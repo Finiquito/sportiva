@@ -1,0 +1,21 @@
+# Contexto para Claude
+
+## Quién y cómo
+- El usuario es chileno, frontend con 15 años de experiencia, algo de backend y mucho diseño. Trabaja como freelancer.
+- **Escribe siempre en español de Chile con «tú».** Nunca voseo («querés», «pensá»).
+- **Diseño:** no inventes estilos; si un cambio altera lo que se ve, muestra antes una maqueta y pregunta.
+- **Instalaciones:** las hace él a mano en Hostinger. Entrégale zips y pasos claros: dónde va cada archivo y qué apretar en el admin.
+- **Después de cada cambio:** zip (si aplica), capturas, commit y push. Envía los archivos con SendUserFile.
+- **Secretos:** nunca al repo ni al chat. Las claves se ingresan en el admin (cifradas con AES-256-GCM).
+- **No abras PR** salvo que lo pida.
+
+## TypeDock (léelo antes de proponer nada)
+- Todo corre sobre **TypeDock**, un CMS PHP para hosting compartido (Hostinger). **Lee `docs/TYPEDOCK.md`**: estructura del servidor, forma de un plugin, API de `PluginContext`, convenciones, trampas conocidas y cómo instalar.
+- No preguntes de nuevo cómo viene TypeDock: está documentado ahí.
+- Referencia viva de un plugin grande hecho por nosotros: repo `finiquito/portalclientes` (carpeta `portal/`, núcleo simulado en `dev/`, zips con `scripts/zip.sh`).
+
+## Proyecto: Sportiva
+Plugin de TypeDock para coordinar **clubes / equipos ↔ entrenadores / jugadores / apoderados**. Inspiración: Cantera, Spond, TeamSnap.
+- **Sí:** comunicación, citaciones, calendario con confirmación de asistencia (voto público), lugares con mapa (Google Maps y Waze), compartir por WhatsApp, consultas de los apoderados, «hoja de ruta» personal, eventos especiales con precio informativo, multi-idioma y zona horaria, PWA con push.
+- **No:** cobros, pagos ni documentos. Nunca.
+- Plan completo y decisiones abiertas: `docs/PLAN.md`.
