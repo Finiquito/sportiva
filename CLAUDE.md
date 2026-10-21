@@ -17,5 +17,9 @@
 ## Proyecto: Sportiva
 Plugin de TypeDock para coordinar **clubes / equipos ↔ entrenadores / jugadores / apoderados**. Inspiración: Cantera, Spond, TeamSnap.
 - **Sí:** comunicación, citaciones, calendario con confirmación de asistencia (voto público), lugares con mapa (Google Maps y Waze), compartir por WhatsApp, consultas de los apoderados, «hoja de ruta» personal, eventos especiales con precio informativo, multi-idioma y zona horaria, PWA con push.
+- Pruebas en `sportiva.richgt.com`. Un club por instalación; el club se maneja en el front (`/app`) y `/admin/sportiva` es solo para el admin técnico.
+- Idiomas: español y francés, ampliables con un archivo por idioma (estilo WordPress).
+- El hijo es de solo lectura más un canal de niños moderado. Las consultas son privadas al entrenador; lo público va al Tablero del equipo (reemplaza el grupo de WhatsApp).
+- Fotos y videos permitidos, con límites, subida por trozos, cuotas y caducidad, para no colapsar Hostinger.
 - **No:** cobros, pagos ni documentos. Nunca.
 - Plan completo y decisiones abiertas: `docs/PLAN.md`.
