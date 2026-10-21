@@ -54,19 +54,18 @@ Una sola PWA en `/app` cuyo menú cambia según el rol. Acceso por código al co
 
 ## 4. Consultas y Tablero
 - **Consulta:** solo la ven el apoderado y el entrenador. Aparece en la hoja de ruta del apoderado.
-- **Tablero:** visible para todo el equipo. Lo publican entrenador y directiva. Preguntas de diseño:
-  - ¿Los apoderados **publican** o solo **comentan y reaccionan**? Si debe reemplazar de verdad a WhatsApp, deberían poder publicar. Propuesta: pueden publicar, el entrenador y la directiva moderan (ocultar y borrar), y cada equipo puede cerrar la publicación libre.
-  - Publicaciones fijadas arriba (reglas del grupo, horarios).
+- **Tablero:** visible para todo el equipo. Lo publican **entrenador y directiva**. Los **apoderados solo comentan y reaccionan**, no publican. Publicaciones fijadas arriba (reglas, horarios).
 
 ## 5. Hijos y canal de niños
 Cuenta de **solo lectura** más un canal propio. Como son menores, lo importante es la seguridad antes que las funciones:
 - **Sin mensajes privados 1 a 1.** Solo canal grupal por equipo. Los apoderados pueden verlo y el entrenador modera.
 - **Nombre y foto de perfil acotados** (nombre de pila, sin datos de contacto).
 - **Sin enlaces externos** y sin números de teléfono en los mensajes.
-- **Botón «Reportar»** en cada mensaje, y el entrenador puede ocultar o suspender a alguien.
+- **«Reportar» escondido en el menú del mensaje**, no a la vista. El entrenador puede ocultar o suspender.
 - **Stickers y reacciones propios** (set deportivo en SVG, sin licencias ajenas) más emojis. **GIFs de buscadores externos (Giphy y similares), no los recomiendo**: traen contenido no filtrado, rastreo de terceros y dependencia de una API. Lo cambiaría por una **biblioteca de GIFs curada** por el club.
 - **Tiempo real en hosting compartido:** no hay websockets. El chat consulta novedades cada 10 a 20 segundos mientras la pantalla está abierta. Basta para niños y no sobrecarga el servidor.
-- **Fotos y videos de partidos:** suben al canal con moderación. Por definir: ¿se publican de inmediato y se reportan después, o el entrenador aprueba antes? Para menores recomiendo aprobación previa de lo que sube cada niño.
+- **Los niños no suben fotos ni videos.** Solo suben apoderados y entrenadores.
+- **Edad:** el canal se habilita desde los **8 años, según fecha de nacimiento** (dato obligatorio del jugador). La mayoría de los niños de esa edad no tiene teléfono propio (desde los 11 es lo común), así que entran con el dispositivo del apoderado.
 - **Chile (Ley 21.719):** imágenes de menores son datos personales sensibles. Habrá que pedir **autorización del apoderado** (casilla al inscribir) para que el niño use el canal y para publicar su imagen. Esto lo reviso contra el texto de la ley antes de lanzar.
 
 ## 6. Notificaciones: opciones y costo
@@ -119,9 +118,8 @@ El riesgo en hosting compartido es: **disco**, **límites de subida** (`upload_m
 10. **WhatsApp oficial** opcional y almacenamiento externo si hace falta.
 
 ## 10. Pendiente por decidir
-- ¿Los apoderados publican en el Tablero o solo comentan?
-- ¿Las fotos y videos de niños se aprueban antes o se reportan después?
-- ¿Biblioteca de GIFs curada por el club, o solo stickers y reacciones?
-- Edad mínima para el canal de niños (¿8 años en adelante?).
+- **Bifurcación grande:** ¿hay multimedia propia (fotos y video) o la app es solo informativa y el grupo de WhatsApp sigue para lo social? Análisis en la conversación; ver sección 7.
+- Si no hay multimedia, el canal de niños (chat con stickers) pierde sentido: sería solo lectura.
+- ¿Biblioteca de GIFs curada por el club, o solo stickers y reacciones? (solo si sigue el canal de niños).
 - Qué dice exactamente la Ley 21.719 sobre autorización de imagen y datos de menores.
 - Maqueta del look antes de construir cualquier pantalla.
