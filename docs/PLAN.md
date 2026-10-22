@@ -66,7 +66,7 @@ Cuenta de **solo lectura** más un canal propio. Como son menores, lo importante
 - **Tiempo real en hosting compartido:** no hay websockets. El chat consulta novedades cada 10 a 20 segundos mientras la pantalla está abierta. Basta para niños y no sobrecarga el servidor.
 - **Los niños no suben fotos ni videos.** Solo suben apoderados y entrenadores.
 - **Edad:** el canal se habilita desde los **8 años, según fecha de nacimiento** (dato obligatorio del jugador). La mayoría de los niños de esa edad no tiene teléfono propio (desde los 11 es lo común), así que entran con el dispositivo del apoderado.
-- **Chile (Ley 21.719):** imágenes de menores son datos personales sensibles. Habrá que pedir **autorización del apoderado** (casilla al inscribir) para que el niño use el canal y para publicar su imagen. Esto lo reviso contra el texto de la ley antes de lanzar.
+- **Francia (RGPD y CNIL):** el club y las familias están en Francia, así que rige el RGPD y no la ley chilena. Hay que pedir **autorización del apoderado** (casilla al inscribir) para el uso de la app por el niño y para publicar su imagen (*droit à l'image*). En Francia el consentimiento digital propio parte a los 15 años, por lo que todos nuestros niños pasan por el apoderado. **Por verificar con la fuente oficial antes de lanzar.**
 
 ## 6. Notificaciones: opciones y costo
 Orden propuesto: **PWA push → correo → WhatsApp solo si hace falta**.
@@ -134,5 +134,16 @@ Salió de la conversación con familias reales; manda sobre el resto del plan.
 - Video propio en AWS: solo si el piloto lo pide (fase 4 del orden acordado: texto, fotos livianas, videos como enlace, video propio).
 - ¿Quién puede publicar en vivo? Propuesta: quien marca «Estoy en la cancha» (apoderados y entrenadores).
 - ¿La hora de regreso la puede cambiar cualquiera de los presentes o solo uno? Propuesta: cualquiera, con historial visible.
-- Qué dice exactamente la Ley 21.719 sobre autorización de imagen y datos de menores.
+- Verificar qué exigen el RGPD y la CNIL sobre datos e imagen de menores (reemplaza la mención anterior a la ley chilena).
 - Pantallas siguientes: asistencia del entrenador, Tablero, Mi ruta y calendario de turnos.
+
+## 12. Ronda 3: cambios y decisiones
+- **Idioma por defecto: francés**, español opcional. Fechas y horas en formato francés (`sam. 24 oct.`, 24 h), zona horaria del club (Europe/Paris). Todo el texto nace en francés y se traduce al español.
+- **Convocar entre categorías y grupos.** Un partido de U13 puede convocar jugadores de U12 o U11, y un equipo puede tener grupos (U11A, U11B, U11C). La convocatoria es una **lista de jugadores**, no un equipo. Cualquier entrenador del club puede convocar a cualquier jugador, aunque no sea de su grupo.
+  - Al crear, se ven los jugadores de todos los equipos, con búsqueda y «marcar todo el equipo».
+  - Se avisa a los entrenadores del equipo base de cada jugador convocado, y la familia ve «convocado con U13».
+  - Se avisa si el jugador ya tiene otro evento a la misma hora.
+  - El entrenador de otro grupo ve el nombre del jugador y su voto, pero no los datos de contacto de la familia.
+- **Equipos móviles.** El jugador pertenece a un equipo **por temporada y por fechas** (desde, hasta), con historial. Se puede reorganizar una categoría a mitad de temporada: mover jugadores entre U11A, U11B y U11C, con vista previa de los cambios y aviso a las familias y entrenadores con un mensaje editable («Desde el 15 de noviembre, Lucas pasa de U11B a U11A»). Los eventos futuros del equipo anterior piden decisión (mantener o quitar). Se hace desde el celular, en un toque por jugador, y en escritorio arrastrando.
+- **Escritorio.** Es la misma app con diseño adaptable, no otra. En pantallas anchas la navegación pasa a una barra lateral y se ve el detalle al lado de la lista. Uso principal: entrenadores y directiva (asistencia en tabla, crear convocatoria, reorganizar equipos). Los wireframes de escritorio vienen en la siguiente ronda.
+- **Menús por rol y nombres:** ver la propuesta de la conversación; se registra aquí cuando se decida.
