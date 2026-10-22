@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sportiva · wireframes v1</title>
+<style>
+:root{
+  --ink:#1a1a1a; --ink2:#545454; --line:#6e6e6e; --fill:#ececec; --fill2:#d6d6d6;
+  --paper:#fff; --bg:#f3f3f3;
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:22px;margin:56px 0 4px}
+.sub{color:var(--ink2);margin:0 0 20px;max-width:70ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14px;color:var(--ink2);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 16px}
+.legend b{color:var(--ink)}
+
+/* ---------- filas pantalla + notas ---------- */
+.row{display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;margin-top:20px}
+.phones{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+.cap{font-size:13px;color:var(--ink2);margin:0 0 6px}
+.notes{flex:1 1 320px;max-width:460px;font-size:15px}
+.notes h3{font-size:16px;margin:0 0 8px}
+.notes ol{list-style:none;padding:0;margin:0 0 16px}
+.notes li{display:flex;gap:10px;margin-bottom:10px}
+.notes li>span:last-child{flex:1}
+.nav{background:#fff;border:1.5px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:14px}
+.nav p{margin:2px 0}
+
+/* ---------- teléfono ---------- */
+.phone{width:390px;background:var(--paper);border:2px solid var(--ink);border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.sb{height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;font-size:14px;font-weight:600;flex:none}
+.top{display:flex;align-items:center;gap:8px;min-height:52px;padding:4px 16px;flex:none}
+.top h4{margin:0;font-size:20px;flex:1}
+.back{min-height:44px;min-width:44px;display:inline-flex;align-items:center;font-weight:600}
+.body{padding:8px 16px 20px;flex:1}
+.tabbar{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);background:#fff;padding-bottom:12px;flex:none}
+.tab{min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:12.5px;position:relative}
+.tab .ico{width:24px;height:24px;border:2px solid var(--ink);border-radius:6px}
+.tab.on{font-weight:800}
+.tab.on .ico{background:var(--ink)}
+.tab.on::before{content:"";position:absolute;top:-2px;left:22%;right:22%;height:4px;background:var(--ink)}
+.badge{position:absolute;top:4px;right:26%;background:var(--ink);color:#fff;border-radius:10px;min-width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+
+/* ---------- piezas ---------- */
+.n{display:inline-flex;flex:none;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font:700 13px/1 system-ui;align-items:center;justify-content:center;font-style:normal}
+.card .n.f,.blk .n.f{position:absolute;top:-11px;left:-9px}
+.card,.blk{position:relative;border:1.5px solid var(--line);border-radius:14px;padding:12px;background:#fff;margin:14px 0}
+.card.hl{border:3px solid var(--ink)}
+.card.flat{background:var(--fill)}
+.btn{min-height:48px;border:2px solid var(--ink);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;background:#fff;padding:0 14px;text-align:center;gap:6px;font-size:15px}
+.btn.pri{background:var(--ink);color:#fff}
+.btn.dis{border-style:dashed;color:#6e6e6e;font-weight:600}
+.btn.sm{min-height:44px;font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border:2px solid var(--ink);border-radius:22px;font-weight:600;font-size:14px;background:#fff}
+.chip.on{background:var(--ink);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.seg div{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;border-left:2px solid var(--ink);gap:0}
+.seg div:first-child{border-left:0}
+.seg div b{font-size:18px;line-height:1}
+.seg .on{background:var(--ink);color:#fff}
+.seg4{grid-template-columns:repeat(4,1fr)}
+.tag{display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:0 8px;border:1.5px solid var(--ink);border-radius:6px;font-size:12.5px;font-weight:700;background:#fff}
+.tag.solid{background:var(--ink);color:#fff}
+.tag.dash{border-style:dashed}
+.muted{color:var(--ink2);font-size:14px}
+.sm{font-size:14px}
+.t{font-weight:700}
+.big{font-size:34px;font-weight:800;line-height:1.05}
+.h{font-size:17px;font-weight:800;margin:0 0 6px}
+.sp{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ph{background:linear-gradient(to top right,transparent calc(50% - 1px),#8a8a8a,transparent calc(50% + 1px)),linear-gradient(to bottom right,transparent calc(50% - 1px),#8a8a8a,transparent calc(50% + 1px)),var(--fill);border:1.5px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--ink2);font-size:12px;text-align:center}
+.ph span{background:var(--fill);padding:2px 6px}
+.field{border:2px solid var(--ink);border-radius:12px;min-height:48px;display:flex;align-items:center;padding:0 12px;color:var(--ink2);background:#fff;font-size:15px}
+.field.area{align-items:flex-start;padding-top:12px;min-height:76px}
+.lab{font-size:13.5px;font-weight:700;margin:12px 0 4px;display:block}
+.req{font-weight:800}
+hr{border:0;border-top:1.5px solid var(--fill2);margin:12px 0}
+.row2{display:flex;gap:10px;align-items:flex-start}
+.dot{width:12px;height:12px;border:2px solid var(--ink);display:inline-block}
+.dot.p{background:var(--ink)}
+.dot.e{border-radius:50%}
+.dot.s{transform:rotate(45deg)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:13px;margin:6px 0}
+.week div{min-height:62px;border:1.5px solid var(--fill2);border-radius:10px;padding:4px 0;display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:center}
+.week .today{border:3px solid var(--ink);font-weight:800}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:2}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:2px solid var(--ink);border-radius:22px 22px 0 0;padding:10px 16px 28px;z-index:3}
+.grab{width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-size:12px;text-align:center;margin:8px 0}
+.stepper div{display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.15}
+.stepper i{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink);display:block}
+.stepper .done i{background:var(--ink)}
+.stepper .now i{background:#fff;border-width:5px}
+.stepper .now{font-weight:800}
+.feed .it{display:flex;gap:10px;padding:10px 0;border-top:1.5px solid var(--fill2)}
+.feed .av{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0}
+.otp div{height:56px;border:2px solid var(--ink);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.mapph{height:120px}
+.car{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1.5px solid var(--fill2)}
+.car .ico{width:36px;height:36px;border:2px solid var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:none}
+.errtxt{font-weight:700;font-size:13.5px;display:flex;gap:6px;align-items:flex-start;margin-top:8px}
+.errtxt i{width:18px;height:18px;border:2px solid var(--ink);border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+
+/* ---------- mapa de navegación ---------- */
+.flow{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;overflow:auto}
+.flow svg{display:block;min-width:1080px}
+.norms{columns:2 340px;column-gap:32px;font-size:15px;padding-left:20px}
+.norms li{margin-bottom:6px;break-inside:avoid}
+@media (max-width:480px){.phone{width:100%}.phones{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Sportiva · wireframes v1</h1>
+<p class="sub">Cinco pantallas clave en gris, pensadas para celular (PWA). Nada de colores, tipografías ni estilo visual: solo estructura, jerarquía y navegación. El look se decide después, con otra maqueta.</p>
+
+<div class="legend">
+  <span><i class="n">1</i> número = nota de lógica (columna derecha)</span>
+  <span><b>Relleno negro</b> = seleccionado / acción principal</span>
+  <span><b>Borde punteado</b> = pendiente o desactivado</span>
+  <span><b>Cuadro con X</b> = foto o mapa</span>
+  <span>Ejemplo: Club U12 · hijo «Lucas» · rival «Niort»</span>
+</div>
+
+<!-- ======================= MAPA DE NAVEGACIÓN ======================= -->
+<h2>Mapa de navegación</h2>
+<p class="sub">Un solo sistema de pestañas inferiores (máximo 4). El entrenador ve además el botón «+ Convocatoria». Las notificaciones abren directo la pantalla que corresponde.</p>
+<div class="flow">
+<svg viewBox="0 0 1080 380" width="1080" height="380" role="img" aria-label="Mapa de navegación de las cinco pantallas" font-family="system-ui,sans-serif">
+  <defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1a1a1a"/></marker></defs>
+  <g fill="#fff" stroke="#1a1a1a" stroke-width="2">
+    <rect x="10" y="40" width="150" height="70" rx="12"/>
+    <rect x="280" y="40" width="150" height="70" rx="12"/>
+    <rect x="550" y="40" width="190" height="70" rx="12"/>
+    <rect x="870" y="40" width="190" height="70" rx="12"/>
+    <rect x="550" y="190" width="190" height="70" rx="12" stroke-dasharray="6 5"/>
+    <rect x="260" y="190" width="190" height="70" rx="12"/>
+    <rect x="870" y="190" width="190" height="70" rx="12" stroke-dasharray="6 5"/>
+    <rect x="10" y="300" width="1050" height="64" rx="10"/>
+  </g>
+  <g fill="#1a1a1a" font-size="15" font-weight="700" text-anchor="middle">
+    <text x="85" y="70">1 · Ingreso</text><text x="85" y="92" font-weight="400" font-size="13">correo → código</text>
+    <text x="355" y="70">2 · Agenda</text><text x="355" y="92" font-weight="400" font-size="13">pestaña inicial</text>
+    <text x="645" y="70">3 · Convocatoria</text><text x="645" y="92" font-weight="400" font-size="13">voto, lugares, traslado</text>
+    <text x="965" y="70">4 · En vivo</text><text x="965" y="92" font-weight="400" font-size="13">novedades, hora de regreso</text>
+    <text x="645" y="220">3B · Cambiar voto</text><text x="645" y="242" font-weight="400" font-size="13">hoja inferior</text>
+    <text x="355" y="220">5 · Crear convocatoria</text><text x="355" y="242" font-weight="400" font-size="13">solo entrenadores</text>
+    <text x="965" y="220">Aviso a entrenadores</text><text x="965" y="242" font-weight="400" font-size="13">push + correo</text>
+  </g>
+  <g stroke="#1a1a1a" stroke-width="2" fill="none" marker-end="url(#ar)">
+    <path d="M160 75 H278"/><path d="M430 75 H548"/><path d="M740 75 H868"/>
+    <path d="M645 110 V188"/><path d="M740 225 H868"/><path d="M355 190 V112"/>
+  </g>
+  <g fill="#545454" font-size="12.5" text-anchor="middle">
+    <text x="219" y="66">código ok</text><text x="489" y="66">toca un evento</text><text x="804" y="66">«Estoy en la cancha»</text>
+    <text x="804" y="216">al confirmar</text>
+  </g>
+  <g fill="#545454" font-size="12.5">
+    <text x="660" y="154">cambia su voto</text><text x="370" y="154">publicar → vuelve a 2</text>
+  </g>
+  <g fill="#1a1a1a" font-size="14">
+    <text x="26" y="326"><tspan font-weight="700">Pestañas:</tspan> Agenda · Tablero (próxima entrega) · Mi ruta (próxima entrega) · Más (idioma, notificaciones, instalar app)</text>
+    <text x="26" y="350"><tspan font-weight="700">Notificación:</tspan> abre la pantalla 3 o 4 directamente, según el aviso.</text>
+  </g>
+</svg>
+</div>
+
+<!-- ======================= PANTALLA 1 ======================= -->
+<h2>1 · Ingreso con código</h2>
+<p class="sub">Sin contraseña. Dos pasos en la misma pantalla. Solo entra quien fue invitado por el club.</p>
+<div class="row">
+ <div class="phones">
+  <div>
+   <p class="cap">1A · Correo</p>
+   <div class="phone" style="height:700px">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><h4></h4><div class="chips"><span class="chip on" style="min-height:44px">ES</span><span class="chip">FR</span></div></div>
+    <div class="body">
+      <div class="ph" style="width:84px;height:84px;margin:24px 0 12px"><span>logo club</span></div>
+      <p class="h" style="font-size:26px;margin:0">Club [nombre]</p>
+      <p class="muted" style="margin:2px 0 28px">en Sportiva</p>
+      <p class="h" style="font-size:20px"><i class="n">1</i>&nbsp; Entra con tu correo</p>
+      <span class="lab">Correo</span>
+      <div class="field">tucorreo@ejemplo.cl</div>
+      <div class="btn pri" style="margin-top:16px">Enviarme un código</div>
+      <p class="muted" style="margin-top:12px"><i class="n" style="width:20px;height:20px;font-size:12px">2</i>&nbsp; Sin contraseña. Te enviamos un código de 6 dígitos.</p>
+      <hr style="margin-top:28px">
+      <p class="muted"><i class="n" style="width:20px;height:20px;font-size:12px">3</i>&nbsp; ¿Tu correo no funciona? Pídele a tu entrenador que te invite.</p>
+    </div>
+   </div>
+  </div>
+  <div>
+   <p class="cap">1B · Código</p>
+   <div class="phone" style="height:700px">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">‹ Atrás</span><h4></h4></div>
+    <div class="body">
+      <p class="h" style="font-size:24px;margin-top:24px">Revisa tu correo</p>
+      <p class="muted" style="margin:0">Enviamos un código a <b>ma•••@ejemplo.cl</b></p>
+      <div class="otp"><div>4</div><div>8</div><div>1</div><div>_</div><div></div><div></div></div>
+      <p class="muted"><i class="n" style="width:20px;height:20px;font-size:12px">4</i>&nbsp; Se envía solo al escribir el sexto dígito.</p>
+      <div class="btn dis" style="margin-top:16px">Reenviar código (0:45)</div>
+      <div class="btn sm" style="margin-top:8px;border-color:transparent;text-decoration:underline">Usar otro correo</div>
+      <div class="errtxt" style="margin-top:20px"><i>!</i><span>Ejemplo de error: «El código no es válido o venció. Pide uno nuevo.»</span></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="notes">
+  <h3>Lógica</h3>
+  <ol>
+   <li><i class="n">1</i><span>Selector de idioma (ES · FR) visible desde el primer paso. Se guarda y se usa en correos y avisos.</span></li>
+   <li><i class="n">2</i><span>El código dura 10 minutos y es de un solo uso. No se revela si el correo existe.</span></li>
+   <li><i class="n">3</i><span>Cerrado por invitación: el club (directiva o entrenador) da de alta a las familias.</span></li>
+   <li><i class="n">4</i><span>Campo numérico en un solo bloque, con autocompletar del código que llega por SMS o correo.</span></li>
+  </ol>
+  <div class="nav">
+    <p><b>Entra desde:</b> enlace de invitación, ícono de la app.</p>
+    <p><b>Va a:</b> 2 · Agenda. La primera vez se muestra «Instalar la app para recibir avisos».</p>
+    <p><b>Sesión:</b> queda abierta 90 días en ese dispositivo.</p>
+  </div>
+ </div>
+</div>
+
+<!-- ======================= PANTALLA 2 ======================= -->
+<h2>2 · Agenda (apoderado)</h2>
+<p class="sub">La pantalla de todos los días. Responde tres preguntas: qué viene, qué me falta responder y si me toca llevar.</p>
+<div class="row">
+ <div class="phones">
+  <div>
+   <p class="cap">2 · Agenda</p>
+   <div class="phone">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><h4>Agenda</h4><span class="chip" style="min-height:44px">Lista ▾</span></div>
+    <div class="body">
+      <div class="card flat" style="margin-top:0"><span class="n f">1</span>
+        <div class="sp"><span class="t">Instala Sportiva para recibir avisos</span><span class="back" style="min-width:44px;justify-content:center">✕</span></div>
+        <div class="btn sm" style="margin-top:6px">Cómo instalarla</div>
+      </div>
+      <div class="chips"><span class="n f" style="position:static;margin:11px 4px 0 0">2</span>
+        <span class="chip on">Todos</span><span class="chip">Lucas · U12</span><span class="chip">Emma · U10</span></div>
+      <div class="card hl"><span class="n f">3</span>
+        <div class="row2"><div class="ico" style="width:36px;height:36px;border:2px solid var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:none">auto</div>
+        <div style="flex:1"><p class="h" style="margin:0">Te toca llevar</p>
+        <p class="sm" style="margin:2px 0 8px">Sáb 24 oct · salida 12:30 desde el club · 3 cupos libres</p>
+        <div class="btn sm">Ver traslado</div></div></div>
+      </div>
+      <div class="week">
+        <div><span>L</span><b>19</b></div><div><span>M</span><b>20</b></div><div><span>M</span><b>21</b></div>
+        <div class="today"><span>J</span><b>22</b><i class="dot e"></i></div><div><span>V</span><b>23</b></div>
+        <div><span>S</span><b>24</b><i class="dot p"></i></div><div><span>D</span><b>25</b></div>
+      </div>
+      <p class="muted" style="margin:0 0 4px"><i class="dot p"></i> partido &nbsp; <i class="dot e"></i> entrenamiento &nbsp; <i class="dot s" style="margin-left:4px"></i> especial</p>
+      <p class="h" style="margin-top:14px">Hoy</p>
+      <div class="card" style="margin-top:6px"><span class="n f">4</span>
+        <div class="sp"><span class="tag">Entrenamiento</span><span class="tag solid">✓ Emma voy</span></div>
+        <p class="t" style="margin:6px 0 0">U10 · 18:00 – 19:30</p>
+        <p class="muted" style="margin:0">Gimnasio municipal</p>
+      </div>
+      <p class="h" style="margin-top:14px">Sábado 24</p>
+      <div class="card" style="margin-top:6px">
+        <div class="sp"><span class="tag solid">Partido</span><span class="tag dash">! Lucas sin responder</span></div>
+        <p class="t" style="margin:6px 0 0">U12 vs Niort · 14:00</p>
+        <p class="muted" style="margin:0">Salida 12:30 · Club</p>
+        <div class="grid3" style="margin-top:10px"><div class="btn sm">✓ Voy</div><div class="btn sm">? Duda</div><div class="btn sm">✕ No</div></div>
+        <p class="muted" style="margin:6px 0 0"><i class="n" style="width:20px;height:20px;font-size:12px">5</i>&nbsp; 14 voy · 3 duda · 5 sin responder</p>
+      </div>
+      <p class="h" style="margin-top:14px">Martes 27</p>
+      <div class="card" style="margin-top:6px">
+        <div class="sp"><span class="tag">Entrenamiento</span><span class="tag">? Lucas duda</span></div>
+        <p class="t" style="margin:6px 0 0">U12 · 18:00 – 19:30</p>
+      </div>
+      <div class="btn pri" style="margin:6px auto 0;max-width:230px"><i class="n" style="background:#fff;color:#1a1a1a;width:20px;height:20px">6</i> + Convocatoria</div>
+      <p class="muted" style="text-align:center;margin:4px 0 0">solo entrenadores · va a la pantalla 5</p>
+    </div>
+    <div class="tabbar">
+      <div class="tab on"><span class="ico"></span>Agenda</div>
+      <div class="tab"><span class="ico"></span>Tablero<span class="badge">3</span></div>
+      <div class="tab"><span class="ico"></span>Mi ruta</div>
+      <div class="tab"><span class="ico"></span>Más</div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="notes">
+  <h3>Lógica</h3>
+  <ol>
+   <li><i class="n">1</i><span>Aviso para instalar la PWA. Se puede cerrar y vuelve a aparecer cada semana. En iPhone es la única forma de recibir push.</span></li>
+   <li><i class="n">2</i><span>Filtro por hijo. Si hay uno solo, no aparece. «Todos» mezcla las agendas de los hijos en un solo calendario.</span></li>
+   <li><i class="n">3</i><span><b>El turno de traslado va arriba de todo</b>, con borde grueso (no depende del color). Reemplaza el PDF del refrigerador. Desaparece cuando pasa el evento.</span></li>
+   <li><i class="n">4</i><span>Cada evento muestra su estado con <b>ícono y texto</b>: ✓ voy, ? duda, ✕ no voy, ! sin responder.</span></li>
+   <li><i class="n">5</i><span>Se vota desde la lista, en un toque, sin abrir el evento. El contador es público: todos ven cuántos van.</span></li>
+   <li><i class="n">6</i><span>Botón flotante solo para entrenadores; el apoderado no lo ve.</span></li>
+  </ol>
+  <h3>Reglas de diseño aplicadas</h3>
+  <p class="muted" style="margin-top:0">Barra inferior de 4 pestañas con texto · botones de 44 px o más · estado nunca solo por color · texto en minúscula y verbos claros.</p>
+  <div class="nav">
+    <p><b>Entra desde:</b> 1 · Ingreso, ícono de la app, cualquier notificación sin enlace.</p>
+    <p><b>Va a:</b> 3 · Convocatoria (toca la tarjeta) · 5 · Crear convocatoria (+) · pestañas.</p>
+    <p><b>Lista | Mes:</b> el selector de arriba cambia a vista de calendario mensual.</p>
+  </div>
+ </div>
+</div>
+
+<!-- ======================= PANTALLA 3 ======================= -->
+<h2>3 · Convocatoria (apoderado)</h2>
+<p class="sub">Todo lo del partido en un solo lugar y en el orden en que lo necesitas: ¿va mi hijo?, ¿adónde voy?, ¿cómo llego?, ¿cómo les fue?</p>
+<div class="row">
+ <div class="phones">
+  <div>
+   <p class="cap">3A · Detalle (se desplaza)</p>
+   <div class="phone">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">‹ Agenda</span><h4></h4><span class="back">⋯</span></div>
+    <div class="body">
+      <span class="tag solid">Partido</span> <span class="tag">U12</span>
+      <p class="big" style="margin:8px 0 2px">U12 vs Niort</p>
+      <p class="t" style="margin:0;font-size:18px">Sáb 24 oct · 14:00</p>
+      <p class="muted" style="margin:0">Hora del club. Publicado por Camila hace 2 días.</p>
+
+      <div class="card hl"><span class="n f">1</span>
+        <p class="h">Tu respuesta</p>
+        <p class="t sm" style="margin:0 0 6px">Lucas</p>
+        <div class="seg"><div class="on"><b>✓</b>Voy</div><div><b>?</b>Duda</div><div><b>✕</b>No voy</div></div>
+        <p class="muted" style="margin:6px 0 0">Emma (U10) no está convocada.</p>
+        <hr>
+        <div class="sp"><span class="sm"><b>14</b> voy · <b>3</b> duda · <b>2</b> no van · <b>5</b> sin responder</span><span class="chip" style="min-height:44px">Ver lista</span></div>
+      </div>
+
+      <div class="card"><span class="n f">2</span>
+        <p class="h">A · Punto de encuentro</p>
+        <p class="t" style="margin:0">Club · 12:30</p>
+        <p class="muted" style="margin:0 0 8px">Estacionamiento del club, portón azul</p>
+        <div class="grid3"><div class="btn sm">Maps</div><div class="btn sm">Waze</div><div class="btn sm">WhatsApp</div></div>
+      </div>
+      <div class="card"><span class="n f">3</span>
+        <p class="h">B · Lugar del partido</p>
+        <p class="t" style="margin:0">Stade du Centre · Niort</p>
+        <p class="muted" style="margin:0 0 8px">Club local: Niort FC · Rue Ejemplo 12, 79000 Niort</p>
+        <div class="ph mapph"><span>mapa con pin · 62 km · 1 h</span></div>
+        <div class="grid3" style="margin-top:8px"><div class="btn sm">Maps</div><div class="btn sm">Waze</div><div class="btn sm">WhatsApp</div></div>
+      </div>
+
+      <div class="card hl"><span class="n f">4</span>
+        <p class="h">Traslado · te toca llevar</p>
+        <div class="car"><div class="ico">tú</div><div style="flex:1"><span class="t">Tu auto</span><br><span class="muted">Salida 12:30 · 3 de 4 cupos</span></div><span class="tag solid">tu turno</span></div>
+        <div class="car"><div class="ico">M</div><div style="flex:1"><span class="t">Auto de Marta</span><br><span class="muted">Salida 12:30 · 2 cupos libres</span></div><div class="btn sm" style="min-height:44px">Pedir cupo</div></div>
+        <div class="car"><div class="ico">!</div><div style="flex:1"><span class="t">Sin auto: Emma, Tomás</span><br><span class="muted">2 jugadores sin traslado</span></div><div class="btn sm" style="min-height:44px">Ofrecer auto</div></div>
+      </div>
+
+      <div class="card"><span class="n f">5</span>
+        <p class="h">En vivo</p>
+        <p class="muted" style="margin:0">Todavía no empieza. Se activa 2 h antes.</p>
+        <hr>
+        <p class="t" style="margin:0">Regreso estimado al club: 18:30</p>
+        <p class="muted" style="margin:0 0 8px">Hora tentativa del entrenador</p>
+        <div class="grid2"><div class="btn sm">Ver novedades</div><div class="btn sm dis">Estoy en la cancha</div></div>
+      </div>
+
+      <div class="card"><span class="n f">6</span>
+        <div class="sp"><p class="h" style="margin:0">Fotos del partido</p><span class="muted">0</span></div>
+        <div class="grid3" style="margin-top:8px"><div class="ph" style="height:80px"><span>foto</span></div><div class="ph" style="height:80px"><span>foto</span></div><div class="btn" style="height:80px;border-style:dashed">+ Agregar</div></div>
+      </div>
+
+      <div class="card"><span class="n f">7</span>
+        <p class="h">Preguntar al entrenador</p>
+        <p class="muted" style="margin:0 0 8px">Privado: solo lo ven los entrenadores del equipo.</p>
+        <div class="field area">Escribe tu consulta…</div>
+        <div class="btn pri" style="margin-top:8px">Enviar</div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <div class="tab on"><span class="ico"></span>Agenda</div>
+      <div class="tab"><span class="ico"></span>Tablero<span class="badge">3</span></div>
+      <div class="tab"><span class="ico"></span>Mi ruta</div>
+      <div class="tab"><span class="ico"></span>Más</div>
+    </div>
+   </div>
+  </div>
+  <div>
+   <p class="cap">3B · Al cambiar el voto</p>
+   <div class="phone" style="height:640px">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">‹ Agenda</span><h4></h4><span class="back">⋯</span></div>
+    <div class="body">
+      <span class="tag solid">Partido</span> <span class="tag">U12</span>
+      <p class="big" style="margin:8px 0 2px">U12 vs Niort</p>
+      <p class="t" style="margin:0;font-size:18px">Sáb 24 oct · 14:00</p>
+      <div class="card hl"><p class="h">Tu respuesta</p>
+        <p class="t sm" style="margin:0 0 6px">Lucas</p>
+        <div class="seg"><div><b>✓</b>Voy</div><div><b>?</b>Duda</div><div class="on"><b>✕</b>No voy</div></div></div>
+    </div>
+    <div class="dim"></div>
+    <div class="sheet">
+      <div class="grab"></div>
+      <p class="h" style="font-size:20px"><i class="n">8</i>&nbsp; Cambiar a «No voy»</p>
+      <p style="margin:0 0 8px">Antes dijiste <b>Voy</b>. Avisaremos a los entrenadores: <b>Camila</b> y <b>Pedro</b>.</p>
+      <span class="lab">Motivo (opcional)</span>
+      <div class="field">Se lesionó el tobillo…</div>
+      <div class="btn pri" style="margin-top:12px">Confirmar cambio</div>
+      <div class="btn sm" style="margin-top:8px;border-color:transparent;text-decoration:underline">Cancelar</div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="notes">
+  <h3>Lógica</h3>
+  <ol>
+   <li><i class="n">1</i><span>Voto por hijo: ✓ voy · ? duda · ✕ no voy. Cambiarlo es un toque; cada cambio se registra y aparece en <b>Mi ruta</b>. La lista pública muestra quién va, quién duda, quién no va y quién no ha respondido.</span></li>
+   <li><i class="n">2</i><span><b>Punto de encuentro</b>: por defecto el club, pero el entrenador puede cambiarlo por evento. Tiene hora propia y indicaciones (portón azul).</span></li>
+   <li><i class="n">3</i><span><b>Lugar del partido</b>: nombre, <b>club local</b>, dirección y mapa con pin. Siempre con coordenadas, así «el estadio de Niort» deja de ser ambiguo. Botones a Maps, Waze y WhatsApp (compartir).</span></li>
+   <li><i class="n">4</i><span><b>Traslado</b>: quién lleva, cupos y quién queda sin auto. «Te toca llevar» se asigna a la familia y lo ve en su Agenda. Cualquiera puede pedir cupo u ofrecer auto.</span></li>
+   <li><i class="n">5</i><span><b>En vivo</b> con la hora estimada de regreso siempre visible. «Estoy en la cancha» se activa solo 2 h antes y permite publicar (pantalla 4).</span></li>
+   <li><i class="n">6</i><span>Fotos del partido: suben apoderados y entrenadores; los niños las ven en su vista de solo lectura.</span></li>
+   <li><i class="n">7</i><span>Consulta <b>privada</b> al entrenador, ligada a este evento. La respuesta llega a «Mi ruta» y por notificación.</span></li>
+   <li><i class="n">8</i><span>Si el jugador pasa de «Voy» a «No voy» o «Duda», se pide confirmación y se <b>avisa a todos los entrenadores del equipo</b> (push o correo). El motivo es opcional.</span></li>
+  </ol>
+  <div class="nav">
+    <p><b>Entra desde:</b> 2 · Agenda, o una notificación (convocatoria nueva, recordatorio, cambio de lugar).</p>
+    <p><b>Va a:</b> 4 · En vivo · 3B (hoja inferior) · Maps o Waze (app externa) · WhatsApp (compartir).</p>
+    <p><b>Si cambia el lugar o la hora:</b> todos los convocados reciben aviso y la tarjeta muestra «Actualizado hoy 10:12».</p>
+  </div>
+ </div>
+</div>
+
+<!-- ======================= PANTALLA 4 ======================= -->
+<h2>4 · En vivo (el partido, hora a hora)</h2>
+<p class="sub">Para las familias que no fueron. Lo primero que se ve es la hora de regreso; abajo, lo que va pasando.</p>
+<div class="row">
+ <div class="phones">
+  <div>
+   <p class="cap">4A · Familia presente (puede publicar)</p>
+   <div class="phone">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">‹ Partido</span><h4></h4><span class="tag solid">En vivo</span></div>
+    <div class="body">
+      <p class="h" style="font-size:22px;margin:0">U12 vs Niort</p>
+      <div class="stepper"><span class="n f" style="position:static;margin:0 auto 4px;grid-column:1/-1;display:none"></span>
+        <div class="done"><i></i>En camino</div><div class="done"><i></i>En la cancha</div><div class="now"><i></i>Jugando</div><div><i></i>De vuelta</div><div><i></i>En el club</div></div>
+
+      <div class="card hl"><span class="n f">1</span>
+        <p class="muted" style="margin:0">Regreso estimado al club</p>
+        <div class="sp"><span class="big">18:50</span><span class="tag dash">antes 18:30</span></div>
+        <p class="muted" style="margin:4px 0 8px">Cambiado por Marta · hace 4 min</p>
+        <div class="btn sm">Cambiar hora</div>
+      </div>
+
+      <div class="card flat"><span class="n f">2</span>
+        <p class="t" style="margin:0">Estás en la cancha</p>
+        <p class="muted" style="margin:0">Presentes: Marta, Luis, Sofía y tú</p>
+      </div>
+
+      <p class="h"><span class="n" style="vertical-align:middle">3</span>&nbsp; Publicar novedad</p>
+      <div class="chips"><span class="chip">Llegamos</span><span class="chip">Comenzó</span><span class="chip">Entretiempo</span><span class="chip">Resultado</span><span class="chip">Hay demora</span><span class="chip">Salimos de vuelta</span></div>
+      <div class="row2" style="margin-top:10px"><div class="field" style="flex:1">Escribe una novedad…</div><div class="btn" style="width:56px;padding:0">Foto</div></div>
+
+      <p class="h" style="margin-top:20px">Novedades</p>
+      <div class="feed">
+        <div class="it"><div class="av">M</div><div style="flex:1"><b>Marta</b> · 14:42<br>Cambió el regreso a <b>18:50</b>. Se alargó el torneo.</div></div>
+        <div class="it"><div class="av">Tú</div><div style="flex:1"><b>Tú</b> · 14:05<br>Comenzó el partido.</div></div>
+        <div class="it"><div class="av">S</div><div style="flex:1"><b>Sofía</b> · 13:40<br>Llegamos. Hay estacionamiento frente a la cancha.<div class="ph" style="height:90px;margin-top:6px"><span>foto</span></div></div></div>
+        <div class="it"><div class="av">L</div><div style="flex:1"><b>Luis</b> · 12:35<br>Salimos del club. 3 autos.</div></div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <div class="tab on"><span class="ico"></span>Agenda</div>
+      <div class="tab"><span class="ico"></span>Tablero<span class="badge">3</span></div>
+      <div class="tab"><span class="ico"></span>Mi ruta</div>
+      <div class="tab"><span class="ico"></span>Más</div>
+    </div>
+   </div>
+  </div>
+  <div>
+   <p class="cap">4B · Familia que no fue (solo lee)</p>
+   <div class="phone" style="height:760px">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">‹ Partido</span><h4></h4><span class="tag solid">En vivo</span></div>
+    <div class="body">
+      <p class="h" style="font-size:22px;margin:0">U12 vs Niort</p>
+      <div class="stepper"><div class="done"><i></i>En camino</div><div class="done"><i></i>En la cancha</div><div class="now"><i></i>Jugando</div><div><i></i>De vuelta</div><div><i></i>En el club</div></div>
+      <div class="card hl">
+        <p class="muted" style="margin:0">Regreso estimado al club</p>
+        <div class="sp"><span class="big">18:50</span><span class="tag dash">antes 18:30</span></div>
+        <p class="muted" style="margin:4px 0 8px">Cambiado por Marta · hace 4 min</p>
+        <div class="btn sm"><i class="n" style="width:20px;height:20px;font-size:12px">4</i>&nbsp; Avisarme si cambia</div>
+      </div>
+      <div class="card flat"><p class="muted" style="margin:0"><i class="n" style="width:20px;height:20px;font-size:12px">5</i>&nbsp; Publican las familias que marcaron «Estoy en la cancha». Tú puedes leer y reaccionar.</p></div>
+      <p class="h" style="margin-top:14px">Novedades</p>
+      <div class="feed">
+        <div class="it"><div class="av">M</div><div style="flex:1"><b>Marta</b> · 14:42<br>Cambió el regreso a <b>18:50</b>.</div></div>
+        <div class="it"><div class="av">C</div><div style="flex:1"><b>Camila (entrenadora)</b> · 14:30<br>Resultado parcial 1–0.</div></div>
+      </div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="notes">
+  <h3>Lógica</h3>
+  <ol>
+   <li><i class="n">1</i><span><b>Hora estimada de regreso</b>: la tarjeta más grande. Muestra la hora anterior, quién la cambió y cuándo. Cambia casi siempre, así que es lo primero que se ve.</span></li>
+   <li><i class="n">2</i><span>Se publica solo si marcas «Estoy en la cancha» (pantalla 3). Se ve quiénes están, para saber de quién fiarse.</span></li>
+   <li><i class="n">3</i><span>Botones rápidos en vez de escribir: un toque, una novedad. El texto libre y la foto quedan abajo.</span></li>
+   <li><i class="n">4</i><span>«Avisarme si cambia» manda push o correo cuando la hora cambie <b>10 min o más</b>. Los entrenadores reciben el aviso siempre.</span></li>
+   <li><i class="n">5</i><span>Quien no fue lee el estado y las novedades. El historial de cambios queda visible: nada se borra.</span></li>
+  </ol>
+  <div class="nav">
+    <p><b>Entra desde:</b> 3 · Convocatoria, notificación de «Salimos de vuelta» o «Cambió la hora».</p>
+    <p><b>Se activa:</b> 2 h antes del partido. Se cierra solo 3 h después de «De vuelta» o cuando un entrenador lo cierra.</p>
+    <p><b>Va a:</b> 3 · Convocatoria (atrás), foto a la galería del evento.</p>
+  </div>
+ </div>
+</div>
+
+<!-- ======================= PANTALLA 5 ======================= -->
+<h2>5 · Crear convocatoria (entrenador)</h2>
+<p class="sub">El formulario que evita los errores de hoy: dos lugares claros, el del partido siempre con ubicación confirmada.</p>
+<div class="row">
+ <div class="phones">
+  <div>
+   <p class="cap">5 · Formulario (se desplaza)</p>
+   <div class="phone">
+    <div class="sb"><span>9:41</span><span></span></div>
+    <div class="top"><span class="back">Cancelar</span><h4 style="text-align:center">Nueva convocatoria</h4><span style="width:56px"></span></div>
+    <div class="body">
+      <span class="lab" style="margin-top:0">Tipo</span>
+      <div class="seg seg4"><div class="on" style="font-size:12.5px">Partido</div><div style="font-size:12.5px">Entreno</div><div style="font-size:12.5px">Stage</div><div style="font-size:12.5px">Especial</div></div>
+
+      <span class="lab"><i class="n" style="width:20px;height:20px;font-size:12px">1</i>&nbsp; Para quién</span>
+      <div class="chips"><span class="chip on">U12 ✓</span><span class="chip">U10</span><span class="chip">+ Elegir jugadores</span></div>
+      <p class="muted" style="margin:4px 0 0">Hoy: todo el equipo · 21 familias</p>
+
+      <span class="lab">Cuándo</span>
+      <div class="grid2"><div class="field">Sáb 24 oct</div><div class="field">14:00</div></div>
+      <span class="lab">Confirmar hasta</span>
+      <div class="field">Jue 22 oct · 21:00</div>
+
+      <div class="blk"><span class="n f">2</span>
+        <p class="h">Punto de encuentro</p>
+        <div class="field">Club (predeterminado)</div>
+        <div class="grid2" style="margin-top:8px"><div class="field">12:30</div><div class="btn sm">Cambiar lugar</div></div>
+        <span class="lab">Indicaciones</span>
+        <div class="field">Estacionamiento, portón azul</div>
+      </div>
+
+      <div class="blk" style="border-width:3px;border-color:var(--ink)"><span class="n f">3</span>
+        <p class="h">Lugar del partido <span class="req">*</span></p>
+        <span class="lab" style="margin-top:0">Recinto</span><div class="field">Stade du Centre</div>
+        <span class="lab">Club local</span><div class="field">Niort FC</div>
+        <span class="lab">Dirección</span>
+        <div class="field">Rue Ejemplo 12, Niort ⌕</div>
+        <p class="muted" style="margin:6px 0">o <b>pega un enlace de Google Maps o Waze</b></p>
+        <div class="ph mapph"><span>mapa con pin arrastrable</span></div>
+        <div class="row2" style="margin-top:10px;align-items:center"><div class="n" style="border-radius:6px;width:28px;height:28px;background:#fff;color:#1a1a1a;border:2px solid #1a1a1a">✓</div><span class="t sm">Confirmo que este es el lugar correcto</span></div>
+        <div class="errtxt"><i>!</i><span>Sin ubicación confirmada no se puede publicar.</span></div>
+      </div>
+
+      <div class="blk"><span class="n f">4</span>
+        <p class="h">Traslado compartido</p>
+        <div class="sp"><span>Organizar traslado</span><span class="tag solid">Sí</span></div>
+        <div class="car"><div class="ico">tú</div><div style="flex:1"><b>Familia Pérez</b><br><span class="muted">turno de este sábado · 4 cupos</span></div><span class="tag">Asignado</span></div>
+        <div class="btn sm">Asignar según turnos</div>
+      </div>
+
+      <span class="lab">Nota para las familias</span>
+      <div class="field area">Llevar camiseta blanca y agua.</div>
+
+      <div class="blk"><span class="n f">5</span>
+        <p class="h">Avisar a</p>
+        <p class="sm" style="margin:0">21 familias · notificación + correo</p>
+      </div>
+      <div class="btn dis" style="margin-top:8px">Publicar convocatoria</div>
+      <p class="muted" style="text-align:center">Se activa al confirmar el lugar del partido</p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="notes">
+  <h3>Lógica</h3>
+  <ol>
+   <li><i class="n">1</i><span>Audiencia: todo el equipo, varios equipos o <b>jugadores específicos</b> (citación a un stage). Muestra cuántas familias recibirán el aviso.</span></li>
+   <li><i class="n">2</i><span><b>Punto de encuentro</b> (salida): por defecto el club; se cambia solo cuando haga falta. Hora de salida aparte de la hora del partido.</span></li>
+   <li><i class="n">3</i><span><b>Lugar del partido: obligatorio</b>. Recinto, club local y dirección. Se puede buscar la dirección o pegar un enlace de Google Maps o Waze, de donde sacamos las coordenadas. Hay que <b>confirmar el pin en el mapa</b>, no hay forma de saltarse eso. Los lugares usados quedan guardados para la próxima vez.</span></li>
+   <li><i class="n">4</i><span>Traslado: se asigna a una familia como usuario (turno), que recibe recordatorio 48 h y 3 h antes. «Asignar según turnos» propone la siguiente familia de la rotación. Ya no hace falta el PDF.</span></li>
+   <li><i class="n">5</i><span>Al publicar sale una notificación a las familias y, si no tienen la app instalada, un correo.</span></li>
+  </ol>
+  <h3>Según el tipo</h3>
+  <p class="muted" style="margin-top:0"><b>Entreno</b>: el lugar puede ser el predeterminado y el traslado no aparece. <b>Especial</b>: agrega «Precio (informativo)» y «Correo de inscripción» (tesorero); sin pagos.</p>
+  <div class="nav">
+    <p><b>Entra desde:</b> botón «+ Convocatoria» de 2 · Agenda (solo entrenadores).</p>
+    <p><b>Va a:</b> 2 · Agenda, con la convocatoria publicada y aviso enviado.</p>
+    <p><b>Después de publicar:</b> se puede editar; si cambia el lugar, la hora o el punto de encuentro, se avisa a todos.</p>
+  </div>
+ </div>
+</div>
+
+<!-- ======================= NORMAS ======================= -->
+<h2>Normas de diseño aplicadas</h2>
+<p class="sub">Tomadas de la guía de diseño de Apple (HIG) y traducidas a una PWA.</p>
+<ul class="norms">
+  <li><b>Navegación:</b> barra de pestañas inferior con texto y no más de 4 ítems; sin menú hamburguesa.</li>
+  <li><b>Zonas táctiles:</b> botones y chips de 44 px de alto como mínimo.</li>
+  <li><b>Color:</b> ningún estado depende solo del color. Voy, duda, no voy y sin responder tienen ícono, texto y relleno distintos.</li>
+  <li><b>Contraste:</b> texto #1a1a1a y #545454 sobre blanco, sobre 7:1. Los bordes de controles, sobre 3:1.</li>
+  <li><b>Texto escalable:</b> en la implementación todo irá en <code>rem</code> y soportará el 200 % de ampliación sin romper el diseño.</li>
+  <li><b>Jerarquía:</b> un solo elemento grande por pantalla (hora de regreso, título de convocatoria) y el resto en escala.</li>
+  <li><b>Escritura:</b> frases con mayúscula inicial, verbos claros («Confirmar cambio»), sin jerga.</li>
+  <li><b>Retroalimentación:</b> las acciones que avisan a terceros (cambio de voto, cambio de hora) piden confirmación y dicen a quién avisarán.</li>
+  <li><b>Modo oscuro y áreas seguras:</b> pendientes para la maqueta visual; la estructura ya respeta los márgenes laterales de 16 px y la barra inferior.</li>
+  <li><b>Accesibilidad:</b> cada ícono tendrá etiqueta para lector de pantalla; los mapas siempre vienen con dirección en texto.</li>
+</ul>
+
+</div>
+</body>
+</html>

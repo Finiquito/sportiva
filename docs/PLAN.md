@@ -117,9 +117,22 @@ El riesgo en hosting compartido es: **disco**, **límites de subida** (`upload_m
 9. **Eventos especiales** con aviso al tesorero.
 10. **WhatsApp oficial** opcional y almacenamiento externo si hace falta.
 
-## 10. Pendiente por decidir
-- **Bifurcación grande:** ¿hay multimedia propia (fotos y video) o la app es solo informativa y el grupo de WhatsApp sigue para lo social? Análisis en la conversación; ver sección 7.
-- Si no hay multimedia, el canal de niños (chat con stickers) pierde sentido: sería solo lectura.
-- ¿Biblioteca de GIFs curada por el club, o solo stickers y reacciones? (solo si sigue el canal de niños).
+## 10. Lo que duele hoy (requisitos del día a día)
+Salió de la conversación con familias reales; manda sobre el resto del plan.
+
+1. **Traslado compartido (co-voiturage).** Hoy es un PDF pegado en el refrigerador. Pasa a ser un **calendario de turnos**: cada convocatoria tiene su bloque «Traslado» con quién lleva, cupos y hora de salida. El turno se **asigna a un usuario** (familia), que recibe recordatorio 48 h y 3 h antes y ve «Te toca llevar» en su Agenda.
+2. **Reporte en vivo.** La mayoría de las familias no va a los partidos y no sabe cómo les fue ni a qué hora vuelven. Quien marca «Estoy en la cancha» puede publicar novedades (llegamos, comenzó, resultado, salimos de vuelta, fotos). Lo central es la **hora estimada de regreso**, que cambia casi siempre (10 a 20 min, o más si se acorta el torneo): si cambia, avisa a todas las familias convocadas.
+3. **Dos direcciones por convocatoria, claras y obligatorias:**
+   - **Punto de encuentro** (salida): por defecto el club, editable por evento, con hora.
+   - **Lugar del partido**: nombre del recinto, **club local**, dirección y **coordenadas obligatorias**. El entrenador confirma el pin en el mapa; sin eso no puede publicar. Así se acaba el «el estadio de Niort… ¿cuál de los tres?».
+4. **Cambio de confirmación avisa a los entrenadores.** Si un jugador pasa de «Voy» a «No voy» (o «Duda»), se avisa a **todos los entrenadores del equipo** (puede haber más de uno), con motivo opcional.
+5. **Fotos del partido.** Cada convocatoria tiene su galería, que suben apoderados y entrenadores. Los niños la ven desde su vista de solo lectura, pero no suben.
+6. **Acceso:** código de 6 dígitos al correo, sin contraseña.
+
+## 11. Pendiente por decidir
+- Qué pasa con el canal de niños: solo lectura (propuesto) y que vean las fotos del canal de los apoderados.
+- Video propio en AWS: solo si el piloto lo pide (fase 4 del orden acordado: texto, fotos livianas, videos como enlace, video propio).
+- ¿Quién puede publicar en vivo? Propuesta: quien marca «Estoy en la cancha» (apoderados y entrenadores).
+- ¿La hora de regreso la puede cambiar cualquiera de los presentes o solo uno? Propuesta: cualquiera, con historial visible.
 - Qué dice exactamente la Ley 21.719 sobre autorización de imagen y datos de menores.
-- Maqueta del look antes de construir cualquier pantalla.
+- Pantallas siguientes: asistencia del entrenador, Tablero, Mi ruta y calendario de turnos.
