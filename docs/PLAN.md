@@ -242,3 +242,22 @@ Cada deporte se define en un archivo (`sports/futbol.json`, `volley.json`, `basq
 - **RGPD:** con varios clubes, cada club es el responsable del tratamiento de sus datos y la plataforma actúa como encargada. Cada club acepta un contrato de tratamiento de datos al darse de alta. **Por revisar con asesoría legal.**
 - **Crecimiento:** en hosting compartido funciona bien para el piloto y varias decenas de clubes. Si crece, el modelo de datos no cambia: se mueve a un VPS y los medios a almacenamiento externo.
 - **Respaldos:** por plataforma, no por club. Restaurar un solo club exige una herramienta de exportar e importar por club (pendiente).
+
+## 21. Ronda 6: horas del partido, invitaciones, familia, chat de niños y escritorio
+- **Horas del partido:** cada partido tiene **hora del partido**, **hora en cancha** (por defecto 45 min antes; atajos de 30 min, 45 min y 1 h) y **hora de salida** del punto de encuentro. Los apoderados ven las dos primeras en grande.
+- **Punto de encuentro variable:** no siempre es el club. Se elige «el club», «el lugar del partido» u «otro lugar» (estadio cercano, estacionamiento), con nombre, indicaciones y hora propios.
+- **Invitaciones.** El club carga una **lista de correos autorizados** (pegada o CSV, con rol y equipo). Solo esos correos pueden pedir un código de acceso. Estados: autorizado, invitado, activo, rebotó. «Enviar invitaciones» manda el correo; el club ve cuántos entraron y cuáles rebotaron, y puede reenviar.
+- **Primer ingreso.** Correo de invitación → **instalar la app** → abrir la app instalada → código al correo → bienvenida de 4 pasos (datos e idioma, hijos que el club ya cargó, compartir datos con otras familias, activar avisos) → agenda.
+  - **Instalar primero y entrar después**, porque en iPhone la app instalada no comparte la sesión con Safari.
+  - Se puede detectar que la app está instalada, pero no se puede obligar a instalarla. El club tiene un ajuste «Exigir instalar la app». Quien igual quiere seguir lo hace con «Continuar sin la app», que avisa que solo recibirá correos.
+  - Android permite un botón de instalar con un toque; iPhone solo con pasos manuales (Compartir → Agregar a pantalla de inicio).
+- **Un correo en varios clubes:** se agrupan; al entrar se elige club, y desde Más se cambia.
+- **Familia.** El adulto titular puede agregar a **otro papá o mamá** (ve lo mismo y puede votar y consultar, pero no cambia la familia) y a **hijos**. Un hijo nuevo queda «pendiente del club» hasta que el club lo confirme. Cada hijo tiene **perfil hijo**: solo ve (agenda, feed, resultados y clubes), no vota ni consulta.
+- **Chat de niños.** Un solo canal por equipo, solo texto y stickers.
+  - Sin fotos, sin mensajes privados y sin enlaces (los bloquea).
+  - Set de stickers propio, sin GIFs externos.
+  - «Reportar» queda en el menú ⋯ de cada mensaje; los entrenadores pueden ocultar mensajes.
+  - Cada familia activa o apaga el chat de su hijo (autorización).
+  - Los apoderados lo ven en **solo lectura** desde Más.
+- **Escritorio.** La misma app con diseño de tres zonas: barra lateral, lista y detalle. Las acciones sobre un evento, aviso o conversación abren en el panel derecho; las hojas se vuelven ventanas centradas.
+- **Prototipo:** `docs/wireframes/prototipo.html` ahora incluye todo esto y un selector de dispositivo (celular o escritorio).
