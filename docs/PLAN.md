@@ -276,3 +276,13 @@ Todas llevan la etiqueta «Nuevo» en el prototipo (se puede apagar en el panel)
 - **Sin conexión:** aviso en la parte de arriba; las respuestas quedan «pendientes» y se envían al volver la conexión.
 
 **Pendiente:** hoja de ruta completa, resumen del partido terminado, buscador, pantallas vacías y de error, y el escritorio de entrenadores y directiva.
+
+## 23. Arquitectura de menús (ronda 8)
+Detalle completo, con árbol por rol: `docs/wireframes/arquitectura.html`.
+- **Error corregido:** Más había crecido a 13 filas porque cada pantalla nueva se agregó ahí sin diseñar la estructura.
+- **Reglas:** (1) las pestañas son lo diario (máximo 5); (2) Más es solo la cuenta de la persona; (3) lo que pertenece a un equipo vive en el equipo; (4) clubes contienen equipos y equipos contienen cosas; (5) un contenido, un solo lugar (con atajos, no copias); (6) cada acción en el nivel que le corresponde; (7) máximo 4 pasos desde una pestaña.
+- **Más (apoderado):** Mi perfil · Mi familia · Mis clubes · Ayuda · Cerrar sesión.
+- **Mi perfil:** Mis datos · Idioma · Preferencias de avisos · Compartir mis datos · Privacidad (descargar datos, pedir que se quiten fotos, eliminar cuenta).
+- **Mis clubes › Club › Mis equipos › Equipo:** entrenadores (preguntar), reglas fijadas, **Turnos de traslado**, **Familias del equipo**, **Chat de niños** (solo lectura) y jugadores. «Salir del club» vive en el club.
+- **Atajos:** «Turnos» desde la tarjeta «Te toca llevar» de la Agenda; la campana de notificaciones.
+- **Otros roles (propuesta):** el Directorio del entrenador pasa de Más a Plantel; todos los roles comparten Mi perfil, Mis clubes, Ayuda y Cerrar sesión en Más.

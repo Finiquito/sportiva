@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sportiva · arquitectura de menús</title>
+<style>
+:root{--ink:#1a1a1a;--ink2:#545454;--line:#6e6e6e;--fill:#ececec;--fill2:#d6d6d6;--bg:#f3f3f3}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:22px;margin:44px 0 6px}
+h3{font-size:17px;margin:0 0 8px}
+.sub{color:var(--ink2);margin:0 0 20px;max-width:72ch}
+.box{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px 18px}
+.reglas{columns:2 380px;column-gap:28px;padding-left:20px;margin:0}
+.reglas li{margin-bottom:10px;break-inside:avoid}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;align-items:start}
+.tag{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:5px;font-size:11.5px;font-weight:800;margin-left:6px;vertical-align:middle;white-space:nowrap;border:1.5px solid var(--ink);background:#fff;color:var(--ink)}
+.tag.n{background:var(--ink);color:#fff}
+.tag.a{border-style:dashed}
+ul.t,ul.t ul{list-style:none;margin:0;padding-left:0}
+ul.t ul{margin-left:12px;padding-left:16px;border-left:2px solid var(--fill2)}
+ul.t li{margin:0;padding:3px 0;position:relative}
+ul.t ul li::before{content:"";position:absolute;left:-16px;top:16px;width:12px;border-top:2px solid var(--fill2)}
+.n1>li>b{display:block;font-size:16px;padding:6px 10px;border:2px solid var(--ink);border-radius:10px;background:#fff;margin:6px 0 2px}
+.n1>li>b.tabb{background:var(--ink);color:#fff}
+.lv{color:var(--ink2);font-size:14px}
+.leg{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--ink2);margin:0 0 14px}
+.path{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;background:var(--fill);border-radius:8px;padding:8px 10px;margin:6px 0;overflow-x:auto;white-space:nowrap}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border:1.5px solid var(--fill2);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--fill)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Arquitectura de menús</h1>
+<p class="sub">Qué vive en cada lugar y por qué. Lo que se usa todos los días está en las pestañas; lo que pertenece a un club o a un equipo vive dentro de él; <b>Más</b> queda solo para la cuenta de la persona.</p>
+
+<div class="leg">
+  <span><span class="tag n">Nuevo</span> lugar o pantalla nueva</span>
+  <span><span class="tag">Movido</span> existía, cambió de lugar</span>
+  <span><span class="tag a">Atajo</span> entrada rápida; el contenido vive en otro lugar</span>
+</div>
+
+<h2>Reglas</h2>
+<div class="box"><ol class="reglas">
+  <li><b>Pestañas = lo diario.</b> Máximo 5. Agenda, Feed, Mi actividad. Todo lo demás se busca hacia adentro.</li>
+  <li><b>Más = solo la cuenta de la persona.</b> Perfil, familia, clubes, ayuda y cerrar sesión. Nada del día a día.</li>
+  <li><b>Pertenece a un equipo, vive en el equipo.</b> Turnos, familias del equipo, chat de niños, entrenadores y reglas fijadas.</li>
+  <li><b>Los clubes contienen equipos; los equipos contienen cosas.</b> Mis clubes › Club › Mis equipos › Equipo.</li>
+  <li><b>Un contenido, un solo lugar.</b> Si hace falta llegar rápido, se agrega un atajo, no una copia (ej. «Turnos» desde la Agenda).</li>
+  <li><b>Cada acción en el nivel que le corresponde.</b> «Salir del club» dentro del club; «Eliminar mi cuenta» dentro de Privacidad.</li>
+  <li><b>Máximo 4 pasos</b> desde una pestaña hasta cualquier pantalla (Más › Mis clubes › Club › Equipo › Turnos es el camino más largo). Lo más frecuente baja por atajos.</li>
+  <li><b>Filas con nombre de lo que son.</b> «Mis clubes», no «Cambiar de club»; «Mi perfil», no «Configuración».</li>
+</ol></div>
+
+<h2>Apoderado</h2>
+<div class="grid">
+ <div class="box"><h3>Pestañas</h3>
+ <ul class="t n1">
+  <li><b class="tabb">Agenda</b>
+   <ul>
+    <li>Convocatoria <span class="lv">(partido · entrenamiento · evento especial)</span>
+     <ul><li>Quién va</li><li>En vivo</li><li>Fotos del partido › visor</li><li>Consulta al entrenador</li><li>Cambios de lugar u hora</li></ul></li>
+    <li>Turnos de traslado <span class="tag a">Atajo</span></li>
+    <li>Notificaciones (campana)</li>
+   </ul></li>
+  <li><b class="tabb">Feed</b>
+   <ul><li>Aviso › comentarios</li><li>Convocatoria publicada</li><li>Fotos › galería</li><li>Cambio de equipo</li></ul></li>
+  <li><b class="tabb">Mi actividad</b>
+   <ul><li>Votos</li><li>Consultas › hilo</li><li>Nueva consulta</li></ul></li>
+ </ul></div>
+
+ <div class="box"><h3>Más <span class="tag n">Reordenado</span></h3>
+ <ul class="t n1">
+  <li><b>Mi perfil<span class="tag n">Nuevo</span></b>
+   <ul>
+    <li>Mis datos <span class="tag">Movido</span></li>
+    <li>Idioma <span class="tag">Movido</span></li>
+    <li>Preferencias de avisos <span class="tag">Movido</span></li>
+    <li>Compartir mis datos <span class="tag">Movido</span></li>
+    <li>Privacidad <span class="tag">Movido</span>
+     <ul><li>Descargar mis datos</li><li>Pedir que se quiten fotos de mis hijos</li><li>Eliminar mi cuenta</li></ul></li>
+   </ul></li>
+  <li><b>Mi familia</b>
+   <ul><li>Adultos › agregar a otro papá o mamá</li><li>Hijos › chat del equipo · enlace de acceso</li><li>Agregar hijo</li></ul></li>
+  <li><b>Mis clubes<span class="tag n">Nuevo</span></b>
+   <ul>
+    <li>Club <span class="tag n">Nuevo</span> <span class="lv">(cambiar a este club · contacto · salir del club)</span>
+     <ul>
+      <li>Mis equipos
+       <ul>
+        <li>Equipo <span class="lv">(U12, U10…)</span>
+         <ul>
+          <li>Entrenadores › preguntar</li>
+          <li>Fijado: reglas del equipo</li>
+          <li>Turnos de traslado <span class="tag">Movido</span> › pedir cambio</li>
+          <li>Familias del equipo <span class="tag">Movido</span></li>
+          <li>Chat de niños <span class="tag">Movido</span> <span class="lv">(solo lectura)</span></li>
+          <li>Jugadores</li>
+         </ul></li>
+       </ul></li>
+     </ul></li>
+   </ul></li>
+  <li><b>Ayuda<span class="tag n">Nuevo</span></b>
+   <ul><li>Instalar la app</li><li>Preguntas frecuentes</li><li>Escribir al soporte de Sportiva</li></ul></li>
+  <li><b>Cerrar sesión</b></li>
+ </ul></div>
+</div>
+
+<h3 style="margin-top:22px">Caminos más largos (y sus atajos)</h3>
+<div class="path">Más › Mis clubes › Club Aigles › U12 › Turnos de traslado   (4 pasos)   ·   atajo: Agenda › tarjeta «Te toca llevar» › Turnos</div>
+<div class="path">Más › Mi perfil › Privacidad › Eliminar mi cuenta   (3 pasos; es una acción rara y está bien lejos)</div>
+<div class="path">Más › Mi perfil › Preferencias de avisos   (2 pasos)   ·   atajo: Notificaciones (campana)</div>
+
+<h2>Otros roles <span class="lv" style="font-size:15px;font-weight:400">(propuesta, por confirmar)</span></h2>
+<div class="grid">
+ <div class="box"><h3>Entrenador y encargado</h3>
+ <ul class="t n1">
+  <li><b class="tabb">Agenda</b><ul><li>Asistencia del partido</li><li>Nueva convocatoria › elegir jugadores · elegir lugar</li><li>Reporte en vivo</li></ul></li>
+  <li><b class="tabb">Feed</b><ul><li>Publicar aviso</li></ul></li>
+  <li><b class="tabb">Consultas</b><ul><li>Familias</li><li>Entrenadores / encargado</li></ul></li>
+  <li><b class="tabb">Plantel</b>
+   <ul><li>Jugadores › ficha › mover de equipo</li><li>Reorganizar categoría</li><li>Directorio de contactos <span class="tag">Movido</span> <span class="lv">(hoy está en Más)</span></li></ul></li>
+  <li><b>Más</b><ul><li>Mi perfil</li><li>Mis clubes › equipos que entreno</li><li>Ayuda</li><li>Cerrar sesión</li></ul></li>
+ </ul></div>
+ <div class="box"><h3>Directiva</h3>
+ <ul class="t n1">
+  <li><b class="tabb">Feed</b><ul><li>Avisos del club</li></ul></li>
+  <li><b class="tabb">Club</b>
+   <ul><li>Equipos y grupos</li><li>Personas</li><li>Invitaciones › lista autorizada · solicitudes</li><li>Lugares</li><li>Temporada</li><li>Ajustes del club</li></ul></li>
+  <li><b class="tabb">Directorio</b><ul><li>Familias por equipo › ficha (solo contactos)</li></ul></li>
+  <li><b>Más</b><ul><li>Mi perfil</li><li>Mis clubes</li><li>Ayuda</li><li>Cerrar sesión</li></ul></li>
+ </ul></div>
+ <div class="box"><h3>Jugador (hijo)</h3>
+ <ul class="t n1">
+  <li><b class="tabb">Agenda</b><ul><li>Convocatoria (solo lectura) › fotos</li></ul></li>
+  <li><b class="tabb">Feed</b><ul><li>Avisos (sin comentar)</li></ul></li>
+  <li><b class="tabb">Chat</b><ul><li>Chat del equipo (texto y stickers)</li></ul></li>
+  <li><b>Más</b><ul><li>Mi perfil › idioma · avisos</li><li>Mis clubes › equipo (solo ver)</li><li>Ayuda</li><li>Cerrar sesión</li></ul></li>
+ </ul></div>
+</div>
+
+<h2>Qué cambió respecto a la versión anterior</h2>
+<div class="box"><table>
+ <thead><tr><th>Antes (todo en Más)</th><th>Ahora</th></tr></thead>
+ <tbody>
+  <tr><td>Mi familia, Chat de niños, Familias de mi equipo, Turnos, Mi equipo, Compartir, Mis datos, Privacidad, Mis clubes, Idioma, Preferencias, Instalar, Cerrar sesión (13 filas)</td><td>Mi perfil, Mi familia, Mis clubes, Ayuda, Cerrar sesión (5 filas)</td></tr>
+  <tr><td>Mis datos, Privacidad, Compartir, Idioma, Preferencias de avisos sueltos</td><td>Dentro de <b>Mi perfil</b></td></tr>
+  <tr><td>Turnos, Familias, Chat de niños sueltos</td><td>Dentro del <b>equipo</b> (Mis clubes › Club › Equipo)</td></tr>
+  <tr><td>«Salir de este club» dentro de Privacidad</td><td>Dentro del <b>club</b></td></tr>
+  <tr><td>Mis clubes abría un selector</td><td>Mis clubes lista los clubes con tus equipos dentro; el selector rápido sigue en el nombre del club arriba</td></tr>
+ </tbody></table></div>
+</div>
+</body>
+</html>
