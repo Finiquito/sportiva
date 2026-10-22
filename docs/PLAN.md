@@ -286,3 +286,13 @@ Detalle completo, con árbol por rol: `docs/wireframes/arquitectura.html`.
 - **Mis clubes › Club › Mis equipos › Equipo:** entrenadores (preguntar), reglas fijadas, **Turnos de traslado**, **Familias del equipo**, **Chat de niños** (solo lectura) y jugadores. «Salir del club» vive en el club.
 - **Atajos:** «Turnos» desde la tarjeta «Te toca llevar» de la Agenda; la campana de notificaciones.
 - **Otros roles (propuesta):** el Directorio del entrenador pasa de Más a Plantel; todos los roles comparten Mi perfil, Mis clubes, Ayuda y Cerrar sesión en Más.
+
+## 24. Dirección visual (ronda 9, en definición)
+Lámina completa: `docs/diseno/direcciones.html` (capturas en `docs/diseno/png/`). **No se construyen pantallas visuales hasta que el usuario elija.**
+- **ADN de las referencias:** esquinas muy redondeadas (24 a 32 px), un solo color saturado por pantalla con tintes suaves, números y horas como protagonistas, controles en píldora con el activo lleno y oscuro, íconos gruesos y redondeados en baldosa o con segundo tono.
+- **Lo que nos hace distintos (común a las tres):** la costura del balón como detalle recurrente, las horas gigantes («en cancha» y «partido»), íconos propios con vocabulario de club, stickers como mascota y color siempre acompañado de ícono y texto.
+- **Direcciones:** A · Amanecer (cálida, crema + sol, tarjetas por tipo de evento); B · Vestuario (oscura, lima eléctrica); C · Club (clara, cabecera con el color del club).
+- **Recomendación:** A como base, con el color del club de C en lo activo, y B como modo oscuro más adelante. En la cancha, a pleno sol, el fondo oscuro se lee peor, por eso B no va por defecto.
+- **Fuentes (de la lista de Hallmark):** Bricolage Grotesque + Geist (A); Big Shoulders Display + Geist (B); Geist + Geist Mono (C).
+- **Ícono propio:** una geometría base dibujada a mano (~40 íconos), sprite SVG con `currentColor` y variables `--ic-stroke` y `--ic-fill`. Tokens en `@theme` de Tailwind 4; el color del club es una sola variable (`--club`) y lo demás se deriva con `color-mix`.
+- **Por decidir:** dirección o mezcla; color por club, por equipo o ambos; tratamiento del ícono (desplazamiento, baldosa o duotono); si los niños tienen una vista propia más juguetona; nombre y logo de Sportiva.

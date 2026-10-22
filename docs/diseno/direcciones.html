@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sportiva · direcciones visuales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Geist:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&family=Geist+Mono:wght@500&display=swap">
+<style>
+/* Hallmark · design board · genre: playful · custom palettes per direction · pre-emit critique: P4 H4 E4 S4 R4 V5 */
+:root{
+  --b-paper:#F3F1EC; --b-surface:#FFFFFF; --b-ink:#1B1A17; --b-ink2:#5B574E; --b-line:#D9D4C8;
+  --font-board:"Geist",ui-sans-serif,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--b-paper);color:var(--b-ink);font:16px/1.5 var(--font-board)}
+.wrap{max-width:1180px;margin:0 auto;padding:36px 16px 96px}
+h1{font-size:clamp(1.9rem,5vw,2.6rem);line-height:1.1;margin:0 0 8px;overflow-wrap:anywhere;font-weight:700;letter-spacing:-.02em}
+h2{font-size:clamp(1.4rem,3.6vw,1.8rem);line-height:1.15;margin:0 0 6px;overflow-wrap:anywhere;font-weight:700;letter-spacing:-.015em}
+h3{font-size:1rem;margin:20px 0 8px;font-weight:700}
+.sub{color:var(--b-ink2);max-width:68ch;margin:0 0 18px}
+section{margin-top:56px}
+.card0{background:var(--b-surface);border:1.5px solid var(--b-line);border-radius:20px;padding:18px 20px}
+ul.pl{margin:0;padding-left:20px}ul.pl li{margin:6px 0}
+
+/* referencias */
+.refs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px;margin-top:14px}
+.ref{background:var(--b-surface);border:1.5px solid var(--b-line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ref .im{border-radius:12px;overflow:hidden;background:var(--b-paper);height:190px;display:flex;align-items:flex-start;justify-content:center}
+.ref .im img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.ref p{margin:0;font-size:.92rem;color:var(--b-ink2)}
+.ref b{color:var(--b-ink)}
+.cols2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:16px;margin-top:14px}
+
+/* ============ direcciones: tokens ============ */
+.dA{
+  --paper:#FFF5E1; --surface:#FFFFFF; --ink:#1D1A14; --ink2:#5E5748; --line:rgba(29,26,20,.16); --line-strong:#1D1A14;
+  --accent:#FFC83D; --accent-ink:#1D1A14; --a2:#FF6B4A; --on-a2:#1D1A14;
+  --tint-a2:#FFD9CF; --menta:#C6F1E0; --lila:#E4DAFF; --tag-bg:rgba(255,255,255,.62);
+  --r:28px; --font-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif; --font-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+}
+.dB{
+  --paper:#0E1220; --surface:#171C2E; --surface2:#1F2540; --ink:#F2F5FF; --ink2:#A4ACC9; --line:rgba(242,245,255,.12); --line-strong:rgba(242,245,255,.28);
+  --accent:#C8FF3D; --accent-ink:#0E1220; --a2:#5B86FF; --on-a2:#FFFFFF; --tag-bg:#1F2540;
+  --r:22px; --font-display:"Big Shoulders Display",ui-sans-serif,system-ui,sans-serif; --font-body:"Geist",ui-sans-serif,system-ui,sans-serif; --font-mono:"Geist Mono",ui-monospace,monospace;
+}
+.dC{
+  --paper:#EEF1F8; --surface:#FFFFFF; --ink:#111827; --ink2:#566077; --line:rgba(17,24,39,.10); --line-strong:rgba(17,24,39,.22);
+  --club:#2F5BFF; --club-tint:color-mix(in oklab,var(--club) 14%,white); --club-ink:#FFFFFF;
+  --accent:var(--club); --accent-ink:var(--club-ink); --a2:#FF7A59; --on-a2:#111827; --tag-bg:var(--club-tint);
+  --r:24px; --font-display:"Geist",ui-sans-serif,system-ui,sans-serif; --font-body:"Geist",ui-sans-serif,system-ui,sans-serif; --font-mono:"Geist Mono",ui-monospace,monospace;
+}
+
+/* ============ artboard (una pantalla, tres estilos) ============ */
+.ab{width:min(360px,100%);border-radius:36px;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--font-body);border:1.5px solid var(--b-line);display:flex;flex-direction:column;position:relative}
+.ab button{font-family:inherit;cursor:pointer;color:inherit}
+.ab .hd{padding:16px 16px 6px}
+.ab .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.clubchip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;border-radius:999px;background:var(--surface);font-weight:600;font-size:14px;white-space:nowrap}
+.logo{width:32px;height:32px;border-radius:50%;background:var(--accent);display:inline-block;border:2px solid var(--ink);flex:none}
+.bellb{position:relative;width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;border:0;flex:none}
+.bellb b{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;border-radius:10px;background:var(--a2);color:var(--on-a2);font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+.ab .tt{font-family:var(--font-display);font-weight:800;font-size:36px;line-height:1;margin:14px 0 12px;letter-spacing:-.02em}
+.segr{display:flex;gap:8px;overflow:hidden}
+.segr button{min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line-strong);background:transparent;font-weight:600;font-size:14px;white-space:nowrap}
+.segr button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cards{padding:8px 12px 12px;display:grid;gap:12px}
+.card{position:relative;border-radius:var(--r);padding:18px;background:var(--surface)}
+.tags{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 11px 0 8px;border-radius:999px;background:var(--tag-bg);font-weight:700;font-size:12.5px;white-space:nowrap}
+.tag .ic{width:18px;height:18px}
+.card h4{font-family:var(--font-display);font-size:22px;margin:0 0 2px;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.card p{margin:0;font-size:14px;color:var(--ink2)}
+.times{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:12px 0 4px}
+.times div{display:flex;flex-direction:column;min-width:0}
+.times small{font-size:12.5px;color:var(--ink2);font-weight:600}
+.num{font-family:var(--font-display);font-weight:800;font-size:46px;line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.vote{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.vote button{min-height:44px;border-radius:999px;border:2px solid var(--line-strong);background:transparent;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.vote .ic{width:18px;height:18px}
+.turno{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.turno .ico{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:var(--surface)}
+.turno b{display:block;font-size:14.5px;line-height:1.25}
+.pillb{min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line-strong);background:transparent;font-weight:700;font-size:14px;white-space:nowrap}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:10px 10px 14px;background:var(--surface)}
+.tabs button{min-height:54px;border-radius:24px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:600;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.tabs button.on{font-weight:700}
+
+/* íconos: una geometría, tres maneras de dibujarla */
+.ic{width:24px;height:24px;display:block;overflow:visible;flex:none}
+.ic .s{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.dA .ic .f{fill:var(--accent);transform:translate(1.5px,1.7px)}
+.dA .ic .s{stroke:currentColor;stroke-width:2.3}
+.dB .ic{transform:skewX(-7deg)}
+.dB .ic .f{display:none}
+.dB .ic .s{stroke:var(--accent);stroke-width:2.6}
+.dC .ic .f{fill:var(--club-tint)}
+.dC .ic .s{stroke:var(--ink);stroke-width:2}
+
+/* ---- A · Amanecer ---- */
+.dA .ab,.ab.dA{background:var(--paper)}
+.dA .card::after{content:"";position:absolute;inset:7px;border:1.6px dashed rgba(29,26,20,.30);border-radius:calc(var(--r) - 7px);pointer-events:none}
+.dA .match{background:var(--accent);color:var(--accent-ink)}
+.dA .match p,.dA .match .times small{color:rgba(29,26,20,.78)}
+.dA .match .ic .f{fill:#fff}
+.dA .match .vote button{border-color:var(--ink)}
+.dA .match .vote button.on{background:var(--ink);color:var(--accent);border-color:var(--ink)}
+.dA .turno{background:var(--tint-a2);padding-top:26px}
+.dA .stk{position:absolute;top:-9px;left:16px;transform:rotate(-3deg);padding:5px 12px;border-radius:9px;background:var(--ink);color:var(--accent);font:800 13px var(--font-display);letter-spacing:.01em;z-index:1}
+.dA .ent{background:var(--menta)}
+.dA .ent .vote button.on{background:var(--ink);color:var(--menta);border-color:var(--ink)}
+.dA .tabs{background:var(--surface);border-radius:28px 28px 0 0}
+.dA .tabs button.on{background:var(--ink);color:var(--paper)}
+.dA .tabs button.on .ic .s{stroke:var(--paper)}
+.dA .tabs button.on .ic .f{fill:var(--accent)}
+.dA .pillb{border-color:var(--ink);color:var(--ink)}
+.dA .turno .ico{background:#fff}
+
+/* ---- B · Vestuario ---- */
+.dB .num{font-weight:900;font-size:62px;letter-spacing:.005em;text-transform:uppercase}
+.dB .ab .tt,.dB .card h4{text-transform:uppercase;letter-spacing:.01em}
+.dB .ab .tt{font-size:42px}
+.dB .card h4{font-size:26px}
+.dB .card{background:var(--surface);border:1px solid var(--line)}
+.dB .match .num{color:var(--accent)}
+.dB .times div{background:var(--surface2);border-radius:16px;padding:12px 14px}
+.dB .vote button{background:var(--surface2);border-color:transparent}
+.dB .vote button.on{background:var(--accent);color:var(--accent-ink)}
+.dB .vote button.on .ic .s{stroke:var(--accent-ink)}
+.dB .turno .ico{background:var(--accent)}
+.dB .turno .ico .ic .s{stroke:var(--accent-ink)}
+.dB .stk,.dC .stk{grid-column:1/-1}
+.dB .stk{display:inline-flex;margin-bottom:6px;font:700 12px var(--font-mono);color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.dB .tabs{background:var(--surface);border-top:1px solid var(--line)}
+.dB .tabs .ico{width:42px;height:34px;border-radius:14px;display:grid;place-items:center;background:var(--surface2)}
+.dB .tabs button.on .ico{background:var(--accent)}
+.dB .tabs button.on .ic .s{stroke:var(--accent-ink)}
+.dB .tabs button.on{color:var(--ink)}
+.dB .pillb{border-color:var(--line-strong);color:var(--ink)}
+.dB .clubchip,.dB .bellb{background:var(--surface2)}
+.dB .segr button{border-color:var(--line-strong)}
+.dB .segr button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.dB .logo{border-color:var(--paper);background:var(--accent)}
+
+/* ---- C · Club ---- */
+.dC .hd{background:var(--club);color:var(--club-ink);border-radius:0 0 34px 34px;padding-bottom:18px}
+.dC .clubchip,.dC .bellb{background:#fff;color:var(--ink)}
+.dC .bellb b{background:var(--a2)}
+.dC .logo{background:var(--club);border-color:var(--ink)}
+.dC .segr button{border-color:rgba(255,255,255,.55);color:var(--club-ink)}
+.dC .segr button.on{background:#fff;color:var(--club);border-color:#fff}
+.dC .card{box-shadow:0 14px 28px -18px rgba(17,24,39,.35)}
+.dC .match .num{color:var(--club)}
+.dC .times div{background:var(--club-tint);border-radius:16px;padding:12px 14px}
+.dC .vote button{border-color:var(--line-strong)}
+.dC .vote button.on{background:var(--club);color:var(--club-ink);border-color:var(--club)}
+.dC .vote button.on .ic .s{stroke:#fff}
+.dC .vote button.on .ic .f{fill:transparent}
+.dC .stk{display:inline-flex;margin-bottom:6px;font-weight:700;font-size:13px;color:var(--club)}
+.dC .turno .ico{background:var(--club-tint)}
+.dC .pillb{border-color:var(--club);color:var(--club)}
+.dC .tabs{box-shadow:0 -10px 24px -18px rgba(17,24,39,.35)}
+.dC .tabs button.on{background:var(--club-tint);color:var(--club)}
+.dC .tabs button.on .ic .s{stroke:var(--club)}
+.dC .tabs button.on .ic .f{fill:#fff}
+
+/* ============ bloque de dirección ============ */
+.dir{border-top:2px solid var(--b-ink);padding-top:22px}
+.dgrid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:32px;align-items:start;margin-top:16px}
+.lema{color:var(--b-ink2);margin:0;max-width:60ch}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(96px,100%),1fr));gap:10px}
+.sw div{border-radius:14px;overflow:hidden;border:1.5px solid var(--b-line);background:var(--b-surface)}
+.sw i{display:block;height:56px}
+.sw span{display:block;font-size:.78rem;padding:6px 8px;color:var(--b-ink2)}
+.ty{background:var(--b-surface);border:1.5px solid var(--b-line);border-radius:16px;padding:14px 16px}
+.ty .big{font-family:var(--font-display);font-weight:800;font-size:2.6rem;line-height:1;margin:0 0 6px;letter-spacing:-.02em}
+.dB .ty .big{font-weight:900;text-transform:uppercase}
+.ty p{margin:2px 0;font-size:.9rem;color:var(--b-ink2)}
+.ig{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px}
+.ig div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.74rem;color:var(--b-ink2)}
+.ig i{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:var(--surface);color:var(--ink);border:1.5px solid var(--b-line)}
+.dB .ig i{background:var(--surface2);border-color:transparent}
+.dA .ig i{background:var(--paper)}
+.dC .ig i{background:#fff}
+.ig .ic{width:28px;height:28px}
+.clubs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px}
+.clubs .mini{border-radius:20px;padding:14px;background:var(--club);color:var(--club-ink);min-height:92px;display:flex;flex-direction:column;justify-content:space-between}
+.clubs .mini b{font-size:.95rem}
+.clubs .mini span{display:inline-flex;align-self:flex-start;background:#fff;color:var(--club);border-radius:999px;padding:0 12px;min-height:30px;align-items:center;font-weight:700;font-size:.8rem}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:14px}
+.verdict .card0 h3{margin-top:0}
+code{font-family:"Geist Mono",ui-monospace,monospace;font-size:.86em;background:#fff;border:1px solid var(--b-line);border-radius:6px;padding:1px 6px}
+@media (max-width:860px){.dgrid{grid-template-columns:minmax(0,1fr)}.ab{margin:0 auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Dirección visual de Sportiva</h1>
+<p class="sub">Tres caminos para que se sienta como una app de club: familiar, con onda y distinta. Las tres muestran <b>la misma pantalla con los mismos datos</b> (la Agenda de una familia), para compararlas de verdad. Nada de esto es definitivo: sirve para elegir y mezclar.</p>
+
+<section style="margin-top:28px">
+  <h2>Qué tomé de tus referencias</h2>
+  <div class="refs">
+    <div class="ref"><div class="im"><img src="refs/panze.jpg" alt="Panel de proyectos con tarjetas de colores suaves"></div><p><b>Tablero de proyectos.</b> Tarjetas de color suave según el tipo, botones en píldora y el activo en tinta casi negra. Título grande y liviano.</p></div>
+    <div class="ref"><div class="im"><img src="refs/teamreach.jpg" alt="Aplicación de equipos en azul eléctrico"></div><p><b>App de equipos.</b> Azul eléctrico con un apoyo violeta. La fecha es un número enorme dentro de su tarjeta.</p></div>
+    <div class="ref"><div class="im"><img src="refs/grupo.jpg" alt="Página de fotos de un grupo deportivo"></div><p><b>Fotos del grupo.</b> Pestañas en píldora, fotos con esquinas muy redondeadas y un botón + flotante.</p></div>
+    <div class="ref"><div class="im"><img src="refs/tiempo.jpg" alt="Pantalla cálida con numerales gigantes"></div><p><b>Foco del día.</b> Fondo cálido, numerales gigantes y un menú inferior con píldora negra para lo activo.</p></div>
+    <div class="ref"><div class="im"><img src="refs/nbk.jpg" alt="Set de íconos en baldosas oscuras con verde lima"></div><p><b>Set de íconos.</b> Gruesos, redondeados, en baldosas. El activo se enciende en lima: ahí está la personalidad.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="cols2">
+    <div class="card0">
+      <h2 style="font-size:1.25rem">El ADN que comparten</h2>
+      <ul class="pl">
+        <li>Esquinas muy redondeadas (24 a 32 px) en todo.</li>
+        <li>Un solo color saturado por pantalla; el resto, tintes suaves.</li>
+        <li>Números y horas como protagonistas.</li>
+        <li>Controles en píldora; el activo, lleno y oscuro.</li>
+        <li>Íconos gruesos y redondeados, en baldosa o con un segundo tono.</li>
+        <li>Nada de ornamento vacío: cada color significa algo.</li>
+      </ul>
+    </div>
+    <div class="card0">
+      <h2 style="font-size:1.25rem">Lo que nos hará distintos (en las tres)</h2>
+      <ul class="pl">
+        <li><b>La costura.</b> Una línea punteada como la costura de un balón, como detalle recurrente: bordes de tarjeta, separadores, carga.</li>
+        <li><b>Horas gigantes.</b> «En cancha» y «partido» son el héroe de cada convocatoria, porque la hora es lo que más importa.</li>
+        <li><b>Íconos propios con vocabulario de club:</b> balón, cono, camiseta, auto, pin, banderín.</li>
+        <li><b>Stickers como mascota.</b> El set del chat de niños es también la cara de la marca.</li>
+        <li><b>Color con significado.</b> Tipo de evento y estado nunca van solo por color: siempre ícono y texto.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div id="dirs"></div>
+
+<section>
+  <h2>El pack de íconos</h2>
+  <p class="sub">Los íconos de arriba son ilustrativos: una geometría base dibujada de tres maneras. El pack final se dibuja a mano, con una sola geometría y ~40 íconos.</p>
+  <div class="cols2">
+    <div class="card0"><h3 style="margin-top:0">Vocabulario a dibujar</h3>
+      <ul class="pl">
+        <li><b>Navegación:</b> agenda, feed, actividad, más, campana.</li>
+        <li><b>Eventos:</b> partido (balón), entrenamiento (cono), especial (estrella), torneo (copa), banderín.</li>
+        <li><b>Lugar y traslado:</b> pin, auto, mapa, reloj, punto de encuentro.</li>
+        <li><b>Equipo:</b> camiseta, silbato, jugadores, entrenador, chat, sticker.</li>
+        <li><b>Acciones:</b> voy, duda, no voy, foto, enviar, compartir, buscar, filtrar.</li>
+        <li><b>Estados:</b> en vivo, sin conexión, pendiente, candado, instalada.</li>
+      </ul></div>
+    <div class="card0"><h3 style="margin-top:0">Cómo se arma con Tailwind</h3>
+      <ul class="pl">
+        <li>Colores, radios y fuentes como tokens en <code>@theme</code> (Tailwind 4, que ya usamos en Portal).</li>
+        <li>Íconos en un <b>sprite SVG</b> con <code>currentColor</code> y dos variables: <code>--ic-stroke</code> y <code>--ic-fill</code>. Cambiar de dirección es cambiar variables.</li>
+        <li>El <b>color del club</b> es una sola variable (<code>--club</code>); tintes y estados se derivan de ella con <code>color-mix</code>.</li>
+        <li>El modo oscuro es un tema aparte (<code>data-theme</code>), no un invertido.</li>
+      </ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>Mi lectura</h2>
+  <div class="verdict">
+    <div class="card0"><h3>Recomiendo mezclar</h3><p style="margin:0"><b>A como base</b> (es la más familiar y la más tuya), <b>con el color del club de C</b> reemplazando al sol en lo activo, y <b>B como modo oscuro</b> más adelante.</p></div>
+    <div class="card0"><h3>Por qué</h3><p style="margin:0">Una plataforma con muchos clubes necesita que cada club ponga su color sin romper la identidad. La identidad queda en la costura, las horas gigantes, los íconos y los stickers; el color es del club.</p></div>
+    <div class="card0"><h3>Ojo con</h3><p style="margin:0">En la cancha, a pleno sol, un fondo oscuro se lee peor. Por eso B no debería ser la versión por defecto, y los contrastes se verifican siempre al 4,5 a 1.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Lo que necesito de ti</h2>
+  <div class="card0"><ol class="pl" style="padding-left:22px">
+    <li>¿Cuál te late más, o qué mezclarías de cada una?</li>
+    <li>Color: ¿por <b>club</b>, por <b>equipo</b> (U10, U12…) o ambos?</li>
+    <li>Íconos: ¿desplazamiento de color (A), baldosa (B) o duotono (C)?</li>
+    <li>¿Los niños ven la misma app o una vista propia, más juguetona?</li>
+    <li>¿Ya tienes nombre y logo para «Sportiva», o también los diseñamos?</li>
+  </ol></div>
+</section>
+
+</div>
+
+<script>
+/* ---------- íconos: s = trazo, f = relleno (solo formas cerradas) ---------- */
+const IC={
+ cal:{s:'M7 3v3M17 3v3M4 9.5h16M7 5h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z',f:'M7 5h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z',n:'Agenda'},
+ feed:{s:'M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM8 10h8M8 13h5',f:'M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6l-4 3v-3H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z',n:'Feed'},
+ flag:{s:'M6 21V4M6 5h11l-2.5 3.5L17 12H6',f:'M6 5h11l-2.5 3.5L17 12H6z',n:'Actividad'},
+ grid:{s:'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',f:'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z',n:'Más'},
+ ball:{s:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8.2l3.3 2.4-1.3 3.9h-4l-1.3-3.9zM12 3v5.2M15.3 10.6l4.4-1.4M14 14.5l2.7 3.6M10 14.5l-2.7 3.6M8.7 10.6L4.3 9.2',f:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z',n:'Partido'},
+ car:{s:'M3.5 16l1.6-5.2A2.2 2.2 0 0 1 7.2 9.2h9.6a2.2 2.2 0 0 1 2.1 1.6L20.5 16v2.3H3.5zM6.2 18.3a1.8 1.8 0 1 0 3.6 0 1.8 1.8 0 0 0-3.6 0zM14.2 18.3a1.8 1.8 0 1 0 3.6 0 1.8 1.8 0 0 0-3.6 0zM6.3 12.6h11.4',f:'M3.5 16l1.6-5.2A2.2 2.2 0 0 1 7.2 9.2h9.6a2.2 2.2 0 0 1 2.1 1.6L20.5 16v2.3H3.5z',n:'Traslado'},
+ pin:{s:'M12 21s6.5-5.4 6.5-11A6.5 6.5 0 0 0 5.5 10C5.5 15.6 12 21 12 21zM12 7.8a2.2 2.2 0 1 0 0 4.4 2.2 2.2 0 0 0 0-4.4z',f:'M12 21s6.5-5.4 6.5-11A6.5 6.5 0 0 0 5.5 10C5.5 15.6 12 21 12 21z',n:'Lugar'},
+ bell:{s:'M6 17v-5.5a6 6 0 1 1 12 0V17l1.6 2H4.4zM10 21.2h4',f:'M6 17v-5.5a6 6 0 1 1 12 0V17l1.6 2H4.4z',n:'Avisos'},
+ photo:{s:'M4 8a2 2 0 0 1 2-2h2l1.4-2h5.2L16 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM12 10a3.3 3.3 0 1 0 0 6.6 3.3 3.3 0 0 0 0-6.6z',f:'M4 8a2 2 0 0 1 2-2h2l1.4-2h5.2L16 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z',n:'Fotos'},
+ cone:{s:'M12 4l5 14H7zM4.5 20.5h15M9.3 11.2h5.4',f:'M12 4l5 14H7z',n:'Entreno'},
+ shirt:{s:'M8 4L3 7l2 4 3-1v10h8V10l3 1 2-4-5-3a4 4 0 0 1-8 0z',f:'M8 4L3 7l2 4 3-1v10h8V10l3 1 2-4-5-3a4 4 0 0 1-8 0z',n:'Camiseta'},
+ check:{s:'M5 12.5l4.6 4.6L19 7.6',f:'',n:'Voy'}
+};
+const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${IC[n].f?`<path class="f" d="${IC[n].f}"/>`:''}<path class="s" d="${IC[n].s}"/></svg>`;
+
+/* ---------- pantalla de ejemplo ---------- */
+function artboard(d){
+ const tab=(n,l,on)=>`<button type="button" class="${on?'on':''}">${d==='B'?`<span class="ico">${ic(n)}</span>`:ic(n)}${l}</button>`;
+ return `<div class="ab d${d}">
+  <header class="hd">
+   <div class="top"><span class="clubchip"><i class="logo"></i>Club Aigles</span><button type="button" class="bellb" aria-label="Notificaciones">${ic('bell')}<b>3</b></button></div>
+   <h3 class="tt">Agenda</h3>
+   <div class="segr"><button type="button" class="on">Todos</button><button type="button">Lucas</button><button type="button">Emma</button></div>
+  </header>
+  <div class="cards">
+   <article class="card match">
+    <div class="tags"><span class="tag">${ic('ball')}Partido</span><span class="tag">U12</span></div>
+    <h4>U12 vs Niort</h4><p>Sábado 24 de octubre · Stade du Centre</p>
+    <div class="times"><div><small>En cancha</small><span class="num">13:15</span></div><div><small>Partido</small><span class="num">14:00</span></div></div>
+    <div class="vote"><button type="button" class="on">${ic('check')}Voy</button><button type="button">? Duda</button><button type="button">✕ No voy</button></div>
+   </article>
+   <article class="card turno">
+    <span class="stk">Te toca llevar</span>
+    <span class="ico">${ic('car')}</span>
+    <b>Salida 12:30 desde el club<span style="font-weight:500;color:var(--ink2)"> · 3 cupos libres</span></b>
+    <button type="button" class="pillb">Turnos</button>
+   </article>
+   <article class="card ent">
+    <div class="tags"><span class="tag">${ic('cone')}Entrenamiento</span><span class="tag">U12</span></div>
+    <h4>Martes 27 · 18:00 – 19:30</h4><p>Gimnasio municipal</p>
+    <div class="vote"><button type="button">${ic('check')}Voy</button><button type="button" class="on">? Duda</button><button type="button">✕ No voy</button></div>
+   </article>
+  </div>
+  <nav class="tabs" aria-label="Menú de ejemplo">${tab('cal','Agenda',1)}${tab('feed','Feed')}${tab('flag','Mi actividad')}${tab('grid','Más')}</nav>
+ </div>`;
+}
+
+const DIRS=[
+ {k:'A',nombre:'A · Amanecer',lema:'Cálido, de barrio, con las horas bien grandes. Tarjetas de color por tipo de evento y la costura del balón en cada borde.',
+  sw:[['--paper','Crema'],['--accent','Sol'],['--a2','Coral'],['--menta','Menta'],['--lila','Lila'],['--ink','Tinta']],
+  ty:['Bricolage Grotesque 800','Títulos y horas gigantes','Geist 400 a 700 · textos y controles'],
+  siente:['Es la más familiar: parece un cuaderno de club, no un panel.','El color cuenta el tipo de evento: sol para partido, menta para entreno, lila para especial.','El ícono tiene un «desplazamiento de impresión»: el color del trazo y el del relleno no coinciden del todo. Es chico y propio.'],
+  ojo:['El amarillo exige tinta oscura encima, siempre.','La costura no puede tapar contenido: va dentro del borde, con aire.']},
+ {k:'B',nombre:'B · Vestuario',lema:'Oscuro y deportivo, con lima eléctrica. La hora como marcador de estadio.',
+  sw:[['--paper','Noche'],['--surface','Cancha'],['--accent','Lima'],['--a2','Azul'],['--ink2','Niebla'],['--ink','Hielo']],
+  ty:['Big Shoulders Display 900','Horas y títulos, en mayúsculas','Geist · textos y Geist Mono · etiquetas'],
+  siente:['Es la más «app deportiva»: energía, marcador, hinchada.','Los íconos van inclinados y encendidos en lima dentro de baldosas, como en tu referencia del set.','Funciona muy bien de noche y para los niños mayores.'],
+  ojo:['A pleno sol, en la cancha, un fondo oscuro se lee peor.','Es la que menos «familia» tiene: sirve mejor como modo oscuro que como cara principal.']},
+ {k:'C',nombre:'C · Club',lema:'Limpia y clara; la cabecera toma el color del club. Es la que mejor sirve a una plataforma con muchos clubes.',
+  sw:[['--paper','Hielo'],['--surface','Blanco'],['--club','Color del club'],['--club-tint','Tinte'],['--ink','Tinta'],['--ink2','Pizarra']],
+  ty:['Geist 700','Títulos y horas','Geist 400 a 600 · textos · Geist Mono · cifras'],
+  siente:['Cada club ve su propio color, y el resto de la app se adapta solo.','Los íconos son duotono: trazo oscuro y relleno con el tinte del club.','Es la más sobria y la más fácil de mantener.'],
+  ojo:['Sin los detalles propios (costura, horas gigantes, íconos), puede quedar genérica.','Hay que elegir bien los colores permitidos: el texto blanco necesita contraste con el color del club.']}
+];
+
+function bloque(d){
+ const icons=['cal','feed','flag','grid','ball','car','pin','bell','photo','cone','shirt','check'];
+ return `<section class="dir" id="dir${d.k}">
+  <h2>${d.nombre}</h2><p class="lema">${d.lema}</p>
+  <div class="dgrid">
+   <div class="d${d.k}">${artboard(d.k)}</div>
+   <div class="d${d.k}">
+    <h3>Paleta</h3><div class="sw">${d.sw.map(([t,l])=>`<div><i style="background:var(${t})"></i><span>${l}</span></div>`).join('')}</div>
+    <h3>Tipografía</h3><div class="ty"><p class="big">${d.k==='B'?'14:00':'Sáb 14:00'}</p><p><b>${d.ty[0]}</b> · ${d.ty[1]}</p><p>${d.ty[2]}</p></div>
+    <h3>Íconos (ilustrativos)</h3><div class="ig">${icons.map(n=>`<div><i>${ic(n)}</i>${IC[n].n}</div>`).join('')}</div>
+    ${d.k==='C'?`<h3>El mismo diseño con el color de tres clubes</h3><div class="clubs">
+      <div class="mini" style="--club:#2F5BFF"><b>Club Aigles</b><span>Agenda</span></div>
+      <div class="mini" style="--club:#0B7A52"><b>Club Pampa</b><span>Agenda</span></div>
+      <div class="mini" style="--club:#A3173B"><b>Sporting Rochelais</b><span>Agenda</span></div></div>`:''}
+    <h3>Cómo se siente</h3><ul class="pl">${d.siente.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h3>Cuidado con</h3><ul class="pl">${d.ojo.map(x=>`<li>${x}</li>`).join('')}</ul>
+   </div>
+  </div></section>`;
+}
+document.getElementById('dirs').innerHTML=DIRS.map(bloque).join('');
+</script>
+</body>
+</html>

@@ -25,4 +25,5 @@ Plugin de TypeDock para coordinar **clubes / equipos ↔ entrenadores / jugadore
 - Plan completo y decisiones abiertas: `docs/PLAN.md`.
 - Wireframes grises v1 (5 pantallas + mapa de navegación): `docs/wireframes/index.html`.
 - **Arquitectura de menús** (árbol por rol, reglas): `docs/wireframes/arquitectura.html`. Respétala al agregar pantallas: Más es solo cuenta; lo del equipo vive en el equipo.
+- **Dirección visual (en definición):** `docs/diseno/direcciones.html`. Tres propuestas (Amanecer, Vestuario, Club) sobre la misma pantalla. No construyas pantallas con diseño hasta que el usuario elija; la skill `hallmark` aplica (tokens bloqueados, sin cromo falso, sin itálicas en títulos).
 - **Prototipo interactivo** (en español, sin textos explicativos): `docs/wireframes/prototipo.html`. Se abre en el navegador; el panel lateral cambia de rol, estado del partido y deporte. Capturas en `docs/wireframes/png/`.
