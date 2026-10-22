@@ -296,3 +296,13 @@ Lámina completa: `docs/diseno/direcciones.html` (capturas en `docs/diseno/png/`
 - **Fuentes (de la lista de Hallmark):** Bricolage Grotesque + Geist (A); Big Shoulders Display + Geist (B); Geist + Geist Mono (C).
 - **Ícono propio:** una geometría base dibujada a mano (~40 íconos), sprite SVG con `currentColor` y variables `--ic-stroke` y `--ic-fill`. Tokens en `@theme` de Tailwind 4; el color del club es una sola variable (`--club`) y lo demás se deriva con `color-mix`.
 - **Por decidir:** dirección o mezcla; color por club, por equipo o ambos; tratamiento del ícono (desplazamiento, baldosa o duotono); si los niños tienen una vista propia más juguetona; nombre y logo de Sportiva.
+
+
+## 25. Dirección visual v2 (tablero con personalidad)
+- Pedido del usuario: seguir la dirección A, estilo dashboard (referencia Panze), poco color en las tarjetas y más en los detalles; quedarse con Bricolage Grotesque 800; un poco de grano (ISO alto); decidir íconos.
+- Lámina: `docs/diseno/direccion-v2.html` (capturas en `docs/diseno/png/v2-*.png`).
+- Tokens: teal #215E5E, limón #F6F24A, hueso #F2F0EA, tinta #10201F; `--club` cambia por club, el limón es fijo de Sportiva.
+- Detalles de marca: horas gigantes con resaltador limón, línea de costura punteada, sticker rotado («Te toca llevar»), grano PNG 256 px solo en superficies de marca (nunca bajo texto).
+- Íconos propuestos (opción B): Phosphor Bold en reposo, Fill en activo, Duotone en ilustraciones (MIT, subset en `docs/diseno/iconos/`) + ~12 propios (silbato, arco, cancha, tarjeta, costura…).
+- Logos por elegir: 1 balón con S cosida, 2 sticker, 3 palabra con rulo.
+- Por decidir: logo, paleta, íconos, tablero del escritorio del entrenador, intensidad del grano.
