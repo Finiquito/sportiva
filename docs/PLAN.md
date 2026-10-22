@@ -146,4 +146,87 @@ Salió de la conversación con familias reales; manda sobre el resto del plan.
   - El entrenador de otro grupo ve el nombre del jugador y su voto, pero no los datos de contacto de la familia.
 - **Equipos móviles.** El jugador pertenece a un equipo **por temporada y por fechas** (desde, hasta), con historial. Se puede reorganizar una categoría a mitad de temporada: mover jugadores entre U11A, U11B y U11C, con vista previa de los cambios y aviso a las familias y entrenadores con un mensaje editable («Desde el 15 de noviembre, Lucas pasa de U11B a U11A»). Los eventos futuros del equipo anterior piden decisión (mantener o quitar). Se hace desde el celular, en un toque por jugador, y en escritorio arrastrando.
 - **Escritorio.** Es la misma app con diseño adaptable, no otra. En pantallas anchas la navegación pasa a una barra lateral y se ve el detalle al lado de la lista. Uso principal: entrenadores y directiva (asistencia en tabla, crear convocatoria, reorganizar equipos). Los wireframes de escritorio vienen en la siguiente ronda.
-- **Menús por rol y nombres:** ver la propuesta de la conversación; se registra aquí cuando se decida.
+
+## 13. Roles, menús y nombres (decidido en la ronda 4)
+
+### Roles
+| Rol | Qué ve y hace |
+|---|---|
+| **Admin técnico** | Solo `/admin/sportiva` en TypeDock: claves, idiomas, deportes, almacenamiento, diagnóstico. |
+| **Directiva (dirigentes)** | Parte administrativa: personas, invitaciones, estructura de equipos, lugares, temporada, avisos generales del club y directorio. **No ve temas deportivos** (votos, consultas, alineaciones, resultados). |
+| **Encargado** | Es uno de los entrenadores, con permiso extra: el jefe deportivo. Ve todo lo deportivo, revisa y contesta las dudas de los entrenadores y revisa las reorganizaciones. |
+| **Entrenador** | Sus equipos y las convocatorias que arma; puede convocar jugadores de cualquier equipo. Ve el directorio completo de contactos. |
+| **Apoderado** | Sus hijos, votos, consultas, feed y, si la familia lo acepta, el directorio de familias de su equipo. |
+| **Jugador (hijo)** | Solo lectura: agenda y fotos. |
+
+### Pestañas inferiores (máximo 5)
+| Rol | Pestañas |
+|---|---|
+| Apoderado | Agenda · Feed · Mi actividad · Más |
+| Entrenador | Agenda · Feed · Consultas · Plantel · Más |
+| Encargado | igual que entrenador; su bandeja de Consultas incluye las de los entrenadores |
+| Directiva | Feed del club · Club · Directorio · Más (¿Agenda sin datos deportivos? Por confirmar) |
+| Jugador | Agenda · Fotos · Más |
+
+### Nombres
+| Sección | Español | Francés |
+|---|---|---|
+| Calendario | Agenda | Agenda |
+| Muro del equipo | **Feed** | **Le fil** |
+| Línea de tiempo personal | Mi actividad | Mon activité |
+| Bandeja del entrenador | Consultas | Questions |
+| Jugadores | Plantel | Effectif |
+| Gestión del club | Club | Club |
+| Menú extra | Más | Plus |
+
+Términos del francés: convocation · entraînement · match · point de rendez-vous · lieu du match · covoiturage · en direct · présent / peut-être / absent / sans réponse. **Por revisar con un hablante nativo.**
+
+### El Feed
+No es un muro social: es la **hoja de ruta del equipo**. De arriba hacia abajo van pasando los momentos del equipo: avisos de entrenador y directiva, convocatorias publicadas, resultados, fotos del partido, cambios de equipo. Los apoderados comentan pero no publican.
+
+## 14. Directorio y privacidad entre familias
+- **Directorio de entrenadores y dirigentes:** por equipo, todos los contactos (apoderados) de cada jugador. Se llama, se escribe por WhatsApp o por correo con un toque. Lo ve todo el cuerpo técnico, el encargado y la directiva (contactos, no lo deportivo). Cualquier entrenador ve el contacto de un jugador al que convoca.
+- **Sin exportar:** no hay descarga de listas (CSV, PDF). Se consulta dentro de la app, para evitar fugas.
+- **Directorio de familias de cada equipo**, aparte. Es **opcional por familia**: cada una elige qué comparte (teléfono, correo) con las otras familias de su equipo. Lo normal en un club es que todos se conozcan, pero el RGPD pide que compartir contactos entre apoderados sea voluntario. Se pregunta una sola vez al ingresar, con un lenguaje cercano.
+- El aviso de privacidad cuenta qué ve el cuerpo técnico y por qué.
+
+## 15. Eventos, consultas y reorganización (aclaraciones)
+- **Los eventos futuros pertenecen al equipo.** Si un jugador cambia de equipo, sus eventos futuros se reemplazan automáticamente por los del equipo nuevo. Las convocatorias individuales a otros equipos, armadas a mano, se mantienen.
+- **Consultas de un jugador convocado desde otro equipo:** las ven el entrenador que convoca y el de su equipo base. Se asume que entre entrenadores hay acuerdo.
+- **Reorganizar equipos:** pueden hacerlo los entrenadores; el encargado revisa. La directiva ve la estructura, no los temas deportivos. Por confirmar con el usuario.
+
+## 16. En vivo cuando nadie reporta
+La tarjeta del partido tiene tres estados, y la app **no dice «en vivo» si nadie está reportando**:
+1. **Con reporteros:** como en el wireframe 4.
+2. **Sin reporteros:** se muestra «Sin novedades en vivo» y la hora de regreso tentativa del entrenador con su antigüedad («actualizada hace 3 h»). El botón «Estoy en la cancha» sigue visible para quien quiera reportar.
+3. **Terminado:** el marcador final lo pone el entrenador o un reportero. Aparece en el Feed.
+- **Reporteros:** cualquier apoderado que marque «Estoy en la cancha» puede publicar novedades. Además, cada equipo puede tener 2 o 3 **reporteros habituales** (padres activos) que actualizan el marcador. El turno de traslado puede traer «reporta en vivo» por defecto.
+- Al empezar el partido se envía una notificación a los reporteros: «¿Puedes actualizar el marcador?».
+- El marcador tiene **una sola versión vigente** con historial visible. El entrenador la puede confirmar («Resultado confirmado»).
+
+## 17. Perfiles de deporte
+Cada deporte se define en un archivo (`sports/futbol.json`, `volley.json`, `basquet.json`…), igual que los idiomas:
+- **Tipo de marcador:** por periodos (fútbol: goles, dos tiempos; básquet: cuartos) o por sets (vóley: mejor de 3 o 5, con puntos por set).
+- **Vocabulario** (gol, punto, set, tiempo, cuarto) como claves de traducción.
+- **Botones rápidos** de novedades del en vivo (en fútbol «Entretiempo»; en vóley «Fin del set»).
+- **Duración típica** del evento.
+- El **deporte se define en el club** y cada equipo puede sobrescribirlo (por si el club tiene varios deportes).
+
+## 18. Idiomas: cómo funcionan por dentro
+- **Un archivo por idioma** (`fr.json` es la base; `es.json`, etc.). Claves ordenadas por sección (`agenda.voto.si`). Variables con `{nombre}`.
+- **Los idiomas que agregues viven fuera del plugin** (`typedock/storage/sportiva_lang/`), para que actualizar el zip del plugin no los pise.
+- **Pantalla «Idiomas» en el admin técnico:** lista de idiomas con el porcentaje traducido, descargar plantilla, subir archivo y editar textos en línea. Un idioma nuevo aparece solo en el selector.
+- **Respaldo en cadena:** idioma de la persona → francés → la clave.
+- **Plurales** con las reglas de cada idioma (en francés, 0 y 1 van en singular). Se usa `ext-intl` si el hosting la tiene; si no, un respaldo propio.
+- **Fechas, horas y números** con `IntlDateFormatter` y `NumberFormatter`, en la zona horaria del club.
+- **Notificaciones en el idioma del destinatario:** la cola guarda **la clave y sus datos**, no el texto ya armado, y se traduce al enviar. Así el mismo aviso sale en francés a una familia y en español a otra.
+- **Plantillas Latte:** una función de traducción registrada en el motor (por confirmar contra el núcleo real de TypeDock).
+- **Revisión automática:** un script que detecta claves sin traducir o sin uso, y las pruebas fallan si falta algo en francés o español.
+- **El contenido que escriben las personas no se traduce solo.** Más adelante, un botón «Traducir» con IA.
+- **Género en francés** («présent/présente»): los textos evitan el acuerdo y nombran al jugador («Lucas : présent»).
+
+## 19. Pendiente por confirmar
+- ¿La directiva ve el calendario de eventos (qué, cuándo, dónde), sin votos ni consultas ni resultados?
+- Reorganización: ¿puede hacerla solo el entrenador del equipo, o cualquier entrenador? ¿El encargado la revisa antes o después?
+- ¿Un solo deporte por club, o puede haber varios?
+- Wireframes: se mantienen en español hasta que lo pidas; después, en francés.
