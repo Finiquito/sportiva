@@ -23,4 +23,5 @@ Plugin de TypeDock para coordinar **clubes / equipos ↔ entrenadores / jugadore
 - Fotos y videos permitidos, con límites, subida por trozos, cuotas y caducidad, para no colapsar Hostinger.
 - **No:** cobros, pagos ni documentos. Nunca.
 - Plan completo y decisiones abiertas: `docs/PLAN.md`.
-- Wireframes grises v1 (5 pantallas + mapa de navegación): `docs/wireframes/index.html` y capturas en `docs/wireframes/png/`.
+- Wireframes grises v1 (5 pantallas + mapa de navegación): `docs/wireframes/index.html`.
+- **Prototipo interactivo** (en español, sin textos explicativos): `docs/wireframes/prototipo.html`. Se abre en el navegador; el panel lateral cambia de rol, estado del partido y deporte. Capturas en `docs/wireframes/png/`.
