@@ -3,7 +3,7 @@
 Nombre clave: **Sportiva**. Pruebas en `sportiva.richgt.com`. Borrador vivo; nada está construido ni diseñado visualmente todavía.
 
 ## 0. Decisiones tomadas
-- Un club por instalación. El club se maneja **en el front**, no en el admin de TypeDock.
+- **Una plataforma con muchos clubes** (reemplaza la decisión anterior de un club por instalación): una sola instalación en `sportiva.richgt.com`, con los datos de cada club separados. Cada club se maneja **en el front**, no en el admin de TypeDock. Ver sección 20.
 - `/admin/sportiva/...` lo ve solo un **admin técnico**: ajustes, claves, almacenamiento y diagnóstico.
 - Idiomas iniciales: **español y francés**, con posibilidad de agregar más (sección 3).
 - El hijo/jugador tiene cuenta de **solo lectura** más un canal propio de niños (sección 5).
@@ -230,3 +230,15 @@ Cada deporte se define en un archivo (`sports/futbol.json`, `volley.json`, `basq
 - Reorganización: ¿puede hacerla solo el entrenador del equipo, o cualquier entrenador? ¿El encargado la revisa antes o después?
 - ¿Un solo deporte por club, o puede haber varios?
 - Wireframes: se mantienen en español hasta que lo pidas; después, en francés.
+
+## 20. Plataforma multi-club (ronda 5)
+- **Una sola instalación aloja a todos los clubes.** Toda tabla lleva `club_id`; no hace falta un sitio por club.
+- **Identidad global, pertenencia por club.** La persona entra con su correo (una sola vez) y elige club si tiene más de uno (por ejemplo un entrenador en dos clubes, o una familia con hijos en clubes distintos). El rol es **por club**.
+- **Separación de datos:** todas las consultas pasan por una sola capa que fuerza el `club_id`, con pruebas automáticas de que un club no puede ver a otro. Con datos de menores, un cruce entre clubes sería el error más grave.
+- **Configuración por club:** deporte, idioma por defecto, zona horaria, logo, remitente de correos y aparición en la lista pública.
+- **Dirección pública:** `sportiva.richgt.com/c/<club>` (por ruta; los subdominios comodín no están garantizados en el hosting compartido).
+- **Página pública de la plataforma:** lista de clubes y cifras (clubes, familias, equipos). Es **opt-in por club** y solo muestra cifras agregadas, nunca personas.
+- **Admin técnico (`/admin/sportiva`):** crea clubes y nombra a su primera directiva. Es el único lugar fuera del front.
+- **RGPD:** con varios clubes, cada club es el responsable del tratamiento de sus datos y la plataforma actúa como encargada. Cada club acepta un contrato de tratamiento de datos al darse de alta. **Por revisar con asesoría legal.**
+- **Crecimiento:** en hosting compartido funciona bien para el piloto y varias decenas de clubes. Si crece, el modelo de datos no cambia: se mueve a un VPS y los medios a almacenamiento externo.
+- **Respaldos:** por plataforma, no por club. Restaurar un solo club exige una herramienta de exportar e importar por club (pendiente).
