@@ -149,6 +149,11 @@ hr{border:0;border-top:1.5px solid var(--fill2);margin:12px 0}
 .desk .sheet{left:50%;right:auto;bottom:auto;top:50%;transform:translate(-50%,-50%);width:min(460px,92%);border:2px solid var(--ink);border-radius:16px}
 .desk .toast{left:50%;right:auto;transform:translateX(-50%);width:min(420px,90%);bottom:24px}
 .desk .fab{bottom:20px}
+
+.nuevo{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:5px;background:var(--ink);color:#fff;font-size:11px;font-weight:800;margin-left:6px;vertical-align:middle;white-space:nowrap}
+.bell{position:relative;min-width:44px;min-height:44px;border:2px solid var(--ink);border-radius:22px;display:flex;align-items:center;justify-content:center;flex:none}
+.bellico{width:18px;height:18px;border:2px solid var(--ink);border-radius:9px 9px 3px 3px;display:block}
+.bell .badge{position:absolute}
 @media (max-width:760px){
  .app{grid-template-columns:1fr;padding:0;gap:0}
  #panel{position:static;max-height:none;border-radius:0;border-width:0 0 1.5px 0}
@@ -203,13 +208,20 @@ const EV0=[
  {id:'e2',tipo:'partido',eq:'U12',titulo:'U12 vs Niort',f:'2026-10-24',h:'14:00',cancha:'13:15',salida:'12:30',pe:'Club',peDir:'Estacionamiento del club, portón azul',lugar:'Stade du Centre · Niort',club:'Niort FC',dir:'Rue Ejemplo 12, 79000 Niort',km:'62 km · 1 h'},
  {id:'e3',tipo:'entreno',eq:'U12',f:'2026-10-27',h:'18:00 – 19:30',lugar:'Gimnasio municipal',dir:'Rue du Stade 4, Niort'},
  {id:'e4',tipo:'especial',eq:'U12',titulo:'Stage de vacaciones',f:'2026-10-29',h:'09:00 – 17:00',lugar:'Complexe sportif · Niort',dir:'Avenue Ejemplo 8, Niort',precio:'45 €',tes:'tesoreria@aigles.fr'},
- {id:'e5',tipo:'partido',eq:'U12',titulo:'U12 vs Chauray',f:'2026-10-31',h:'15:00',cancha:'14:15',salida:'13:30',pe:'Stade municipal (Aiffres)',peDir:'Estacionamiento norte, junto a la entrada',lugar:'Stade des Pins · Chauray',club:'AS Chauray',dir:'Rue Ejemplo 3, 79180 Chauray',km:'18 km · 25 min'}
+ {id:'e5',tipo:'partido',eq:'U12',titulo:'U12 vs Chauray',f:'2026-10-31',h:'15:00',cancha:'14:15',salida:'13:30',pe:'Stade municipal (Aiffres)',peDir:'Estacionamiento norte, junto a la entrada',lugar:'Stade des Pins · Chauray',club:'AS Chauray',dir:'Rue Ejemplo 3, 79180 Chauray',km:'18 km · 25 min'},
+ {id:'h1',tipo:'partido',eq:'U12',titulo:'U12 vs Rochelais',f:'2026-10-18',h:'14:00',cancha:'13:15',salida:'12:30',pe:'Club',peDir:'Estacionamiento del club',lugar:'Complexe sportif · Rochelais',club:'Sporting Rochelais',dir:'Avenue Ejemplo 20, La Rochelle',km:'140 km · 1 h 40'}
 ];
 const LUGARES=[
  {n:'Club (predeterminado)',dir:'Stade del club, Niort'},
  {n:'Gimnasio municipal',dir:'Rue du Stade 4, Niort'},
  {n:'Stade du Centre · Niort FC',dir:'Rue Ejemplo 12, 79000 Niort'},
  {n:'Complexe sportif · Rochelais',dir:'Avenue Ejemplo 20, La Rochelle'}
+];
+const TURNOS=[
+ {f:'2026-10-24',t:'U12 vs Niort',fam:['Familia Pérez (tú)','Familia Garcia'],ev:'e2',mio:1},
+ {f:'2026-10-31',t:'U12 vs Chauray',fam:['Familia Moreau','Familia Roux'],ev:'e5',mio:0},
+ {f:'2026-11-07',t:'Partido por confirmar',fam:['Familia Bernard','Familia Dubois'],mio:0,tent:1},
+ {f:'2026-11-14',t:'Partido por confirmar',fam:['Familia Pérez (tú)','Familia Martin'],mio:1,tent:1}
 ];
 const ASIS0={Tomás:'voy',Mateo:'voy',Gabriel:'voy',Louis:'voy',Arthur:'voy',Raphaël:'duda',Paul:'duda',Adam:'no',Ethan:null};
 const FEED0=[
@@ -252,12 +264,13 @@ const S={
  FEED:JSON.parse(JSON.stringify(FEED0)),FEEDC:JSON.parse(JSON.stringify(FEEDCLUB0)),
  ACT:JSON.parse(JSON.stringify(ACT0)),CONS:JSON.parse(JSON.stringify(CONS0)),CONSE:JSON.parse(JSON.stringify(CONSE0)),
  CAMBIOS:JSON.parse(JSON.stringify(CAMBIOS0)),
- votos:{'e1|emma':'voy','e3|lucas':'duda'},vista:'lista',dia:HOY,hijoF:'todos',turno:true,cupo:false,inscrito:false,fotos:{e2:0},
+ votos:{'e1|emma':'voy','e3|lucas':'duda'},vista:'lista',dia:HOY,hijoF:'todos',turno:true,cupo:false,inscrito:false,fotos:{e2:0,h1:12},
  eta:{act:'18:50',ant:'18:30',por:'Marta',cuando:'hace 4 min'},marc:{l:2,v:1},sets:[[25,21],[22,25],[15,12]],conf:false,extra:[],
  tg:{push:0,correo:1,hora:1,turno:1,wsp:0,sh_tel:0,sh_mail:0,pub:1,perfil:0,ch_lucas:1,ch_emma:1,exigir:1},
  asisTab:'voy',cons:'fam',consSel:null,plantelEq:'U12',dirEq:'U12',pend:{},otpOk:0,
  f:null,mover:null,filtroPers:'todos',filtroAct:'todo',tel:'',
  ajustes:{deporte:'Fútbol',idioma:'Français',zona:'Europe/Paris'},
+ marcar:1,off:0,cola:[],camb2:{e2:1},turnoPed:{},notifF:'todas',pubId:'aigles',
  dev:'cel',onb:false,plat:'iphone',errMail:false,adulto:null,hijosX:[],stkOpen:false,
  INV:[
   {m:'daniela@ejemplo.fr',r:'Familia',e:'U12 · U10',s:'activo'},
@@ -270,6 +283,14 @@ const S={
   {n:'Tomás',t:'¿Quién va el sábado?'},{n:'Mateo',k:'¡Vamos!'},{n:'Louis',h:1},{n:'Gabriel',t:'Yo voy'},{n:'Arthur',k:'Bravo'}
  ]
 };
+S.NOTIFS=[
+ {id:'n1',d:'Hoy',h:'14:42',k:'Hora',txt:'Cambió la hora de regreso: 18:50 (antes 18:30)',ctx:'U12 vs Niort',nl:1,go:{s:'envivo',p:{id:'e2'}}},
+ {id:'n2',d:'Hoy',h:'10:12',k:'Lugar',txt:'Cambió el lugar del partido',ctx:'U12 vs Niort · Sáb 24 oct',nl:1,go:{s:'convo',p:{id:'e2'}}},
+ {id:'n3',d:'Hoy',h:'09:00',k:'Turno',txt:'Te toca llevar este sábado',ctx:'Salida 12:30 desde el club',nl:1,go:{s:'turnos',p:{}}},
+ {id:'n4',d:'Ayer',h:'20:10',k:'Respuesta',txt:'Camila respondió tu consulta',ctx:'¿Hay que llevar botella?',nl:0,go:{s:'hilo',p:{id:'c1',src:'act'}}},
+ {id:'n5',d:'Ayer',h:'18:30',k:'Convocatoria',txt:'Nueva convocatoria: U12 vs Chauray',ctx:'Sáb 31 oct',nl:0,go:{s:'convo',p:{id:'e5'}}}
+];
+S.SOL=[{m:'sophie.martin@ejemplo.fr',h:'Jade · U10'},{m:'karim.b@ejemplo.fr',h:'Inés · U12'}];
 const newForm=()=>({tipo:'partido',eq:'U12',sel:new Set(S.EQ.U12),f:'2026-10-31',h:'14:00',cancha:'13:15',canchaMan:0,salida:'12:30',peOpc:'club',pe:'Club',peInd:'',lugar:null,ok:false,tras:true,nota:'',tab:'U12',q:''});
 S.f=newForm();
 
@@ -304,6 +325,10 @@ const evsVisibles=()=>{
 };
 const clave=(id,h)=>id+'|'+h;
 const restar=(h,m)=>{const [a,b]=h.split(':').map(Number);const t=((a*60+b-m)%1440+1440)%1440;return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')};
+const NW=()=>S.marcar?'<span class="nuevo">Nuevo</span>':'';
+const NUEVAS=new Set(['turnos','bandeja','fotosEv','visor','equipoF','nuevaConsulta','misDatos','privacidad','clubPub']);
+function campana(){const n=S.NOTIFS.filter(x=>x.nl).length;return `${NW()}<button type="button" class="bell" data-a="go" data-s="bandeja" aria-label="Notificaciones"><span class="bellico"></span>${n?`<span class="badge" style="top:-4px;left:auto;right:-4px">${n}</span>`:''}</button>`}
+const banner=()=>S.off?`<div class="card flat" style="margin:0 0 8px"><b>Sin conexión</b><p class="muted m0">Mostrando lo último que se descargó. Tus respuestas se enviarán cuando vuelva.</p></div>`:'';
 const pasos=n=>`<div class="pasos">${[1,2,3,4].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</div><p class="muted" style="margin:4px 0 8px">Paso ${n} de 4</p>`;
 const estadoAsis=e=>{
  const base=Object.assign({},ASIS0);
@@ -326,7 +351,7 @@ SC.landing=()=>({t:'Sportiva',noBack:1,noTabs:1,right:btn('Entrar','auth',{s:'lo
   <div class="stat"><b>${CLUBES.reduce((a,c)=>a+c.eq,0)}</b><span>equipos</span></div>
  </div>
  <p class="h">Clubes</p>
- ${CLUBES.map(c=>`<div class="card"><div class="row2"><div class="ph" style="width:56px;height:56px;flex:none"><span>logo</span></div><div style="flex:1"><b>${c.n}</b><br><span class="muted">${c.c} · ${c.d}</span><br><span class="muted">${c.eq} equipos · ${c.fam} familias</span></div></div></div>`).join('')}
+ ${CLUBES.map(c=>`<button type="button" class="card" style="width:100%;text-align:left" data-a="verClub" data-id="${c.id}"><div class="row2"><div class="ph" style="width:56px;height:56px;flex:none"><span>logo</span></div><div style="flex:1"><b>${c.n}</b>${c.id==='aigles'?NW():''}<br><span class="muted">${c.c} · ${c.d}</span><br><span class="muted">${c.eq} equipos · ${c.fam} familias</span></div><b>›</b></div></button>`).join('')}
  <div style="margin-top:12px">${btn('Entrar','auth',{s:'login1'},'pri')}</div>`});
 SC.login1=()=>({t:'',back:'auth',backS:'landing',noTabs:1,right:`<div class="chips m0">${chip('FR',S.idioma==='fr','idioma',{v:'fr'})}${chip('ES',S.idioma==='es','idioma',{v:'es'})}</div>`,body:`
  ${ph('logo',72).replace('height:72px','width:72px;height:72px')}
@@ -392,8 +417,8 @@ function tarjetaEv(e){
  const k=hijoDe(e),h=k?HIJOS[k].n:'';
  const v=S.votos[clave(e.id,k)]||null;
  const ro=S.rol==='jugador';
- const cab=`<div class="sp">${tag(TIPO[e.tipo],e.tipo==='partido'?'solid':'')}${S.rol==='apoderado'?tag((v?VT[v][0]+' ':'! ')+h+' · '+(v?VT[v][1]:'sin responder'),v==='voy'?'solid':(v?'':'dash')):''}${isCoach()?tag(e.eq):''}</div>`;
- const cuerpo=`<p class="t m0" style="margin-top:6px">${titulo(e)}${e.tipo==='partido'?' · '+e.h:' · '+e.h}</p><p class="muted m0">${e.tipo==='partido'?'En cancha '+e.cancha+' · Salida '+e.salida+' · '+e.pe:e.lugar}${e.extraEq?' · convoca '+e.eq:''}</p>`;
+ const cab=`<div class="sp">${tag(TIPO[e.tipo],e.tipo==='partido'?'solid':'')}${S.rol==='apoderado'?tag((v?VT[v][0]+' ':'! ')+h+' · '+(v?VT[v][1]:'sin responder')+(S.cola.includes(clave(e.id,k))?' · pendiente':''),v==='voy'?'solid':(v?'':'dash')):''}${isCoach()?tag(e.eq):''}</div>`;
+ const cuerpo=`<p class="t m0" style="margin-top:6px">${titulo(e)}${e.tipo==='partido'?' · '+e.h:' · '+e.h}</p><p class="muted m0">${e.tipo==='partido'?'En cancha '+e.cancha+' · Salida '+e.salida+' · '+e.pe:e.lugar}${e.extraEq?' · convoca '+e.eq:''}${S.camb2[e.id]?' · Modificada hoy':''}</p>`;
  let acc='';
  if(S.rol==='apoderado'&&e.tipo!=='especial')acc=`<div class="grid3" style="margin-top:10px">${['voy','duda','no'].map(x=>`<button type="button" class="btn sm ${v===x?'pri':''}" data-a="vote" data-id="${e.id}" data-h="${k}" data-v="${x}">${VT[x][0]} ${VT[x][1]}</button>`).join('')}</div>`;
  const abre=isCoach()?'asistencia':'convo';
@@ -404,7 +429,7 @@ SC.agenda=()=>{
  let body='';
  if(S.rol==='apoderado'){
   body+=`<div class="chips scroll">${chip('Todos',S.hijoF==='todos','hijoF',{v:'todos'})}${Object.entries(HIJOS).map(([k,h])=>chip(h.n+' · '+h.eq,S.hijoF===k,'hijoF',{v:k})).join('')}</div>`;
-  if(S.turno&&S.estado!=='final')body+=`<div class="card hl"><div class="row2"><div class="car" style="border:0;padding:0"><div class="ico">auto</div></div><div style="flex:1"><p class="h m0">Te toca llevar</p><p class="sm" style="margin:2px 0 8px">Sáb 24 oct · salida 12:30 desde el club · ${S.cupo?2:3} cupos libres</p>${btn('Ver traslado','go',{s:'convo',id:'e2'},'sm')}</div></div></div>`;
+  if(S.turno&&S.estado!=='final')body+=`<div class="card hl"><div class="row2"><div class="car" style="border:0;padding:0"><div class="ico">auto</div></div><div style="flex:1"><p class="h m0">Te toca llevar</p><p class="sm" style="margin:2px 0 8px">Sáb 24 oct · salida 12:30 desde el club · ${S.cupo?2:3} cupos libres</p><div class="grid2">${btn('Ver traslado','go',{s:'convo',id:'e2'},'sm')}${btn('Turnos'+NW(),'go',{s:'turnos'},'sm')}</div></div></div></div>`;
  }
  body+=seg([['lista','Lista'],['mes','Mes']],S.vista,'vista');
  if(S.vista==='mes'){
@@ -416,7 +441,7 @@ SC.agenda=()=>{
   body+=Object.keys(grupos).map(f=>`<p class="h" style="margin-bottom:0">${f===HOY?'Hoy · '+L(f):L(f)}</p>${grupos[f].map(tarjetaEv).join('')}`).join('');
  }
  const fab=isCoach()?`<button type="button" class="fab" data-a="nuevaConv">+ Convocatoria</button>`:'';
- return {t:'Agenda',club:1,body,fab};
+ return {t:'Agenda',club:1,body,fab,right:S.rol==='apoderado'?campana():''};
 };
 
 /* ---- convocatoria (familia) ---- */
@@ -439,6 +464,9 @@ SC.convo=p=>{
  let b=`<div class="span">${tag(TIPO[e.tipo],e.tipo==='partido'?'solid':'')} ${tag(e.eq)}${e.extraEq?' '+tag('Convocado con '+e.eq):''}
  <p class="big">${titulo(e)}</p><p class="t m0" style="font-size:18px">${L(e.f)}${e.tipo==='partido'?'':' · '+e.h}</p>
  ${e.tipo==='partido'?`<div class="grid2" style="margin-top:8px"><div class="card flat" style="margin:0"><span class="muted">En cancha</span><br><b style="font-size:26px">${e.cancha}</b></div><div class="card flat" style="margin:0"><span class="muted">Partido</span><br><b style="font-size:26px">${e.h}</b></div></div>`:''}</div>`;
+ if(S.camb2[e.id]){
+  b+=`<div class="card" style="border:3px dashed var(--ink)"><p class="h m0">Cambió el lugar del partido ${NW()}</p><p class="muted m0">Hoy 10:12 · Camila</p><div class="lrow" style="display:block"><span class="muted">Antes</span><br><s>Stade municipal · Niort</s></div><div class="lrow" style="display:block"><span class="muted">Ahora</span><br><b>Stade du Centre · Niort</b></div><div style="margin-top:8px">${btn('Entendido','entendido',{id:e.id},'sm')}</div></div>`;
+ }
  if(e.tipo!=='especial'){
   const c=quienVa(e,k);
   b+=`<div class="card hl"><p class="h m0">${ro?'Convocatoria':'Tu respuesta'}</p>`;
@@ -462,7 +490,8 @@ SC.convo=p=>{
   <div class="card"><p class="h m0">En vivo</p>${livePreview(e)}<div class="grid2" style="margin-top:10px">${btn('Ver novedades','go',{s:'envivo',id:e.id},'sm')}${S.presente?btn('✓ Estás en la cancha','noop',{},'sm'):(S.estado==='antes'||S.estado==='final'?btn('Estoy en la cancha','noop',{},'sm dis'):btn('Estoy en la cancha','presente',{},'sm'))}</div></div>`;
  }
  if(e.tipo!=='especial'){
-  b+=`<div class="card"><div class="sp"><p class="h m0">Fotos del partido</p><span class="muted">${S.fotos[e.id]||0}</span></div><div class="grid3" style="margin-top:8px">${Array.from({length:Math.min(2,S.fotos[e.id]||0)},()=>ph('foto',80)).join('')}${ro?'':`<button type="button" class="btn" style="height:80px;border-style:dashed" data-a="foto" data-id="${e.id}">+ Agregar</button>`}</div></div>`;
+  const nf=S.fotos[e.id]||0;
+  b+=`<div class="card"><div class="sp"><p class="h m0">Fotos del partido ${NW()}</p><span class="muted">${nf}</span></div><div class="grid3" style="margin-top:8px">${Array.from({length:Math.min(2,nf)},(_,i)=>`<button type="button" data-a="go" data-s="visor" data-id="${e.id}" data-i="${i}">${ph('foto',80)}</button>`).join('')}${ro?'':`<button type="button" class="btn" style="height:80px;border-style:dashed" data-a="sheet" data-s="subirFoto" data-id="${e.id}">+ Agregar</button>`}</div>${nf?`<div style="margin-top:8px">${btn('Ver todas · '+nf,'go',{s:'fotosEv',id:e.id},'sm')}</div>`:''}</div>`;
  }
  if(!ro){
   b+=`<div class="card"><p class="h m0">Preguntar al entrenador</p><p class="muted" style="margin:0 0 8px">Privado: lo ven los entrenadores del equipo.</p><textarea class="field" id="cq" placeholder="Escribe tu consulta…"></textarea><div style="margin-top:8px">${btn('Enviar','consulta',{id:e.id},'pri')}</div></div>`;
@@ -524,14 +553,14 @@ function itemFeed(i,club){
  if(i.t==='aviso')return `<button type="button" class="card" style="display:block;width:100%;text-align:left" data-a="go" data-s="aviso" data-id="${i.id}">${aut}<p class="h" style="margin:4px 0">${i.titulo}</p><p class="m0">${i.txt}</p>${i.foto?`<div style="margin-top:8px">${ph('foto',100)}</div>`:''}<p class="muted" style="margin:8px 0 0">Comentarios: ${i.com.length}</p></button>`;
  if(i.t==='convo'){const e=evPor(i.ev);return `<div class="card">${tag('Convocatoria publicada')}<p class="h" style="margin:6px 0 0">${titulo(e)}</p><p class="muted m0">${L(e.f)} · ${e.h} · ${e.lugar}</p><div style="margin-top:8px">${btn(isCoach()?'Ver asistencia':(S.rol==='jugador'?'Ver':'Responder'),'go',{s:isCoach()?'asistencia':'convo',id:e.id},'sm')}</div></div>`}
  if(i.t==='res')return `<div class="card">${tag('Resultado','solid')}<p class="big" style="font-size:26px">${i.txt}</p><p class="muted m0">${i.hora}</p></div>`;
- if(i.t==='fotos')return `<div class="card">${tag('Fotos')}<p class="t" style="margin:6px 0">${i.txt}</p><div class="grid3">${ph('foto',70)}${ph('foto',70)}${ph('foto',70)}</div></div>`;
+ if(i.t==='fotos')return `<div class="card">${tag('Fotos')}<p class="t" style="margin:6px 0">${i.txt}</p><div class="grid3">${ph('foto',70)}${ph('foto',70)}${ph('foto',70)}</div><div style="margin-top:8px">${btn('Ver fotos','go',{s:'fotosEv',id:'h1'},'sm')}</div></div>`;
  return `<div class="card flat">${tag('Cambio de equipo')}<p class="t" style="margin:6px 0 0">${i.txt}</p><p class="muted m0">${i.hora}</p></div>`;
 }
 SC.feed=()=>{
  const club=S.rol==='directiva';
  const l=club?S.FEEDC:S.FEED;
  const pub=(isCoach()||club)?`<div style="margin:6px 0">${btn('Publicar aviso','go',{s:'nuevoAviso'},'sm')}</div>`:'';
- return {t:club?'Feed del club':'Feed',club:1,body:`${pub}${l.map(i=>itemFeed(i,club)).join('')}`};
+ return {t:club?'Feed del club':'Feed',club:1,right:S.rol==='apoderado'?campana():'',body:`${pub}${l.map(i=>itemFeed(i,club)).join('')}`};
 };
 SC.aviso=p=>{
  const i=[...S.FEED,...S.FEEDC].find(x=>x.id===p.id);
@@ -551,7 +580,7 @@ SC.actividad=()=>{
  const f=S.filtroAct;
  const l=S.ACT.filter(a=>f==='todo'||(f==='votos'&&a.t==='voto')||(f==='cons'&&a.t==='cons'));
  return {t:'Mi actividad',club:1,body:`<div class="chips scroll">${chip('Todo',f==='todo','fAct',{v:'todo'})}${chip('Votos',f==='votos','fAct',{v:'votos'})}${chip('Consultas',f==='cons','fAct',{v:'cons'})}</div>
- ${l.map(a=>a.t==='voto'?`<div class="lrow" style="display:block"><span class="muted">${a.hora}</span><br>${tag('Voto')} <b>${a.txt}</b></div>`:`<button type="button" class="lrow" data-a="go" data-s="hilo" data-id="${a.id}" data-src="act"><span><span class="muted">${a.hora}</span><br>${tag('Consulta')} <b>${a.txt}</b><small>${a.ctx} · ${a.msgs[a.msgs.length-1].t}</small></span><i>›</i></button>`).join('')}`};
+ <div style="margin:6px 0">${btn('Nueva consulta'+NW(),'go',{s:'nuevaConsulta'},'sm')}</div>${l.map(a=>a.t==='voto'?`<div class="lrow" style="display:block"><span class="muted">${a.hora}</span><br>${tag('Voto')} <b>${a.txt}</b></div>`:`<button type="button" class="lrow" data-a="go" data-s="hilo" data-id="${a.id}" data-src="act"><span><span class="muted">${a.hora}</span><br>${tag('Consulta')} <b>${a.txt}</b><small>${a.ctx} · ${a.msgs[a.msgs.length-1].t}</small></span><i>›</i></button>`).join('')}`};
 };
 SC.hilo=p=>{
  const lst=p.src==='act'?S.ACT:(S.CONS.concat(S.CONSE));
@@ -679,6 +708,7 @@ SC.cInvit=()=>{
  return {t:'Invitaciones',back:1,body:`<div class="grid2"><div class="stat"><b>${S.INV.length}</b><span>autorizados</span></div><div class="stat"><b>${c('activo')}</b><span>activos</span></div></div>
  <div class="grid2" style="margin-top:8px"><div class="stat"><b>${c('invitado')}</b><span>invitados sin entrar</span></div><div class="stat"><b>${c('rebotó')}</b><span>correos rebotados</span></div></div>
  <div style="margin:12px 0;display:grid;gap:8px">${btn('Cargar lista de correos','sheet',{s:'cargarLista'},'sm')}${pend?btn('Enviar invitaciones · '+pend,'enviaInv',{},'pri'):btn('Sin invitaciones por enviar','noop',{},'dis sm')}</div>
+ ${S.SOL.length?`<p class="h">Solicitudes ${NW()}</p>${S.SOL.map((x,i)=>`<div class="card"><b>${x.m}</b><p class="muted m0">${x.h}</p><div class="grid2" style="margin-top:8px">${btn('Aprobar','solOk',{i},'sm pri')}${btn('Rechazar','solNo',{i},'sm')}</div></div>`).join('')}`:''}
  ${S.INV.map((i,k)=>`<div class="lrow"><span><b>${i.m}</b><small>${i.r} · ${i.e}</small></span>${i.s==='invitado'?`<button type="button" class="btn sm auto" data-a="reenviar" data-k="${k}">Reenviar</button>`:tag(EST[i.s][0],EST[i.s][1])}</div>`).join('')}`};
 };
 
@@ -695,15 +725,69 @@ SC.chat=p=>{
  return {t:'Chat de U12',back:p.ro?1:0,club:0,foot,body:`<p class="muted m0">10 jugadores · lo moderan Camila y Pedro</p>${msgs}${ro?`<div class="card flat"><p class="muted m0">Solo lectura. Los niños escriben desde su perfil.</p></div>`:''}`};
 };
 
+/* ---- NUEVAS: turnos, bandeja, fotos, equipo, datos, club público ---- */
+SC.turnos=()=>{
+ const mios=TURNOS.map((x,i)=>Object.assign({i},x)).filter(x=>x.mio);
+ return {t:'Turnos de traslado',back:1,body:`
+ <div class="card hl"><p class="h m0">Tus turnos</p>${mios.map(x=>`<div class="car"><div class="ico">auto</div><div style="flex:1"><b>${L(x.f)}</b>${x.tent?' '+tag('Tentativo','dash'):''}<br><span class="muted">${x.t}</span></div>${S.turnoPed[x.i]?tag('Cambio pedido','dash'):`<button type="button" class="btn sm auto" data-a="sheet" data-s="cambiarTurno" data-i="${x.i}">Cambiar</button>`}</div>`).join('')}</div>
+ <p class="muted">Te avisamos 48 h y 3 h antes de cada turno.</p>
+ <p class="h">Rotación de U12</p>
+ ${TURNOS.map(x=>`<div class="lrow" style="display:block"><div class="sp"><b>${L(x.f)}</b>${x.tent?tag('Tentativo','dash'):tag('Confirmado','solid')}</div><span class="muted">${x.t}</span><br>${x.fam.join(' · ')}${x.ev?`<div style="margin-top:6px">${btn('Ver partido','go',{s:'convo',id:x.ev},'sm')}</div>`:''}</div>`).join('')}`};
+};
+SC.bandeja=()=>{
+ const f=S.notifF;const l=S.NOTIFS.filter(n=>f==='todas'||n.nl);
+ const grupo=g=>{const li=l.filter(n=>n.d===g);return li.length?`<p class="h">${g}</p>${li.map(n=>`<button type="button" class="lrow" data-a="nAbrir" data-id="${n.id}"><span>${n.nl?'● ':''}<b>${n.txt}</b><small>${tag(n.k)} ${n.ctx} · ${n.h}</small></span><i>›</i></button>`).join('')}`:''};
+ return {t:'Notificaciones',back:1,body:`<div class="chips scroll">${chip('Todas',f==='todas','nFil',{v:'todas'})}${chip('Sin leer · '+S.NOTIFS.filter(n=>n.nl).length,f==='sin','nFil',{v:'sin'})}</div>
+ <div style="margin:4px 0">${btn('Marcar todo como leído','nLeer',{},'sm')}</div>${grupo('Hoy')}${grupo('Ayer')}${l.length?'':'<div class="card flat"><p class="muted m0">No tienes avisos sin leer.</p></div>'}`};
+};
+SC.fotosEv=p=>{
+ const e=evPor(p.id);const n=S.fotos[e.id]||0;
+ return {t:'Fotos',back:1,body:`<p class="muted m0">${titulo(e)} · ${L(e.f)}</p><p class="t">${n} fotos</p>
+ ${n?`<div class="grid3">${Array.from({length:n},(_,i)=>`<button type="button" data-a="go" data-s="visor" data-id="${e.id}" data-i="${i}">${ph('foto',96)}</button>`).join('')}</div>`:'<div class="card flat"><p class="muted m0">Todavía no hay fotos.</p></div>'}
+ ${S.rol==='jugador'?'':`<div style="margin-top:12px">${btn('Agregar foto','sheet',{s:'subirFoto',id:e.id},'pri')}</div>`}`};
+};
+SC.visor=p=>{
+ const e=evPor(p.id);const n=S.fotos[e.id]||1;const i=+p.i;const quien=['Sofía','Marta','Luis','Camila'][i%4];
+ return {t:(i+1)+' de '+n,back:1,right:`<button type="button" class="back" data-a="sheet" data-s="fotoMenu" aria-label="Más opciones">⋯</button>`,body:`${ph('foto',320)}<p class="t" style="margin:8px 0 0">Subida por ${quien}</p><p class="muted m0">${titulo(e)}</p><div class="grid2" style="margin-top:12px">${btn('‹ Anterior','visorNav',{d:-1},'sm')}${btn('Siguiente ›','visorNav',{d:1},'sm')}</div>`};
+};
+SC.equipoF=()=>({t:'U12',back:1,body:`<p class="muted m0">Temporada 2026 – 2027 · 10 jugadores</p>
+ <p class="h">Entrenadores</p>
+ ${[['Camila','Entrenadora · encargada'],['Pedro','Entrenador']].map(([n,r])=>`<div class="lrow"><span><b>${n}</b><small>${r}</small></span><button type="button" class="btn sm auto" data-a="go" data-s="nuevaConsulta" data-para="${n}">Preguntar</button></div>`).join('')}
+ <p class="h">Fijado</p><div class="card flat"><b>Reglas del equipo</b><p class="muted m0">Llegar 15 minutos antes. Avisar si no vas hasta el jueves a las 21:00.</p></div>
+ <p class="h">Jugadores</p><div class="chips">${S.EQ.U12.map(n=>`<span class="tag">${n}</span>`).join('')}</div>
+ <div style="margin-top:12px">${btn('Familias del equipo','go',{s:'familias'},'sm')}</div>`});
+SC.nuevaConsulta=p=>({t:'Nueva consulta',back:1,body:`<span class="lab" style="margin-top:0">Para</span><select class="field" id="nc-p"><option ${p.para==='Camila'?'selected':''}>Camila</option><option ${p.para==='Pedro'?'selected':''}>Pedro</option><option ${!p.para?'selected':''}>Camila y Pedro</option></select>
+ <span class="lab">Tema</span>${fld('nc-t','Ropa, horario, lesión…')}<span class="lab">Mensaje</span><textarea class="field" id="nc-m" placeholder="Escribe tu consulta"></textarea>
+ <p class="muted">Es privada: solo la ven los entrenadores.</p><div style="margin-top:8px">${btn('Enviar','enviaConsulta',{},'pri')}</div>`});
+SC.misDatos=()=>({t:'Mis datos',back:1,body:`<span class="lab" style="margin-top:0">Nombre</span>${fld('md-n','Nombre','Daniela Pérez')}<span class="lab">Teléfono</span>${fld('md-t','Teléfono','06 00 00 00 01','tel')}
+ <span class="lab">Correo</span><div class="field" style="display:flex;align-items:center;color:var(--ink2)">daniela@ejemplo.fr</div><p class="muted">Para cambiar el correo te pedimos un código.</p>
+ <span class="lab">Idioma</span><div class="chips">${chip('Français',S.idioma==='fr','idioma',{v:'fr'})}${chip('Español',S.idioma==='es','idioma',{v:'es'})}</div>
+ <div style="margin-top:12px">${btn('Guardar','toastC',{m:'Datos guardados'},'pri')}</div><div style="margin-top:6px">${btn('Cambiar correo','toastC',{m:'Te enviamos un código al nuevo correo'},'sm')}</div>`});
+SC.privacidad=()=>({t:'Privacidad',back:1,body:`<p class="h" style="margin-top:4px">Quién ve tus datos</p>
+ <div class="lrow" style="display:block"><b>Entrenadores y dirigentes del club</b><br><span class="muted">Tu nombre, teléfono y correo, y los datos de tus hijos.</span></div>
+ <div class="lrow" style="display:block"><b>Otras familias de tu equipo</b><br><span class="muted">Solo lo que tú elijas compartir.</span></div>
+ <div class="lrow" style="display:block"><b>Compañeros de tus hijos</b><br><span class="muted">Solo su nombre de pila, en el chat del equipo.</span></div>
+ <div style="margin-top:8px">${btn('Elegir qué comparto','go',{s:'compartir'},'sm')}</div>
+ <p class="h">Tus derechos</p>
+ <div style="display:grid;gap:8px">${btn('Descargar mis datos','toastC',{m:'Te enviamos un correo con tus datos'},'sm')}${btn('Pedir que se quiten fotos de mis hijos','toastC',{m:'El club revisará tu pedido'},'sm')}${btn('Salir de este club','sheet',{s:'salirClub'},'sm')}${btn('Eliminar mi cuenta','sheet',{s:'eliminar'},'sm')}</div>`});
+SC.clubPub=()=>{
+ const c=CLUBES.find(x=>x.id===S.pubId)||CLUBES[0];
+ return {t:c.n,back:1,backS:'landing',noTabs:1,body:`${ph('foto del club',110)}<p class="muted" style="margin:8px 0 0">${c.c} · ${c.d}</p>
+ <div class="grid2" style="margin-top:8px"><div class="stat"><b>${c.eq}</b><span>equipos</span></div><div class="stat"><b>${c.fam}</b><span>familias</span></div></div>
+ <p class="h">Categorías</p><div class="chips">${['U8','U10','U12','U14','U16'].map(x=>`<span class="tag">${x}</span>`).join('')}</div>
+ <p class="h">Contacto</p><div class="lrow" style="display:block"><b>contacto@${c.id}.fr</b><br><span class="muted">${c.c}</span></div>
+ <div style="margin-top:12px">${btn('Pedir invitación','sheet',{s:'pedirInv'},'pri')}</div><div style="margin-top:6px">${btn('Ya tengo invitación','auth',{s:'login1'},'sm')}</div>`};
+};
+
 /* ---- fotos (jugador) ---- */
 SC.fotos=()=>({t:'Fotos',club:1,body:`${['U12 vs Rochelais · 18 oct','Entrenamiento · 13 oct','Stage de verano'].map(t=>`<p class="h">${t}</p><div class="grid3">${Array.from({length:6},()=>ph('foto',84)).join('')}</div>`).join('')}`});
 
 /* ---- más ---- */
 SC.mas=()=>{
  let b='';
- if(S.rol==='apoderado')b+=`${row('Mi familia','Daniela · Lucas · Emma','go',{s:'familia'})}${row('Chat de niños','Solo lectura','go',{s:'chat',ro:1})}${row('Familias de mi equipo','Directorio opcional','go',{s:'familias'})}${row('Compartir mis datos','Teléfono y correo','go',{s:'compartir'})}`;
+ if(S.rol==='apoderado')b+=`${row('Mi familia','Daniela · Lucas · Emma','go',{s:'familia'})}${row('Chat de niños','Solo lectura','go',{s:'chat',ro:1})}${row('Familias de mi equipo','Directorio opcional','go',{s:'familias'})}${row('Turnos de traslado'+NW(),'Quién lleva y cuándo','go',{s:'turnos'})}${row('Mi equipo · U12'+NW(),'Entrenadores y plantel','go',{s:'equipoF'})}${row('Compartir mis datos','Teléfono y correo','go',{s:'compartir'})}${row('Mis datos'+NW(),'Nombre, teléfono, idioma','go',{s:'misDatos'})}${row('Privacidad'+NW(),'Quién ve qué, descargar o borrar','go',{s:'privacidad'})}`;
  if(isCoach())b+=`${row('Directorio de contactos','Familias de todos los equipos','go',{s:'directorio'})}`;
- b+=`${row('Mis clubes',clubN()+' · '+(MIS_CLUBES.length)+' clubes','sheet',{s:'clubs'})}${row('Idioma',S.idioma==='fr'?'Français':'Español','go',{s:'idioma'})}${row('Notificaciones','Push, correo','go',{s:'notifs'})}${row('Instalar la app','','sheet',{s:'instalar'})}${row('Cerrar sesión','','auth',{s:'landing'},'')}`;
+ b+=`${row('Mis clubes',clubN()+' · '+(MIS_CLUBES.length)+' clubes','sheet',{s:'clubs'})}${row('Idioma',S.idioma==='fr'?'Français':'Español','go',{s:'idioma'})}${row('Preferencias de avisos','Push, correo','go',{s:'notifs'})}${row('Instalar la app','','sheet',{s:'instalar'})}${row('Cerrar sesión','','auth',{s:'landing'},'')}`;
  return {t:'Más',club:1,body:b};
 };
 SC.familia=()=>({t:'Mi familia',back:1,body:`
@@ -715,7 +799,7 @@ SC.familia=()=>({t:'Mi familia',back:1,body:`
  ${S.hijosX.map(h=>`<div class="card"><div class="sp"><span><b style="font-size:18px">${esc(h.n)}</b> ${tag(h.eq)}</span>${tag('Pendiente del club','dash')}</div></div>`).join('')}
  ${btn('Agregar hijo','sheet',{s:'agregarHijo'},'sm')}`});
 SC.idioma=()=>({t:'Idioma',back:1,body:[['fr','Français'],['es','Español']].map(([k,l])=>`<button type="button" class="lrow" data-a="idioma" data-v="${k}"><b>${l}</b><span class="chk ${S.idioma===k?'on':''}">${S.idioma===k?'✓':''}</span></button>`).join('')});
-SC.notifs=()=>({t:'Notificaciones',back:1,body:`${trow('Avisos en el celular','Push','push')}${trow('Correo','','correo')}${trow('Cambios de hora de regreso','','hora')}${trow('Recordatorio de mi turno','48 h y 3 h antes','turno')}${trow('Aviso por WhatsApp','Un mensaje con un enlace','wsp')}`});
+SC.notifs=()=>({t:'Preferencias de avisos',back:1,body:`${trow('Avisos en el celular','Push','push')}${trow('Correo','','correo')}${trow('Cambios de hora de regreso','','hora')}${trow('Recordatorio de mi turno','48 h y 3 h antes','turno')}${trow('Aviso por WhatsApp','Un mensaje con un enlace','wsp')}`});
 SC.compartir=()=>({t:'Compartir mis datos',back:1,body:`<p class="muted">Con las familias de tu equipo.</p>${trow('Mi teléfono','','sh_tel')}${trow('Mi correo','','sh_mail')}${trow('Aparecer en el directorio','','perfil')}`});
 SC.familias=()=>({t:'Familias de U12',back:1,body:`${S.EQ.U12.map((n,i)=>{const f=FAM[n][0];const t=i%3!==0;return `<div class="lrow" style="display:block"><b>${f.n}</b> <span class="muted">· ${n}</span><br><span class="muted">${t?f.tel+' · '+f.mail:'No comparte sus datos'}</span></div>`}).join('')}`});
 
@@ -748,6 +832,12 @@ luc.bernard@ejemplo.fr, Familia, U12
 sin-arroba, Familia, U12
 marta.garcia@ejemplo.fr, Familia, U12</textarea><div class="grid2" style="margin-top:10px">${btn('Subir CSV','noop',{},'sm')}${btn('Autorizar','autorizar',{},'pri sm')}</div>`;
 
+SH.cambiarTurno=p=>`<p class="h" style="margin-top:0">Cambiar mi turno</p><p class="muted m0">${L(TURNOS[p.i].f)} · ${TURNOS[p.i].t}</p><span class="lab">Con quién</span><select class="field" id="ct1"><option>Pedir a todas las familias</option><option>Familia Moreau</option><option>Familia Roux</option><option>Familia Bernard</option></select><span class="lab">Motivo (opcional)</span>${fld('ct2','Viajo ese fin de semana')}<p class="muted">Camila confirma el cambio.</p>${btn('Enviar pedido','pideTurno',{i:p.i},'pri')}<div style="margin-top:6px">${btn('Cancelar','cerrar',{},'sm')}</div>`;
+SH.subirFoto=p=>`<p class="h" style="margin-top:0">Agregar foto</p><p class="muted">Se achica en tu celular antes de subir.</p><div class="grid2">${btn('Cámara','subeFoto',{id:p.id},'pri')}${btn('Galería','subeFoto',{id:p.id},'')}</div>`;
+SH.fotoMenu=()=>`<p class="h" style="margin-top:0">Esta foto</p>${btn('Pedir que se quite','pideQuitar',{},'pri')}<p class="muted">Un entrenador la revisa. Sirve si sale tu hijo y no quieres que se vea.</p><div style="margin-top:6px">${btn('Cancelar','cerrar',{},'sm')}</div>`;
+SH.pedirInv=()=>`<p class="h" style="margin-top:0">Pedir invitación</p><span class="lab">Tu correo</span>${fld('pi-m','tucorreo@ejemplo.fr')}<span class="lab">Nombre de tu hijo o hija</span>${fld('pi-h','Nombre')}<span class="lab">Equipo</span><select class="field" id="pi-e">${['U8','U10','U12','U14','U16'].map(x=>`<option>${x}</option>`).join('')}</select><p class="muted">El club revisa tu solicitud y te avisa por correo.</p>${btn('Enviar al club','enviaSol',{},'pri')}`;
+SH.salirClub=()=>`<p class="h" style="margin-top:0">Salir del Club Aigles</p><p>Tus hijos dejan de aparecer en sus equipos y dejas de recibir avisos de este club.</p>${btn('Salir del club','toastC',{m:'Saliste del Club Aigles'},'pri')}<div style="margin-top:6px">${btn('Cancelar','cerrar',{},'sm')}</div>`;
+SH.eliminar=()=>`<p class="h" style="margin-top:0">Eliminar mi cuenta</p><p>Borramos tus datos y los de tus hijos en Sportiva. El club puede conservar el historial deportivo que necesite.</p>${btn('Eliminar mi cuenta','toastC',{m:'Pedido enviado. Te confirmamos por correo'},'pri')}<div style="margin-top:6px">${btn('Cancelar','cerrar',{},'sm')}</div>`;
 const guardaCampos=()=>{const m={};document.querySelectorAll('#phone input[id],#phone textarea[id]').forEach(e=>{m[e.id]=e.value});return m};
 const restauraCampos=m=>{Object.entries(m).forEach(([id,v])=>{const e=document.getElementById(id);if(e&&e.value!==v)e.value=v})};
 /* ===================== render ===================== */
@@ -770,7 +860,7 @@ function render(keep){
   const b=(k==='feed'&&S.rol==='apoderado')?3:(k==='consultas'?S.CONS.filter(x=>x.nl).length+S.CONSE.filter(x=>x.nl).length:0);
   return `<button type="button" class="tab ${S.tab===k?'on':''}" data-a="tab" data-v="${k}"><span class="ico"></span>${l}${b?`<span class="badge">${b}</span>`:''}</button>`}).join('')}</nav>`:'';
  const club=(o.club&&!S.auth&&!S.nav.length)?`<div class="clubline"><button type="button" data-a="sheet" data-s="clubs">${clubN()} ▾</button></div>`:'';
- ph_.innerHTML=`<div class="sb"><span>9:41</span><span></span></div>${club}<div class="top">${topBack}<h4>${o.t||''}</h4>${o.right||''}</div><div class="body">${o.body}</div>${o.foot||''}${o.fab||''}${tabs}${overlays()}`;
+ ph_.innerHTML=`<div class="sb"><span>9:41</span><span></span></div>${club}<div class="top">${topBack}<h4>${o.t||''}${NUEVAS.has(cur.s)?NW():''}</h4>${o.right||''}</div><div class="body">${S.auth?'':banner()}${o.body}</div>${o.foot||''}${o.fab||''}${tabs}${overlays()}`;
  restauraCampos(campos);
  const nb=ph_.querySelector('.body');if(nb&&keep)nb.scrollTop=st;
  if(nb&&cur.s==='chat')nb.scrollTop=nb.scrollHeight;
@@ -784,15 +874,15 @@ function renderPC(keep){
  let html='';
  if(S.auth){
   const o=SC[S.auth]({});
-  html=`<div class="dkauth"><div class="dkcard"><div class="top">${o.back?`<button type="button" class="back" data-a="auth" data-s="${o.backS}">‹ Atrás</button>`:''}<h4>${o.t||''}</h4>${o.right||''}</div><div class="body">${o.body}</div></div></div>`;
+  html=`<div class="dkauth"><div class="dkcard"><div class="top">${o.back?`<button type="button" class="back" data-a="auth" data-s="${o.backS}">‹ Atrás</button>`:''}<h4>${o.t||''}${NUEVAS.has(S.auth)?NW():''}</h4>${o.right||''}</div><div class="body">${o.body}</div></div></div>`;
  }else{
   const root=SC[S.tab]({});
   const dn=S.nav.length?S.nav[S.nav.length-1]:null;
   const det=dn?SC[dn.s](dn.p||{}):null;
   const nav=TABS[S.rol].map(([k,l])=>{const b=(k==='feed'&&S.rol==='apoderado')?3:(k==='consultas'?S.CONS.filter(x=>x.nl).length+S.CONSE.filter(x=>x.nl).length:0);return `<button type="button" class="nv ${S.tab===k?'on':''}" data-a="tab" data-v="${k}"><span class="ico"></span>${l}${b?`<span class="badge">${b}</span>`:''}</button>`}).join('');
   html=`<nav class="dkn"><div class="brand">Sportiva</div><button type="button" class="clubb" data-a="sheet" data-s="clubs">${clubN()} <span>▾</span></button>${nav}<div class="yo">${{jugador:'Lucas',entrenador:'Pedro',encargado:'Camila',directiva:'Sylvie'}[S.rol]||'Daniela Pérez'}</div></nav>
-  <section class="dkc"><div class="dkh"><h4>${root.t}</h4>${root.right||''}</div><div class="body">${root.body}</div>${root.foot||''}${root.fab||''}</section>
-  <section class="dkd">${det?`<div class="dkh">${S.nav.length>1?`<button type="button" class="back" data-a="back">‹ Atrás</button>`:`<button type="button" class="back" data-a="cerrarDet" aria-label="Cerrar">✕</button>`}<h4>${det.t||''}</h4>${det.right||''}</div><div class="body ${det.cols?'cols':''}">${det.body}</div>${det.foot||''}`:`<div class="vacio"><div class="ph" style="height:110px;margin-bottom:14px"><span>sin selección</span></div><b>Elige un evento, un aviso o una conversación</b></div>`}</section>`;
+  <section class="dkc"><div class="dkh"><h4>${root.t}</h4>${root.right||''}</div><div class="body">${banner()}${root.body}</div>${root.foot||''}${root.fab||''}</section>
+  <section class="dkd">${det?`<div class="dkh">${S.nav.length>1?`<button type="button" class="back" data-a="back">‹ Atrás</button>`:`<button type="button" class="back" data-a="cerrarDet" aria-label="Cerrar">✕</button>`}<h4>${det.t||''}${NUEVAS.has(dn.s)?NW():''}</h4>${det.right||''}</div><div class="body ${det.cols?'cols':''}">${det.body}</div>${det.foot||''}`:`<div class="vacio"><div class="ph" style="height:110px;margin-bottom:14px"><span>sin selección</span></div><b>Elige un evento, un aviso o una conversación</b></div>`}</section>`;
  }
  ph_.innerHTML=html+overlays();
  restauraCampos(campos);
@@ -808,7 +898,10 @@ function panel(){
   directiva:[['Equipos','cEquipos',{}],['Personas','cPersonas',{}],['Invitaciones','cInvit',{}],['Temporada','cTemporada',{}],['Ajustes del club','cAjustes',{}]],
   jugador:[['Convocatoria (solo lectura)','convo',{id:'e2'}]]
  };J.encargado=J.entrenador;
- $('#panelbody').innerHTML=`<h5>Dispositivo</h5>${[['cel','Celular'],['pc','Escritorio']].map(([k,l])=>`<button type="button" class="${S.dev===k?'on':''}" data-a="dev" data-v="${k}">${l}</button>`).join('')}<h5>Ingreso</h5>${[['landing','Lista de clubes'],['inv_mail','Invitación (correo)'],['instalar1','Instalar la app'],['instalar2','Abrir desde inicio'],['login1','Correo'],['login2','Código'],['clubes','Elegir club'],['ob1','Bienvenida']].map(([s,l])=>`<button type="button" class="${S.auth===s?'on':''}" data-a="auth" data-s="${s}">${l}</button>`).join('')}
+ $('#panelbody').innerHTML=`<h5>Dispositivo</h5>${[['cel','Celular'],['pc','Escritorio']].map(([k,l])=>`<button type="button" class="${S.dev===k?'on':''}" data-a="dev" data-v="${k}">${l}</button>`).join('')}<h5>Marcar nuevas</h5>${[['si','Sí'],['no','No']].map(([k,l])=>`<button type="button" class="${(S.marcar?'si':'no')===k?'on':''}" data-a="marcar" data-v="${k}">${l}</button>`).join('')}
+ <h5>Nuevas en esta ronda</h5>${[['Turnos de traslado','turnos',{}],['Notificaciones','bandeja',{}],['Convocatoria modificada','convo',{id:'e2'}],['Fotos del partido','fotosEv',{id:'h1'}],['Visor de foto','visor',{id:'h1',i:0}],['Mi equipo','equipoF',{}],['Nueva consulta','nuevaConsulta',{}],['Mis datos','misDatos',{}],['Privacidad','privacidad',{}],['Página pública del club','clubPub',{auth:1}]].map(([l,sc,pp])=>`<button type="button" data-a="jumpN" data-s="${sc}" data-p='${JSON.stringify(pp)}'>${l}</button>`).join('')}
+ <h5>Conexión</h5>${[['on','En línea'],['off','Sin conexión']].map(([k,l])=>`<button type="button" class="${(S.off?'off':'on')===k?'on':''}" data-a="conexion" data-v="${k}">${l}</button>`).join('')}
+ <h5>Ingreso</h5>${[['landing','Lista de clubes'],['inv_mail','Invitación (correo)'],['instalar1','Instalar la app'],['instalar2','Abrir desde inicio'],['login1','Correo'],['login2','Código'],['clubes','Elegir club'],['ob1','Bienvenida']].map(([s,l])=>`<button type="button" class="${S.auth===s?'on':''}" data-a="auth" data-s="${s}">${l}</button>`).join('')}
  <h5>Rol</h5>${R.map(([k,l])=>`<button type="button" class="${!S.auth&&S.rol===k?'on':''}" data-a="rol" data-v="${k}">${l}</button>`).join('')}
  <h5>Estado del partido</h5>${[['antes','Antes'],['sinrep','En vivo sin reporteros'],['vivo','En vivo'],['final','Terminado']].map(([k,l])=>`<button type="button" class="${S.estado===k?'on':''}" data-a="estado" data-v="${k}">${l}</button>`).join('')}
  <h5>Deporte</h5>${[['futbol','Fútbol'],['volley','Vóley']].map(([k,l])=>`<button type="button" class="${S.deporte===k?'on':''}" data-a="dep" data-v="${k}">${l}</button>`).join('')}
@@ -816,7 +909,7 @@ function panel(){
 }
 
 /* ===================== acciones ===================== */
-const TABOF={familia:'mas',chat:'mas',cInvit:'club',convo:'agenda',envivo:'agenda',lista:'agenda',asistencia:'agenda',crear:'agenda',elegir:'agenda',aviso:'feed',nuevoAviso:'feed',hilo:'actividad',familias:'mas',jugador:'plantel',reorganizar:'plantel',cEquipos:'club',cPersonas:'club',cTemporada:'club',cAjustes:'club'};
+const TABOF={turnos:'mas',bandeja:'agenda',fotosEv:'agenda',visor:'agenda',equipoF:'mas',nuevaConsulta:'actividad',misDatos:'mas',privacidad:'mas',familia:'mas',chat:'mas',cInvit:'club',convo:'agenda',envivo:'agenda',lista:'agenda',asistencia:'agenda',crear:'agenda',elegir:'agenda',aviso:'feed',nuevoAviso:'feed',hilo:'actividad',familias:'mas',jugador:'plantel',reorganizar:'plantel',cEquipos:'club',cPersonas:'club',cTemporada:'club',cAjustes:'club'};
 const A={
  noop(){},
  auth(d){S.auth=d.s;S.nav=[];render()},
@@ -847,7 +940,7 @@ const A={
  vote(d){
   const k=clave(d.id,d.h),prev=S.votos[k]||null;
   if(prev==='voy'&&(d.v==='no'||d.v==='duda')){S.sheet={s:'cambiarVoto',id:d.id,h:d.h,v:d.v};render(true);return}
-  aplicaVoto(d.id,d.h,d.v,'');toast('Respuesta guardada');
+  aplicaVoto(d.id,d.h,d.v,'');toast(S.off?'Guardada. Se enviará cuando vuelva la conexión':'Respuesta guardada');
  },
  confirmaVoto(d){const m=($('#mv')||{}).value||'';aplicaVoto(d.id,d.h,d.v,m);S.sheet=null;toast('Avisamos a Camila y Pedro')},
  cupo(){S.cupo=!S.cupo;render(true)},
@@ -969,9 +1062,38 @@ Object.assign(A,{
   S.sheet=null;toast(ok+' autorizados · '+dup+' repetidos · '+bad+' inválidos');
  }
 });
+Object.assign(A,{
+ verClub(d){S.pubId=d.id;S.auth='clubPub';S.nav=[];render()},
+ jumpN(d,el){const p=JSON.parse(el.dataset.p||'{}');S.sheet=null;
+  if(p.auth){S.auth=d.s;S.nav=[];render();return}
+  S.rol='apoderado';S.auth=null;S.nav=[{s:d.s,p}];S.tab=TABOF[d.s]||'agenda';render()},
+ entendido(d){delete S.camb2[d.id];render(true)},
+ pideTurno(d){S.turnoPed[d.i]=1;S.sheet=null;toast('Pedido enviado. Camila lo confirma.')},
+ nFil(d){S.notifF=d.v;render(true)},
+ nLeer(){S.NOTIFS.forEach(n=>{n.nl=0});render(true)},
+ nAbrir(d){const n=S.NOTIFS.find(x=>x.id===d.id);n.nl=0;S.nav.push({s:n.go.s,p:Object.assign({},n.go.p)});render()},
+ visorNav(d){const t=S.nav[S.nav.length-1];const n=S.fotos[t.p.id]||1;t.p.i=(((+t.p.i)+(+d.d))%n+n)%n;render()},
+ subeFoto(d){S.fotos[d.id]=(S.fotos[d.id]||0)+1;S.sheet=null;toast('Foto subida · se achicó a 1600 px (420 KB)')},
+ pideQuitar(){S.sheet=null;toast('El entrenador lo revisará')},
+ enviaConsulta(){
+  const m=(($('#nc-m')||{}).value||'').trim();if(!m){toast('Escribe tu consulta');return}
+  const t=(($('#nc-t')||{}).value||'').trim()||'Consulta general';const para=$('#nc-p').value;const id='c'+Date.now();
+  S.ACT.unshift({t:'cons',id,txt:t,ctx:'Para '+para,hora:'Ahora',msgs:[{de:'yo',t:m}]});
+  S.CONS.unshift({id,n:'Familia Pérez',jug:'Lucas',ctx:t,nl:1,msgs:[{de:'ot',n:'Daniela',t:m}]});
+  S.nav=[];S.tab='actividad';toast('Consulta enviada a '+para)
+ },
+ enviaSol(){
+  const m=(($('#pi-m')||{}).value||'').trim(),h=(($('#pi-h')||{}).value||'').trim();if(!m){toast('Escribe tu correo');return}
+  S.SOL.push({m,h:(h||'Hijo')+' · '+$('#pi-e').value});S.sheet=null;toast('Enviado al club. Te avisaremos por correo')
+ },
+ solOk(d){const x=S.SOL.splice(+d.i,1)[0];S.INV.push({m:x.m,r:'Familia',e:x.h.split(' · ')[1]||'—',s:'autorizado'});toast('Autorizado. Ya puedes enviarle la invitación')},
+ solNo(d){S.SOL.splice(+d.i,1);toast('Solicitud rechazada')},
+ conexion(d){const was=S.off;S.off=d.v==='off'?1:0;if(was&&!S.off&&S.cola.length){const n=S.cola.length;S.cola=[];toast('Se enviaron '+n+' respuesta'+(n>1?'s':''));return}render(true)},
+ marcar(d){S.marcar=d.v==='si'?1:0;render(true)}
+});
 function aplicaVoto(id,h,v,m){
  const k=clave(id,h);const e=evPor(id);
- S.votos[k]=v;
+ S.votos[k]=v;if(S.off&&!S.cola.includes(k))S.cola.push(k);
  S.ACT.unshift({t:'voto',txt:HIJOS[h].n+' · '+VT[v][1]+' · '+titulo(e)+' '+L(e.f),hora:'Ahora'});
  if(h==='lucas')S.CAMBIOS.unshift({n:'Lucas',v,m,cuando:'ahora'});
  render(true);

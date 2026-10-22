@@ -261,3 +261,18 @@ Cada deporte se define en un archivo (`sports/futbol.json`, `volley.json`, `basq
   - Los apoderados lo ven en **solo lectura** desde Más.
 - **Escritorio.** La misma app con diseño de tres zonas: barra lateral, lista y detalle. Las acciones sobre un evento, aviso o conversación abren en el panel derecho; las hojas se vuelven ventanas centradas.
 - **Prototipo:** `docs/wireframes/prototipo.html` ahora incluye todo esto y un selector de dispositivo (celular o escritorio).
+
+## 22. Ronda 7: pantallas nuevas para apoderados
+Todas llevan la etiqueta «Nuevo» en el prototipo (se puede apagar en el panel).
+- **Turnos de traslado:** reemplaza el PDF del refrigerador. Muestra «Tus turnos» y la rotación del equipo, con estado confirmado o tentativo. Se puede **pedir un cambio** (a una familia o a todas) y el encargado lo confirma. Avisos 48 h y 3 h antes.
+- **Notificaciones (campana):** bandeja con todas, sin leer y «marcar todo como leído». Cada aviso abre la pantalla correspondiente. Las **preferencias** de avisos pasan a llamarse «Preferencias de avisos» en Más.
+- **Convocatoria modificada:** cuando cambia el lugar o la hora, la agenda marca «Modificada hoy» y la convocatoria muestra **antes y ahora**, con un botón «Entendido».
+- **Fotos del partido:** galería, visor con anterior y siguiente, y «Agregar foto» (cámara o galería; se achica en el celular antes de subir). Desde el visor, la familia puede **pedir que se quite una foto** (derecho de imagen).
+- **Mi equipo:** entrenadores con el botón «Preguntar», reglas fijadas, jugadores y acceso a las familias.
+- **Nueva consulta general:** una consulta privada que no depende de un evento, con destinatario (Camila, Pedro o ambos).
+- **Mis datos:** nombre, teléfono, idioma; el cambio de correo exige un código.
+- **Privacidad:** quién ve qué; descargar mis datos; pedir que se quiten fotos de mis hijos; salir del club; eliminar la cuenta.
+- **Página pública del club** (desde la lista de clubes): cifras, categorías, contacto y **Pedir invitación**. El club ve las **solicitudes** en Invitaciones y las aprueba o rechaza.
+- **Sin conexión:** aviso en la parte de arriba; las respuestas quedan «pendientes» y se envían al volver la conexión.
+
+**Pendiente:** hoja de ruta completa, resumen del partido terminado, buscador, pantallas vacías y de error, y el escritorio de entrenadores y directiva.
