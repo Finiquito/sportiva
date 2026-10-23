@@ -10,9 +10,9 @@ def regreso(h,sub,cambio=None):
     return card('<span class="ey">Regreso estimado al club</span><span class="num-g">%s</span><p class="meta" style="margin-top:8px">{{i:clock:bold}}%s</p>'%(h,sub),(('<div class="aviso" style="margin-top:12px">%s<div><b>%s</b><p>%s</p></div></div>'%(fi('timer'),cambio[0],cambio[1])) if cambio else ''))
 
 # ---------- Evento especial ----------
-ev_info=card(tags(tipo_tag('especial'),chipm('U12 · Lucas')),h2('Stage de vacaciones'),meta('calendar-blank','Jue 29 oct · 09:00 – 17:00'),meta('map-pin','Complexe sportif · Niort','margin-top:6px'))
-ev_insc=card('<span class="ey">Inscripción</span><span class="num-g">45 €</span>','<p class="meta" style="margin:8px 0 14px">Precio informativo. No se cobra en la app.</p>',aviso_box('mail' if False else 'paper-plane-tilt','Al inscribirte se avisa a tesorería','tesoreria@aigles.fr'),'<div style="height:14px"></div>',bt('Inscribir a Lucas','check',k='s w'))
-ev_lugar=card(ch('Lugar'),mapa_lugar('Complexe sportif · Niort','Avenue Ejemplo 8, Niort'))
+ev_info=card(tags(tipo_tag('especial'),chipm('U12 · Lucas')),h2('Stage de vacaciones'),meta('calendar-blank','Jue 29 oct · 09:00 – 17:00'),meta('map-pin','Complexe sportif · Coulonges-sur-l’Autize','margin-top:6px'))
+ev_insc=card('<span class="ey">Inscripción</span><span class="num-g">45 €</span>','<p class="meta" style="margin:8px 0 14px">Precio informativo. No se cobra en la app.</p>',aviso_box('mail' if False else 'paper-plane-tilt','Al inscribirte se avisa a tesorería','tesoreria@ejemplo.fr'),'<div style="height:14px"></div>',bt('Inscribir a Lucas','check',k='s w'))
+ev_lugar=card(ch('Lugar'),mapa_lugar('Complexe sportif · Coulonges-sur-l’Autize','6 Place du Château, 79160 Coulonges-sur-l’Autize'))
 ev_preg=card(ch('Preguntar al entrenador'),campo_enviar('Escribe tu pregunta…'),'<p class="meta" style="margin-top:10px">{{i:lock:bold}}Privado: lo ven los entrenadores del equipo.</p>')
 S('ap-evento','apoderado','Convocatoria · evento especial','agenda','Stage de vacaciones',[ev_info,ev_insc,ev_lugar,ev_preg],back='Agenda',sub='Evento especial · Jue 29 oct',layout='g2',
   dmain=[ev_info,ev_lugar],dside=[ev_insc,ev_preg])

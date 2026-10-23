@@ -10,9 +10,9 @@ def btn_s(t,ic=None,w=True): return bt(t,ic,k='s w' if w else 's')
 HORAS_LINEA=lambda e,c,p:'<p class="meta" style="margin-top:6px">{{i:clock:bold}}Encuentro %s · En cancha %s · Partido %s</p>'%(e,c,p) if e else '<p class="meta" style="margin-top:6px">{{i:clock:bold}}En cancha %s · Partido %s</p>'%(c,p)
 
 # ---------------- 1 · Agenda ----------------
-ag_partido=card(tags(tipo_tag('partido'),chipm('U12'),tag('Modificada hoy','map-pin')),h2('U12 vs Niort'),meta('map-pin','Stade du Centre · Niort'),HORAS_LINEA('12:30','13:15','14:00'),resumen_a(),acciones(bt('Abrir',k='f')))
+ag_partido=card(tags(tipo_tag('partido'),chipm('U12'),tag('Modificada hoy','map-pin')),h2('U12 vs Niort'),meta('map-pin','Estadio · Coulonges-sur-l’Autize'),HORAS_LINEA('12:30','13:15','14:00'),resumen_a(),acciones(bt('Abrir',k='f')))
 ag_entreno=card(tags(tipo_tag('entreno'),chipm('U12')),h2('Entrenamiento U12'),meta('clock','18:00 – 19:30'),meta('map-pin','Gimnasio municipal','margin-top:6px'),resumen_a(8,1,0,1),acciones(bt('Abrir',k='f')))
-ag_stage=card(tags(tipo_tag('especial'),chipm('U12')),h2('Stage de vacaciones'),meta('clock','09:00 – 17:00'),meta('map-pin','Complexe sportif · Niort','margin-top:6px'),resumen_a(3,1,0,6),acciones(bt('Abrir',k='f')))
+ag_stage=card(tags(tipo_tag('especial'),chipm('U12')),h2('Stage de vacaciones'),meta('clock','09:00 – 17:00'),meta('map-pin','Complexe sportif · Coulonges-sur-l’Autize','margin-top:6px'),resumen_a(3,1,0,6),acciones(bt('Abrir',k='f')))
 ag_chauray=card(tags(tipo_tag('partido'),chipm('U12')),h2('U12 vs Chauray'),meta('map-pin','Stade municipal (Aiffres)'),HORAS_LINEA(None,'14:15','15:00'),resumen_a(0,0,0,10),acciones(bt('Abrir',k='f')))
 nueva=bt('Nueva convocatoria','plus',k='s w',style='margin-top:6px')
 S('en-agenda',R,'Agenda','agenda','Agenda',
@@ -59,7 +59,7 @@ ev_marc=card(ch('Marcador','<span class="est">{{i:check:bold}}Reportando</span>'
 ev_ret=card(ch('Regreso estimado al club'),'<div class="horas" style="border:0;margin:0;padding:0;grid-template-columns:1fr"><div><span class="hora"><span class="hl">18:50</span></span></div></div>','<p class="meta" style="margin:10px 0 14px">{{i:clock:bold}}Antes 18:30 · lo cambió Marta hace 4 min</p>',bt('Cambiar hora',k='w'))
 ev_quien=card(ch('Quién reporta'),pers('CA','Camila (tú)','Entrenadora · reportando',est('check','Activa')),pers('MG','Marta G.','Familia · reportando',est('check','Activa')),bt('Pedir a otra familia','plus',k='w',style='margin-top:12px'))
 ev_line=card(ch('Actualizaciones'),campo('Escribe una actualización','',ph=True),acciones(bt('Foto','camera'),btn_s('Publicar',None,w=False)),hr(),evt('14:42','Marta','Cambió el regreso a 18:50. Se alargó el torneo.'),evt('14:05','Tú','Comenzó el partido.'),evt('13:40','Sofía','Llegamos. Hay estacionamiento frente a la cancha.'),evt('12:35','Luis','Salimos del club. 3 autos.'))
-S('en-envivo',R,'Reporte en vivo','agenda','U12 vs Niort',[ev_marc,ev_ret,ev_quien,ev_line],back='Asistencia',sub='En partido · 14:00 · Stade du Centre',layout='g2',
+S('en-envivo',R,'Reporte en vivo','agenda','U12 vs Niort',[ev_marc,ev_ret,ev_quien,ev_line],back='Asistencia',sub='En partido · 14:00 · Estadio del club',layout='g2',
   dmain=[ev_marc,ev_line],dside=[ev_ret,ev_quien])
 
 # ---------------- 7 · Turnos (nuevo modelo) ----------------
@@ -79,14 +79,14 @@ S('en-turnos',R,'Turnos de traslado','agenda','Turnos',[t_info,t_sol]+t_cards+[t
 
 # ---------------- 8 · Feed ----------------
 f_items=[
- card('<div class="hilo">%s<div><span class="ey">Convocatoria publicada</span><b>U12 vs Niort</b><p>Sáb 24 oct · 14:00 · Stade du Centre · Niort</p>%s</div></div>'%(fi('c:balon','lim'),bt('Ver asistencia'))),
+ card('<div class="hilo">%s<div><span class="ey">Convocatoria publicada</span><b>U12 vs Niort</b><p>Sáb 24 oct · 14:00 · Estadio · Coulonges-sur-l’Autize</p>%s</div></div>'%(fi('c:balon','lim'),bt('Ver asistencia'))),
  post('CA','Camila · entrenadora','Mié 21 oct','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',titulo='Ropa perdida del sábado',extra='<div class="foto-ph" style="margin-bottom:14px">{{i:images:bold}}</div>',coment='1 comentario'),
  '<p class="sis">{{i:users-three:bold}}Nolan pasa de U11B a U11A desde el 15 nov</p>',
  card(ch('Fotos','<span class="est">12 nuevas</span>'),fotos(3),bt('Ver fotos',k='w')),
  card('<div class="hilo">%s<div><span class="ey">Resultado</span><b>U12 3 – 1 Rochelais</b><p>Dom 18 oct</p></div></div>'%fi('trophy'))]
 pub=bt('Publicar aviso','megaphone',k='s w',style='margin-bottom:12px')
 S('en-feed',R,'Feed','feed','Feed',[pub,dia('Esta semana')]+f_items,eyebrow='Hola, Camila',layout='g3',
-  dleft=[card(ch('Equipos'),lista(fila(fi('c:balon','lim'),'U12','10 jugadores','',sel=True),fila(fi('c:silbato','pol'),'U13','8 jugadores'),fila(fi('house'),'Club Aigles','Avisos del club')))],
+  dleft=[card(ch('Equipos'),lista(fila(fi('c:balon','lim'),'U12','10 jugadores','',sel=True),fila(fi('c:silbato','pol'),'U13','8 jugadores'),fila(fi('house'),'FCJ Orée de l’Autize','Avisos del club')))],
   dmain=[pub]+f_items,dside=[card(ch('Próximo partido'),tags(tipo_tag('partido'),chipm('U12')),h2('U12 vs Niort','font-size:20px'),'<p class="meta">{{i:calendar-blank:bold}}Sáb 24 · 14:00</p>',resumen_a(),bt('Ver asistencia',k='w',style='margin-top:12px'))])
 
 # ---------------- 9 · Nuevo aviso ----------------
@@ -134,4 +134,4 @@ d_ficha=card(ch('Daniela Pérez'),'<span class="mini-t">Familia de Lucas · U12<
 S('en-directorio',R,'Directorio','plantel','Directorio',[d_list],back='Plantel',sub='Familias de todos los equipos',layout='g2',dmain=[d_list],dside=[d_ficha])
 
 # ---------------- 16 · Más ----------------
-S('en-mas',R,'Más','mas','Más',[card(lkl(lk('user-circle','Mi perfil','Datos, idioma, avisos'),lk('address-book' if False else 'users-three','Directorio de contactos','Familias de todos los equipos'),lk('house','Mis clubes','Club Aigles · 2 clubes'),lk('question','Ayuda','Instalar la app')),style='padding:8px 20px'),bt('Cerrar sesión','x',k='danger w')],eyebrow='Hola, Camila',layout='uno')
+S('en-mas',R,'Más','mas','Más',[card(lkl(lk('user-circle','Mi perfil','Datos, idioma, avisos'),lk('address-book' if False else 'users-three','Directorio de contactos','Familias de todos los equipos'),lk('house','Mis clubes','FCJ Orée de l’Autize · 2 clubes'),lk('question','Ayuda','Instalar la app')),style='padding:8px 20px'),bt('Cerrar sesión','x',k='danger w')],eyebrow='Hola, Camila',layout='uno')

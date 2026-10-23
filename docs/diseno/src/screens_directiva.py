@@ -1,7 +1,7 @@
 from lib import *
 
 def stat4(*p): return '<div class="stats c4">%s</div>'%''.join('<div class="stat"><b>%s</b><span>%s</span></div>'%x for x in p)
-RESUMEN=card(ch('Club Aigles','<span class="est">Niort · Fútbol</span>'),stats(('14','equipos'),('212','familias'),('18','entrenadores')))
+RESUMEN=card(ch('FCJ Orée de l’Autize','<span class="est">Coulonges-sur-l’Autize · Fútbol</span>'),stats(('14','equipos'),('212','familias'),('18','entrenadores')))
 
 # ---- Feed del club ----
 publicar=card('<div class="hilo">%s<div><b>Avisos del club</b><p>Lo ven todas las familias y entrenadores.</p>%s</div></div>'%(fi('megaphone'),bt('Publicar aviso','plus',k='s')))
@@ -51,7 +51,7 @@ solic=card(ch('Solicitudes','<span class="est">2</span>'),
 def inv(ini,mail,sub,right): return pers(ini,mail,sub,right)
 lst=card(ch('Correos autorizados'),
   inv('DP','daniela@ejemplo.fr','Familia · U12 · U10',est('check','Activo')),
-  inv('PE','pedro@aigles.fr','Entrenador · U13',est('check','Activo')),
+  inv('PE','pedro@ejemplo.fr','Entrenador · U13',est('check','Activo')),
   inv('MG','marta.garcia@ejemplo.fr','Familia · U12',bt('Reenviar','paper-plane-tilt',style='height:34px;padding:0 10px')),
   inv('JM','julien.moreau@ejemplo.fr','Familia · U11A',est('shield-check','Autorizado')),
   inv('CR','claire.roux@ejemplo.fr','Familia · U12',est('x','Rebotó')))
@@ -60,13 +60,13 @@ S('di-invitaciones','directiva','Invitaciones','club','Invitaciones',[card(ST),c
   dmain=[lst],dside=[card(ST.replace('class="stats c4"','class="stats c4" style="grid-template-columns:repeat(2,minmax(0,1fr))"'),cargar),solic])
 
 # ---- Lugares ----
-LU=[('Club (predeterminado)','Stade del club, Niort'),('Gimnasio municipal','Rue du Stade 4, Niort'),('Stade du Centre · Niort FC','Rue Ejemplo 12, 79000 Niort'),('Complexe sportif · Rochelais','Avenue Ejemplo 20, La Rochelle')]
+LU=[('Sede del club (predeterminado)','6 Place du Château, 79160 Coulonges-sur-l’Autize'),('Gimnasio municipal','Coulonges-sur-l’Autize'),('Estadio del club','46.480236, -0.599575'),('Complexe sportif · Rochelais','Avenue Ejemplo 20, La Rochelle')]
 lug=card(lkl(*[lk('map-pin',a,b) for a,b in LU]),style='padding:8px 20px')
 S('di-lugares','directiva','Lugares','club','Lugares',[lug,bt('Nuevo lugar','plus',k='f w')],back='Club',sub='4 guardados',layout='g2',
-  dmain=[lug],dside=[card(ch('Stade del club'),mapa(),mapas_btns()),bt('Nuevo lugar','plus',k='f w')])
+  dmain=[lug],dside=[card(ch('Estadio del club'),mapa(),mapas_btns()),bt('Nuevo lugar','plus',k='f w')])
 
 # ---- Nuevo lugar ----
-form_l=card(campo('Recinto','Stade du Centre'),campo('Club local','Niort FC'),campo('Dirección','Rue Ejemplo 12, 79000 Niort',ic='map-pin'),campo('Enlace','o pega un enlace de Google Maps o Waze',ph=True,ic='share-network'))
+form_l=card(campo('Recinto','Estadio del club'),campo('Club local','FCJ Orée de l’Autize'),campo('Dirección','6 Place du Château, 79160 Coulonges-sur-l’Autize',ic='map-pin'),campo('Enlace','o pega un enlace de Google Maps o Waze',ph=True,ic='share-network'))
 mapa_l=card(mini('Ubicación'),mapa(),'<p class="ro" style="margin-top:12px">{{i:map-pin:bold}}Arrastra el pin para ajustar.</p>')
 S('di-lugar-nuevo','directiva','Nuevo lugar','club','Nuevo lugar',[form_l,mapa_l,bt('Usar este lugar',k='s w')],back='Lugares',sub='Recinto de partidos',layout='g2',
   dmain=[form_l,bt('Usar este lugar',k='s w')],dside=[mapa_l])
@@ -74,12 +74,12 @@ S('di-lugar-nuevo','directiva','Nuevo lugar','club','Nuevo lugar',[form_l,mapa_l
 # ---- Temporada ----
 temp=card(mini('Temporada actual'),'<div class="num-g">2026 – 2027</div><p class="meta" style="margin-top:8px">{{i:calendar-blank:bold}}1 sept. 2026 – 31 ago. 2027</p>')
 cerrar=card(aviso_box('calendar-blank','Cerrar la temporada','Se archivan los equipos y se crea la siguiente. Los jugadores quedan para reorganizar.'),bt('Cerrar y crear la siguiente',k='f w',style='margin-top:14px'))
-S('di-temporada','directiva','Temporada','club','Temporada',[temp,cerrar],back='Club',sub='Club Aigles',layout='g2',dmain=[temp],dside=[cerrar])
+S('di-temporada','directiva','Temporada','club','Temporada',[temp,cerrar],back='Club',sub='FCJ Orée de l’Autize',layout='g2',dmain=[temp],dside=[cerrar])
 
 # ---- Ajustes ----
 ajustes=[card(mini('Deporte'),pills(['Fútbol','Vóley','Básquet'],0),mini('Idioma por defecto'),pills(['Français','Español'],0),select('Zona horaria','Europe/Paris')),
   card(tog('Aparecer en la lista pública de clubes','Solo se muestran cifras',True),tog('Exigir instalar la app','Para recibir avisos en el celular',True)),
-  card(mini('Logo'),'<div class="logo-fila">%s<span class="meta" style="margin:0">Club Aigles</span>%s</div>'%(escudo('CA'),bt('Cambiar','camera')),),
+  card(mini('Logo'),'<div class="logo-fila">%s<span class="meta" style="margin:0">FCJ Orée de l’Autize</span>%s</div>'%(escudo('FO'),bt('Cambiar','camera')),),
   bt('Guardar',k='s w')]
 S('di-ajustes','directiva','Ajustes del club','club','Ajustes del club',ajustes,back='Club',sub='Deporte, idioma, zona horaria',layout='g2',
   dmain=ajustes[:1]+ajustes[1:2],dside=[ajustes[2],ajustes[3]])
@@ -93,5 +93,5 @@ S('di-directorio','directiva','Directorio','directorio','Directorio',[pills(eqp,
   dmain=[pills(eqp,1),dlist],dside=[ficha,aviso_box('lock','Solo contactos','El directorio no muestra asistencia ni temas deportivos.')])
 
 # ---- Más ----
-mas=card(lkl(lk('user-circle','Mi perfil','Datos, idioma, avisos'),lk('house','Mis clubes','Club Aigles · 2 clubes'),lk('chat-circle-dots','Ayuda','Instalar la app'),lk('x','Cerrar sesión','',right='')),style='padding:8px 20px')
+mas=card(lkl(lk('user-circle','Mi perfil','Datos, idioma, avisos'),lk('house','Mis clubes','FCJ Orée de l’Autize · 2 clubes'),lk('chat-circle-dots','Ayuda','Instalar la app'),lk('x','Cerrar sesión','',right='')),style='padding:8px 20px')
 S('di-mas','directiva','Más','mas','Más',[mas],eyebrow='Hola, Sylvie',layout='uno')

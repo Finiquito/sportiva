@@ -100,8 +100,20 @@ def img(i,cls='',alt='Foto del equipo',L=False): return '<img class="foto%s" src
 def masonry(n=3,start=0): return '<div class="masonry" role="group" aria-label="%d fotos">%s</div>'%(n,''.join(img(start+k,alt='Foto %d'%(k+1)) for k in range(n)))
 def fotos(n=3,cols=3): return masonry(n)
 def marcador(l,v,nl='U12',nv='Niort',sub='En vivo · 2.º tiempo'): return '<div class="marc"><div><b>%s</b><small>%s</small></div><i>–</i><div><b>%s</b><small>%s</small></div></div><p class="meta" style="justify-content:center;margin-top:14px">{{i:timer:bold}}%s</p>'%(l,nl,v,nv,sub)
-def mapa(): return '<div class="mapa" aria-hidden="true"><svg class="ruta" viewBox="0 0 400 120" preserveAspectRatio="none"><path d="M-10 96 C 90 40, 170 110, 250 62 S 380 30, 420 50" fill="none" stroke="var(--club)" stroke-width="2.5" stroke-dasharray="3 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><span class="pin">{{i:map-pin:fill}}</span></div>'
-def mapas_btns(): return '<div class="nav"><button type="button" class="bt">{{i:navigation-arrow:bold}}Google Maps</button><button type="button" class="bt">{{i:navigation-arrow:bold}}Waze</button><button type="button" class="bt">{{i:share-network:bold}}WhatsApp</button></div>'
+LAT,LON,ZOOM=46.480236,-0.599575,16   # estadio del club (FCJ Orée de l’Autize)
+def _tiles(lat,lon,z,cols=4,rows=3):
+    import math
+    n=2**z; px=(lon+180)/360*n*256; py=(1-math.log(math.tan(math.radians(lat))+1/math.cos(math.radians(lat)))/math.pi)/2*n*256
+    tx0,ty0=int(px//256)-cols//2,int(py//256)-rows//2
+    ox,oy=px-tx0*256,py-ty0*256
+    imgs=''.join('<img src="https://tile.openstreetmap.org/%d/%d/%d.png" alt="" width="256" height="256" loading="lazy" referrerpolicy="no-referrer">'%(z,tx0+c,ty0+r) for r in range(rows) for c in range(cols))
+    return '<div class="tiles" style="width:%dpx;height:%dpx;transform:translate(-%.1fpx,-%.1fpx)">%s</div>'%(cols*256,rows*256,ox,oy,imgs)
+def mapa(lat=None,lon=None,z=None):
+    """mapa estático con teselas de OpenStreetMap centrado en el estadio (sin JS; en producción: Leaflet/MapLibre)"""
+    return '<div class="mapa" role="img" aria-label="Mapa: estadio del club">%s<span class="pin">{{i:map-pin:fill}}</span><span class="osm">© OpenStreetMap</span></div>'%_tiles(lat or LAT,lon or LON,z or ZOOM)
+GMAPS='https://www.google.com/maps/search/?api=1&amp;query=%s,%s'%(LAT,LON)
+WAZE='https://waze.com/ul?ll=%s,%s&amp;navigate=yes'%(LAT,LON)
+def mapas_btns(): return '<div class="nav"><a class="bt" href="%s" target="_blank" rel="noopener">{{i:navigation-arrow:bold}}Google Maps</a><a class="bt" href="%s" target="_blank" rel="noopener">{{i:navigation-arrow:bold}}Waze</a><button type="button" class="bt">{{i:share-network:bold}}WhatsApp</button></div>'%(GMAPS,WAZE)
 def horas(a,b,*,hl=True,ia=None,ib=None):
     """a,b = (etiqueta, hora, icono). Resaltador limón en la primera."""
     (la,ha,ica),(lb,hb,icb)=a,b
@@ -142,7 +154,7 @@ def _css(dev):
     return ':root{--grano:url("{{GRANO}}")}\n'+re.sub(r'\n\s*\n','\n',t)
 
 def bell(): return '<button type="button" class="bell" aria-label="Notificaciones, 3 nuevas">{{i:bell:bold}}<b>3</b></button>'
-def clubchip(): return '<span class="chip-club"><span class="mk">{{LOGO}}</span>Club Aigles</span>'
+def clubchip(): return '<span class="chip-club"><span class="mk">{{LOGO}}</span>FCJ Orée de l’Autize</span>'
 
 def render_mobile(s):
     title=s['nombre']

@@ -2,13 +2,13 @@ from lib import *
 
 SALIR='<span class="chev">{{i:arrow-right:bold}}</span>'
 def cab_perfil(): return '<div class="perfil-cab"><span class="foto">DP</span><div><b>Daniela Pérez</b><small>daniela@ejemplo.fr</small></div></div>'
-def en_club(): return '<div class="tags" style="margin:0 0 4px">%s%s</div>'%(tag('Club Aigles','house'),chipm('Apoderada · Lucas y Emma'))
+def en_club(): return '<div class="tags" style="margin:0 0 4px">%s%s</div>'%(tag('FCJ Orée de l’Autize','house'),chipm('Apoderada · Lucas y Emma'))
 
 # ---------- Más ----------
 mas_menu=card(lkl(
   lk('user-circle','Mi perfil','Daniela Pérez · daniela@ejemplo.fr'),
   lk('users-three','Mi familia','Daniela · Lucas · Emma'),
-  lk('house','Mis clubes','Club Aigles · Club Pampa'),
+  lk('house','Mis clubes','FCJ Orée de l’Autize · Club Pampa'),
   lk('question','Ayuda','Instalar la app, preguntas')),style='padding:8px 18px')
 salir=card(lkl(lk('arrow-right','Cerrar sesión','',right='')),style='padding:8px 18px')
 S('ap-mas','apoderado','Más','mas','Más',[mas_menu,salir],eyebrow='Hola, Daniela',layout='g2',
@@ -69,23 +69,23 @@ S('ap-familia','apoderado','Mi familia','mas','Mi familia',[adultos,hijos],back=
 # ---------- Mis clubes ----------
 def club_row(esc,k,n,sub,sub2,act=False):
     return '<li><button type="button" class="lk" style="grid-template-columns:auto minmax(0,1fr) auto">%s<span><b>%s</b><small>%s</small><small>%s</small></span>%s</button></li>'%(escudo(esc,k),n,sub,sub2,est('check','Activo') if act else '<span class="chev">{{i:arrow-right:bold}}</span>')
-clubes=card('<ul class="lkl">%s%s</ul>'%(club_row('CA','','Club Aigles','Niort · Fútbol','U12 · Lucas · U10 · Emma',True),club_row('CP','b','Club Pampa','Poitiers · Vóley','U14 Vóley · Lucas')),style='padding:8px 18px')
+clubes=card('<ul class="lkl">%s%s</ul>'%(club_row('FO','','FCJ Orée de l’Autize','Coulonges-sur-l’Autize · Fútbol','U12 · Lucas · U10 · Emma',True),club_row('CP','b','Club Pampa','Poitiers · Vóley','U14 Vóley · Lucas')),style='padding:8px 18px')
 S('ap-misclubes','apoderado','Mis clubes','mas','Mis clubes',[clubes,'<p class="sis">{{i:house:bold}}Tu correo está en más de un club. Cambias de club desde el nombre arriba.</p>'],back='Más',sub='2 clubes',layout='g2',
-  dmain=[clubes],dside=[card(ch('Club activo'),'<div class="tags">%s</div>'%tag('Club Aigles','house'),'<p class="meta">{{i:map-pin:bold}}Niort · Fútbol</p>',bt('Entrar al club',k='w',style='margin-top:12px'))])
+  dmain=[clubes],dside=[card(ch('Club activo'),'<div class="tags">%s</div>'%tag('FCJ Orée de l’Autize','house'),'<p class="meta">{{i:map-pin:bold}}Coulonges-sur-l’Autize · Fútbol</p>',bt('Entrar al club',k='w',style='margin-top:12px'))])
 
 # ---------- Club ----------
 eq_u12=lk('c:balon','U12','Lucas · Camila, Pedro',k='lim'); eq_u10=lk('c:balon','U10','Emma · Léa, Marc',k='lim')
 mis_eq=card(ch('Mis equipos'),lkl(eq_u12,eq_u10),style='padding:20px 18px 8px')
-sobre=card(ch('Sobre el club'),'<p class="meta">{{i:paper-plane-tilt:bold}}contacto@aigles.fr</p>','<p class="meta" style="margin-top:6px">{{i:map-pin:bold}}Niort</p>',bt('Salir de este club',k='danger w',style='margin-top:16px'))
-S('ap-club','apoderado','Club Aigles','mas','Club Aigles',[card(tags(tag('Club activo','check'),chipm('Niort · Fútbol'))),mis_eq,sobre],back='Mis clubes',sub='Niort · Fútbol',layout='g2',
-  dmain=[mis_eq],dside=[card(tags(tag('Club activo','check'),chipm('Niort · Fútbol'))),sobre])
+sobre=card(ch('Sobre el club'),'<p class="meta">{{i:phone:bold}}06 23 60 52 30</p>','<p class="meta" style="margin-top:6px">{{i:map-pin:bold}}6 Place du Château, 79160 Coulonges-sur-l’Autize</p>',bt('Salir de este club',k='danger w',style='margin-top:16px'))
+S('ap-club','apoderado','FCJ Orée de l’Autize','mas','FCJ Orée de l’Autize',[card(tags(tag('Club activo','check'),chipm('Coulonges-sur-l’Autize · Fútbol'))),mis_eq,sobre],back='Mis clubes',sub='Coulonges-sur-l’Autize · Fútbol',layout='g2',
+  dmain=[mis_eq],dside=[card(tags(tag('Club activo','check'),chipm('Coulonges-sur-l’Autize · Fútbol'))),sobre])
 
 # ---------- Equipo ----------
 entrenadores=card(ch('Entrenadores'),pers('CA','Camila','Entrenadora · encargada',bt('Preguntar',style='height:34px;padding:0 12px')),pers('PE','Pedro','Entrenador',bt('Preguntar',style='height:34px;padding:0 12px')))
 fijado=card(tags(tag('Fijado','push-pin')),'<div class="regla"><b>Reglas del equipo</b><p>Llegar 15 minutos antes. Avisar si no vas hasta el jueves a las 21:00.</p></div>')
 en_este=card(ch('En este equipo'),lkl(lk('car','Turnos de traslado','Quién lleva y cuándo'),lk('users-three','Familias del equipo','Directorio opcional'),lk('chats-circle','Chat de niños','Solo lectura')),style='padding:20px 18px 8px')
 jug=card(ch('Jugadores','<span class="est">10</span>'),'<div class="chips">%s</div>'%''.join(tag(j) for j in JUG))
-S('ap-equipo','apoderado','Equipo U12','mas','U12',[fijado,entrenadores,en_este,jug],back='Club Aigles',sub='Temporada 2026 – 2027 · 10 jugadores',layout='g2',
+S('ap-equipo','apoderado','Equipo U12','mas','U12',[fijado,entrenadores,en_este,jug],back='FCJ Orée de l’Autize',sub='Temporada 2026 – 2027 · 10 jugadores',layout='g2',
   dmain=[fijado,en_este],dside=[entrenadores,jug])
 
 # ---------- Familias del equipo ----------

@@ -10,6 +10,7 @@ _js=open(os.path.join(ICON_DIR,'phosphor-subset.js')).read()
 PH=json.loads(_js[_js.index('window.PH=')+len('window.PH='):_js.rindex('}')+1])
 PH.update({
  'arrows-left-right':{'bold':'<g fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M40 104h176M184 72l32 32-32 32"/><path d="M216 152H40M72 120l-32 32 32 32"/></g>'},
+ 'phone':{'bold':'<g fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M92 60l-20-8a16 16 0 0 0-21 14c-4 80 56 140 136 136a16 16 0 0 0 14-21l-8-20a16 16 0 0 0-17-10l-24 5a72 72 0 0 1-42-42l5-24a16 16 0 0 0-10-17z"/></g>'},
  'arrow-left':{'bold':'<g fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M216 128H40M104 64l-64 64 64 64"/></g>'}})
 BB=json.load(open(os.path.join(HERE,'bbox.json')))
 GRANO='data:image/png;base64,'+base64.b64encode(open(os.path.join(HERE,'grano-s.png'),'rb').read()).decode()
