@@ -35,7 +35,7 @@ S('en-crear',R,'Nueva convocatoria','agenda','Nueva convocatoria',[c_tipo,c_quie
   dmain=[c_tipo,c_quien,c_cuando,c_punto,c_lugar],dside=[c_turno,c_nota])
 
 # ---------------- 3 · Elegir jugadores ----------------
-def fila_j(n,ini_,on=True,eq='U12'): return '<div class="pers">%s<div><b>%s</b><small>%s</small></div>%s</div>'%(avatar(ini_),n,eq,chk(on))
+def fila_j(n,ini_,on=True,eq='U12'): return '<div class="pers">%s<div><b>%s</b><small>%s</small></div>%s</div>'%(avatar(ini_,kid=n),n,eq,chk(on))
 jug_card=card(ch('U12 · 10','<span class="est">10 convocados</span>'),''.join(fila_j(n,ini(n)) for n in JUG),bt('Quitar a todo el equipo',k='w',style='margin-top:12px'))
 elegir_pills=pills(EQS,1)
 S('en-elegir',R,'Elegir jugadores','agenda','Elegir jugadores',[elegir_pills,jug_card,btn_s('Listo · 10 convocados','check')],back='Nueva convocatoria',sub='Puedes sumar jugadores de otras categorías',layout='g2l',
@@ -109,7 +109,7 @@ S('en-hilo',R,'Hilo de consulta','consultas','Familia Pérez',[h_conv,aviso_box(
 
 # ---------------- 12 · Plantel ----------------
 PCT=[70,77,84,91,70,77,84,91,70,77]
-def j_fila(n,p): return fila(avatar(ini(n)),n,'Asistencia %d%%'%p,'<span class="chev">{{i:arrow-right:bold}}</span>')
+def j_fila(n,p): return fila(avatar(ini(n),kid=n),n,'Asistencia %d%%'%p,'<span class="chev">{{i:arrow-right:bold}}</span>')
 pl_list=card(ch('U12 · 10 jugadores'),lista(*[j_fila(n,p) for n,p in zip(JUG,PCT)]))
 pl_pills=pills(EQS,1)
 S('en-plantel',R,'Plantel','plantel','Plantel',[pl_pills,pl_list],eyebrow='Hola, Camila',layout='g2',

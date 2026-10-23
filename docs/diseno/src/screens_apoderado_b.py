@@ -61,7 +61,7 @@ S('ap-privacidad','apoderado','Privacidad','mas','Privacidad',[quien,derechos],b
 # ---------- Mi familia ----------
 adultos=card(ch('Adultos'),pers('DP','Daniela Pérez','Titular · daniela@ejemplo.fr',est('check','Tú'),True),bt('Agregar a otro papá o mamá','plus',k='w',style='margin-top:12px'))
 def hijo(n,eq,edad):
-    return '<div class="hijo-fila"><div class="top">%s<div><b>%s</b><small>%s · %s</small></div>%s</div><div class="sub-acc">%s%s</div></div>'%(avatar(n[0]),n,eq,edad+' · solo puede ver',tag('Perfil hijo'),bt('Chat del equipo','chats-circle',style='height:34px;padding:0 12px'),bt('Enlace de acceso para %s'%n,'share-network',style='height:34px;padding:0 12px'))
+    return '<div class="hijo-fila"><div class="top">%s<div><b>%s</b><small>%s · %s</small></div>%s</div><div class="sub-acc">%s%s</div></div>'%(avatar(n[0],kid=n),n,eq,edad+' · solo puede ver',tag('Perfil hijo'),bt('Chat del equipo','chats-circle',style='height:34px;padding:0 12px'),bt('Enlace de acceso para %s'%n,'share-network',style='height:34px;padding:0 12px'))
 hijos=card(ch('Hijos'),hijo('Lucas','U12','12 años'),hijo('Emma','U10','10 años'),bt('Agregar hijo','plus',k='w',style='margin-top:6px'))
 S('ap-familia','apoderado','Mi familia','mas','Mi familia',[adultos,hijos],back='Más',sub='Adultos e hijos',layout='g2',
   dmain=[hijos],dside=[adultos])

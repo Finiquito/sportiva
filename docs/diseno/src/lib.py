@@ -53,11 +53,20 @@ def est(ic,t): return '<span class="est">{{i:%s:bold}}%s</span>'%(ic,t)
 def bt(t,ic=None,k='',style=''):
     return '<button type="button" class="bt%s"%s>%s%s</button>'%(' '+k if k else '',' style="%s"'%style if style else '',('{{i:%s:bold}}'%ic if ic else ''),t)
 def acciones(*b): return '<div class="acciones">%s</div>'%''.join(b)
-def avatar(ini,lim=False): return '<span class="avatar%s">%s</span>'%(' lim' if lim else '',ini)
+KIDS={'Lucas':0,'Tom':1,'Léo':2,'Hugo':3,'Nolan':4,'Tomás':1,'Mateo':2,'Gabriel':3,'Louis':4,'Raphaël':0,'Adam':1,'Arthur':2,'Ethan':3,'Paul':4}
+def kid_av(name):
+    if name.startswith('Familia '): return None
+    p=name.split(' ')
+    if len(p)>1 and len(p[1].strip('.'))>1 and not p[1].startswith(('(','·')): return None   # «Paul Fournier» es un adulto
+    return KIDS.get(p[0].strip('.,·'))
+def avatar(ini,lim=False,kid=None):
+    k=kid_av(kid) if isinstance(kid,str) else kid
+    if k is not None: return '<span class="avatar foto-av"><img src="{{av:%d}}" alt=""></span>'%k
+    return '<span class="avatar%s">%s</span>'%(' lim' if lim else '',ini)
 def fi(ic,k=''):
     inner='{{c:%s}}'%ic[2:] if ic.startswith('c:') else '{{i:%s:bold}}'%ic
     return '<span class="fi%s">%s</span>'%(' '+k if k else '',inner)
-def pers(ini,name,sub='',right='',lim=False): return '<div class="pers">%s<div><b>%s</b><small>%s</small></div>%s</div>'%(avatar(ini,lim),name,sub,right)
+def pers(ini,name,sub='',right='',lim=False): return '<div class="pers">%s<div><b>%s</b><small>%s</small></div>%s</div>'%(avatar(ini,lim,kid=name),name,sub,right)
 def pers_l(*rows): return ''.join(rows)
 def lk(ic,t,sub='',right=None,k=''):
     """fila de navegación (Más, listas). right=None → chevrón."""
@@ -84,7 +93,7 @@ def mini(t): return '<span class="mini-t">%s</span>'%t
 def hr(): return '<hr class="sep-h">'
 def burbuja(ini,name,txt,oculto=False):
     if oculto: txt='Mensaje oculto por un entrenador'
-    return '<div class="burb%s">%s<div class="tx"><b>%s</b><span>%s</span></div></div>'%(' oculto' if oculto else '',avatar(ini),name,txt)
+    return '<div class="burb%s">%s<div class="tx"><b>%s</b><span>%s</span></div></div>'%(' oculto' if oculto else '',avatar(ini,kid=name),name,txt)
 def stickers(*t): return '<div class="stickers">%s</div>'%''.join('<span>%s</span>'%x for x in t)
 def evt(hora,autor,txt): return '<div class="evt"><time>%s</time><div><b>%s</b><span>%s</span></div></div>'%(hora,autor,txt)
 def img(i,cls='',alt='Foto del equipo',L=False): return '<img class="foto%s" src="{{foto:%d%s}}" alt="%s" loading="lazy">'%(' '+cls if cls else '',i,'L' if L else '',alt)
