@@ -1,0 +1,14 @@
+/* entrenador */
+.chk{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--linea-2);display:grid;place-items:center;font-size:16px;color:transparent;flex:none}
+.chk.on{background:var(--club);border-color:var(--club);color:var(--limon)}
+.resumen-a{display:flex;gap:6px 14px;flex-wrap:wrap;margin:12px 0 0}
+.nuevo-b{display:inline-flex;align-items:center;gap:5px;font:600 12px var(--font-mono);color:var(--coral);white-space:nowrap}
+.nuevo-b .pi{font-size:15px}
+.fam-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.turno-f{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}
+.sol{display:grid;gap:10px;padding:10px 0}
+.sol+.sol{border-top:1.5px dashed var(--linea-2)}
+.sol .botones{display:flex;gap:8px}
+.sol .botones .bt{flex:1}
+.pct{font:600 12px var(--font-mono);white-space:nowrap}
+.est-grupo{margin:0 0 4px}

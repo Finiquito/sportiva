@@ -1,0 +1,4 @@
+.fotos.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fotos.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.fotos.g4 span,.fotos.g3 span{min-height:90px}
+h1{line-height:1.06}

@@ -1,0 +1,12 @@
+/* directiva y jugador */
+.stats.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:420px){.stats.c4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sol{padding:12px 0}
+.sol+.sol{border-top:1.5px dashed var(--linea-2)}
+.sol .acc{display:flex;gap:8px;margin-top:10px}
+.sol .acc .bt{flex:1;height:38px}
+.chat-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;margin-top:12px}
+.chat-in .campo{margin:0}
+.logo-fila{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.ro{display:flex;align-items:center;gap:8px;font:500 12px/1.4 var(--font-mono);color:var(--tinta-2);margin:0}
+.ro .pi{font-size:16px;color:var(--tinta)}
