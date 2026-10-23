@@ -20,7 +20,7 @@ A('ac-landing','Lista de clubes','Clubes en Sportiva',[
 
 # 2 · club público
 A('ac-clubpublico','Club público','Club Aigles',[
-  '<div class="foto-ph h">{{i:images:bold}}</div>',
+  img(1,'hero',alt='El equipo del club junto al arco',L=True),
   meta('map-pin','Niort · Fútbol'),
   '<div style="height:14px"></div>',
   '<div class="stats dos"><div class="stat"><b>14</b><span>equipos</span></div><div class="stat"><b>212</b><span>familias</span></div></div>',

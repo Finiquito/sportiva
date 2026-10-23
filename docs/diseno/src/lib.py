@@ -13,6 +13,8 @@ import os
 HERE=os.path.dirname(os.path.abspath(__file__))
 def css(n): return open(os.path.join(HERE,'css',n)).read()
 
+import glob as _g
+NFOTOS=len(_g.glob(os.path.join(HERE,'fotos','*.jpg'))) or 6
 ROLES=[('acceso','Acceso'),('apoderado','Apoderado'),('entrenador','Entrenador y encargado'),('directiva','Directiva'),('jugador','Jugador (hijo)')]
 TABS={
  'apoderado':[('agenda','Agenda','calendar-blank'),('feed','Feed','newspaper'),('actividad','Mi actividad','path'),('mas','Más','squares-four')],
@@ -85,7 +87,9 @@ def burbuja(ini,name,txt,oculto=False):
     return '<div class="burb%s">%s<div class="tx"><b>%s</b><span>%s</span></div></div>'%(' oculto' if oculto else '',avatar(ini),name,txt)
 def stickers(*t): return '<div class="stickers">%s</div>'%''.join('<span>%s</span>'%x for x in t)
 def evt(hora,autor,txt): return '<div class="evt"><time>%s</time><div><b>%s</b><span>%s</span></div></div>'%(hora,autor,txt)
-def fotos(n=3,cols=3): return '<div class="fotos" role="img" aria-label="%d fotos">%s</div>'%(n,''.join('<span>{{i:images:bold}}</span>' for _ in range(n)))
+def img(i,cls='',alt='Foto del equipo',L=False): return '<img class="foto%s" src="{{foto:%d%s}}" alt="%s" loading="lazy">'%(' '+cls if cls else '',i,'L' if L else '',alt)
+def masonry(n=3,start=0): return '<div class="masonry" role="group" aria-label="%d fotos">%s</div>'%(n,''.join(img(start+k,alt='Foto %d'%(k+1)) for k in range(n)))
+def fotos(n=3,cols=3): return masonry(n)
 def marcador(l,v,nl='U12',nv='Niort',sub='En vivo · 2.º tiempo'): return '<div class="marc"><div><b>%s</b><small>%s</small></div><i>–</i><div><b>%s</b><small>%s</small></div></div><p class="meta" style="justify-content:center;margin-top:14px">{{i:timer:bold}}%s</p>'%(l,nl,v,nv,sub)
 def mapa(): return '<div class="mapa" aria-hidden="true"><svg class="ruta" viewBox="0 0 400 120" preserveAspectRatio="none"><path d="M-10 96 C 90 40, 170 110, 250 62 S 380 30, 420 50" fill="none" stroke="var(--club)" stroke-width="2.5" stroke-dasharray="3 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><span class="pin">{{i:map-pin:fill}}</span></div>'
 def mapas_btns(): return '<div class="nav"><button type="button" class="bt">{{i:navigation-arrow:bold}}Google Maps</button><button type="button" class="bt">{{i:navigation-arrow:bold}}Waze</button><button type="button" class="bt">{{i:share-network:bold}}WhatsApp</button></div>'
@@ -103,7 +107,7 @@ def donut(n,de,leyenda=True):
     return '<div class="donut" role="img" aria-label="%s de %s"><div><span>%s<small>de %s</small></span></div></div>'%(n,de,n,de)+('<div class="lg"><span>{{i:check:bold}}Voy 5</span><span>{{i:question:bold}}Duda 2</span><span>{{i:x:bold}}No voy 1</span><span>{{i:clock:bold}}Sin respuesta 2</span></div>' if leyenda else '')
 def post(autor_ini,autor,sub,texto,*,titulo=None,foto=False,coment=None,lim=False,extra=''):
     h='<div class="post-h">%s<div><b>%s</b><small class="sub" style="margin-top:2px">%s</small></div></div>'%(avatar(autor_ini,lim),autor,sub)
-    return '<article class="card post">%s%s<p class="tx">%s</p>%s%s%s</article>'%(h,('<h2 style="font-size:20px;margin:0 0 8px">%s</h2>'%titulo if titulo else ''),texto,(fotos(1) if foto else ''),extra,('<div class="post-f">%s</div>'%bt(coment,'chat-circle-dots') if coment else ''))
+    return '<article class="card post">%s%s<p class="tx">%s</p>%s%s%s</article>'%(h,('<h2 style="font-size:20px;margin:0 0 8px">%s</h2>'%titulo if titulo else ''),texto,(img(2,'ancho',alt='Foto del aviso') if foto else ''),extra,('<div class="post-f">%s</div>'%bt(coment,'chat-circle-dots') if coment else ''))
 def avatars_row(*ini): return '<div class="chips">%s</div>'%''.join(avatar(i) for i in ini)
 
 # jugadores / familias de ejemplo (iguales a los wireframes)

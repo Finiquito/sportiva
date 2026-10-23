@@ -27,7 +27,7 @@ S('ap-envivo-antes','apoderado','En partido · antes de empezar','agenda','En pa
 vivo_marc=card(marcador('2','1','U12','Niort','En vivo · 2.º tiempo'))
 vivo_line=card(ch('Línea de tiempo','<span class="est">{{i:bell-ringing:bold}}En vivo</span>'),
   evt('14:42','Marta','Cambió el regreso a 18:50. Se alargó el torneo.'),evt('14:05','Tú','Comenzó el partido.'),
-  evt('13:40','Sofía','Llegamos. Hay estacionamiento frente a la cancha.')+'<div class="foto-ph" style="margin:6px 0 4px 54px;min-height:96px" role="img" aria-label="Foto">{{i:images:bold}}</div>',
+  evt('13:40','Sofía','Llegamos. Hay estacionamiento frente a la cancha.')+'<div style="margin:8px 0 4px 54px;max-width:260px">'+img(0,'ancho',alt='Foto del grupo llegando')+'</div>',
   evt('12:35','Luis','Salimos del club. 3 autos.'))
 vivo_reg=regreso('18:50','Cambió hace 4 min · antes 18:30',('Cambió la hora de regreso','Marta · hace 4 min'))
 vivo_rep=card(ch('Quién reporta'),pers('MG','Marta Garcia','Reportera en vivo · papás de Tomás',est('check','Activa')),'<p class="meta" style="margin-top:8px">{{i:users-three:bold}}Cualquier familia o el entrenador puede reportar.</p>')
@@ -35,15 +35,15 @@ S('ap-envivo','apoderado','En vivo','agenda','En vivo',[vivo_marc,vivo_reg,vivo_
   dmain=[vivo_marc,vivo_line],dside=[vivo_reg,vivo_rep])
 
 # ---------- Fotos ----------
-def galeria(n,k='g4'): return '<div class="fotos %s" role="img" aria-label="%d fotos">%s</div>'%(k,n,''.join('<span>{{i:images:bold}}</span>' for _ in range(n)))
-fo_main=card(ch('Fotos del partido','<span class="est">6 fotos</span>'),galeria(6,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))
+def galeria(n,k='g4'): return masonry(n)
+fo_main=card(ch('Fotos del partido','<span class="est">%d fotos</span>'%NFOTOS+''),galeria(NFOTOS,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))
 fo_reg=card(aviso_box('camera','Quién sube fotos','Papás y entrenadores. Los niños no suben fotos.'),'<p class="meta" style="margin-top:12px">{{i:lock:bold}}¿No quieres que salga tu hijo? Pídelo en Privacidad.</p>')
 S('ap-fotos','apoderado','Fotos del partido','agenda','Fotos',[fo_main,fo_reg],back='Convocatoria',sub='U12 vs Niort · Sáb 24 oct',layout='g2',
-  dmain=[card(ch('Fotos del partido','<span class="est">6 fotos</span>'),galeria(6,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))],dside=[fo_reg])
+  dmain=[card(ch('Fotos del partido','<span class="est">%d fotos</span>'%NFOTOS+''),galeria(NFOTOS,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))],dside=[fo_reg])
 
 # ---------- Visor ----------
-vi_main=card('<div class="foto-ph" style="min-height:320px" role="img" aria-label="Foto 3 de 6">{{i:images:bold}}</div>','<p class="meta" style="margin:14px 0 0">{{i:camera:bold}}Subida por Sofía B. · 13:40</p><p class="sub" style="margin:4px 0 0 27px">U12 vs Niort · Sáb 24 oct</p>',acciones(bt('Anterior',k='',style='flex:1').replace('<button type="button" class="bt" style="flex:1">','<button type="button" class="bt" style="flex:1">'+ANT),bt('Siguiente',k='',style='flex:1')[:-9]+' '+SIG+'</button>'))
-S('ap-visor','apoderado','Visor de foto','agenda','Foto 3 de 6',[vi_main],back='Fotos',sub='U12 vs Niort',layout='uno')
+vi_main=card(img(3,'visor',alt='Foto %d de %d'%(min(3,NFOTOS),NFOTOS),L=True),'<p class="meta" style="margin:14px 0 0">{{i:camera:bold}}Subida por Sofía B. · 13:40</p><p class="sub" style="margin:4px 0 0 27px">U12 vs Niort · Sáb 24 oct</p>',acciones(bt('Anterior',k='',style='flex:1').replace('<button type="button" class="bt" style="flex:1">','<button type="button" class="bt" style="flex:1">'+ANT),bt('Siguiente',k='',style='flex:1')[:-9]+' '+SIG+'</button>'))
+S('ap-visor','apoderado','Visor de foto','agenda','Foto %d de %d'%(min(3,NFOTOS),NFOTOS),[vi_main],back='Fotos',sub='U12 vs Niort',layout='uno')
 
 # ---------- Aviso con comentarios ----------
 av_post=post('CA','Camila · entrenadora','Mié 21 oct','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',titulo='Ropa perdida del sábado',extra='<div class="foto-ph" style="margin:0 0 14px" role="img" aria-label="Foto">{{i:images:bold}}</div>')

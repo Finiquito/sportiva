@@ -22,7 +22,19 @@ def propio(n):
         s=open(os.path.join(ICON_DIR,'propios',n+'.svg')).read()
         _prop[n]=re.sub(r'<svg[^>]*>','<svg class="pi pw" viewBox="%s" fill="currentColor" aria-hidden="true">'%BB[n],s,count=1)
     return _prop[n]
+from PIL import Image
+import io,glob
+FOTOS=sorted(glob.glob(os.path.join(HERE,'fotos','*.jpg')))
+_fc={}
+def foto_uri(i,large):
+    if not FOTOS: return ''
+    p=FOTOS[i%len(FOTOS)];k=(p,large)
+    if k not in _fc:
+        im=Image.open(p).convert('RGB');im.thumbnail((760,760) if large else (420,420));buf=io.BytesIO();im.save(buf,'JPEG',quality=68 if not large else 72,optimize=True,progressive=True)
+        _fc[k]='data:image/jpeg;base64,'+base64.b64encode(buf.getvalue()).decode()
+    return _fc[k]
 def resolve(t):
+    t=re.sub(r'\{\{foto:(\d+)(L?)\}\}',lambda m:foto_uri(int(m.group(1)),bool(m.group(2))),t)
     t=re.sub(r'\{\{i:([a-z-]+):(\w+)\}\}',lambda m:'<svg class="pi" viewBox="0 0 256 256" aria-hidden="true">%s</svg>'%PH[m.group(1)][m.group(2)],t)
     t=re.sub(r'\{\{c:([a-z-]+)\}\}',lambda m:propio(m.group(1)),t)
     return t.replace('{{LOGOC}}',LOGOC).replace('{{LOGO}}',LOGO).replace('{{GRANO}}',GRANO)
