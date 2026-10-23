@@ -57,7 +57,7 @@ lst=card(ch('Correos autorizados'),
   inv('CR','claire.roux@ejemplo.fr','Familia · U12',est('x','Rebotó')))
 cargar=acciones(bt('Cargar lista de correos','plus',k='f'),bt('Enviar invitaciones · 1','paper-plane-tilt',k='s'))
 S('di-invitaciones','directiva','Invitaciones','club','Invitaciones',[card(ST),cargar,solic,lst],back='Club',sub='Lista autorizada de correos',layout='g2',
-  dmain=[lst],dside=[card(ST,cargar),solic])
+  dmain=[lst],dside=[card(ST.replace('class="stats c4"','class="stats c4" style="grid-template-columns:repeat(2,minmax(0,1fr))"'),cargar),solic])
 
 # ---- Lugares ----
 LU=[('Club (predeterminado)','Stade del club, Niort'),('Gimnasio municipal','Rue du Stade 4, Niort'),('Stade du Centre · Niort FC','Rue Ejemplo 12, 79000 Niort'),('Complexe sportif · Rochelais','Avenue Ejemplo 20, La Rochelle')]

@@ -19,7 +19,7 @@ S('en-agenda',R,'Agenda','agenda','Agenda',
   [dia('Sáb 24 oct'),ag_partido,dia('Mar 27 oct'),ag_entreno,dia('Jue 29 oct'),ag_stage,dia('Sáb 31 oct'),ag_chauray,nueva],
   eyebrow='Hola, Camila',pills=(['Lista','Mes'],0),layout='g2',
   dmain=[dia('Sáb 24 oct'),ag_partido,dia('Mar 27 oct'),ag_entreno,dia('Jue 29 oct'),ag_stage,dia('Sáb 31 oct'),ag_chauray],
-  dside=[card(ch('Por responder'),pers('LP','Ethan · U12','Sin responder · Sáb 24',est('clock','2 días')),pers('PA','Lucas · U12','Sin responder · Sáb 24',est('clock','2 días')),bt('Recordar a las familias','paper-plane-tilt',k='w',style='margin-top:12px')),
+  dside=[card(ch('Por responder'),pers('EP','Ethan · U12','Sin responder · Sáb 24',est('clock','2 días')),pers('LU','Lucas · U12','Sin responder · Sáb 24',est('clock','2 días')),bt('Recordar a las familias','paper-plane-tilt',k='w',style='margin-top:12px')),
          card(ch('Turnos de traslado'),'<p class="meta" style="margin-bottom:12px">{{i:car:bold}}Sáb 24: 3 familias cargadas</p><p class="meta">{{i:clock:bold}}Sáb 31: sin cargar</p>',bt('Cargar turnos',k='w',style='margin-top:12px')),
          nueva])
 
@@ -39,7 +39,7 @@ def fila_j(n,ini_,on=True,eq='U12'): return '<div class="pers">%s<div><b>%s</b><
 jug_card=card(ch('U12 · 10','<span class="est">10 convocados</span>'),''.join(fila_j(n,ini(n)) for n in JUG),bt('Quitar a todo el equipo',k='w',style='margin-top:12px'))
 elegir_pills=pills(EQS,1)
 S('en-elegir',R,'Elegir jugadores','agenda','Elegir jugadores',[elegir_pills,jug_card,btn_s('Listo · 10 convocados','check')],back='Nueva convocatoria',sub='Puedes sumar jugadores de otras categorías',layout='g2l',
-  dleft=[card(ch('Equipos'),lista(*[fila('' ,e,'%d jugadores'%n,est('check','%d'%c) if c else '',sel=(e=='U12')) for e,n,c in [('U13',8,0),('U12',10,10),('U11A',6,0),('U11B',6,0),('U11C',6,0),('U10',6,0)]]))],
+  dleft=[card(ch('Equipos'),lista(*[fila(fi('users-three'),e,'%d jugadores'%n,est('check','%d'%c) if c else '',sel=(e=='U12')) for e,n,c in [('U13',8,0),('U12',10,10),('U11A',6,0),('U11B',6,0),('U11C',6,0),('U10',6,0)]]))],
   dmain=[jug_card,btn_s('Listo · 10 convocados','check',w=False)])
 
 # ---------------- 4 · Asistencia ----------------
@@ -55,7 +55,7 @@ S('en-asistencia',R,'Asistencia del partido','agenda','U12 vs Niort',[res_card,c
 S('en-lista',R,'Quién va','agenda','Quién va',quien,back='Asistencia',sub='U12 vs Niort · Sáb 24 oct',layout='cols2')
 
 # ---------------- 6 · En vivo ----------------
-ev_marc=card(ch('Marcador','<span class="est">{{i:timer:bold}}2.º tiempo</span>'),marcador(2,1),acciones(bt('Gol U12','plus'),bt('Gol Niort','plus'),bt('Cambiar periodo')))
+ev_marc=card(ch('Marcador','<span class="est">{{i:check:bold}}Reportando</span>'),marcador(2,1),acciones(bt('Gol U12','plus'),bt('Gol Niort','plus'),bt('Cambiar periodo')))
 ev_ret=card(ch('Regreso estimado al club'),'<div class="horas" style="border:0;margin:0;padding:0;grid-template-columns:1fr"><div><span class="hora"><span class="hl">18:50</span></span></div></div>','<p class="meta" style="margin:10px 0 14px">{{i:clock:bold}}Antes 18:30 · lo cambió Marta hace 4 min</p>',bt('Cambiar hora',k='w'))
 ev_quien=card(ch('Quién reporta'),pers('CA','Camila (tú)','Entrenadora · reportando',est('check','Activa')),pers('MG','Marta G.','Familia · reportando',est('check','Activa')),bt('Pedir a otra familia','plus',k='w',style='margin-top:12px'))
 ev_line=card(ch('Actualizaciones'),campo('Escribe una actualización','',ph=True),acciones(bt('Foto','camera'),btn_s('Publicar',None,w=False)),hr(),evt('14:42','Marta','Cambió el regreso a 18:50. Se alargó el torneo.'),evt('14:05','Tú','Comenzó el partido.'),evt('13:40','Sofía','Llegamos. Hay estacionamiento frente a la cancha.'),evt('12:35','Luis','Salimos del club. 3 autos.'))
@@ -80,7 +80,7 @@ S('en-turnos',R,'Turnos de traslado','agenda','Turnos',[t_info,t_sol]+t_cards+[t
 # ---------------- 8 · Feed ----------------
 f_items=[
  card('<div class="hilo">%s<div><span class="ey">Convocatoria publicada</span><b>U12 vs Niort</b><p>Sáb 24 oct · 14:00 · Stade du Centre · Niort</p>%s</div></div>'%(fi('c:balon','lim'),bt('Ver asistencia'))),
- post('CA','Camila · entrenadora','Mié 21 oct','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',titulo='Ropa perdida del sábado',foto=True,coment='1 comentario'),
+ post('CA','Camila · entrenadora','Mié 21 oct','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',titulo='Ropa perdida del sábado',extra='<div class="foto-ph" style="margin-bottom:14px">{{i:images:bold}}</div>',coment='1 comentario'),
  '<p class="sis">{{i:users-three:bold}}Nolan pasa de U11B a U11A desde el 15 nov</p>',
  card(ch('Fotos','<span class="est">12 nuevas</span>'),fotos(3),bt('Ver fotos',k='w')),
  card('<div class="hilo">%s<div><span class="ey">Resultado</span><b>U12 3 – 1 Rochelais</b><p>Dom 18 oct</p></div></div>'%fi('trophy'))]
@@ -92,7 +92,7 @@ S('en-feed',R,'Feed','feed','Feed',[pub,dia('Esta semana')]+f_items,eyebrow='Hol
 # ---------------- 9 · Nuevo aviso ----------------
 na_form=card(ch('Nuevo aviso'),mini('Para'),pills(['Todo el equipo U12','U12 y U13','Jugadores específicos…'],0),campo('Título','Ropa perdida del sábado'),campo('Mensaje','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',ta=True),acciones(bt('Agregar foto','camera'),btn_s('Publicar',None,w=False)))
 na_prev=card(ch('Así lo verán las familias'),post('CA','Camila · entrenadora','Ahora','Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club.',titulo='Ropa perdida del sábado').replace('<article class="card post">','<article class="post">').replace('</article>','</article>'),'<p class="sis" style="margin-top:8px">{{i:users-three:bold}}Se avisará a 10 familias.</p>')
-S('en-nuevoaviso',R,'Nuevo aviso','feed','Nuevo aviso',[na_form],back='Feed',layout='g2',dside=[na_prev])
+S('en-nuevoaviso',R,'Nuevo aviso','feed','Nuevo aviso',[na_form],back='Feed',sub='Para las familias del equipo',layout='g2',dside=[na_prev])
 
 # ---------------- 10 · Consultas ----------------
 def cons(nom,ctx,txt,nuevo=True,sel=False):
