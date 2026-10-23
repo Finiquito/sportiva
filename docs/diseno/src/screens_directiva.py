@@ -87,7 +87,7 @@ S('di-ajustes','directiva','Ajustes del club','club','Ajustes del club',ajustes,
 # ---- Directorio ----
 eqp=['U13','U12','U11A','U11B','U11C','U10']
 dir_rows=[('Lucas','Daniela Pérez'),('Tomás','Marta Garcia'),('Mateo','Paul Fournier'),('Gabriel','Inés Garcia'),('Louis','Karim Dubois · Pierre Dubois'),('Raphaël','Marta Roux'),('Adam','Luis Girard'),('Arthur','Sofía Bernard · Nadia Bernard'),('Ethan','Julien Lefèvre'),('Paul','Ana Morel')]
-dlist=card(campo('Buscar','Jugador o familia',ph=True,ic='magnifying-glass'),''.join(pers(ini(a),a,b,'<span class="chev">{{i:arrow-right:bold}}</span>') for a,b in dir_rows))
+dlist=card(campo('Buscar','Jugador o familia',ph=True,ic='magnifying-glass'),''.join(pers(a[:2].upper(),a,b,'<span class="chev">{{i:arrow-right:bold}}</span>') for a,b in dir_rows))
 ficha=card(ch('Daniela Pérez','<span class="est">Lucas · U12</span>'),'<p class="meta">{{i:users-three:bold}}Madre</p><p class="meta" style="margin-top:6px">{{i:chat-circle-dots:bold}}06 00 00 00 01</p><p class="meta" style="margin-top:6px">{{i:paper-plane-tilt:bold}}daniela@ejemplo.fr</p>',acciones(bt('Llamar'),bt('WhatsApp'),bt('Correo')))
 S('di-directorio','directiva','Directorio','directorio','Directorio',[pills(eqp,1,'grupo-pills'),dlist],eyebrow='Hola, Sylvie',layout='g2',
   dmain=[pills(eqp,1),dlist],dside=[ficha,aviso_box('lock','Solo contactos','El directorio no muestra asistencia ni temas deportivos.')])

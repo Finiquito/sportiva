@@ -39,7 +39,7 @@ def galeria(n,k='g4'): return '<div class="fotos %s" role="img" aria-label="%d f
 fo_main=card(ch('Fotos del partido','<span class="est">6 fotos</span>'),galeria(6,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))
 fo_reg=card(aviso_box('camera','Quién sube fotos','Papás y entrenadores. Los niños no suben fotos.'),'<p class="meta" style="margin-top:12px">{{i:lock:bold}}¿No quieres que salga tu hijo? Pídelo en Privacidad.</p>')
 S('ap-fotos','apoderado','Fotos del partido','agenda','Fotos',[fo_main,fo_reg],back='Convocatoria',sub='U12 vs Niort · Sáb 24 oct',layout='g2',
-  dmain=[card(ch('Fotos del partido','<span class="est">6 fotos</span>'),galeria(6),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))],dside=[fo_reg])
+  dmain=[card(ch('Fotos del partido','<span class="est">6 fotos</span>'),galeria(6,'g3'),'<div style="height:6px"></div>',bt('Agregar foto','camera',k='s w'))],dside=[fo_reg])
 
 # ---------- Visor ----------
 vi_main=card('<div class="foto-ph" style="min-height:320px" role="img" aria-label="Foto 3 de 6">{{i:images:bold}}</div>','<p class="meta" style="margin:14px 0 0">{{i:camera:bold}}Subida por Sofía B. · 13:40</p><p class="sub" style="margin:4px 0 0 27px">U12 vs Niort · Sáb 24 oct</p>',acciones(bt('Anterior',k='',style='flex:1').replace('<button type="button" class="bt" style="flex:1">','<button type="button" class="bt" style="flex:1">'+ANT),bt('Siguiente',k='',style='flex:1')[:-9]+' '+SIG+'</button>'))
@@ -59,11 +59,11 @@ S('ap-hilo','apoderado','Consulta · hilo','actividad','¿Hay que llevar botella
 
 # ---------- Nueva consulta ----------
 nc_main=card(mini('Para'),pills(['Camila','Pedro','Camila y Pedro'],2),campo('Tema','Ej.: horario, lesión, ropa…',ph=True),campo('Mensaje','Escribe tu consulta…',ph=True,ta=True),aviso_box('lock','Es privada','Solo la ven los entrenadores.'),'<div style="height:14px"></div>',bt('Enviar','paper-plane-tilt',k='s w'))
-S('ap-nueva-consulta','apoderado','Nueva consulta','actividad','Nueva consulta',[nc_main],back='Mi actividad',layout='uno')
+S('ap-nueva-consulta','apoderado','Nueva consulta','actividad','Nueva consulta',[nc_main],back='Mi actividad',sub='Consulta privada al entrenador',layout='uno')
 
 # ---------- Notificaciones ----------
 NUEVO='<span class="est">{{i:bell-ringing:bold}}Nuevo</span>'
 def nt(ic,t,sub,nuevo=False,k=''): return lk(ic,t,sub,right=('<span style="display:inline-flex;align-items:center;gap:6px">'+NUEVO+'<span class="chev">{{i:arrow-right:bold}}</span></span>') if nuevo else None,k=k)
 nb_hoy=card(lkl(nt('timer','Cambió la hora de regreso: 18:50 (antes 18:30)','Hora · U12 vs Niort · 14:42',True),nt('map-pin','Cambió el lugar del partido','Lugar · Sáb 24 oct · 10:12',True),nt('car','Te toca llevar este sábado','Turno · Encuentro 12:30 · 09:00',True)),style='padding:8px 18px')
 nb_ayer=card(lkl(nt('chat-circle-dots','Camila respondió tu consulta','Respuesta · ¿Hay que llevar botella? · 20:10'),nt('c:balon','Nueva convocatoria: U12 vs Chauray','Convocatoria · Sáb 31 oct · 18:30',k='lim')),style='padding:8px 18px')
-S('ap-bandeja','apoderado','Notificaciones','agenda','Notificaciones',[pills(['Todas','Sin leer · 3'],0),dia('Hoy'),nb_hoy,dia('Ayer'),nb_ayer,bt('Marcar todo como leído','check',k='w')],back='Agenda',layout='uno')
+S('ap-bandeja','apoderado','Notificaciones','agenda','Notificaciones',[pills(['Todas','Sin leer · 3'],0),dia('Hoy'),nb_hoy,dia('Ayer'),nb_ayer,bt('Marcar todo como leído','check',k='w')],back='Agenda',sub='Hoy y ayer',layout='uno')

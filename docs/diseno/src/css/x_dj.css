@@ -10,3 +10,5 @@
 .logo-fila{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
 .ro{display:flex;align-items:center;gap:8px;font:500 12px/1.4 var(--font-mono);color:var(--tinta-2);margin:0}
 .ro .pi{font-size:16px;color:var(--tinta)}
+.pers>div{min-width:0}
+.pers b,.pers small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
