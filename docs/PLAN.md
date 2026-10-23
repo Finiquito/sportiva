@@ -306,3 +306,10 @@ Lámina completa: `docs/diseno/direcciones.html` (capturas en `docs/diseno/png/`
 - Íconos propuestos (opción B): Phosphor Bold en reposo, Fill en activo, Duotone en ilustraciones (MIT, subset en `docs/diseno/iconos/`) + ~12 propios (silbato, arco, cancha, tarjeta, costura…).
 - Logos por elegir: 1 balón con S cosida, 2 sticker, 3 palabra con rulo.
 - Por decidir: logo, paleta, íconos, tablero del escritorio del entrenador, intensidad del grano.
+
+## 26. Turnos de traslado y horas de citación (decisión del usuario)
+- **Turnos sin cupos.** El profe carga por fecha qué familias llevan, junto con los partidos de la temporada o del mes (o después). Las familias lo ven. No se asignan cupos: el profe calcula de más y los cupos se reparten al llegar al punto de encuentro.
+- **Cambios.** Los padres hablan entre ellos (botón «Hablar») para cambiar un turno. Si otra familia también va, pide sumarse al turno («Yo también llevo»), el profe la acepta y queda citada como las demás en el punto de encuentro, a la hora que corresponda.
+- **Horas del partido.** Tres horas posibles: punto de encuentro, en cancha y partido. Las que importan para la citación son **Encuentro** (si corresponde) y **En cancha**. Si todos van directo, se muestran **En cancha** y **Partido**. La hora del partido se ve en el bloque «En partido» / «En vivo» / «En torneo», según corresponda.
+- **Vocabulario:** donde decía «votos» ahora dice **asistencias** (pestaña «Asistencias», «Mis asistencias»).
+- **Menú inferior móvil:** estaba tapado por la hoja (z-index); corregido, queda fijo abajo.
