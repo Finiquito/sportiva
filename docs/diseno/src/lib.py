@@ -106,11 +106,11 @@ def _tiles(lat,lon,z,cols=4,rows=3):
     n=2**z; px=(lon+180)/360*n*256; py=(1-math.log(math.tan(math.radians(lat))+1/math.cos(math.radians(lat)))/math.pi)/2*n*256
     tx0,ty0=int(px//256)-cols//2,int(py//256)-rows//2
     ox,oy=px-tx0*256,py-ty0*256
-    imgs=''.join('<img src="https://%s.basemaps.cartocdn.com/light_all/%d/%d/%d.png" alt="" width="256" height="256" loading="lazy">'%('abcd'[(tx0+c+ty0+r)%4],z,tx0+c,ty0+r) for r in range(rows) for c in range(cols))
+    imgs=''.join('<img src="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/%d/%d/%d" alt="" width="256" height="256" loading="lazy">'%(z,ty0+r,tx0+c) for r in range(rows) for c in range(cols))
     return '<div class="tiles" style="width:%dpx;height:%dpx;transform:translate(-%.1fpx,-%.1fpx)">%s</div>'%(cols*256,rows*256,ox,oy,imgs)
 def mapa(lat=None,lon=None,z=None):
-    """mapa estático con teselas CARTO Positron (datos de OpenStreetMap; OSM bloquea las teselas sin Referer, p. ej. desde file://) centrado en el estadio (sin JS; en producción: Leaflet/MapLibre)"""
-    return '<div class="mapa" role="img" aria-label="Mapa: estadio del club">%s<span class="pin">{{i:map-pin:fill}}</span><span class="osm">© OpenStreetMap · © CARTO</span></div>'%_tiles(lat or LAT,lon or LON,z or ZOOM)
+    """mapa estático con teselas Esri Light Gray Canvas (sin llave, solo para el diseño; OSM bloquea sin Referer y CARTO pide llave) centrado en el estadio (sin JS; en producción: Leaflet/MapLibre)"""
+    return '<div class="mapa" role="img" aria-label="Mapa: estadio del club">%s<span class="pin">{{i:map-pin:fill}}</span><span class="osm">Esri · © OpenStreetMap</span></div>'%_tiles(lat or LAT,lon or LON,z or ZOOM)
 GMAPS='https://www.google.com/maps/search/?api=1&amp;query=%s,%s'%(LAT,LON)
 WAZE='https://waze.com/ul?ll=%s,%s&amp;navigate=yes'%(LAT,LON)
 def mapas_btns(): return '<div class="nav"><a class="bt" href="%s" target="_blank" rel="noopener">{{i:navigation-arrow:bold}}Google Maps</a><a class="bt" href="%s" target="_blank" rel="noopener">{{i:navigation-arrow:bold}}Waze</a><button type="button" class="bt">{{i:share-network:bold}}WhatsApp</button></div>'%(GMAPS,WAZE)
