@@ -1,0 +1,143 @@
+## auth/landing — Sportiva
+imagen | Clubes en Sportiva | 4 | clubes | 757 | familias | 49 | equipos | Clubes | logo | Club Aigles | Niort · Fútbol | 14 equipos · 212 familias | › | logo | Club Pampa | Poitiers · Vóley | 9 equipos · 148 familias | › | logo | Sporting Rochelais | La Rochelle · Fútbol | 18 equipos · 301 familias | › | logo | AS Bocage | Bressuire · Fútbol | 8 equipos · 96 familias | › | Entrar
+## auth/clubes — ¿A qué club entras?
+Tu correo está en más de un club. | logo | Club Aigles | Niort · Apoderada de Lucas y Emma | › | logo | Club Pampa | Poitiers · Apoderada de Camila (U9) | ›
+## auth/clubPub#aigles — Club Aigles
+foto del club | Niort · Fútbol | 14 | equipos | 212 | familias | Categorías | U8 | U10 | U12 | U14 | U16 | Contacto | contacto@aigles.fr | Niort | Pedir invitación | Ya tengo invitación
+## auth/inv_mail — Correo
+De: Club Aigles | Para: daniela@ejemplo.fr | Daniela, el Club Aigles te invita a Sportiva | Ahí verás la agenda, los avisos y los partidos de Lucas y Emma, y avisarás si van o no. | Aceptar invitación | Si no esperabas este correo, ignóralo.
+## auth/instalar1 — 
+Instala Sportiva | Para recibir los avisos en tu celular. | iPhone | Android | 1 | Toca el botón Compartir | captura iPhone | 2 | Elige «Agregar a pantalla de inicio» | captura iPhone | 3 | Toca Agregar | captura iPhone | Ya la instalé | Continuar sin la app
+## auth/instalar2 — 
+Abre Sportiva desde tu pantalla de inicio | Correo | Mapas | Fotos | Reloj | Sportiva | Notas | Música | Ajustes | Abrir la app
+## auth/login1 — 
+logo | Entra con tu correo | Correo | Enviarme un código
+## auth/login2 — 
+Revisa tu correo | Enviamos un código a | da•••@ejemplo.fr | Entrar | Reenviar código (0:45) | Usar otro correo
+## auth/ob1 — Bienvenida
+Paso 1 de 4 | El Club Aigles ya cargó a tus hijos. Revisa tus datos. | Nombre | Teléfono | Idioma | Français | Español | Continuar
+## auth/ob2 — Tus hijos
+Paso 2 de 4 | Confirma quiénes son tus hijos en el club. | Lucas | U12 | 12 años | ✓ | Emma | U10 | 10 años | ✓ | Agregar otro hijo | Continuar
+## auth/ob3 — Tus datos con otras familias
+Paso 3 de 4 | Opcional. Solo lo verán las familias de tu equipo. | Mi teléfono | Mi correo | Aparecer en el directorio | Continuar
+## auth/ob4 — Activa los avisos
+Paso 4 de 4 | Cambios de hora de regreso | Recordatorio de tu turno de traslado | Respuestas del entrenador | Activar avisos | Entrar a la agenda
+## apoderado/agenda — Agenda
+Todos | Lucas · U12 | Emma · U10 | auto | Te toca llevar | Sáb 24 oct · salida 12:30 desde el club · 3 cupos libres | Ver traslado | Turnos | Lista | Mes | Hoy · Jue 22 oct | Entrenamiento | ✓ Emma · Voy | Entrenamiento U10 · 18:00 – 19:30 | Gimnasio municipal | ✓ Voy | ? Duda | ✕ No voy | Sáb 24 oct | Partido | ! Lucas · sin responder | U12 vs Niort · 14:00 | En cancha 13:15 · Salida 12:30 · Club · Modificada hoy | ✓ Voy | ? Duda | ✕ No voy | Mar 27 oct | Entrenamiento | ? Lucas · Duda | Entrenamiento U12 · 18:00 – 19:30 | Gimnasio municipal | ✓ Voy | ? Duda | ✕ No voy | Jue 29 oct | Evento especial | ! Lucas · sin responder | Stage de vacaciones · 09:00 – 17:00 | Complexe sportif · Niort | Abrir | Sáb 31 oct | Partido | ! Lucas · sin responder | U12 vs Chauray · 15:00 | En cancha 14:15 · Salida 13:30 · Stade municipal (Aiffres) | ✓ Voy | ? Duda | ✕ No voy
+## apoderado/convo#e2 — 
+Partido | U12 | U12 vs Niort | Sáb 24 oct | En cancha | 13:15 | Partido | 14:00 | Cambió el lugar del partido | Hoy 10:12 · Camila | Antes | Stade municipal · Niort | Ahora | Stade du Centre · Niort | Entendido | Tu respuesta | Lucas | ✓ | Voy | ? | Duda | ✕ | No voy | 5 | voy · | 2 | duda · | 1 | no van · | 2 | sin responder | Ver lista | A · Punto de encuentro | Club · 12:30 | Estacionamiento del club, portón azul | mapa del punto de encuentro | Maps | Waze | WhatsApp | B · Lugar del partido | Stade du Centre · Niort | Club local: Niort FC · Rue Ejemplo 12, 79000 Niort | mapa con pin · 62 km · 1 h | Maps | Waze | WhatsApp | Traslado · te toca llevar | tú | Tu auto | Salida 12:30 · 3 de 4 cupos | tu turno | M | Auto de Marta | Salida 12:30 · 2 cupos libres | Pedir cupo | ! | Sin auto: Ethan, Paul | 2 jugadores sin traslado | Ofrecer auto | En vivo | Todavía no empieza. Se activa 2 h ant
+## apoderado/convo#e4 — 
+Evento especial | U12 | Stage de vacaciones | Jue 29 oct · 09:00 – 17:00 | Inscripción | 45 € | Precio informativo. No se cobra en la app. | Al inscribirte se avisa a tesorería (tesoreria@aigles.fr). | Inscribir a Lucas | Lugar | Complexe sportif · Niort | Avenue Ejemplo 8, Niort | Maps | Waze | WhatsApp | Preguntar al entrenador | Privado: lo ven los entrenadores del equipo. | Enviar
+## apoderado/envivo#e2 — 
+U12 vs Niort | Regreso estimado al club | 18:30 | Hora tentativa del entrenador | Todavía no empieza | El reporte en vivo se activa 2 horas antes.
+## apoderado/fotosEv#e2 — Fotos
+U12 vs Niort · Sáb 24 oct | 0 fotos | Todavía no hay fotos. | Agregar foto
+## apoderado/visor#e2 — NaN de 1
+foto | Subida por undefined | U12 vs Niort | ‹ Anterior | Siguiente ›
+## apoderado/feed — Feed
+Convocatoria publicada | U12 vs Niort | Sáb 24 oct · 14:00 · Stade du Centre · Niort | Responder | Camila · entrenadora | Mié 21 oct | Ropa perdida del sábado | Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club. | foto | Comentarios: 1 | Cambio de equipo | Nolan pasa de U11B a U11A desde el 15 nov | Mar 20 oct | Fotos | 12 fotos nuevas del partido en La Rochelle | foto | foto | foto | Ver fotos | Resultado | U12 3 – 1 Rochelais | Dom 18 oct
+## apoderado/aviso#f2 — Aviso
+Camila · entrenadora | Mié 21 oct | Ropa perdida del sábado | Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club. | foto | Comentarios · 1 | Marta Garcia | Creo que la sudadera es de Tomás. | Enviar
+## apoderado/actividad — Mi actividad
+Todo | Votos | Consultas | Nueva consulta | Mié 21 oct · 20:14 | Voto | Lucas · Duda · Entrenamiento mar 27 oct | Lun 19 oct · 09:02 | Voto | Emma · Voy · Entrenamiento jue 22 oct | Vie 16 oct | Consulta | ¿Hay que llevar botella? | U12 vs Rochelais · Sí, y camiseta blanca. | ›
+## apoderado/hilo#c1 — ¿Hay que llevar botella?
+U12 vs Rochelais | Tú | ¿Hay que llevar botella? | Camila | Sí, y camiseta blanca. | Enviar
+## apoderado/nuevaConsulta — Nueva consulta
+Para | Camila | Pedro | Camila y Pedro | Tema | Mensaje | Es privada: solo la ven los entrenadores. | Enviar
+## apoderado/turnos — Turnos de traslado
+Tus turnos | auto | Sáb 24 oct | U12 vs Niort | Cambiar | auto | Sáb 14 nov | Tentativo | Partido por confirmar | Cambiar | Te avisamos 48 h y 3 h antes de cada turno. | Rotación de U12 | Sáb 24 oct | Confirmado | U12 vs Niort | Familia Pérez (tú) · Familia Garcia | Ver partido | Sáb 31 oct | Confirmado | U12 vs Chauray | Familia Moreau · Familia Roux | Ver partido | Sáb 7 nov | Tentativo | Partido por confirmar | Familia Bernard · Familia Dubois | Sáb 14 nov | Tentativo | Partido por confirmar | Familia Pérez (tú) · Familia Martin
+## apoderado/bandeja — Notificaciones
+Todas | Sin leer · 3 | Marcar todo como leído | Hoy | ● | Cambió la hora de regreso: 18:50 (antes 18:30) | Hora | U12 vs Niort · 14:42 | › | ● | Cambió el lugar del partido | Lugar | U12 vs Niort · Sáb 24 oct · 10:12 | › | ● | Te toca llevar este sábado | Turno | Salida 12:30 desde el club · 09:00 | › | Ayer | Camila respondió tu consulta | Respuesta | ¿Hay que llevar botella? · 20:10 | › | Nueva convocatoria: U12 vs Chauray | Convocatoria | Sáb 31 oct · 18:30 | ›
+## apoderado/mas — Más
+Mi perfil | Nuevo | Daniela Pérez · daniela@ejemplo.fr | › | Mi familia | Daniela · Lucas · Emma | › | Mis clubes | Nuevo | Club Aigles · Club Pampa | › | Ayuda | Nuevo | Instalar la app, preguntas | › | Cerrar sesión
+## apoderado/perfil — Mi perfil
+foto | Daniela Pérez | daniela@ejemplo.fr | Mis datos | Movido | Nombre, teléfono, correo | › | Idioma | Movido | Français | › | Preferencias de avisos | Movido | Push, correo | › | Compartir mis datos | Movido | Con las familias de tu equipo | › | Privacidad | Movido | Quién ve qué, descargar o borrar | ›
+## apoderado/misDatos — Mis datos
+Nombre | Teléfono | Correo | daniela@ejemplo.fr | Para cambiar el correo te pedimos un código. | Idioma | Français | Español | Guardar | Cambiar correo
+## apoderado/idioma — Idioma
+Français | ✓ | Español
+## apoderado/notifs — Preferencias de avisos
+Avisos en el celular | Push | Correo | Cambios de hora de regreso | Recordatorio de mi turno | 48 h y 3 h antes | Aviso por WhatsApp | Un mensaje con un enlace
+## apoderado/compartir — Compartir mis datos
+Con las familias de tu equipo. | Mi teléfono | Mi correo | Aparecer en el directorio
+## apoderado/privacidad — Privacidad
+Quién ve tus datos | Entrenadores y dirigentes del club | Tu nombre, teléfono y correo, y los datos de tus hijos. | Otras familias de tu equipo | Solo lo que tú elijas compartir. | Compañeros de tus hijos | Solo su nombre de pila, en el chat del equipo. | Elegir qué comparto | Tus derechos | Descargar mis datos | Pedir que se quiten fotos de mis hijos | Eliminar mi cuenta
+## apoderado/familia — Mi familia
+Adultos | Daniela Pérez | Titular · daniela@ejemplo.fr | Tú | Agregar a otro papá o mamá | Hijos | Lucas | U12 | Perfil hijo | 12 años · solo puede ver | Chat del equipo | Con sus compañeros | Enlace de acceso para Lucas | Emma | U10 | Perfil hijo | 10 años · solo puede ver | Chat del equipo | Con sus compañeros | Enlace de acceso para Emma | Agregar hijo
+## apoderado/misClubes — Mis clubes
+logo | Club Aigles | Activo | Niort · Fútbol | U12 · Lucas · U10 · Emma | › | logo | Club Pampa | Poitiers · Vóley | U14 Vóley · Lucas | ›
+## apoderado/clubF#aigles — Club Aigles
+Niort · Fútbol | Club activo | Mis equipos | U12 | Lucas · Camila, Pedro | › | U10 | Emma · Léa, Marc | › | Sobre el club | contacto@aigles.fr | Niort | Salir de este club
+## apoderado/equipoF#U12 — U12
+Temporada 2026 – 2027 · 10 jugadores | Entrenadores | Camila | Entrenadora · encargada | Preguntar | Pedro | Entrenador | Preguntar | Fijado | Reglas del equipo | Llegar 15 minutos antes. Avisar si no vas hasta el jueves a las 21:00. | En este equipo | Turnos de traslado | Movido | Quién lleva y cuándo | › | Familias del equipo | Movido | Directorio opcional | › | Chat de niños | Movido | Solo lectura | › | Jugadores | Lucas | Tomás | Mateo | Gabriel | Louis | Raphaël | Adam | Arthur | Ethan | Paul
+## apoderado/familias — Familias de U12
+Daniela Pérez | · Lucas | No comparte sus datos | Marta Garcia | · Tomás | 06 00 00 00 02 · marta.garcia@ejemplo.fr | Paul Fournier | · Mateo | 06 00 00 00 20 · paul.fournier@ejemplo.fr | Inés Garcia | · Gabriel | No comparte sus datos | Karim Dubois | · Louis | 06 00 00 00 22 · karim.dubois@ejemplo.fr | Marta Roux | · Raphaël | 06 00 00 00 23 · marta.roux@ejemplo.fr | Luis Girard | · Adam | No comparte sus datos | Sofía Bernard | · Arthur | 06 00 00 00 25 · sofia.bernard@ejemplo.fr | Julien Lefèvre | · Ethan | 06 00 00 00 26 · julien.lefevre@ejemplo.fr | Ana Morel | · Paul | No comparte sus datos
+## apoderado/chat — Chat de U12
+10 jugadores · lo moderan Camila y Pedro | Tomás | ⋯ | ¿Quién va el sábado? | Mateo | ⋯ | ¡Vamos! | Mensaje oculto por un entrenador | Gabriel | ⋯ | Yo voy | Arthur | ⋯ | Bravo | Solo lectura. Los niños escriben desde su perfil.
+## apoderado/ayuda — Ayuda
+Instalar la app | Para recibir avisos | › | Preguntas frecuentes | › | Escribir al soporte de Sportiva | ›
+## apoderado/directorio — Directorio
+U13 | U12 | U11A | U11B | U11C | U10 | Lucas | Daniela Pérez | › | Tomás | Marta Garcia | › | Mateo | Paul Fournier | › | Gabriel | Inés Garcia | › | Louis | Karim Dubois · Pierre Dubois | › | Raphaël | Marta Roux | › | Adam | Luis Girard | › | Arthur | Sofía Bernard · Nadia Bernard | › | Ethan | Julien Lefèvre | › | Paul | Ana Morel | ›
+## entrenador/agenda — Agenda
+Lista | Mes | Sáb 24 oct | Partido | U12 | U12 vs Niort · 14:00 | En cancha 13:15 · Salida 12:30 · Club · Modificada hoy | Abrir | Mar 27 oct | Entrenamiento | U12 | Entrenamiento U12 · 18:00 – 19:30 | Gimnasio municipal | Abrir | Jue 29 oct | Evento especial | U12 | Stage de vacaciones · 09:00 – 17:00 | Complexe sportif · Niort | Abrir | Sáb 31 oct | Partido | U12 | U12 vs Chauray · 15:00 | En cancha 14:15 · Salida 13:30 · Stade municipal (Aiffres) | Abrir
+## entrenador/crear — Nueva convocatoria
+Tipo | Partido | Entreno | Stage | Especial | Equipo que convoca | U13 | U12 | U11A | U11B | U11C | U10 | Jugadores | 10 convocados | Solo del equipo | Elegir › | Cuándo | Hora del partido | Hora en cancha | 30 min antes | 45 min antes | 1 h antes | Punto de encuentro | El club | El lugar del partido | Otro lugar | Nombre del lugar | Indicaciones | Hora de salida | Lugar del partido * | Ningún lugar elegido. | Elegir lugar | ! Sin ubicación confirmada no se puede publicar. | Traslado compartido | F | Familia Pérez | turno de este sábado · 4 cupos | Asignado | Asignar según turnos | Nota para las familias | Avisar a 10 familias | Notificación y correo | Publicar convocatoria
+## entrenador/elegir — Elegir jugadores
+U13 | U12 · 10 | U11A | U11B | U11C | U10 | 10 convocados | Quitar a todo el equipo | Lucas | U12 | ✓ | Tomás | U12 | ✓ | Mateo | U12 | ✓ | Gabriel | U12 | ✓ | Louis | U12 | ✓ | Raphaël | U12 | ✓ | Adam | U12 | ✓ | Arthur | U12 | ✓ | Ethan | U12 | ✓ | Paul | U12 | ✓ | Listo · 10 convocados
+## entrenador/asistencia#e2 — 
+Partido | U12 | U12 vs Niort | Sáb 24 oct · 14:00 · en cancha 13:15 | Stade du Centre · Niort | ✓ 5 | Voy | ? 2 | Duda | ✕ 1 | No | ! 2 | Sin resp. | Tomás | › | Mateo | › | Gabriel | › | Louis | › | Arthur | › | Cambios recientes | Adam | cambió a No voy · hace 12 min | Gripe | Paul | cambió a Duda · hace 1 h | Recordar a quienes no respondieron | Reporte en vivo | Editar convocatoria
+## entrenador/lista#e2 — Quién va
+U12 vs Niort · Sáb 24 oct | ✓ Voy · 5 | Tomás | U12 | Mateo | U12 | Gabriel | U12 | Louis | U12 | Arthur | U12 | ? Duda · 2 | Raphaël | U12 | Paul | U12 | ✕ No van · 1 | Adam | U12 | Sin responder · 2 | Ethan | U12 | Lucas | U12
+## entrenador/envivo#e2 — 
+U12 vs Niort | Regreso estimado al club | 18:30 | Hora tentativa del entrenador | Todavía no empieza | El reporte en vivo se activa 2 horas antes.
+## entrenador/feed — Feed
+Publicar aviso | Convocatoria publicada | U12 vs Niort | Sáb 24 oct · 14:00 · Stade du Centre · Niort | Ver asistencia | Camila · entrenadora | Mié 21 oct | Ropa perdida del sábado | Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club. | foto | Comentarios: 1 | Cambio de equipo | Nolan pasa de U11B a U11A desde el 15 nov | Mar 20 oct | Fotos | 12 fotos nuevas del partido en La Rochelle | foto | foto | foto | Ver fotos | Resultado | U12 3 – 1 Rochelais | Dom 18 oct
+## entrenador/nuevoAviso — Nuevo aviso
+Para | Todo el equipo U12 | U12 y U13 | Jugadores específicos… | Título | Mensaje | Agregar foto | Publicar
+## entrenador/consultas — Consultas
+Familias · 2 | Encargado · 1 | Familia Pérez ● | Lucas · U12 vs Niort | ¿Hasta qué hora estará el bus? | › | Familia Garcia ● | Tomás · Stage de vacaciones | ¿El stage incluye almuerzo? | › | Familia Moreau | Hugo (U11A) · Convocado a U13 | Perfecto. | ›
+## entrenador/hilo —  ERR Cannot read properties of undefined (reading 'n')
+
+## entrenador/plantel — Plantel
+U13 | U12 | U11A | U11B | U11C | U10 | 10 jugadores | Lucas | Asistencia 70% | › | Tomás | Asistencia 77% | › | Mateo | Asistencia 84% | › | Gabriel | Asistencia 91% | › | Louis | Asistencia 70% | › | Raphaël | Asistencia 77% | › | Adam | Asistencia 84% | › | Arthur | Asistencia 91% | › | Ethan | Asistencia 70% | › | Paul | Asistencia 77% | ›
+## entrenador/jugador#Lucas — Lucas
+U12 | 12 años · nació 12 mar 2014 | Contactos | Daniela Pérez | · Madre | 06 00 00 00 01 | daniela@ejemplo.fr | Llamar | WhatsApp | Correo | Historial de equipos | U12 | desde sept. 2026 | U11B | sept. 2025 – ago. 2026 | Mover de equipo
+## entrenador/reorganizar — Reorganizar U11
+Toca un jugador para moverlo. | U11A · 6 | Nolan | ⇄ | Théo | ⇄ | Maxime | ⇄ | Ilan | ⇄ | Sacha | ⇄ | Yanis | ⇄ | U11B · 6 | Camille | ⇄ | Léon | ⇄ | Rayan | ⇄ | Oscar | ⇄ | Axel | ⇄ | Malo | ⇄ | U11C · 6 | Eliott | ⇄ | Gaspard | ⇄ | Timéo | ⇄ | Victor | ⇄ | Basile | ⇄ | Joseph | ⇄ | Sin cambios
+## entrenador/directorio — Directorio
+U13 | U12 | U11A | U11B | U11C | U10 | Lucas | Daniela Pérez | › | Tomás | Marta Garcia | › | Mateo | Paul Fournier | › | Gabriel | Inés Garcia | › | Louis | Karim Dubois · Pierre Dubois | › | Raphaël | Marta Roux | › | Adam | Luis Girard | › | Arthur | Sofía Bernard · Nadia Bernard | › | Ethan | Julien Lefèvre | › | Paul | Ana Morel | ›
+## entrenador/mas — Más
+Mi perfil | Datos, idioma, avisos | › | Directorio de contactos | Familias de todos los equipos | › | Mis clubes | Club Aigles · 2 clubes | › | Ayuda | Instalar la app | › | Cerrar sesión
+## directiva/feed — Feed del club
+Publicar aviso | Directiva | Mié 21 oct | Asamblea general, 14 de noviembre | Sábado 14 a las 10:00 en la sala del club. Habrá café. | Comentarios: 0 | Directiva | Lun 12 oct | Torneo de fin de año | Ya está abierta la lista de familias voluntarias. | Comentarios: 1
+## directiva/club — Club
+Equipos y grupos | 14 equipos · 1 temporada | › | Personas | 212 familias · 18 entrenadores | › | Invitaciones | 1 sin enviar · 5 autorizados | › | Lugares | 4 guardados | › | Temporada | 2026 – 2027 | › | Ajustes del club | Deporte, idioma, zona horaria | ›
+## directiva/cEquipos — Equipos y grupos
+U13 | 8 jugadores · Camila, Pedro | › | U12 | 10 jugadores · Camila, Pedro | › | U11A | 6 jugadores · Camila, Pedro | › | U11B | 6 jugadores · Camila, Pedro | › | U11C | 6 jugadores · Camila, Pedro | › | U10 | 6 jugadores · Camila, Pedro | › | Nuevo equipo
+## directiva/cPersonas — Personas
+Todos | Entrenadores | Familias | Directiva | Camila | Entrenadora · encargada | › | Pedro | Entrenador | › | Daniela Pérez | Familia · Lucas, Emma | › | Marta Garcia | Familia · Tomás | › | Julien Moreau | Familia · Hugo | › | Sylvie | Directiva · presidenta | › | Invitar a alguien
+## directiva/cInvit — Invitaciones
+5 | autorizados | 2 | activos | 1 | invitados sin entrar | 1 | correos rebotados | Cargar lista de correos | Enviar invitaciones · 1 | Solicitudes | sophie.martin@ejemplo.fr | Jade · U10 | Aprobar | Rechazar | karim.b@ejemplo.fr | Inés · U12 | Aprobar | Rechazar | daniela@ejemplo.fr | Familia · U12 · U10 | Activo | pedro@aigles.fr | Entrenador · U13 | Activo | marta.garcia@ejemplo.fr | Familia · U12 | Reenviar | julien.moreau@ejemplo.fr | Familia · U11A | Autorizado | claire.roux@ejemplo.fr | Familia · U12 | Rebotó
+## directiva/cLugares — Lugares
+Club (predeterminado) | Stade del club, Niort | › | Gimnasio municipal | Rue du Stade 4, Niort | › | Stade du Centre · Niort FC | Rue Ejemplo 12, 79000 Niort | › | Complexe sportif · Rochelais | Avenue Ejemplo 20, La Rochelle | › | Nuevo lugar
+## directiva/lugarNuevo — Nuevo lugar
+Recinto | Club local | Dirección | o pega un enlace de Google Maps o Waze | mapa con pin arrastrable | Usar este lugar
+## directiva/cTemporada — Temporada
+Temporada actual | 2026 – 2027 | 1 sept. 2026 – 31 ago. 2027 | Cerrar y crear la siguiente
+## directiva/cAjustes — Ajustes del club
+Deporte | Fútbol | Vóley | Básquet | Idioma por defecto | Français | Español | Zona horaria | Europe/Paris | Aparecer en la lista pública de clubes | Solo se muestran cifras | Exigir instalar la app | Para recibir avisos en el celular | Logo | logo
+## directiva/directorio — Directorio
+U13 | U12 | U11A | U11B | U11C | U10 | Lucas | Daniela Pérez | › | Tomás | Marta Garcia | › | Mateo | Paul Fournier | › | Gabriel | Inés Garcia | › | Louis | Karim Dubois · Pierre Dubois | › | Raphaël | Marta Roux | › | Adam | Luis Girard | › | Arthur | Sofía Bernard · Nadia Bernard | › | Ethan | Julien Lefèvre | › | Paul | Ana Morel | ›
+## directiva/mas — Más
+Mi perfil | Datos, idioma, avisos | › | Mis clubes | Club Aigles · 2 clubes | › | Ayuda | Instalar la app | › | Cerrar sesión
+## jugador/agenda — Agenda
+Lista | Mes | Sáb 24 oct | Partido | U12 vs Niort · 14:00 | En cancha 13:15 · Salida 12:30 · Club · Modificada hoy | Abrir | Mar 27 oct | Entrenamiento | Entrenamiento U12 · 18:00 – 19:30 | Gimnasio municipal | Abrir | Jue 29 oct | Evento especial | Stage de vacaciones · 09:00 – 17:00 | Complexe sportif · Niort | Abrir | Sáb 31 oct | Partido | U12 vs Chauray · 15:00 | En cancha 14:15 · Salida 13:30 · Stade municipal (Aiffres) | Abrir
+## jugador/convo#e2 — 
+Partido | U12 | U12 vs Niort | Sáb 24 oct | En cancha | 13:15 | Partido | 14:00 | Cambió el lugar del partido | Hoy 10:12 · Camila | Antes | Stade municipal · Niort | Ahora | Stade du Centre · Niort | Entendido | Convocatoria | 5 | voy · | 2 | duda · | 1 | no van · | 2 | sin responder | Ver lista | A · Punto de encuentro | Club · 12:30 | Estacionamiento del club, portón azul | mapa del punto de encuentro | Maps | Waze | WhatsApp | B · Lugar del partido | Stade du Centre · Niort | Club local: Niort FC · Rue Ejemplo 12, 79000 Niort | mapa con pin · 62 km · 1 h | Maps | Waze | WhatsApp | Fotos del partido | 0
+## jugador/feed — Feed
+Convocatoria publicada | U12 vs Niort | Sáb 24 oct · 14:00 · Stade du Centre · Niort | Ver | Camila · entrenadora | Mié 21 oct | Ropa perdida del sábado | Quedaron una sudadera gris y dos botellas en el vestuario. Están en la caja del club. | foto | Comentarios: 1 | Cambio de equipo | Nolan pasa de U11B a U11A desde el 15 nov | Mar 20 oct | Fotos | 12 fotos nuevas del partido en La Rochelle | foto | foto | foto | Ver fotos | Resultado | U12 3 – 1 Rochelais | Dom 18 oct
+## jugador/chat — Chat de U12
+10 jugadores · lo moderan Camila y Pedro | Tomás | ⋯ | ¿Quién va el sábado? | Mateo | ⋯ | ¡Vamos! | Mensaje oculto por un entrenador | Gabriel | ⋯ | Yo voy | Arthur | ⋯ | Bravo
+[foot] ☺ | Enviar
+## jugador/mas — Más
+Mi perfil | Datos, idioma, avisos | › | Mis clubes | Club Aigles · 2 clubes | › | Ayuda | Instalar la app | › | Cerrar sesión

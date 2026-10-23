@@ -1,0 +1,10 @@
+:root{
+  --teal:#215E5E; --limon:#F6F24A; --hueso:#F2F0EA; --papel:#FFFFFF;
+  --tinta:#10201F; --tinta-2:#4B5E5C; --linea:rgba(16,32,31,.12); --linea-2:rgba(16,32,31,.22);
+  --polvo-t:#D9E2EA; --coral:#B9341A; --fondo:#DAD8D0; --gris:#D9D6CC;
+  --club:var(--teal); --club-t:color-mix(in oklab,var(--club) 10%,var(--papel));
+  --font-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --font-body:"Geist",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+
