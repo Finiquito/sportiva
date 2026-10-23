@@ -8,6 +8,9 @@ for m in MODS:
 ICON_DIR=os.path.join(HERE,'..','iconos')
 _js=open(os.path.join(ICON_DIR,'phosphor-subset.js')).read()
 PH=json.loads(_js[_js.index('window.PH=')+len('window.PH='):_js.rindex('}')+1])
+PH.update({
+ 'arrows-left-right':{'bold':'<g fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M40 104h176M184 72l32 32-32 32"/><path d="M216 152H40M72 120l-32 32 32 32"/></g>'},
+ 'arrow-left':{'bold':'<g fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path d="M216 128H40M104 64l-64 64 64 64"/></g>'}})
 BB=json.load(open(os.path.join(HERE,'bbox.json')))
 GRANO='data:image/png;base64,'+base64.b64encode(open(os.path.join(HERE,'grano-s.png'),'rb').read()).decode()
 LOGO_PATHS='<path d="M305 458 L322 459 C328 459 330 465 331 476 C340 560 400 620 480 684 C508 702 527 722 527 745 C527 800 480 850 430 850 C421 850 417 844 415 832 C405 760 385 700 325 652 C285 626 212 590 210 548 C215 500 260 458 305 458 Z"/><path d="M385 458 L415 457 C490 458 527 510 527 560 L527 636 C527 644 520 647 510 646 C440 622 372 555 369 488 C369 465 375 458 385 458 Z"/><path d="M226 657 C218 657 209 660 209 678 L209 712 C209 790 255 851 315 851 L352 852 C366 852 371 846 370 826 C362 750 320 690 245 660 C238 658 232 657 226 657 Z"/>'
@@ -69,7 +72,7 @@ figure{margin:0}
 figcaption{font:500 12px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);margin:0 0 10px 4px}
 iframe{display:block;border:0;border-radius:28px;background:var(--papel);box-shadow:0 0 0 1px var(--linea)}
 </style></head><body>
-<div class="bar"><div role="tablist" aria-label="Vista" style="display:flex;gap:6px"><button class="tab" role="tab" id="t-m" aria-selected="true" aria-controls="p-m">Móvil</button><button class="tab" role="tab" id="t-d" aria-selected="false" aria-controls="p-d">Escritorio</button></div><nav class="salto" id="salto" aria-label="Ir a un rol">'''+jump%'m'+'''</nav></div>
+<div class="bar"><div role="tablist" aria-label="Vista" style="display:flex;gap:6px"><button class="tab" role="tab" id="t-m" aria-selected="true" aria-controls="p-m">Móvil</button><button class="tab" role="tab" id="t-d" aria-selected="false" aria-controls="p-d">Escritorio</button></div><nav class="salto" id="salto" aria-label="Ir a un rol">'''+jump.replace('%s','m')+'''</nav></div>
 <section class="panel" id="p-m" role="tabpanel" aria-labelledby="t-m">'''+panel(1,'390px',844,'m','')+'''</section>
 <section class="panel" id="p-d" role="tabpanel" aria-labelledby="t-d" hidden>'''+panel(2,'1140px',820,'d','')+'''</section>
 <script>

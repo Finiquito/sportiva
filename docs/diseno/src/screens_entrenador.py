@@ -117,12 +117,12 @@ S('en-plantel',R,'Plantel','plantel','Plantel',[pl_pills,pl_list],eyebrow='Hola,
 
 # ---------------- 13 · Jugador ----------------
 j_cont=card(ch('Contactos'),pers('DP','Daniela Pérez','Madre · 06 00 00 00 01 · daniela@ejemplo.fr'),acciones(bt('Llamar','navigation-arrow'),bt('WhatsApp','chat-circle-dots'),bt('Correo','paper-plane-tilt')))
-j_hist=card(ch('Historial de equipos'),pers('12','U12','desde sept. 2026',est('check','Actual')),pers('11','U11B','sept. 2025 – ago. 2026'),bt('Mover de equipo','share-network',k='w',style='margin-top:12px'))
+j_hist=card(ch('Historial de equipos'),pers('12','U12','desde sept. 2026',est('check','Actual')),pers('11','U11B','sept. 2025 – ago. 2026'),bt('Mover de equipo','arrows-left-right',k='w',style='margin-top:12px'))
 j_asis=card(ch('Asistencia'),'<span class="num-g">70%</span><p class="meta" style="margin:6px 0 0">Temporada 2026 – 2027</p>',barra(70))
 S('en-jugador',R,'Ficha de jugador','plantel','Lucas',[j_cont,j_asis,j_hist],back='Plantel',sub='U12 · 12 años · nació 12 mar 2014',layout='g2',dmain=[j_cont,j_hist],dside=[j_asis])
 
 # ---------------- 14 · Reorganizar ----------------
-def col(eq,nombres): return card(ch('%s · %d'%(eq,len(nombres))),''.join('<div class="mov-fila"><b>%s</b>%s</div>'%(n,bt('','share-network',k='pill-sm',style='width:38px;padding:0')) for n in nombres))
+def col(eq,nombres): return card(ch('%s · %d'%(eq,len(nombres))),''.join('<div class="mov-fila"><b>%s</b>%s</div>'%(n,bt('','arrows-left-right',k='pill-sm',style='width:38px;padding:0')) for n in nombres))
 r_cols=[col('U11A',['Nolan','Théo','Maxime','Ilan','Sacha','Yanis']),col('U11B',['Camille','Léon','Rayan','Oscar','Axel','Malo']),col('U11C',['Eliott','Gaspard','Timéo','Victor','Basile','Joseph'])]
 r_acc=card(aviso_box('users-three','Se avisará a las familias','Solo a las de los jugadores que cambien de equipo.'),'<div style="height:12px"></div>',bt('Sin cambios',k='w',style='opacity:.55'),cls='x-wide')
 S('en-reorganizar',R,'Reorganizar U11','plantel','Reorganizar U11',r_cols+[r_acc],back='Plantel',sub='Toca un jugador para moverlo',layout='cols3')

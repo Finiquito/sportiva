@@ -313,3 +313,8 @@ Lámina completa: `docs/diseno/direcciones.html` (capturas en `docs/diseno/png/`
 - **Horas del partido.** Tres horas posibles: punto de encuentro, en cancha y partido. Las que importan para la citación son **Encuentro** (si corresponde) y **En cancha**. Si todos van directo, se muestran **En cancha** y **Partido**. La hora del partido se ve en el bloque «En partido» / «En vivo» / «En torneo», según corresponda.
 - **Vocabulario:** donde decía «votos» ahora dice **asistencias** (pestaña «Asistencias», «Mis asistencias»).
 - **Menú inferior móvil:** estaba tapado por la hoja (z-index); corregido, queda fijo abajo.
+
+## 27. Todas las pantallas con diseño (ronda de revisión)
+- 73 pantallas (móvil y escritorio) generadas desde `docs/diseno/src`: Acceso 12 · Apoderado 28 · Entrenador y encargado 16 · Directiva 12 · Jugador 5. Cubren todo lo que había en el prototipo gris, con las decisiones nuevas (turnos sin cupos, horas Encuentro / En cancha / Partido, «asistencia»).
+- Revisión con las skills de crítica de diseño y accesibilidad: sin desbordes a 320–768 px (móvil) y 420–1140 px (escritorio), contraste AA sin fallos en todas las pantallas, objetivos táctiles ≥ 36 px, estados siempre con ícono + texto. Correcciones aplicadas: columnas del escritorio del apoderado, línea suelta en Convocatoria, ícono de «mover» (antes usaba el de compartir), títulos repetidos, correos sin cortar.
+- Pendientes de producto: fotos reales (hoy cuadros vacíos), mapa real, resumen del partido terminado, buscador global, pantallas vacías y de error, wireframes/diseño en francés.

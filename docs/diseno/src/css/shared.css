@@ -59,7 +59,7 @@
 .fecha{width:46px;height:46px;border-radius:14px;background:var(--hueso);color:var(--tinta);display:grid;place-content:center;text-align:center;font:600 10.5px/1 var(--font-mono);letter-spacing:.06em;flex:none}
 .fecha b{display:block;font:800 18px/1 var(--font-display);letter-spacing:-.01em;margin-bottom:2px}
 .g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:12px;align-items:start}
-.g3{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr) minmax(0,300px);gap:12px;align-items:start}
+.g3{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr) minmax(0,270px);gap:12px;align-items:start}
 .col{display:grid;gap:12px;min-width:0}
 .cars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:1000px){.g2,.g3{grid-template-columns:minmax(0,1fr)}.cars{grid-template-columns:minmax(0,1fr)}}

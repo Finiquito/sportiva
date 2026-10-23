@@ -93,12 +93,12 @@ DATOS={'Lucas':None,'Tomás':'06 00 00 00 02 · marta.garcia@ejemplo.fr','Mateo'
 def fam_row(j,p):
     d=DATOS[j]
     return pers(ini(p),p,'· %s'%j+('' if d is None else ' · '+d) if False else ('%s · %s'%(j,d) if d else '%s · No comparte sus datos'%j),'<span class="chev">{{i:arrow-right:bold}}</span>' if d else est('lock','Privado'),lim=(j=='Lucas'))
-fams=card(ch('Familias de U12','<span class="est">10</span>'),''.join(fam_row(j,p) for j,p in PPFAM))
+fams=card(ch('Directorio','<span class="est">10</span>'),''.join(fam_row(j,p) for j,p in PPFAM))
 S('ap-familias','apoderado','Familias del equipo','mas','Familias de U12',[fams],back='U12',sub='Solo ves lo que cada familia comparte',layout='g2',
   dmain=[fams],dside=[card(ch('Tu privacidad'),'<p class="meta">{{i:lock:bold}}Tus datos aparecen solo si activas «Aparecer en el directorio».</p>',bt('Compartir mis datos',k='w',style='margin-top:12px'))])
 
 # ---------- Chat de niños (solo lectura) ----------
-chat=card(ch('Chat de U12','<span class="est">{{i:lock:bold}}Solo lectura</span>'),'<p class="meta" style="margin-bottom:14px">{{i:users-three:bold}}10 jugadores · lo moderan Camila y Pedro</p>',
+chat=card(ch('Mensajes','<span class="est">{{i:lock:bold}}Solo lectura</span>'),'<p class="meta" style="margin-bottom:14px">{{i:users-three:bold}}10 jugadores · lo moderan Camila y Pedro</p>',
   '<div class="burbujas">'+burbuja('TO','Tomás','¿Quién va el sábado?')+burbuja('MA','Mateo','¡Vamos!')+burbuja('GA','Gabriel','',oculto=True)+burbuja('GA','Gabriel','Yo voy')+burbuja('AR','Arthur','Bravo')+'</div>',
   '<div class="chat-pie">{{i:lock:bold}}<span>Solo lectura. Los niños escriben desde su perfil.</span></div>')
 S('ap-chat','apoderado','Chat de niños','mas','Chat de U12',[chat],back='U12',sub='Lo ves, no escribes',layout='g2',

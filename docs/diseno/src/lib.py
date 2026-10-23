@@ -122,7 +122,11 @@ HEAD='''<!doctype html>
 def _css(dev):
     import glob
     extra=''.join(open(f).read() for f in sorted(glob.glob(os.path.join(HERE,'css','x_*.css'))))
-    return css('tokens.css')+css('mobile.css' if dev=='m' else 'desktop.css')+css('shared.css')+css('components.css')+extra
+    t=css('tokens.css')+css('mobile.css' if dev=='m' else 'desktop.css')+css('shared.css')+css('components.css')+extra
+    t=t.replace('url("{{GRANO}}")','var(--grano)')
+    import re
+    t=re.sub(r'/\*.*?\*/','',t,flags=re.S)
+    return ':root{--grano:url("{{GRANO}}")}\n'+re.sub(r'\n\s*\n','\n',t)
 
 def bell(): return '<button type="button" class="bell" aria-label="Notificaciones, 3 nuevas">{{i:bell:bold}}<b>3</b></button>'
 def clubchip(): return '<span class="chip-club"><span class="mk">{{LOGO}}</span>Club Aigles</span>'

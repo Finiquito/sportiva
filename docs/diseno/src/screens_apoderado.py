@@ -33,7 +33,7 @@ S('ap-agenda','apoderado','Agenda','agenda','Agenda',
 cambio=card('<div class="aviso">%s<div><b>Cambió el lugar del partido</b><p>Hoy 10:12 · Camila</p></div></div><div class="antes-ahora"><div><small>Antes</small><b>Stade municipal · Niort</b></div><div><small>Ahora</small><b>Stade du Centre · Niort</b></div></div>%s'%(fi('map-pin'),bt('Entendido',k='w')))
 convo_main=[cambio,
   card(tags(tipo_tag('partido'),chipm('U12 · Lucas')),h2('U12 vs Niort'),meta('calendar-blank','Sábado 24 de octubre'),meta('map-pin','Stade du Centre · Niort','margin-top:6px'),'<p class="meta" style="margin-top:6px">{{i:users-three:bold}}Club local: Niort FC · Rue Ejemplo 12</p>',mapa(),mapas_btns()),
-  card(HORAS_ENC(),'<div class="punto"><span class="fi">{{i:users-three:bold}}</span><div><span class="ey">Punto de encuentro</span><b>Estacionamiento del club, portón azul</b></div></div>',mapa().replace('height:120px',''),mapas_btns(),'<div style="height:16px"></div><span class="mini-t">Tu asistencia · Lucas</span>',asistencia(0))]
+  card(HORAS_ENC().replace('class="horas"','class="horas" style="margin-top:0;padding-top:0;border-top:0"'),'<div class="punto"><span class="fi">{{i:users-three:bold}}</span><div><span class="ey">Punto de encuentro</span><b>Estacionamiento del club, portón azul</b></div></div>',mapa().replace('height:120px',''),mapas_btns(),'<div style="height:16px"></div><span class="mini-t">Tu asistencia · Lucas</span>',asistencia(0))]
 S('ap-convo','apoderado','Convocatoria · partido','agenda','U12 vs Niort',convo_main+[en_partido(),quien_va(),traslado_resumen(),preguntar()],back='Agenda',sub='Convocatoria · Sáb 24 oct',layout='g2',
   dmain=convo_main,dside=[en_partido(),quien_va(),traslado_resumen(),preguntar()])
 
