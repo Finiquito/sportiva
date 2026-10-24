@@ -1,0 +1,12 @@
+{layout $plugin_ui_layout}
+{block page_title}u330 · Diagnóstico{/block}
+{block content}
+<div class="page-header"><h1>Diagnóstico</h1></div>
+{if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
+<div class="card">
+ <p>Versión del plugin {$version} · PHP {$php}. Aquí se anotan los errores de las pantallas de <code>/app</code>.</p>
+ {if $log === ''}<p>Sin errores registrados.</p>{else}
+ <pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;background:#10201F;color:#F7F1E8;padding:14px;border-radius:10px">{$log}</pre>
+ <form method="post"><input type="hidden" name="_csrf_token" value="{$csrf_token}"><button class="btn" type="submit">Vaciar registro</button></form>
+ {/if}
+</div>

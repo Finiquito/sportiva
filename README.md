@@ -27,6 +27,7 @@ Cuentas de ejemplo: `daniela@` (apoderada), `camila@` (encargada), `pedro@` (ent
 Con MariaDB: `SPORTIVA_DB_DSN="mysql:host=127.0.0.1;dbname=sportiva_test;charset=utf8mb4" SPORTIVA_DB_USER=root SPORTIVA_DB_PASS=root php tests/run.php`.
 
 ## Cambios
+- **0.2.2** Diagnóstico: los errores de `/app` se anotan en `storage/sportiva_uploads/errores.log` y se ven en el admin (u330 → Diagnóstico).
 - **0.2.1** Marca u330: paleta nueva (verde, hueso, amarillo, naranja, lila, dorado), logo del header (favicon sobre verde) y logo principal sobre verde, favicon, avisos en verde claro con ícono (check blanco sobre círculo verde), contador de la campana en naranja con número blanco, íconos de balón y cancha según el deporte del club, íconos nuevos (medalla, copa, podio, arco con red). El nombre visible pasa a «u330»; el slug, tablas y rutas siguen como `sportiva`.
 - **0.2.0** Agenda y asistencia: convocatorias (partido, entrenamiento, evento especial, stage) con horas Encuentro / En cancha / Partido,
   otras categorías convocadas, lugares con mapa y enlaces a Google Maps y Waze; Voy / Duda / No voy por hijo; vista de entrenadores
