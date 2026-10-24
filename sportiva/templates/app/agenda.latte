@@ -1,0 +1,19 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.agenda')} · Sportiva{/block}
+{block contenido}
+<p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
+<h1>{$t('nav.agenda')}</h1>
+{if $coach}<a class="bt s" href="{$url('evento/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('evento.nueva')}</a>{/if}
+{foreach $dias as $dia => $evs}
+ <div class="dia">{$ed($dia . ' 00:00:00')}</div>
+ {foreach $evs as $e}
+  {include '_evento-card.latte', e: $e, coach: $coach}
+ {/foreach}
+{else}
+ <section class="card vacio">
+  <span class="fi">{$ico('calendar-blank')|noescape}</span>
+  <b>{$t('agenda.vacio.titulo')}</b>
+  <p>{$t($coach ? 'agenda.vacio.coach' : 'agenda.vacio.familia')}</p>
+ </section>
+{/foreach}
+{/block}

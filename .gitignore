@@ -1,0 +1,6 @@
+dev/vendor/
+dev/storage/
+node_modules/
+dist/
+.DS_Store
+/entregas/

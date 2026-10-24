@@ -1,0 +1,10 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.' . $seccion)} · Sportiva{/block}
+{block contenido}
+<h1>{$t('nav.' . $seccion)}</h1>
+<section class="card vacio">
+ <span class="fi">{$ico('sparkle')|noescape}</span>
+ <b>{$t('pronto.titulo')}</b>
+ <p>{$t('pronto.texto')}</p>
+</section>
+{/block}

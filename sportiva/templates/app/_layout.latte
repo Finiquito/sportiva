@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="{$lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#215E5E">
+<title>{block titulo}Sportiva{/block}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/plugins/sportiva/assets/sportiva.css?v={$cssv}">
+</head>
+<body>
+<div class="app{block claseApp}{/block}">
+ <header class="band">
+  <div class="top">
+   <span class="lockup lockup--m">{$logo()|noescape}sportiva</span>
+   <span class="chip-club"><span class="mk">{$logo()|noescape}</span>{$club ? $club['nombre'] : 'Sportiva'}</span>
+  </div>
+ </header>
+ <div class="cuerpo">
+  {if $tabs}
+  <nav class="bar" aria-label="{$t('nav.principal')}" style="--n:{count($tabs)}">
+   {foreach $tabs as [$k, $icono]}
+   <a href="{$url($k)}" class="{if $activa === $k}on{/if}" {if $activa === $k}aria-current="page"{/if}>{$ico($icono, $activa === $k ? 'fill' : 'bold')|noescape}<span>{$t('nav.' . $k)}</span></a>
+   {/foreach}
+  </nav>
+  {/if}
+  <main class="sheet">
+   {if $flash}<div class="aviso flash" role="status">{$ico('check')|noescape}<div><b>{$flash}</b></div></div>{/if}
+   {block contenido}{/block}
+  </main>
+ </div>
+</div>
+</body>
+</html>

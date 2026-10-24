@@ -1,0 +1,28 @@
+{layout $plugin_ui_layout}
+{block page_title}Sportiva · Clubes{/block}
+{block content}
+<div class="page-header"><h1>Clubes</h1></div>
+{if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
+{if $flash_error}<div class="alert alert-error">{$flash_error}</div>{/if}
+<div class="card">
+ <table class="table">
+  <tr><th>Club</th><th>Ciudad</th><th>Deporte</th><th>Idioma</th><th></th></tr>
+  {foreach $clubes as $c}
+  <tr><td>{$c['nombre']}</td><td>{$c['ciudad']}</td><td>{$c['deporte']}</td><td>{$c['idioma']}</td><td><a class="btn" href="{$admin_url('clubes/' . $c['id'])}">Abrir</a></td></tr>
+  {else}
+  <tr><td colspan="5">Todavía no hay clubes.</td></tr>
+  {/foreach}
+ </table>
+</div>
+<div class="card">
+ <h2>Nuevo club</h2>
+ <form method="post" action="{$admin_url('clubes')}">
+  <input type="hidden" name="_csrf_token" value="{$csrf_token}">
+  <p><input class="form-input" name="nombre" placeholder="Nombre del club" required> <input class="form-input" name="ciudad" placeholder="Ciudad"></p>
+  <p><select class="form-input" name="deporte"><option value="futbol">Fútbol</option><option value="voley">Vóley</option><option value="basquet">Básquet</option></select>
+  <select class="form-input" name="idioma">{foreach $idiomas as $c => $n}<option value="{$c}">{$n}</option>{/foreach}</select>
+  <input class="form-input" name="zona" value="Europe/Paris" placeholder="Zona horaria"></p>
+  <button class="btn btn-primary" type="submit">Crear club</button>
+ </form>
+</div>
+{/block}

@@ -1,0 +1,17 @@
+.apps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 8px;margin:0 0 16px}
+.apps div{display:grid;justify-items:center;gap:6px;font:500 11px/1.2 var(--font-mono);color:var(--tinta-2);text-align:center}
+.apps i{width:56px;height:56px;border-radius:16px;background:var(--hueso);color:var(--club);display:grid;place-items:center;font-size:26px;font-style:normal}
+.apps i.sp{background:var(--club);box-shadow:0 0 0 3px var(--limon)}
+.apps i.sp svg{width:22px;height:auto;display:block}
+.apps .sp-l{color:var(--tinta);font-weight:700}
+.mail-l{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2);margin:0 0 4px}
+.mail-l b{font-weight:600;color:var(--tinta)}
+.mail-h{font:800 20px/1.2 var(--font-display);letter-spacing:-.01em;margin:14px 0 8px}
+.mail-p{margin:0 0 16px;font:400 14.5px/1.5 var(--font-body)}
+.stats.dos{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ac-btns{display:grid;gap:8px;margin-top:16px}
+.ac-btns .bt{width:100%}
+.foto-ph.h{min-height:140px;margin:0 0 14px}
+.centro{text-align:center;font:400 12.5px/1.45 var(--font-mono);color:var(--tinta-2);margin:12px 0 0}
+.lead{margin:0 0 16px;font:400 14.5px/1.5 var(--font-body);color:var(--tinta-2)}
+.instr{align-items:start}

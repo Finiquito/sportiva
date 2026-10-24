@@ -1,0 +1,17 @@
+{layout '_auth.latte'}
+{block titulo}{$t('clubes.titulo')} · Sportiva{/block}
+{block contenido}
+<h1>{$t('clubes.titulo')}</h1>
+<section class="card">
+ {foreach $clubes as $c}
+ <a class="clubrow" href="/app/club/{$c['slug']}">
+  <span class="escudo">{mb_strtoupper(mb_substr(preg_replace('/[^\p{L}]/u', '', $c['nombre']) ?: 'C', 0, 2))}</span>
+  <span><b>{$c['nombre']}</b><small>{$c['ciudad']} · {$t('deporte.' . $c['deporte'])}</small></span>
+  <span class="chev">{$ico('arrow-right')|noescape}</span>
+ </a>
+ {else}
+ <p class="meta">{$t('clubes.vacio')}</p>
+ {/foreach}
+</section>
+<a class="bt s w" href="/app/entrar">{$ico('arrow-right')|noescape}{$t('clubes.entrar')}</a>
+{/block}

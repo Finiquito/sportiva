@@ -1,0 +1,46 @@
+{layout $plugin_ui_layout}
+{block page_title}{$club['nombre']} · Sportiva{/block}
+{block content}
+<div class="page-header"><h1>{$club['nombre']}</h1><a class="btn" href="{$admin_url('')}">Volver</a></div>
+{if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
+{if $flash_error}<div class="alert alert-error">{$flash_error}</div>{/if}
+<div class="card">
+ <h2>Datos del club</h2>
+ <form method="post" action="{$admin_url('clubes/' . $club['id'])}">
+  <input type="hidden" name="_csrf_token" value="{$csrf_token}">
+  <p><input class="form-input" name="nombre" value="{$club['nombre']}" required> <input class="form-input" name="ciudad" value="{$club['ciudad']}" placeholder="Ciudad"> <input class="form-input" name="telefono" value="{$club['telefono']}" placeholder="Teléfono"></p>
+  <p><input class="form-input" name="direccion" value="{$club['direccion']}" placeholder="Dirección" size="48"></p>
+  <p><input class="form-input" name="lat" value="{$club['lat']}" placeholder="Latitud del estadio"> <input class="form-input" name="lon" value="{$club['lon']}" placeholder="Longitud"></p>
+  <p><textarea class="form-input" name="descripcion" rows="5" cols="70" placeholder="Presentación del club">{$club['descripcion']}</textarea></p>
+  <p><select class="form-input" name="deporte">{foreach ['futbol' => 'Fútbol', 'voley' => 'Vóley', 'basquet' => 'Básquet'] as $k => $n}<option value="{$k}" {if $club['deporte'] === $k}selected{/if}>{$n}</option>{/foreach}</select>
+  <select class="form-input" name="idioma">{foreach $idiomas as $c => $n}<option value="{$c}" {if $club['idioma'] === $c}selected{/if}>{$n}</option>{/foreach}</select>
+  <input class="form-input" name="zona" value="{$club['zona']}"></p>
+  <p><label><input type="checkbox" name="publico" value="1" {if $club['publico']}checked{/if}> Aparece en la lista pública de clubes</label>
+  <label><input type="checkbox" name="exigir_app" value="1" {if $club['exigir_app']}checked{/if}> Exigir instalar la app</label></p>
+  <button class="btn btn-primary" type="submit">Guardar</button>
+ </form>
+</div>
+<div class="card">
+ <h2>Equipos</h2>
+ <table class="table">{foreach $equipos as $e}<tr><td>{$e['nombre']}</td><td>{$e['temporada']}</td></tr>{else}<tr><td>Sin equipos.</td></tr>{/foreach}</table>
+ <form method="post" action="{$admin_url('clubes/' . $club['id'] . '/equipos')}">
+  <input type="hidden" name="_csrf_token" value="{$csrf_token}">
+  <input class="form-input" name="nombre" placeholder="Nombre (U12)" required> <input class="form-input" name="temporada" placeholder="2026-2027">
+  <button class="btn" type="submit">Agregar equipo</button>
+ </form>
+</div>
+<div class="card">
+ <h2>Personas</h2>
+ <table class="table"><tr><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
+ {foreach $personas as $p}<tr><td>{$p['nombre']}</td><td>{$p['email']}</td><td>{$p['rol']}</td></tr>{else}<tr><td colspan="3">Sin personas.</td></tr>{/foreach}</table>
+ <h3>Agregar persona</h3>
+ <form method="post" action="{$admin_url('clubes/' . $club['id'] . '/personas')}">
+  <input type="hidden" name="_csrf_token" value="{$csrf_token}">
+  <p><input class="form-input" name="nombre" placeholder="Nombre" required> <input class="form-input" name="email" type="email" placeholder="Correo" required>
+  <select class="form-input" name="rol">{foreach $roles as $r}<option>{$r}</option>{/foreach}</select>
+  <select class="form-input" name="equipo_id"><option value="">Equipo (entrenadores y apoderados)</option>{foreach $equipos as $e}<option value="{$e['id']}">{$e['nombre']}</option>{/foreach}</select></p>
+  <p><textarea class="form-input" name="hijos" rows="3" cols="50" placeholder="Hijos (apoderados): una línea por hijo, «Nombre; AAAA-MM-DD»"></textarea></p>
+  <button class="btn btn-primary" type="submit">Agregar</button>
+ </form>
+</div>
+{/block}

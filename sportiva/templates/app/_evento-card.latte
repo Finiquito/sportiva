@@ -1,0 +1,46 @@
+{* Tarjeta de un evento en la agenda. Recibe $e (con jugador/respuesta si es de familia) y $coach. *}
+<article class="card">
+ <div class="tags">
+  {if $e['tipo'] === 'partido'}<span class="tag lim">{$propio('balon')|noescape}{$t('tipo.partido')}</span>
+  {elseif $e['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
+  {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $e['tipo'])}</span>{/if}
+  <span class="tag m">{$e['equipo']}{if isset($e['jugador'])} · {$e['jugador']}{/if}</span>
+ </div>
+ <h2>{$e['titulo']}</h2>
+ {if $e['lugar']}<p class="meta">{$ico('map-pin')|noescape}{$e['lugar']}</p>{/if}
+ {if $e['tipo'] === 'partido'}
+  <div class="horas">
+   {if $e['hora_encuentro']}
+   <div><small>{$ico('users-three')|noescape}{$t('hora.encuentro')}</small><span class="hora"><span class="hl">{$h($e['hora_encuentro'])}</span></span></div><span class="sep"></span>
+   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
+   {else}
+   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
+   <div><small>{$ico('timer')|noescape}{$t('hora.partido')}</small><span class="hora">{$h($e['inicio'])}</span></div>
+   {/if}
+  </div>
+ {else}
+  <p class="meta" style="margin-top:6px">{$ico('clock')|noescape}{$h($e['inicio'])}{if $e['fin']} – {$h($e['fin'])}{/if}</p>
+ {/if}
+ {if $coach}
+  {var $r = $e['resumen']}
+  <p class="resumen">
+   <span class="est">{$ico('check')|noescape}{$t('asist.voy')} {$r['voy']}</span>
+   <span class="est">{$ico('question')|noescape}{$t('asist.duda')} {$r['duda']}</span>
+   <span class="est">{$ico('x')|noescape}{$t('asist.no')} {$r['no']}</span>
+   <span class="est">{$ico('clock')|noescape}{$t('asist.sin')} {$r['sin']}</span>
+  </p>
+  <a class="bt w" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
+ {elseif isset($e['jugador_id']) && $rol === 'apoderado' && $e['tipo'] !== 'especial'}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}">
+   <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="jugador" value="{$e['jugador_id']}"><input type="hidden" name="volver" value="/app/agenda">
+   <div class="voto">
+    {foreach [['voy', 'check'], ['duda', 'question'], ['no', 'x']] as [$k, $ic]}
+    <button type="submit" name="respuesta" value="{$k}" class="{if $e['respuesta'] === $k}on{/if}" {if $e['respuesta'] === $k}aria-pressed="true"{/if}>{$ico($ic)|noescape}{$t('asist.' . $k . '_largo')}</button>
+    {/foreach}
+   </div>
+  </form>
+  <a class="bt w" style="margin-top:8px" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
+ {else}
+  <a class="bt w" style="margin-top:12px" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
+ {/if}
+</article>

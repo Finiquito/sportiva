@@ -1,0 +1,76 @@
+{layout '_layout.latte'}
+{block titulo}{$t($e ? 'evento.editar' : 'evento.nueva')} · Sportiva{/block}
+{block contenido}
+<a class="volver" href="{$e ? $url('evento/' . $e['id']) : $url('agenda')}">{$ico('arrow-left')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:14px">{$t($e ? 'evento.editar' : 'evento.nueva')}</h1>
+<form method="post" action="{$e ? $url('evento/' . $e['id']) : $url('evento')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <div class="ch"><h3>{$t('evento.tipo')}</h3></div>
+  <div class="grupo-pills">
+   {foreach ['partido', 'entreno', 'especial', 'stage'] as $k}
+   <label class="pill-radio"><input type="radio" name="tipo" value="{$k}" {if ($d['tipo'] ?? 'partido') === $k}checked{/if}><span class="pill">{$t('tipo.' . $k)}</span></label>
+   {/foreach}
+  </div>
+  <label class="campo"><span>{$t('evento.equipo')}</span>
+   <select class="in" name="equipo_id" {if $e}disabled{/if}>
+    {foreach $equipos as $q}<option value="{$q['id']}" {if ($d['equipo_id'] ?? '') === $q['id']}selected{/if}>{$q['nombre']}</option>{/foreach}
+   </select>
+   {if $e}<input type="hidden" name="equipo_id" value="{$e['equipo_id']}">{/if}
+  </label>
+  {if !$e}
+  <fieldset class="campo"><span>{$t('evento.otras_categorias')}</span>
+   <div class="grupo-pills">
+   {foreach $todosEquipos as $q}
+    <label class="pill-radio"><input type="checkbox" name="extra[]" value="{$q['id']}" {if in_array($q['id'], $d['extra'] ?? [], true)}checked{/if}><span class="pill">{$q['nombre']}</span></label>
+   {/foreach}
+   </div>
+   <small>{$t('evento.otras_ayuda')}</small>
+  </fieldset>
+  {/if}
+  <label class="campo"><span>{$t('evento.titulo')}</span><input class="in" type="text" name="titulo" value="{$d['titulo'] ?? ''}" maxlength="200">{if isset($errores['titulo'])}<small class="error" role="alert">{$t($errores['titulo'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('evento.rival')}</span><input class="in" type="text" name="rival" value="{$d['rival'] ?? ''}" maxlength="120"></label>
+ </section>
+
+ <section class="card">
+  <div class="ch"><h3>{$t('evento.cuando')}</h3></div>
+  <label class="campo"><span>{$t('evento.fecha')}</span><input class="in" type="date" name="fecha" value="{$d['fecha'] ?? ''}">{if isset($errores['fecha'])}<small class="error" role="alert">{$t($errores['fecha'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('evento.hora_partido')}</span><input class="in" type="time" name="hora_partido" value="{$d['hora_partido'] ?? ''}"></label>
+  <label class="campo"><span>{$t('evento.hora_fin')}</span><input class="in" type="time" name="hora_fin" value="{$d['hora_fin'] ?? ''}"></label>
+  <label class="campo"><span>{$t('evento.hora_cancha')}</span>
+   <input class="in" type="time" name="hora_cancha" value="{$d['hora_cancha'] ?? ''}">
+   <small>{$t('evento.cancha_ayuda')}</small>
+   {if isset($errores['hora_cancha'])}<small class="error" role="alert">{$t($errores['hora_cancha'])}</small>{/if}
+  </label>
+  <label class="campo"><span>{$t('evento.cancha_antes')}</span>
+   <select class="in" name="cancha_antes">
+    {foreach ['30', '45', '60'] as $m}<option value="{$m}" {if ($d['cancha_antes'] ?? '45') === $m}selected{/if}>{$t('evento.min_antes', ['n' => $m])}</option>{/foreach}
+   </select>
+  </label>
+  <label class="tog"><span><b>{$t('evento.hay_encuentro')}</b><small>{$t('evento.encuentro_ayuda')}</small></span><input type="checkbox" name="hay_encuentro" value="1" {if !empty($d['hay_encuentro'])}checked{/if}></label>
+  <label class="campo"><span>{$t('evento.hora_encuentro')}</span><input class="in" type="time" name="hora_encuentro" value="{$d['hora_encuentro'] ?? ''}">{if isset($errores['hora_encuentro'])}<small class="error" role="alert">{$t($errores['hora_encuentro'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('evento.punto')}</span><input class="in" type="text" name="encuentro_texto" value="{$d['encuentro_texto'] ?? ''}" maxlength="255" placeholder="{$t('evento.punto_club')}"></label>
+ </section>
+
+ <section class="card">
+  <div class="ch"><h3>{$t('evento.lugar')} *</h3></div>
+  <label class="campo"><span>{$t('evento.lugar_elegir')}</span>
+   <select class="in" name="lugar_id">
+    <option value="">—</option>
+    {foreach $lugares as $l}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/foreach}
+   </select>
+   {if isset($errores['lugar_id'])}<small class="error" role="alert">{$t($errores['lugar_id'])}</small>{/if}
+  </label>
+  <p class="mini-t">{$t('evento.lugar_nuevo')}</p>
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="lugar_nombre" value="{$d['lugar_nombre'] ?? ''}"></label>
+  <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="lugar_direccion" value="{$d['lugar_direccion'] ?? ''}"></label>
+  <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" name="lugar_lat" value="{$d['lugar_lat'] ?? ''}" inputmode="decimal" placeholder="46.480236"></label>
+  <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" name="lugar_lon" value="{$d['lugar_lon'] ?? ''}" inputmode="decimal" placeholder="-0.599575"></label>
+ </section>
+
+ <section class="card">
+  <label class="campo"><span>{$t('evento.nota')}</span><textarea class="in ta" name="nota" rows="3">{$d['nota'] ?? ''}</textarea></label>
+  <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t($e ? 'guardar' : 'evento.publicar')}</button>
+ </section>
+</form>
+{/block}

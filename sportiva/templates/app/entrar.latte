@@ -1,0 +1,16 @@
+{layout '_auth.latte'}
+{block titulo}{$t('entrar.titulo')} · Sportiva{/block}
+{block contenido}
+<h1>{$t('entrar.titulo')}</h1>
+<p class="sub" style="margin:0 2px 16px">{$t('entrar.sub')}</p>
+{if $sin}<div class="aviso">{$ico('lock')|noescape}<div><b>{$t('entrar.sin')}</b></div></div>{/if}
+<form method="post" action="/app/entrar" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <label class="campo"><span>{$t('campo.correo')}</span>
+  <input class="in" type="email" name="correo" value="{$correo}" autocomplete="email" inputmode="email" required>
+  {if $error}<small class="error" role="alert">{$t($error)}</small>{/if}
+ </label>
+ <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('entrar.enviar')}</button>
+</form>
+<p class="meta" style="margin-top:16px"><a href="/app">{$t('entrar.ver_clubes')}</a></p>
+{/block}

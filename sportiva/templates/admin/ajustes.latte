@@ -1,0 +1,19 @@
+{layout $plugin_ui_layout}
+{block page_title}Sportiva · Correo{/block}
+{block content}
+<div class="page-header"><h1>Correo (SMTP)</h1></div>
+{if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
+{if $flash_error}<div class="alert alert-error">{$flash_error}</div>{/if}
+<div class="card">
+ <p>Los códigos de acceso salen por este servidor. La contraseña se guarda cifrada (AES-256-GCM) y no se vuelve a mostrar. Si lo dejas vacío se usa el correo del núcleo de TypeDock.</p>
+ <form method="post" action="{$admin_url('ajustes')}">
+  <input type="hidden" name="_csrf_token" value="{$csrf_token}">
+  <p><input class="form-input" name="smtp_host" value="{$s['host']}" placeholder="Servidor (smtp.hostinger.com)"> <input class="form-input" name="smtp_puerto" value="{$s['puerto']}" size="5">
+  <select class="form-input" name="smtp_seguridad">{foreach ['tls' => 'STARTTLS (587)', 'ssl' => 'SSL (465)', 'ninguna' => 'Ninguna'] as $k => $n}<option value="{$k}" {if $s['seguridad'] === $k}selected{/if}>{$n}</option>{/foreach}</select></p>
+  <p><input class="form-input" name="smtp_usuario" value="{$s['usuario']}" placeholder="Usuario"> <input class="form-input" name="smtp_clave" type="password" placeholder="{if $s['tiene_clave']}•••••• (guardada; escribe para cambiarla){else}Contraseña{/if}" autocomplete="new-password"></p>
+  <p><input class="form-input" name="smtp_remitente" value="{$s['remitente']}" placeholder="Remitente (avisos@tudominio.com)"> <input class="form-input" name="smtp_nombre" value="{$s['nombre']}" placeholder="Nombre que ve la gente"></p>
+  <button class="btn btn-primary" type="submit">Guardar</button>
+  <button class="btn" type="submit" name="probar" value="1">Guardar y probar conexión</button>
+ </form>
+</div>
+{/block}

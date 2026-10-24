@@ -1,0 +1,34 @@
+# Sportiva
+
+Plugin de **TypeDock** para coordinar clubes, equipos, entrenadores, jugadores y apoderados: agenda con convocatorias,
+asistencia (Voy / Duda / No voy), horas de encuentro / en cancha / partido, lugares con mapa, y más (ver `docs/PLAN.md`).
+Plataforma multi-club: una instalación con muchos clubes, datos separados por `club_id` y roles por club.
+
+- Front de los clubes: `/app` · Admin técnico: `/admin/sportiva` (clubes, equipos, personas, correo SMTP).
+- Diseño: `docs/diseno/pantallas.html` (73 pantallas); el CSS sale de `docs/diseno/src/css` y se copia a `sportiva/assets-src/`.
+- Cómo trabajamos con TypeDock: `docs/TYPEDOCK.md`.
+
+## Instalar (Hostinger)
+1. `bash scripts/zip.sh` → `dist/sportiva-plugin-vX.Y.Z.zip` (compila el CSS y **no arma el zip si las pruebas fallan**).
+2. Admin de TypeDock → **Plugins → subir zip**. Las migraciones corren solas en la primera visita (nunca borran datos).
+3. Entra a `/admin/sportiva`: crea el club, sus equipos y las personas (entrenadores y apoderados con sus hijos).
+4. **Correo:** `/admin/sportiva/ajustes` → SMTP propio (la clave se guarda cifrada con AES-256-GCM y no se vuelve a mostrar).
+   Sin SMTP se usa el correo del núcleo.
+5. Las familias entran en `/app/entrar` con su correo y un código de 6 dígitos.
+
+## Desarrollo
+```
+cd dev && composer install      # una vez (Flight y Latte)
+php dev/seed.php --reset        # club FCJ Orée de l’Autize con datos de ejemplo
+bash dev/serve.sh               # http://127.0.0.1:8080  ·  entrar sin código: /dev/entrar?email=daniela@ejemplo.fr
+php tests/run.php               # pruebas (SQLite en memoria)
+```
+Cuentas de ejemplo: `daniela@` (apoderada), `camila@` (encargada), `pedro@` (entrenador), `sylvie@` (directiva), `lucas@` (jugador), todas `@ejemplo.fr`.
+Con MariaDB: `SPORTIVA_DB_DSN="mysql:host=127.0.0.1;dbname=sportiva_test;charset=utf8mb4" SPORTIVA_DB_USER=root SPORTIVA_DB_PASS=root php tests/run.php`.
+
+## Cambios
+- **0.2.0** Agenda y asistencia: convocatorias (partido, entrenamiento, evento especial, stage) con horas Encuentro / En cancha / Partido,
+  otras categorías convocadas, lugares con mapa y enlaces a Google Maps y Waze; Voy / Duda / No voy por hijo; vista de entrenadores
+  (resumen, crear, editar, cancelar) y del jugador (solo lectura).
+- **0.1.0** Base: clubes, equipos, personas con rol por club, entrada con código por correo, español y francés (idiomas añadibles en
+  `storage/sportiva_lang/`), Más (idioma, cambiar de club), admin técnico y SMTP cifrado.

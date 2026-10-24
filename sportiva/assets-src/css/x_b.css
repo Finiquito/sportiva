@@ -1,0 +1,25 @@
+/* x_b · cuenta, clubes y equipo del apoderado */
+.perfil-cab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.perfil-cab .foto{width:64px;height:64px;border-radius:50%;background:var(--club-t);color:var(--club);display:grid;place-items:center;font:800 22px/1 var(--font-display)}
+.perfil-cab b{display:block;font:800 20px/1.15 var(--font-display);letter-spacing:-.01em}
+.perfil-cab small{display:block;font:400 12.5px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:3px}
+.opt-fila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 4px;min-height:48px}
+.opt-fila+.opt-fila{border-top:1.5px dashed var(--linea-2)}
+.opt-fila b{font:700 15px/1.3 var(--font-body)}
+.opt-fila .est{font-size:12.5px}
+.nivel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:12px 0}
+.nivel+.nivel{border-top:1.5px dashed var(--linea-2)}
+.nivel b{display:block;font:700 14.5px/1.3 var(--font-body)}
+.nivel p{margin:3px 0 0;font:400 12.5px/1.45 var(--font-mono);color:var(--tinta-2)}
+.regla{border-radius:18px;background:var(--club-t);padding:14px}
+.regla b{display:block;font:800 16px/1.2 var(--font-display);margin:6px 0 4px}
+.regla p{margin:0;font:400 14px/1.5 var(--font-body)}
+.chat-pie{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--linea-2);font:400 12.5px/1.45 var(--font-mono);color:var(--tinta-2)}
+.chat-pie .pi{font-size:20px;color:var(--tinta)}
+.hijo-fila{padding:14px 0}
+.hijo-fila+.hijo-fila{border-top:1.5px dashed var(--linea-2)}
+.hijo-fila .top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.hijo-fila .top b{display:block;font:800 17px/1.2 var(--font-display)}
+.hijo-fila .top small{display:block;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2)}
+.hijo-fila .sub-acc{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.faq-fila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px 4px;min-height:48px}

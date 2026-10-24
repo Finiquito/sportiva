@@ -1,0 +1,20 @@
+/* entrenador */
+.chk{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--linea-2);display:grid;place-items:center;font-size:16px;color:transparent;flex:none}
+.chk.on{background:var(--club);border-color:var(--club);color:var(--limon)}
+.resumen-a{display:flex;gap:6px 14px;flex-wrap:wrap;margin:12px 0 0}
+.nuevo-b{display:inline-flex;align-items:center;gap:5px;font:600 12px var(--font-mono);color:var(--coral);white-space:nowrap}
+.nuevo-b .pi{font-size:15px}
+.fam-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.turno-f{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start}
+.sol{display:grid;gap:10px;padding:10px 0}
+.sol+.sol{border-top:1.5px dashed var(--linea-2)}
+.sol .botones{display:flex;gap:8px}
+.sol .botones .bt{flex:1}
+.pct{font:600 12px var(--font-mono);white-space:nowrap}
+.est-grupo{margin:0 0 4px}
+.donut{width:150px;height:150px;border-radius:50%;margin:4px auto 16px;display:grid;place-items:center;background:conic-gradient(var(--club) 0 180deg,var(--limon) 180deg 252deg,var(--tinta-2) 252deg 288deg,var(--gris) 288deg 360deg)}
+.donut div{width:100px;height:100px;border-radius:50%;background:var(--papel);display:grid;place-items:center;align-content:center;text-align:center;font:800 34px/1 var(--font-display)}
+.donut small{display:block;font:500 11.5px/1.2 var(--font-mono);color:var(--tinta-2);margin-top:3px}
+.lg{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;font:600 12px var(--font-mono)}
+.lg span{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.lg .pi{font-size:14px}

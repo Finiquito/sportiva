@@ -1,0 +1,18 @@
+{layout '_auth.latte'}
+{block titulo}{$t('elegir.titulo')} · Sportiva{/block}
+{block contenido}
+<h1>{$t('elegir.titulo')}</h1>
+<p class="sub" style="margin:0 2px 16px">{$t('elegir.sub')}</p>
+<form method="post" action="/app/elegir">
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  {foreach $mem as $m}
+  <button class="clubrow" type="submit" name="membresia" value="{$m['id']}">
+   <span class="escudo">{mb_strtoupper(mb_substr(preg_replace('/[^\p{L}]/u', '', $m['club']) ?: 'C', 0, 2))}</span>
+   <span><b>{$m['club']}</b><small>{$t('rol.' . $m['rol'])}</small></span>
+   <span class="chev">{$ico('arrow-right')|noescape}</span>
+  </button>
+  {/foreach}
+ </section>
+</form>
+{/block}

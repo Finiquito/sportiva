@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="{$lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#215E5E">
+<title>{block titulo}Sportiva{/block}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/plugins/sportiva/assets/sportiva.css?v={$cssv}">
+</head>
+<body class="auth">
+<div class="app auth{block claseApp}{/block}">
+ <header class="band"><div class="top"><span class="lockup">{$logo()|noescape}sportiva</span></div></header>
+ <main class="sheet">
+  {block contenido}{/block}
+  <p class="idiomas">
+   {foreach \TypeDock\Plugin\Sportiva\I18n::disponibles() as $codIdioma => $nombreIdioma}
+   <a href="?lang={$codIdioma}" {if $codIdioma === $lang}aria-current="true"{/if}>{$nombreIdioma}</a>
+   {/foreach}
+  </p>
+ </main>
+</div>
+</body>
+</html>

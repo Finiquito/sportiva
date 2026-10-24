@@ -1,0 +1,32 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.mas')} · Sportiva{/block}
+{block contenido}
+<p class="hola">{$persona['nombre']}</p>
+<h1>{$t('nav.mas')}</h1>
+<section class="card">
+ <ul class="lkl">
+  <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('user-circle')|noescape}</span><span><b>{$persona['nombre']}</b><small>{$persona['email']} · {$t('rol.' . $rol)}</small></span></span></li>
+ </ul>
+</section>
+<section class="card">
+ <div class="ch"><h3>{$t('mas.idioma')}</h3></div>
+ <form method="post" action="/app/idioma" class="grupo-pills">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  {foreach $idiomas as $c => $nombre}
+  <button class="pill{if $c === $lang} on{/if}" type="submit" name="idioma" value="{$c}" {if $c === $lang}aria-pressed="true"{/if}>{$nombre}</button>
+  {/foreach}
+ </form>
+</section>
+{if count($mem) > 1}
+<section class="card">
+ <div class="ch"><h3>{$t('mas.clubes')}</h3></div>
+ <ul class="lkl">
+  <li><a class="lk" href="/app/elegir" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('house')|noescape}</span><span><b>{$t('mas.cambiar_club')}</b><small>{count($mem)}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+ </ul>
+</section>
+{/if}
+<form method="post" action="/app/salir">
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <button class="bt w danger" type="submit">{$t('mas.salir')}</button>
+</form>
+{/block}

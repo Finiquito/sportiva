@@ -1,0 +1,17 @@
+{layout '_auth.latte'}
+{block titulo}{$c['nombre']} · Sportiva{/block}
+{block contenido}
+<a class="volver" href="/app">{$ico('arrow-left')|noescape}{$t('volver')}</a>
+<h1 style="font-size:30px">{$c['nombre']}</h1>
+{if $c['ciudad']}<p class="meta">{$ico('map-pin')|noescape}{$c['ciudad']} · {$t('deporte.' . $c['deporte'])}</p>{/if}
+{if $c['descripcion']}
+<section class="card" style="margin-top:14px"><span class="mini-t">{$t('club.presentacion')}</span><p lang="fr" class="texto">{$c['descripcion']}</p></section>
+{/if}
+<section class="card">
+ {if $equipos}<span class="mini-t">{$t('club.categorias')}</span><div class="tags">{foreach $equipos as $e}<span class="tag m">{$e['nombre']}</span>{/foreach}</div><hr class="sep-h">{/if}
+ <span class="mini-t">{$t('club.contacto')}</span>
+ {if $c['telefono']}<p class="meta">{$ico('phone')|noescape}{$c['telefono']}</p>{/if}
+ {if $c['direccion']}<p class="meta" style="margin-top:6px">{$ico('map-pin')|noescape}{$c['direccion']}</p>{/if}
+</section>
+<a class="bt s w" href="/app/entrar">{$t('club.tengo_invitacion')}</a>
+{/block}
