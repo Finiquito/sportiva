@@ -1226,6 +1226,38 @@ $comoRol('daniela@ejemplo.fr', 'apoderado');
 check(str_contains($h, 'Cancelada'), 'una citación cancelada se marca como cancelada en los avisos');
 check(S\Tiempo::hace(S\Tiempo::sello(), new S\I18n('es')) === 'ahora', 'la publicación se muestra como «ahora»');
 
+
+seccion('Calendario del mes');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$ag = new S\AgendaController($ctx);
+$lugarC = $pdo->query("SELECT id FROM sportiva_lugares WHERE club_id = '{$cid}' LIMIT 1")->fetchColumn();
+$mesQ = (new DateTimeImmutable('first day of next month'))->format('Y-m');
+$diaQ = $mesQ . '-15';
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $ag->crear(), conCsrf(['tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'Partido del calendario', 'fecha' => $diaQ, 'hora_partido' => '11:00', 'cancha_antes' => '45', 'lugar_id' => $lugarC, 'jugadores_presente' => '1', 'jugadores' => array_column($S['ev']->jugadoresDe($u12), 'id')]));
+llamar(fn() => $ag->crear(), conCsrf(['tipo' => 'entreno', 'equipo_id' => $u12, 'titulo' => 'Entreno del calendario', 'fecha' => $diaQ, 'hora_partido' => '18:00', 'hora_fin' => '19:00', 'lugar_id' => $lugarC, 'jugadores_presente' => '1', 'jugadores' => array_column($S['ev']->jugadoresDe($u12), 'id')]));
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ]);
+check(str_contains($h, 'class="card cal"') && str_contains($h, 'cal-g') && str_contains($h, 'mes=' . $mesQ . '&amp;dia=' . $diaQ), 'la vista de calendario muestra el mes con un enlace por día');
+check(preg_match('/dia=' . $diaQ . '"[^>]*>\s*<b>15<\/b>\s*<span class="cal-p"><i class="p-partido"><\/i><i class="p-entreno"><\/i>/s', $h) === 1, 'el día con partido y entrenamiento lleva un punto de cada tipo');
+check(str_contains($h, 'mes=' . (new DateTimeImmutable($mesQ . '-01'))->modify('+1 month')->format('Y-m')), 'el calendario enlaza al mes siguiente y al anterior');
+[$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
+check(str_contains($h, 'Partido del calendario') && str_contains($h, 'Entreno del calendario') && str_contains($h, 'class="cal-c sel"') || str_contains($h, 'cal-c sel'), 'al tocar un día se ven sus eventos y el día queda marcado');
+[$h] = llamar(fn() => $ag->agenda(), [], ['dia' => $diaQ]);
+check(str_contains($h, 'Partido del calendario') && str_contains($h, 'Volver a los próximos'), 'en la lista, un día elegido muestra solo ese día con enlace para volver');
+[$h] = llamar(fn() => $ag->agenda());
+check(str_contains($h, 'class="ag-lateral"') && str_contains($h, 'class="card cal mini"'), 'la lista lleva el calendario en la columna lateral (escritorio)');
+check(str_contains($h, 'ag-vista') && str_contains($h, 'vista=mes'), 'en el móvil hay opción Lista | Calendario');
+[$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => 'basura', 'dia' => 'x']);
+check(str_contains($h, 'cal-g'), 'parámetros inválidos no rompen el calendario');
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
+check(!str_contains($h, 'Partido del calendario'), 'un entrenador de otro equipo no ve en el calendario los eventos del U12');
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
+check(str_contains($h, 'Partido del calendario') || str_contains($h, 'No hay eventos') || str_contains($h, 'Aucun'), 'cada familia ve en el calendario solo lo de sus hijos');
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');

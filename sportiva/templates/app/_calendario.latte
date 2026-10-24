@@ -1,0 +1,22 @@
+{* Calendario del mes. Recibe $cal, $vista (lista|mes), $diaSel y $mini. Cada día enlaza a sus eventos. *}
+{var $q = 'vista=' . $vista}
+<section class="card cal{if $mini} mini{/if}" aria-label="{$t('agenda.calendario')}">
+ <div class="cal-cab">
+  <a class="bt pill-sm" href="{$url('agenda')}?{$q}&amp;mes={$cal['prev']}" aria-label="{$t('agenda.mes_anterior')}">{$ico('arrow-left')|noescape}</a>
+  <h3>{$cal['titulo']}</h3>
+  <a class="bt pill-sm" href="{$url('agenda')}?{$q}&amp;mes={$cal['sig']}" aria-label="{$t('agenda.mes_siguiente')}">{$ico('arrow-right')|noescape}</a>
+ </div>
+ <div class="cal-g" role="grid">
+  {foreach [1, 2, 3, 4, 5, 6, 0] as $w}<span class="cal-d" role="columnheader">{$lista('fmt.dias_cortos')[$w]}</span>{/foreach}
+  {foreach $cal['semanas'] as $sem}{foreach $sem as $c}
+   {if $c === null}<span class="cal-v"></span>
+   {else}
+   <a class="cal-c{if $c['hoy']} hoy{/if}{if $c['sel']} sel{/if}" href="{$url('agenda')}?{$q}&amp;mes={$cal['mes']}&amp;dia={$c['fecha']}" {if $c['sel']}aria-current="date"{/if} aria-label="{$dl($c['fecha'] . ' 00:00:00')}{if $c['total']}, {$n('agenda.n_eventos', $c['total'])}{/if}">
+    <b>{$c['n']}</b>
+    <span class="cal-p">{foreach $c['tipos'] as $tp}<i class="p-{$tp}"></i>{/foreach}</span>
+   </a>
+   {/if}
+  {/foreach}{/foreach}
+ </div>
+ <p class="cal-ley"><span><i class="p-partido"></i>{$t('tipo.partido')}</span><span><i class="p-entreno"></i>{$t('tipo.entreno')}</span><span><i class="p-especial"></i>{$t('agenda.otros_eventos')}</span></p>
+</section>

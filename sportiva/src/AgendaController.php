@@ -21,31 +21,22 @@ final class AgendaController extends AppBase
         return Tiempo::ahora($this->zona())->format('Y-m-d') . ' 00:00:00';
     }
 
-    public function agenda(): void
+    /** Eventos del rol actual entre dos fechas (`$hasta` exclusivo), listos para mostrar en tarjetas. @return array<int, array<string, mixed>>|null null si el rol no tiene agenda */
+    private function filasEntre(string $desde, ?string $hasta = null): ?array
     {
-        if (($r = $this->exigir()) !== null) {
-            $this->ir($r);
-            return;
-        }
         $ev = $this->eventos();
-        $desde = $this->hoy();
-        $dias = [];
-        $hijos = [];
         if ($this->rol === 'apoderado') {
-            $filas = $ev->paraApoderado($this->persona['id'], $this->club['id'], $desde);
-            $hijos = (new PersonaService($this->pdo))->hijos($this->persona['id'], $this->club['id']);
+            $filas = $ev->paraApoderado($this->persona['id'], $this->club['id'], $desde, $hasta);
         } elseif ($this->rol === 'jugador') {
-            $filas = $ev->paraJugador($this->persona['id'], $this->club['id'], $desde);
+            $filas = $ev->paraJugador($this->persona['id'], $this->club['id'], $desde, $hasta);
         } elseif (self::esCoach($this->rol)) {
-            $eqs = array_column($this->gestionables(), 'id');
-            $filas = $ev->delClubDesde($this->club['id'], $desde, $eqs);
+            $filas = $ev->delClubDesde($this->club['id'], $desde, array_column($this->gestionables(), 'id'), false, $hasta);
             foreach ($filas as &$f) {
                 $f['resumen'] = $ev->resumen($f['id']);
             }
             unset($f);
         } else {
-            $this->ir('/app/feed');
-            return;
+            return null;
         }
         $mios = $this->rol === 'apoderado' ? (new TurnoService($this->pdo))->eventosDeTurno($this->persona['id'], $this->club['id'], $desde) : [];
         foreach ($filas as &$f) {
@@ -53,13 +44,76 @@ final class AgendaController extends AppBase
             $f['compartir'] = Mapa::textoCompartir($f, $this->i18n, $this->urlAbsoluta('/app/evento/' . $f['id']));
         }
         unset($f);
+        return $filas;
+    }
+
+    /**
+     * Mes para el calendario: semanas de lunes a domingo, con puntos por tipo de evento en cada día.
+     * @return array<string, mixed>
+     */
+    private function calendario(string $mes, ?string $sel, string $hoy): array
+    {
+        $ini = new \DateTimeImmutable($mes . '-01');
+        $sig = $ini->modify('+1 month');
+        $porDia = [];
+        foreach ($this->filasEntre($ini->format('Y-m-d') . ' 00:00:00', $sig->format('Y-m-d') . ' 00:00:00') ?? [] as $f) {
+            $porDia[Tiempo::dia($f['inicio'])][$f['tipo']] = ($porDia[Tiempo::dia($f['inicio'])][$f['tipo']] ?? 0) + 1;
+        }
+        $semanas = [];
+        $sem = array_fill(0, ((int) $ini->format('N')) - 1, null);
+        for ($d = $ini; $d < $sig; $d = $d->modify('+1 day')) {
+            $f = $d->format('Y-m-d');
+            $sem[] = ['fecha' => $f, 'n' => (int) $d->format('j'), 'hoy' => $f === $hoy, 'sel' => $f === $sel, 'tipos' => array_keys($porDia[$f] ?? []), 'total' => array_sum($porDia[$f] ?? [])];
+            if (count($sem) === 7) {
+                $semanas[] = $sem;
+                $sem = [];
+            }
+        }
+        if ($sem !== []) {
+            $semanas[] = array_pad($sem, 7, null);
+        }
+        $i = $this->i18n;
+        return [
+            'mes' => $mes, 'titulo' => $i->lista('fmt.meses')[(int) $ini->format('n') - 1] . ' ' . $ini->format('Y'), 'semanas' => $semanas,
+            'prev' => $ini->modify('-1 month')->format('Y-m'), 'sig' => $sig->format('Y-m'), 'primerDia' => array_key_first($porDia),
+        ];
+    }
+
+    public function agenda(): void
+    {
+        if (($r = $this->exigir()) !== null) {
+            $this->ir($r);
+            return;
+        }
+        $desde = $this->hoy();
+        $hoyD = substr($desde, 0, 10);
+        $filas = $this->filasEntre($desde);
+        if ($filas === null) {
+            $this->ir('/app/feed');
+            return;
+        }
+        $hijos = $this->rol === 'apoderado' ? (new PersonaService($this->pdo))->hijos($this->persona['id'], $this->club['id']) : [];
+        $vista = ($_GET['vista'] ?? '') === 'mes' ? 'mes' : 'lista';
+        $mes = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', (string) ($_GET['mes'] ?? '')) ? (string) $_GET['mes'] : substr($hoyD, 0, 7);
+        $dia = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($_GET['dia'] ?? '')) && strtotime((string) $_GET['dia']) !== false ? (string) $_GET['dia'] : null;
+        $cal = $this->calendario($mes, $dia ?? ($vista === 'mes' && $mes === substr($hoyD, 0, 7) ? $hoyD : null), $hoyD);
+        $base = ['activa' => 'agenda', 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona(), 'cal' => $cal, 'vista' => $vista, 'diaSel' => null, 'delDia' => [], 'proximo' => [], 'dias' => [], 'oculto' => 0, 'masDias' => 20];
+        // Un día elegido (del calendario): todo lo de ese día, sin tope.
+        $elegido = $dia ?? ($vista === 'mes' ? ($mes === substr($hoyD, 0, 7) ? $hoyD : $cal['primerDia']) : null);
+        if ($elegido !== null && ($dia !== null || $vista === 'mes')) {
+            $sigD = (new \DateTimeImmutable($elegido))->modify('+1 day')->format('Y-m-d') . ' 00:00:00';
+            $base['diaSel'] = $elegido;
+            $base['delDia'] = $this->filasEntre($elegido . ' 00:00:00', $sigD) ?? [];
+            echo $this->vista()->pagina('agenda.latte', $base);
+            return;
+        }
         // El próximo evento (de cualquier tipo) queda fijo arriba. Debajo, solo los próximos días y pocos entrenamientos:
         // una planificación de todo el año no puede llenar la agenda.
-        $proximo = [];
         $resto = [];
+        $proximo = [];
         $oculto = 0;
         $dias_ = max(10, min(90, (int) round(((int) ($_GET['dias'] ?? 10)) / 10) * 10));
-        $limite = (new \DateTimeImmutable(substr($desde, 0, 10)))->modify('+' . $dias_ . ' days')->format('Y-m-d') . ' 23:59:59';
+        $limite = (new \DateTimeImmutable($hoyD))->modify('+' . $dias_ . ' days')->format('Y-m-d') . ' 23:59:59';
         $topeEntrenos = 2 * intdiv($dias_, 10);
         $primero = $filas[0]['id'] ?? null;
         $entrenos = [];
@@ -79,7 +133,9 @@ final class AgendaController extends AppBase
                 $oculto++;
             }
         }
-        echo $this->vista()->pagina('agenda.latte', ['activa' => 'agenda', 'proximo' => $proximo, 'dias' => $resto, 'oculto' => $oculto, 'masDias' => min(90, $dias_ + 10), 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona()]);
+        echo $this->vista()->pagina('agenda.latte', [
+            'proximo' => $proximo, 'dias' => $resto, 'oculto' => $oculto, 'masDias' => min(90, $dias_ + 10),
+        ] + $base);
     }
 
     public function evento(string $id): void

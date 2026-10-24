@@ -646,5 +646,15 @@
  "plantel.locales.quitar": "Dejar de ser local",
  "ajax.guardado": "Guardado",
  "asist.guardada": "Respuesta guardada",
- "evento.fechas_listas": "Fechas listas para revisar"
+ "evento.fechas_listas": "Fechas listas para revisar",
+ "agenda.vista.lista": "Lista",
+ "agenda.vista.mes": "Calendario",
+ "agenda.calendario": "Calendario",
+ "agenda.mes_anterior": "Mes anterior",
+ "agenda.mes_siguiente": "Mes siguiente",
+ "agenda.n_eventos.uno": "{n} evento",
+ "agenda.n_eventos.otros": "{n} eventos",
+ "agenda.otros_eventos": "Otros",
+ "agenda.dia_vacio": "No hay eventos este día",
+ "agenda.volver_proximos": "Volver a los próximos"
 }

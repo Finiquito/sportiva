@@ -187,11 +187,11 @@ final class EventoService extends Repo
     }
 
     /** @return array<int, array<string, mixed>> */
-    public function delClubDesde(string $club, string $desde, ?array $equipos = null, bool $borradores = false): array
+    public function delClubDesde(string $club, string $desde, ?array $equipos = null, bool $borradores = false, ?string $hasta = null): array
     {
         $sql = 'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
-                WHERE ev.club_id = ? AND ev.inicio >= ? AND ev.estado <> ?';
-        $p = [$club, $desde, 'cancelado'];
+                WHERE ev.club_id = ? AND ev.inicio >= ? AND ev.estado <> ?' . ($hasta !== null ? ' AND ev.inicio < ?' : '');
+        $p = $hasta !== null ? [$club, $desde, 'cancelado', $hasta] : [$club, $desde, 'cancelado'];
         if ($equipos !== null) {
             if ($equipos === []) {
                 return [];
@@ -206,7 +206,7 @@ final class EventoService extends Repo
      * Eventos para las familias: uno por (evento, hijo convocado), con su respuesta.
      * @return array<int, array<string, mixed>>
      */
-    public function paraApoderado(string $persona, string $club, string $desde): array
+    public function paraApoderado(string $persona, string $club, string $desde, ?string $hasta = null): array
     {
         return $this->filas(
             "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
@@ -217,14 +217,14 @@ final class EventoService extends Repo
              JOIN sportiva_equipos eq ON eq.id = ev.equipo_id
              LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
              LEFT JOIN sportiva_asistencias a ON a.evento_id = ev.id AND a.jugador_id = j.id
-             WHERE aj.persona_id = ? AND ev.club_id = ? AND ev.inicio >= ? AND ev.estado = 'publicado'
+             WHERE aj.persona_id = ? AND ev.club_id = ? AND ev.inicio >= ? AND ev.estado = 'publicado'" . ($hasta !== null ? ' AND ev.inicio < ?' : '') . "
              ORDER BY ev.inicio, j.nombre",
-            [$persona, $club, $desde]
+            $hasta !== null ? [$persona, $club, $desde, $hasta] : [$persona, $club, $desde]
         );
     }
 
     /** Eventos del propio jugador (hijo), solo lectura. @return array<int, array<string, mixed>> */
-    public function paraJugador(string $persona, string $club, string $desde): array
+    public function paraJugador(string $persona, string $club, string $desde, ?string $hasta = null): array
     {
         return $this->filas(
             "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
@@ -234,9 +234,9 @@ final class EventoService extends Repo
              JOIN sportiva_equipos eq ON eq.id = ev.equipo_id
              LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
              LEFT JOIN sportiva_asistencias a ON a.evento_id = ev.id AND a.jugador_id = j.id
-             WHERE j.persona_id = ? AND ev.club_id = ? AND ev.inicio >= ? AND ev.estado = 'publicado'
+             WHERE j.persona_id = ? AND ev.club_id = ? AND ev.inicio >= ? AND ev.estado = 'publicado'" . ($hasta !== null ? ' AND ev.inicio < ?' : '') . "
              ORDER BY ev.inicio",
-            [$persona, $club, $desde]
+            $hasta !== null ? [$persona, $club, $desde, $hasta] : [$persona, $club, $desde]
         );
     }
 

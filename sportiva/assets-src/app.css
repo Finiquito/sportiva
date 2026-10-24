@@ -194,3 +194,29 @@ details.citar summary::-webkit-details-marker{display:none}
 @media (min-width:1000px){.toast{bottom:28px}}
 @media (prefers-reduced-motion:reduce){.toast.entra,.toast.sale{animation:none}}
 [hidden]{display:none!important}
+/* Calendario del mes: opción «Calendario» en el móvil y columna lateral en escritorio */
+.cal-cab{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
+.cal-cab h3{font:700 17px/1.2 var(--font-body);margin:0;text-transform:capitalize}
+.cal-g{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.cal-d{font:600 10.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);text-align:center;padding:6px 0}
+.cal-c{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:46px;border-radius:12px;text-decoration:none;color:var(--tinta)}
+.cal-c b{font:600 14px/1 var(--font-mono)}
+.cal-c:hover{background:var(--hueso)}
+.cal-c.hoy b{box-shadow:0 0 0 1.5px var(--club);border-radius:999px;padding:3px 6px}
+.cal-c.sel{background:var(--club);color:#F7F1E8}
+.cal-p{display:flex;gap:3px;height:6px}
+.cal-p i,.cal-ley i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--club)}
+.p-partido{background:var(--amarillo)!important;box-shadow:0 0 0 1px var(--tinta)}
+.p-entreno{background:var(--lila,#BD8DFF)!important}
+.p-especial,.p-stage{background:var(--club)!important}
+.cal-c.sel .p-especial,.cal-c.sel .p-stage{background:#F7F1E8!important}
+.cal-ley{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 0;font:500 11.5px/1 var(--font-mono);color:var(--tinta-2)}
+.cal-ley span{display:inline-flex;align-items:center;gap:6px}
+.cal.mini .cal-c{min-height:38px}
+.ag-lateral{display:none}
+.ag-g{display:block}
+@media (min-width:1000px){
+ .ag-g{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start}
+ .ag-lateral{display:block;position:sticky;top:16px}
+ .ag-vista{display:none}
+}

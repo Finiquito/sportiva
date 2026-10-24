@@ -646,5 +646,15 @@
  "plantel.locales.quitar": "Ne plus être à domicile",
  "ajax.guardado": "Enregistré",
  "asist.guardada": "Réponse enregistrée",
- "evento.fechas_listas": "Dates prêtes à vérifier"
+ "evento.fechas_listas": "Dates prêtes à vérifier",
+ "agenda.vista.lista": "Liste",
+ "agenda.vista.mes": "Calendrier",
+ "agenda.calendario": "Calendrier",
+ "agenda.mes_anterior": "Mois précédent",
+ "agenda.mes_siguiente": "Mois suivant",
+ "agenda.n_eventos.uno": "{n} événement",
+ "agenda.n_eventos.otros": "{n} événements",
+ "agenda.otros_eventos": "Autres",
+ "agenda.dia_vacio": "Aucun événement ce jour",
+ "agenda.volver_proximos": "Retour aux prochains"
 }
