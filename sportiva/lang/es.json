@@ -662,5 +662,11 @@
  "evento.lugar_de.entreno": "Lugar del entrenamiento",
  "evento.lugar_de.otro": "Lugar del evento",
  "evento.lugar_nuevo_op": "+ Lugar nuevo",
- "evento.lugar_coordenadas": "Ajustar coordenadas (opcional)"
+ "evento.lugar_coordenadas": "Ajustar coordenadas (opcional)",
+ "cit.de_total": "de {n} van",
+ "cit.van": "Van",
+ "cit.duda": "En duda",
+ "cit.sin": "Sin responder",
+ "cit.no": "No van",
+ "cit.faltan": "Faltan por confirmar"
 }

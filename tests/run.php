@@ -1109,7 +1109,7 @@ $apEmail = $pdo->query("SELECT email FROM sportiva_personas WHERE id = '{$ap}'")
 $comoRol($apEmail, 'apoderado');
 llamar(fn() => $ag->responder($pid), conCsrf(['jugador' => $hijoCitado, 'respuesta' => 'voy']));
 [$h] = llamar(fn() => $ag->evento($pid));
-check(str_contains($h, 'Citados') && str_contains($h, 'Confirmaron asistencia') && str_contains($h, '1 de 3'), 'la familia ve la lista de citados y la de quienes confirmaron');
+check(str_contains($h, 'Citados') && str_contains($h, 'class="cit-voy"') && str_contains($h, '<b>1</b> de 3 van') && str_contains($h, 'Faltan por confirmar'), 'la familia ve cuántos van, el bloque de quienes confirmaron y quiénes faltan');
 $noCit = array_values(array_diff($j12, $S['ev']->convocadosIds($pid)))[0] ?? null;
 if ($noCit) {
     $nom = $pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$noCit}'")->fetchColumn();

@@ -243,3 +243,34 @@ html,body{background:var(--club)}
  .solo-movil{display:none!important}
  .sheet.angosta>*{max-width:760px}
 }
+/* Citados: resumen, los que van en verde oscuro, los que faltan con línea punteada */
+.cit-titular{margin:0 0 8px;font:600 14px/1.3 var(--font-body);color:var(--tinta-2)}
+.cit-titular b{font:800 34px/1 var(--font-display,'Bricolage Grotesque');color:var(--club);margin-right:4px;letter-spacing:-.02em}
+.cit-barra{display:flex;gap:3px;height:10px;margin:0 0 10px}
+.cit-barra i{display:block;min-width:8px;border-radius:999px}
+.cit-barra .voy{background:var(--club)}
+.cit-barra .duda{background:var(--lila,#BD8DFF)}
+.cit-barra .falta{background:transparent;border:1.5px dashed var(--tinta-2);opacity:.6}
+.cit-leyenda{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 4px;font:500 11.5px/1 var(--font-mono);color:var(--tinta-2)}
+.cit-leyenda span{display:inline-flex;align-items:center;gap:5px}
+.cit-leyenda .pi{font-size:14px}
+.cit-grupo{margin:14px 0 0}
+.cit-tit{display:flex;align-items:center;justify-content:space-between;margin:0 2px 6px;font:600 10.5px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-2)}
+.cit-tit i{font-style:normal;color:var(--tinta)}
+.cit-f{display:flex;align-items:center;gap:10px;padding:8px 0}
+.cit-f>div{flex:1;min-width:0}
+.cit-f b{display:block;font:700 14px/1.25 var(--font-body)}
+.cit-f small{display:block;font:400 11.5px/1.3 var(--font-mono);opacity:.75;margin-top:1px}
+.cit-m{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:15px}
+.cit-voy{background:var(--club);color:#F7F1E8;border-radius:18px;padding:4px 14px}
+.cit-voy .cit-f+.cit-f{border-top:1px solid rgba(247,241,232,.22)}
+.cit-voy .cit-m{background:#F7F1E8;color:var(--club)}
+.cit-voy .avatar{box-shadow:0 0 0 2px rgba(247,241,232,.55)}
+.cit-duda{background:var(--lila-t,#EFE6FF);border-radius:18px;padding:4px 14px}
+.cit-duda .cit-m{background:var(--lila,#BD8DFF);color:#10201F}
+.cit-f.falta{border:1.5px dashed var(--linea-2);border-radius:16px;padding:8px 12px;margin-bottom:6px;color:var(--tinta-2)}
+.cit-f.falta b{color:var(--tinta)}
+.cit-f.falta .avatar{opacity:.75}
+.cit-f.falta .cit-m{border:1.5px dashed var(--tinta-2);color:var(--tinta-2)}
+.cit-f.falta.no{border-color:var(--tinta-2);background:transparent}
+.cit-f.falta.no b{color:var(--tinta-2);text-decoration:line-through;text-decoration-thickness:1px}

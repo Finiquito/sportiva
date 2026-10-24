@@ -662,5 +662,11 @@
  "evento.lugar_de.entreno": "Lieu de l'entraînement",
  "evento.lugar_de.otro": "Lieu de l'événement",
  "evento.lugar_nuevo_op": "+ Nouveau lieu",
- "evento.lugar_coordenadas": "Ajuster les coordonnées (facultatif)"
+ "evento.lugar_coordenadas": "Ajuster les coordonnées (facultatif)",
+ "cit.de_total": "sur {n} viennent",
+ "cit.van": "Viennent",
+ "cit.duda": "Doute",
+ "cit.sin": "Sans réponse",
+ "cit.no": "Ne viennent pas",
+ "cit.faltan": "À confirmer"
 }

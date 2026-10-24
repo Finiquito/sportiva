@@ -1,0 +1,77 @@
+{* Citados de una convocatoria. Entrenador: todo el estado. Familias: quiénes confirmaron y quiénes faltan (sin decir duda o no). *}
+{var $grupos = ['voy' => [], 'duda' => [], 'sin' => [], 'no' => []]}
+{foreach $conv as $c}{var $k = in_array($c['respuesta'], ['voy', 'duda', 'no'], true) ? $c['respuesta'] : 'sin'}{do $grupos[$k][] = $c}{/foreach}
+{var $total = max(1, $resumen['total'])}
+<section class="card cit">
+ <div class="ch"><h3>{$t('evento.citados')}</h3><span class="est">{$resumen['total']}</span></div>
+ {if $resumen['total'] > 0}
+ <p class="cit-titular"><b>{$resumen['voy']}</b> {$t('cit.de_total', ['n' => $resumen['total']])}</p>
+ <div class="cit-barra" role="img" aria-label="{$resumen['voy']} / {$resumen['total']}">
+  {if $resumen['voy']}<i class="voy" style="flex:{$resumen['voy']}"></i>{/if}
+  {if $puede && $resumen['duda']}<i class="duda" style="flex:{$resumen['duda']}"></i>{/if}
+  {if $resumen['total'] - $resumen['voy'] - ($puede ? $resumen['duda'] : 0) > 0}<i class="falta" style="flex:{$resumen['total'] - $resumen['voy'] - ($puede ? $resumen['duda'] : 0)}"></i>{/if}
+ </div>
+ {if $puede}
+ <p class="cit-leyenda">
+  <span>{$ico('check')|noescape}{$t('cit.van')} {$resumen['voy']}</span>
+  <span>{$ico('question')|noescape}{$t('cit.duda')} {$resumen['duda']}</span>
+  <span>{$ico('clock')|noescape}{$t('cit.sin')} {$resumen['sin']}</span>
+  <span>{$ico('x')|noescape}{$t('cit.no')} {$resumen['no']}</span>
+ </p>
+ {/if}
+
+ {if $grupos['voy']}
+ <div class="cit-grupo">
+  <p class="cit-tit">{$t('cit.van')} <i>{count($grupos['voy'])}</i></p>
+  <div class="cit-voy">
+   {foreach $grupos['voy'] as $c}
+   <div class="cit-f">{$avatar($c)|noescape}<div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div><span class="cit-m">{$ico('check')|noescape}</span></div>
+   {/foreach}
+  </div>
+ </div>
+ {/if}
+
+ {if $puede && $grupos['duda']}
+ <div class="cit-grupo">
+  <p class="cit-tit">{$t('cit.duda')} <i>{count($grupos['duda'])}</i></p>
+  <div class="cit-duda">
+   {foreach $grupos['duda'] as $c}
+   <div class="cit-f">{$avatar($c)|noescape}<div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div><span class="cit-m">{$ico('question')|noescape}</span></div>
+   {/foreach}
+  </div>
+ </div>
+ {/if}
+
+ {if $puede}
+  {if $grupos['sin']}
+  <div class="cit-grupo">
+   <p class="cit-tit">{$t('cit.sin')} <i>{count($grupos['sin'])}</i></p>
+   {foreach $grupos['sin'] as $c}
+   <div class="cit-f falta">{$avatar($c)|noescape}<div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div><span class="cit-m">{$ico('clock')|noescape}</span></div>
+   {/foreach}
+  </div>
+  {/if}
+  {if $grupos['no']}
+  <div class="cit-grupo">
+   <p class="cit-tit">{$t('cit.no')} <i>{count($grupos['no'])}</i></p>
+   {foreach $grupos['no'] as $c}
+   <div class="cit-f falta no">{$avatar($c)|noescape}<div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div><span class="cit-m">{$ico('x')|noescape}</span></div>
+   {/foreach}
+  </div>
+  {/if}
+ {else}
+  {var $faltan = array_merge($grupos['duda'], $grupos['sin'], $grupos['no'])}
+  {if $faltan}
+  <div class="cit-grupo">
+   <p class="cit-tit">{$t('cit.faltan')} <i>{count($faltan)}</i></p>
+   {foreach $faltan as $c}
+   <div class="cit-f falta">{$avatar($c)|noescape}<div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div><span class="cit-m">{$ico('clock')|noescape}</span></div>
+   {/foreach}
+  </div>
+  {/if}
+ {/if}
+ {else}
+ <p class="texto" style="margin:0">{$t('evento.sin_citados')}</p>
+ {/if}
+ {if $puede}<a class="bt w" href="{$url('evento/' . $e['id'] . '/editar')}#citados" style="margin-top:14px">{$ico('pencil-simple')|noescape}{$t('evento.editar_citados')}</a>{/if}
+</section>

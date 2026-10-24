@@ -73,48 +73,7 @@
 </div>
 
 <aside class="dos-lat">
- <section class="card">
-  <div class="ch"><h3>{$t('evento.citados')}</h3><span class="est">{$resumen['total']}</span></div>
-  {if $puede}
-  <p class="resumen">
-   <span class="est">{$ico('check')|noescape}{$t('asist.voy')} {$resumen['voy']}</span>
-   <span class="est">{$ico('question')|noescape}{$t('asist.duda')} {$resumen['duda']}</span>
-   <span class="est">{$ico('x')|noescape}{$t('asist.no')} {$resumen['no']}</span>
-   <span class="est">{$ico('clock')|noescape}{$t('asist.sin')} {$resumen['sin']}</span>
-  </p>
-  {/if}
-  {foreach $conv as $c}
-  <div class="pers">
-   {$avatar($c)|noescape}
-   <div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div>
-   {if $puede}
-   {if $c['respuesta'] === 'voy'}<span class="est">{$ico('check')|noescape}{$t('asist.voy')}</span>
-   {elseif $c['respuesta'] === 'duda'}<span class="est">{$ico('question')|noescape}{$t('asist.duda')}</span>
-   {elseif $c['respuesta'] === 'no'}<span class="est">{$ico('x')|noescape}{$t('asist.no')}</span>
-   {else}<span class="est">{$ico('clock')|noescape}{$t('asist.sin')}</span>{/if}
-   {/if}
-  </div>
-  {else}
-  <p class="texto" style="margin:0">{$t('evento.sin_citados')}</p>
-  {/foreach}
-  {if $puede}<a class="bt w" href="{$url('evento/' . $e['id'] . '/editar')}#citados" style="margin-top:12px">{$ico('pencil-simple')|noescape}{$t('evento.editar_citados')}</a>{/if}
- </section>
-
- {if !$puede}
- <section class="card">
-  <div class="ch"><h3>{$t('asist.confirmaron')}</h3><span class="est">{$resumen['voy']} {$t('de')} {$resumen['total']}</span></div>
-  {foreach $conv as $c}
-  {if $c['respuesta'] === 'voy'}
-  <div class="pers">
-   {$avatar($c)|noescape}
-   <div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div>
-   <span class="est">{$ico('check')|noescape}{$t('asist.voy')}</span>
-  </div>
-  {/if}
-  {/foreach}
-  {if $resumen['voy'] === 0}<p class="texto" style="margin:0">{$t('asist.nadie_confirma')}</p>{/if}
- </section>
- {/if}
+ {include '_citados.latte', conv: $conv, resumen: $resumen, puede: $puede, e: $e}
 </aside>
 
 <div class="dos-b">
