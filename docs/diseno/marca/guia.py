@@ -8,7 +8,7 @@ CSS+='''
 .tel .aviso{border-radius:14px;padding:10px 12px;font:600 12.5px "Geist",sans-serif;display:flex;gap:10px;align-items:center;background:var(--aviso);color:var(--tinta);margin:8px 0}
 .ia{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none}
 .ia svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.ia.ok{color:var(--exito-txt)}.ia.err{color:var(--error)}.ia.dor{color:var(--dorado-txt)}
+.ia.ok{background:var(--exito);color:#fff}.ia.err{color:var(--error)}.ia.dor{color:var(--dorado-txt)}
 .ia.am{background:var(--amarillo);color:var(--tinta)}
 .msgs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:10px}
 .msgs .aviso{margin:0;background:var(--aviso);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;font:600 14px "Geist",sans-serif}
@@ -30,6 +30,12 @@ def svgfile(n,cls='',alt='u330'):
     s=re.sub(r'<\?xml.*?\?>\s*','',s);s=re.sub(r'<!--.*?-->\s*','',s,flags=re.S);s=re.sub(r'<defs>.*?</defs>','',s,flags=re.S)
     s=s.replace('class="st0"','class="u-b"').replace('class="st1"','class="u-a"').replace('class="st2"','class="u-v"')
     return re.sub(r'<svg [^>]*viewBox="([^"]+)"[^>]*>',r'<svg class="lg %s" viewBox="\1" role="img" aria-label="%s">'%(cls,alt),s,1)
+def fijo(n,cls,alt='u330'):
+    s=open(D+'marca/%s.svg'%n).read()
+    s=re.sub(r'<\?xml.*?\?>\s*','',s);s=re.sub(r'<!--.*?-->\s*','',s,flags=re.S)
+    cols=dict(re.findall(r'\.(st\d)\s*\{\s*fill:\s*(#\w+)',s));s=re.sub(r'<defs>.*?</defs>','',s,flags=re.S)
+    s=re.sub(r'class="(st\d)"',lambda m:'fill="%s"'%cols[m.group(1)],s)
+    return re.sub(r'<svg [^>]*viewBox="([^"]+)"[^>]*>',r'<svg class="lg %s" viewBox="\1" role="img" aria-label="%s">'%(cls,alt),s,1)
 CHK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>'
 CRZ='<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>'
 EXC='<svg viewBox="0 0 24 24"><path d="M12 6v7M12 17.5v.5"/></svg>'
@@ -46,7 +52,7 @@ AV='#E7EDED'
 pares=[('Texto tinta sobre hueso','#10201F','#F7F1E8'),('Texto secundario sobre hueso','#4B5E5C','#F7F1E8'),('Verde sobre hueso (horas, títulos)','#0F4F4E','#F7F1E8'),('Blanco sobre verde (botones)','#FFFFFF','#0F4F4E'),('Verde sobre amarillo (resaltador)','#0F4F4E','#F6F24A'),
 ('Tinta sobre naranja','#10201F','#FC5603'),('Blanco sobre naranja','#FFFFFF','#FC5603'),('Naranja-txt sobre hueso','#B93C00','#F7F1E8'),('Tinta sobre lila','#10201F','#BD8DFF'),('Lila-txt sobre hueso','#6A3FC4','#F7F1E8'),
 ('Tinta sobre dorado','#10201F','#BD984A'),('Dorado-txt sobre hueso','#7A5A1A','#F7F1E8'),('Tinta sobre éxito','#10201F','#00AB05'),
-('Ícono éxito-txt sobre aviso (verde claro)','#006B03',AV),('Ícono rojo sobre aviso','#B9341A',AV),('Ícono dorado-txt sobre aviso','#7A5A1A',AV),('Ícono tinta sobre amarillo (círculo del aviso)','#10201F','#F6F24A'),
+('Check blanco sobre círculo éxito (avisos)','#FFFFFF','#00AB05'),('Ícono rojo sobre aviso','#B9341A',AV),('Ícono dorado-txt sobre aviso','#7A5A1A',AV),('Ícono tinta sobre amarillo (círculo del aviso)','#10201F','#F6F24A'),
 ('Naranja puro sobre hueso (texto o ícono)','#FC5603','#F7F1E8'),('Dorado puro sobre hueso (texto o ícono)','#BD984A','#F7F1E8'),('Lila puro sobre hueso (texto o ícono)','#BD8DFF','#F7F1E8'),('Éxito puro sobre hueso (texto o ícono)','#00AB05','#F7F1E8')]
 def fila(n,a,b):
     r=cr(a,b);ok='ok' if r>=4.5 else ('gr' if r>=3 else 'no')
@@ -55,7 +61,7 @@ def fila(n,a,b):
 filas=''.join(fila(*p) for p in pares)
 def tarjeta(nuevo):
     if nuevo:
-        b='background:var(--naranja);color:var(--tinta)';tag_ent='background:var(--lila-t);color:var(--tinta)'
+        b='background:var(--naranja);color:#fff';tag_ent='background:var(--lila-t);color:var(--tinta)'
         logo='<span class="mk2">%s</span>'%svgfile('logo-favicon','','u330')
         aviso1='<div class="aviso"><span class="ia am">%s</span>Cambió el lugar del partido · hoy 10:12</div>'%EXC
         aviso2='<div class="aviso"><span class="ia ok">%s</span>Asistencia guardada</div>'%CHK
@@ -140,11 +146,12 @@ html='''<!doctype html>
 <div class="logos">
  <figure class="lbox hueso" style="margin:0">'''+svgfile('logo-principal','w2')+'''<figcaption>Principal · sobre hueso</figcaption></figure>
  <figure class="lbox blanco" style="margin:0">'''+svgfile('logo-largo','w2 l')+'''<figcaption>Largo con .app · sobre blanco</figcaption></figure>
- <figure class="lbox verde" style="margin:0">'''+svgfile('logo-principal','w2')+'''<figcaption>Sobre verde · negativo (propuesta)</figcaption></figure>
+ <figure class="lbox verde" style="margin:0">'''+fijo('logo-principal-verde','w2')+'''<figcaption>Principal · sobre verde</figcaption></figure>
  <figure class="lbox hueso" style="margin:0">'''+svgfile('logo-favicon','w3')+'''<figcaption>Favicon · ícono de app</figcaption></figure>
+ <figure class="lbox verde" style="margin:0">'''+fijo('logo-favicon-verde','w3')+'''<figcaption>Favicon · sobre verde</figcaption></figure>
  <figure class="lbox verde" style="margin:0"><span class="chip"><span class="mk2">'''+svgfile('logo-favicon','','u330')+'''</span>FCJ Orée de l’Autize</span><figcaption>Header de la app · U invertida sobre círculo verde</figcaption></figure>
 </div>
-<div class="nota"><b>Sobre verde</b> las partes verdes del logo (palabra, tapas y fondo de la U) se vuelven hueso; la U dorada y naranja se queda. En el header de la app va solo la U del favicon, invertida, dentro del círculo verde. La versión larga usa lila en la U; la principal y el favicon, naranja.</div>
+<div class="nota"><b>Sobre verde</b> se usan las versiones que diseñaste (<code>logo-principal-verde.svg</code> y <code>logo-favicon-verde.svg</code>): palabra en amarillo, U naranja y lila, tapas en hueso. En el header de la app va solo la U del favicon, invertida, dentro del círculo verde. La versión larga usa lila en la U; la principal y el favicon, naranja.</div>
 
 <h2>Íconos</h2>
 <p>Mismo trazo que el resto de la interfaz, en verde. Los de logros van en dorado (<code>--dorado-txt</code> sobre claro, dorado puro sobre verde).</p>
