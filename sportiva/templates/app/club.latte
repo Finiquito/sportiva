@@ -1,14 +1,17 @@
 {layout '_layout.latte'}
 {block titulo}{$t('nav.club')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <p class="hola">{$t('club.panel')}</p>
 <h1>{$club['nombre']}</h1>
-<div class="resumen">
+<div class="resumen solo-movil">
  <span class="pill">{$n('club.n.equipos', $r['equipos'])}</span>
  <span class="pill">{$n('club.n.jugadores', $r['jugadores'])}</span>
  <span class="pill">{$n('club.n.familias', $r['familias'])}</span>
  <span class="pill">{$n('club.n.entrenadores', $r['entrenadores'])}</span>
 </div>
+<div class="dos">
+<div class="dos-main">
 <section class="card">
  <ul class="lkl">
   {foreach [['equipos','users-three','club.equipos','club.equipos.sub'],['personas','user-circle','club.personas','club.personas.sub'],['invitaciones','paper-plane-tilt','club.invitaciones','club.invitaciones.sub'],['lugares','map-pin','club.lugares','club.lugares.sub'],['temporada','calendar-blank','club.temporada','club.temporada.sub'],['ajustes','gear','club.ajustes','club.ajustes.sub']] as $it}
@@ -16,4 +19,17 @@
   {/foreach}
  </ul>
 </section>
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('club.panel')}</h3></div>
+  <ul class="lkl">
+   <li><span class="lk" style="grid-template-columns:minmax(0,1fr) auto"><b>{$t('nav.plantel')}</b><span class="est">{$r['jugadores']}</span></span></li>
+   <li><span class="lk" style="grid-template-columns:minmax(0,1fr) auto"><b>{$t('club.grupo.familias')}</b><span class="est">{$r['familias']}</span></span></li>
+   <li><span class="lk" style="grid-template-columns:minmax(0,1fr) auto"><b>{$t('club.grupo.entrenadores')}</b><span class="est">{$r['entrenadores']}</span></span></li>
+   <li><span class="lk" style="grid-template-columns:minmax(0,1fr) auto"><b>{$t('club.temporada')}</b><span class="est">{$temporada}</span></span></li>
+  </ul>
+ </section>
+</aside>
+</div>
 {/block}

@@ -1,12 +1,15 @@
 {layout '_layout.latte'}
 {block titulo}{$t('nav.consultas')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
 <h1>{$t('nav.consultas')}</h1>
-<div class="grupo-pills">
+<div class="grupo-pills solo-movil">
  <a class="pill{if $vista === 'pendientes'} on{/if}" href="{$url('consultas')}" style="display:inline-flex;align-items:center;text-decoration:none">{$t('consulta.pendientes')} · {$pendientes}</a>
  <a class="pill{if $vista === 'todas'} on{/if}" href="{$url('consultas')}?v=todas" style="display:inline-flex;align-items:center;text-decoration:none">{$t('consulta.todas')}</a>
 </div>
+<div class="dos">
+<div class="dos-main">
 <section class="card">
  {foreach $lista as $c}
  <a class="pers" href="{$url('consulta/' . $c['id'])}" style="text-decoration:none;color:inherit">
@@ -18,4 +21,15 @@
  <div class="vacio"><span class="fi">{$ico('check')|noescape}</span><b>{$t('consulta.sin_pendientes')}</b></div>
  {/foreach}
 </section>
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('nav.consultas')}</h3></div>
+  <ul class="lkl">
+   <li><a class="lk" href="{$url('consultas')}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('consulta.pendientes')}</b></span><span class="est">{$pendientes}</span></a></li>
+   <li><a class="lk" href="{$url('consultas')}?v=todas" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('consulta.todas')}</b></span></a></li>
+  </ul>
+ </section>
+</aside>
+</div>
 {/block}

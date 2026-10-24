@@ -1,24 +1,13 @@
 {layout '_layout.latte'}
 {block titulo}{$t('turno.titulo')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <a class="volver" href="{$url('agenda')}">{$ico('arrow-right')|noescape}{$t('nav.agenda')}</a>
 <h1 style="font-size:34px;margin-bottom:6px">{$t('turno.titulo')}</h1>
 <p class="sub" style="margin:0 2px 16px">{$t('turno.sub')}</p>
 
-<section class="card">
- <div class="ch"><h3>{$t('turno.repartir')}</h3></div>
- <p class="texto" style="margin:0 0 12px">{$t('turno.repartir.ayuda')}</p>
- <form method="post" action="{$url('turnos/repartir')}">
-  <input type="hidden" name="csrf" value="{$csrf}">
-  <label class="campo"><span>{$t('evento.equipo')}</span>
-   <select class="in" name="equipo_id">{foreach $equipos as $q}<option value="{$q['id']}">{$q['nombre']}</option>{/foreach}</select>
-  </label>
-  <label class="campo"><span>{$t('turno.por_partido')}</span>
-   <select class="in" name="por_partido">{foreach [1, 2, 3, 4] as $k}<option value="{$k}" {if $k === 2}selected{/if}>{$k}</option>{/foreach}</select>
-  </label>
-  <button class="bt s" type="submit">{$ico('car')|noescape}{$t('turno.repartir_btn')}</button>
- </form>
-</section>
+<div class="dos antes">
+<div class="dos-main">
 
 {foreach $partidos as $p}
 <section class="card">
@@ -46,4 +35,22 @@
 {else}
 <section class="card vacio"><span class="fi">{$ico('car')|noescape}</span><b>{$t('turno.sin_partidos')}</b></section>
 {/foreach}
+</div>
+<aside class="dos-lat">
+<section class="card">
+ <div class="ch"><h3>{$t('turno.repartir')}</h3></div>
+ <p class="texto" style="margin:0 0 12px">{$t('turno.repartir.ayuda')}</p>
+ <form method="post" action="{$url('turnos/repartir')}">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('evento.equipo')}</span>
+   <select class="in" name="equipo_id">{foreach $equipos as $q}<option value="{$q['id']}">{$q['nombre']}</option>{/foreach}</select>
+  </label>
+  <label class="campo"><span>{$t('turno.por_partido')}</span>
+   <select class="in" name="por_partido">{foreach [1, 2, 3, 4] as $k}<option value="{$k}" {if $k === 2}selected{/if}>{$k}</option>{/foreach}</select>
+  </label>
+  <button class="bt s" type="submit">{$ico('car')|noescape}{$t('turno.repartir_btn')}</button>
+ </form>
+</section>
+</aside>
+</div>
 {/block}

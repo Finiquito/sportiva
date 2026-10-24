@@ -1,10 +1,11 @@
 {layout '_layout.latte'}
 {block titulo}{$e['titulo']} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <a class="volver" href="{$url('agenda')}">{$ico('arrow-right')|noescape}{$t('nav.agenda')}</a>
 
-<div class="g2">
-<div class="col">
+<div class="dos tres">
+<div class="dos-a">
  <section class="card ficha-evento">
   <div class="tags">
    {if $e['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
@@ -71,14 +72,7 @@
  {/if}
 </div>
 
-<div class="col">
- {if $e['tipo'] === 'partido'}
- <section class="card"><div class="hilo">
-  <span class="fi">{$ico('timer')|noescape}</span>
-  <div><span class="ey">{$t('evento.en_partido')}</span><b class="hora-mono">{$h($e['inicio'])}</b><p>{$t('evento.en_vivo_pronto')}</p></div>
- </div></section>
- {/if}
-
+<aside class="dos-lat">
  <section class="card">
   <div class="ch"><h3>{$t('evento.citados')}</h3><span class="est">{$resumen['total']}</span></div>
   {if $puede}
@@ -120,6 +114,15 @@
   {/foreach}
   {if $resumen['voy'] === 0}<p class="texto" style="margin:0">{$t('asist.nadie_confirma')}</p>{/if}
  </section>
+ {/if}
+</aside>
+
+<div class="dos-b">
+ {if $e['tipo'] === 'partido'}
+ <section class="card"><div class="hilo">
+  <span class="fi">{$ico('timer')|noescape}</span>
+  <div><span class="ey">{$t('evento.en_partido')}</span><b class="hora-mono">{$h($e['inicio'])}</b><p>{$t('evento.en_vivo_pronto')}</p></div>
+ </div></section>
  {/if}
 
  {if $puedeMedios}

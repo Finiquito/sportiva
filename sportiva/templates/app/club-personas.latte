@@ -1,18 +1,21 @@
 {layout '_layout.latte'}
 {block titulo}{$t('club.personas')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1 style="font-size:34px;margin-bottom:12px">{$t('club.personas')}</h1>
-<div class="grupo-pills">
+<div class="grupo-pills solo-movil">
  {foreach ['todos', 'entrenadores', 'familias', 'directiva'] as $k}
  <a class="pill{if $g === $k} on{/if}" href="{$url('club/personas')}?g={$k}{if $q !== ''}&amp;q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none" {if $g === $k}aria-current="true"{/if}>{$t('club.grupo.' . $k)}</a>
  {/foreach}
 </div>
-<form method="get" action="{$url('club/personas')}" style="margin-bottom:12px">
+<form class="solo-movil" method="get" action="{$url('club/personas')}" style="margin-bottom:12px">
  <input type="hidden" name="g" value="{$g}">
  <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
 </form>
-<a class="bt s" href="{$url('club/invitar')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('club.invitar')}</a>
+<a class="bt s solo-movil" href="{$url('club/invitar')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('club.invitar')}</a>
+<div class="dos">
+<div class="dos-main">
 <section class="card">
  {foreach $personas as $p}
  <a class="pers" href="{$url('club/personas/' . $p['id'])}" style="text-decoration:none;color:inherit">
@@ -24,4 +27,21 @@
  <div class="vacio"><span class="fi">{$ico('user-circle')|noescape}</span><b>{$t('club.personas.vacio')}</b></div>
  {/foreach}
 </section>
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('club.personas')}</h3></div>
+  <ul class="lkl">
+   {foreach ['todos', 'entrenadores', 'familias', 'directiva'] as $k}
+   <li><a class="lk" href="{$url('club/personas')}?g={$k}{if $q !== ''}&amp;q={$q}{/if}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('club.grupo.' . $k)}</b></span>{if $g === $k}<span class="est">{$ico('check')|noescape}</span>{/if}</a></li>
+   {/foreach}
+  </ul>
+  <form method="get" action="{$url('club/personas')}" style="margin-top:12px">
+   <input type="hidden" name="g" value="{$g}">
+   <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
+  </form>
+  <a class="bt s w" href="{$url('club/invitar')}" style="margin-top:12px">{$ico('plus')|noescape}{$t('club.invitar')}</a>
+ </section>
+</aside>
+</div>
 {/block}

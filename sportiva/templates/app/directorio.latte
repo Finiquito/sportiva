@@ -1,15 +1,16 @@
 {layout '_layout.latte'}
 {block titulo}{$t('nav.directorio')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <p class="hola">{$t('directorio.sub')}</p>
 <h1>{$t('nav.directorio')}</h1>
-<div class="grupo-pills">
+<div class="grupo-pills solo-movil">
  <a class="pill{if $sel === ''} on{/if}" href="{$url('directorio')}{if $q !== ''}?q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none">{$t('club.grupo.todos')}</a>
  {foreach $equipos as $e}
  <a class="pill{if $sel === $e['id']} on{/if}" href="{$url('directorio')}?equipo={$e['id']}{if $q !== ''}&amp;q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none">{$e['nombre']}</a>
  {/foreach}
 </div>
-<form method="get" action="{$url('directorio')}" style="margin-bottom:12px">
+<form class="solo-movil" method="get" action="{$url('directorio')}" style="margin-bottom:12px">
  {if $sel !== ''}<input type="hidden" name="equipo" value="{$sel}">{/if}
  <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
 </form>
@@ -23,6 +24,8 @@
   </div>
  </div>
 {/define}
+<div class="dos">
+<div class="dos-main">
 {if $staff}
 <section class="card"><div class="ch"><h3>{$t('club.staff')}</h3></div>
  {foreach $staff as $c}{include contacto $c, $t('rol.' . $c['rol']) . ' · ' . implode(', ', $c['equipos'])}{/foreach}
@@ -38,4 +41,21 @@
  {else}<div class="vacio"><span class="fi">{$ico('user-circle')|noescape}</span><b>{$t('club.personas.vacio')}</b></div>{/foreach}
 </section>
 <p class="sis">{$ico('lock')|noescape}{$t('directorio.solo_contactos')}</p>
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('nav.directorio')}</h3></div>
+  <ul class="lkl">
+   <li><a class="lk" href="{$url('directorio')}{if $q !== ''}?q={$q}{/if}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('club.grupo.todos')}</b></span>{if $sel === ''}<span class="est">{$ico('check')|noescape}</span>{/if}</a></li>
+   {foreach $equipos as $e}
+   <li><a class="lk" href="{$url('directorio')}?equipo={$e['id']}{if $q !== ''}&amp;q={$q}{/if}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$e['nombre']}</b></span>{if $sel === $e['id']}<span class="est">{$ico('check')|noescape}</span>{/if}</a></li>
+   {/foreach}
+  </ul>
+  <form method="get" action="{$url('directorio')}" style="margin-top:12px">
+   {if $sel !== ''}<input type="hidden" name="equipo" value="{$sel}">{/if}
+   <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
+  </form>
+ </section>
+</aside>
+</div>
 {/block}

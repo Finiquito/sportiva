@@ -1,5 +1,6 @@
 {layout '_layout.latte'}
 {block titulo}{$t('familia.titulo')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1 style="font-size:34px;margin-bottom:4px">{$t('familia.titulo')}</h1>
@@ -18,6 +19,8 @@
 </section>
 {/if}
 
+<div class="dos">
+<div class="dos-main">
 <section class="card">
  <div class="ch"><h3>{$t('familia.adultos')}</h3></div>
  {foreach $adultos as $a}
@@ -44,5 +47,14 @@
  {/foreach}
  {if $titular}<a class="bt w" href="{$url('familia/hijo')}" style="margin-top:12px">{$ico('plus')|noescape}{$t('familia.agregar_hijo')}</a>{/if}
 </section>
-{if $titular}<p class="sis">{$ico('shield-check')|noescape}{$t('familia.aprobacion')}</p>{/if}
+{if $titular}<p class="sis solo-movil">{$ico('shield-check')|noescape}{$t('familia.aprobacion')}</p>{/if}
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('familia.titulo')}</h3></div>
+  <p class="texto" style="margin:0">{$t($titular ? 'familia.sub.titular' : 'familia.sub.adulto')}</p>
+  {if $titular}<p class="sis" style="margin-top:12px">{$ico('shield-check')|noescape}{$t('familia.aprobacion')}</p>{/if}
+ </section>
+</aside>
+</div>
 {/block}

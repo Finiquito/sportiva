@@ -34,7 +34,7 @@
    {/foreach}
   </nav>
   {/if}
-  <main class="sheet">
+  <main class="sheet {block claseSheet}angosta{/block}">
    {if $flash}<div class="aviso flash" role="status"><span class="ia ok">{$ico('check')|noescape}</span><div><b>{$flash}</b></div></div>{/if}
    {if $flashError}<div class="aviso flash" role="alert"><span class="ia err">{$ico('warning-circle')|noescape}</span><div><b>{$flashError}</b></div></div>{/if}
    {block contenido}{/block}

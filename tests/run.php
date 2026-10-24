@@ -1261,6 +1261,26 @@ $comoRol('ines.garcia@ejemplo.fr', 'apoderado');
 [$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
 check(str_contains($h, 'Partido del calendario') || str_contains($h, 'No hay eventos') || str_contains($h, 'Aucun'), 'cada familia ve en el calendario solo lo de sus hijos');
 
+
+seccion('Laterales de escritorio');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$evL = $pdo->query("SELECT e.id FROM sportiva_eventos e JOIN sportiva_convocados c ON c.evento_id = e.id JOIN sportiva_apoderados_jugadores aj ON aj.jugador_id = c.jugador_id JOIN sportiva_personas p ON p.id = aj.persona_id WHERE p.email = 'daniela@ejemplo.fr' AND e.estado = 'publicado' LIMIT 1")->fetchColumn();
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($evL));
+check(preg_match('/<aside class="dos-lat">.*?evento\.citados|<aside class="dos-lat">.*?Citados/s', $h) === 1 && str_contains($h, 'class="dos tres"'), 'en la convocatoria los citados van en el lateral derecho');
+check(!str_contains($h, 'sheet angosta'), 'la convocatoria usa el ancho completo (con lateral), no la columna angosta');
+[$h] = llamar(fn() => (new S\PerfilController($ctx))->inicio());
+check(str_contains($h, 'sheet angosta'), 'las pantallas sin lateral quedan en columna angosta en escritorio');
+[$h] = llamar(fn() => (new S\FeedController($ctx))->inicio());
+check(str_contains($h, 'class="dos"') && str_contains($h, 'dos-lat solo-escritorio'), 'el feed tiene lateral con lo próximo');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => (new S\PlantelController($ctx))->inicio());
+check(str_contains($h, 'class="dos-lat"') && strpos($h, 'class="dos-lat"') < strpos($h, 'id="locales"'), 'el plantel lleva los lugares locales en el lateral');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->nuevo());
+check(str_contains($h, 'class="dos tres"') && preg_match('/<aside class="dos-lat">\s*<section class="card">\s*<div class="ch"><h3>[^<]*<\/h3><span class="est" id="cuenta-citados"/s', $h) === 1, 'el formulario de la citación lleva los citados en el lateral');
+$comoRol('sylvie@ejemplo.fr', 'directiva');
+[$h] = llamar(fn() => (new S\ClubController($ctx))->inicio());
+check(str_contains($h, 'dos-lat solo-escritorio'), 'el panel del club lleva su resumen en el lateral');
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');

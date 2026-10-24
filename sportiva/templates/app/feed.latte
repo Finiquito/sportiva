@@ -1,9 +1,13 @@
 {layout '_layout.latte'}
 {block titulo}{$t('nav.feed')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
 <h1>{$t('nav.feed')}</h1>
 {if $puedePublicar}<a class="bt s" href="{$url('feed/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('feed.publicar')}</a>{/if}
+{var $sig = null}{foreach $items as $it}{if $it['k'] !== 'post' && $it['k'] !== 'medios' && !$sig}{var $sig = $it['p']}{/if}{/foreach}
+<div class="dos">
+<div class="dos-main">
 {if $tieneEquipos || $vista === 'club'}
 <div class="grupo-pills">
  {if $tieneEquipos}<a class="pill{if $vista === 'equipo'} on{/if}" href="{$url('feed')}?v=equipo" style="display:inline-flex;align-items:center;text-decoration:none" {if $vista === 'equipo'}aria-current="true"{/if}>{$t('feed.equipo')}</a>{/if}
@@ -40,4 +44,19 @@
 {else}
 <section class="card vacio"><span class="fi">{$ico('newspaper')|noescape}</span><b>{$t('feed.vacio.titulo')}</b><p>{$t($puedePublicar ? 'feed.vacio.coach' : 'feed.vacio.familia')}</p></section>
 {/foreach}
+</div>
+<aside class="dos-lat solo-escritorio">
+ {if $sig}
+ <section class="card">
+  <div class="ch"><h3>{$t('agenda.proximo')}</h3></div>
+  <div class="av" style="padding:0;grid-template-columns:auto minmax(0,1fr)">
+   <span class="av-fecha" aria-hidden="true"><small>{$lista('fmt.meses_cortos')[(int) substr($sig['inicio'], 5, 2) - 1]}</small><b>{(int) substr($sig['inicio'], 8, 2)}</b></span>
+   <div class="av-txt"><b>{$sig['titulo']}</b><p class="av-cita"><span class="av-dia">{$dc($sig['inicio'])}</span><span class="av-h clave">{$h($sig['inicio'])}</span></p><small>{$sig['equipo']}</small></div>
+  </div>
+  <a class="bt w" href="{$url('evento/' . $sig['id'])}" style="margin-top:12px">{$t('abrir')}</a>
+ </section>
+ {/if}
+ <a class="bt w" href="{$url('agenda')}">{$ico('calendar-dots')|noescape}{$t('nav.agenda')}</a>
+</aside>
+</div>
 {/block}

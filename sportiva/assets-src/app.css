@@ -225,6 +225,21 @@ details.citar summary::-webkit-details-marker{display:none}
 details.avanzado{margin:4px 0 12px}
 details.avanzado summary{cursor:pointer;font:600 13px/1.3 var(--font-body);color:var(--club);padding:6px 0}
 /* Con la app instalada en el iPhone, el sistema pone un velo bajo la hora: bajamos un poco el contenido */
-@media (display-mode: standalone) and (max-width: 999px){.band{padding-top:calc(12px + env(safe-area-inset-top) + 30px)}}
+@media (display-mode: standalone) and (max-width: 999px){.band{padding-top:calc(12px + env(safe-area-inset-top) + 10px)}}
 /* Fondo raíz verde sólido: iOS lo toma como color bajo la barra de estado (con degradado cae a un velo claro) */
 html,body{background:var(--club)}
+/* Dos columnas en escritorio: contenido + lateral fijo con lo más importante (citados, calendario, resumen…) */
+.dos{display:flex;flex-direction:column}
+.dos-lat{min-width:0}
+.dos.antes .dos-lat{order:-1}
+.solo-escritorio{display:none!important}
+@media (min-width:1000px){
+ .dos{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:0 20px;align-items:start}
+ .dos-lat{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+ .dos.antes .dos-lat{order:0}
+ .dos.tres{grid-template-areas:"a l" "b l";grid-template-rows:auto 1fr}
+ .dos.tres>.dos-a{grid-area:a}.dos.tres>.dos-lat{grid-area:l}.dos.tres>.dos-b{grid-area:b}
+ .solo-escritorio{display:block!important}
+ .solo-movil{display:none!important}
+ .sheet.angosta>*{max-width:760px}
+}

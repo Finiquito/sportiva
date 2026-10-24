@@ -1,8 +1,11 @@
 {layout '_layout.latte'}
 {block titulo}{$t('nav.plantel')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
 <h1>{$t('nav.plantel')}</h1>
+<div class="dos">
+<div class="dos-main">
 {if $pendientes > 0}
 <a class="aviso" href="{$url('plantel/solicitudes')}" style="margin-bottom:12px;text-decoration:none;color:inherit"><span class="ia am">{$ico('bell')|noescape}</span><div><b>{$n('plantel.pendientes', $pendientes)}</b><p>{$t('plantel.pendientes.ayuda')}</p></div></a>
 {/if}
@@ -28,6 +31,8 @@
 {else}
 <section class="card vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('plantel.sin_equipos')}</b></section>
 {/if}
+</div>
+<aside class="dos-lat">
 <section class="card" id="locales">
  <div class="ch"><h3>{$t('plantel.locales')}</h3><span class="est">{$ico('map-pin')|noescape}{count($locales)}</span></div>
  <p class="texto" style="margin:0 0 8px;font-size:13px">{$t('plantel.locales.sub')}</p>
@@ -52,4 +57,6 @@
   <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('plantel.locales.agregar')}</button>
  </form>
 </section>
+</aside>
+</div>
 {/block}

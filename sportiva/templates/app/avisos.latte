@@ -1,19 +1,22 @@
 {layout '_layout.latte'}
 {block titulo}{$t('avisos.titulo')} · u330{/block}
+{block claseSheet}{/block}
 {block contenido}
 <a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('nav.mas')}</a>
 <div class="av-cab">
  <h1 style="font-size:34px;margin:0">{$t('avisos.titulo')}</h1>
- <span class="av-iconos">
+ <span class="av-iconos solo-movil">
   {if $conteos['todos']['nuevos'] > 0}<form method="post" action="{$url('avisos/leer')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('avisos.leer_todo')}" title="{$t('avisos.leer_todo')}">{$ico('check')|noescape}</button></form>{/if}
   <a class="bt pill-sm" href="{$url('avisos/ajustes')}" aria-label="{$t('avisos.ajustes')}" title="{$t('avisos.ajustes')}">{$ico('gear')|noescape}</a>
  </span>
 </div>
-<div class="grupo-pills av-filtros">
+<div class="grupo-pills av-filtros solo-movil">
  {foreach ['todos', 'citaciones', 'turnos', 'otros'] as $k}
  <a class="pill{if $filtro === $k} on{/if}" href="{$url('avisos')}{if $k !== 'todos'}?f={$k}{/if}" style="display:inline-flex;align-items:center;text-decoration:none" {if $filtro === $k}aria-current="true"{/if}>{$t('avisos.filtro.' . $k)}{if $conteos[$k]['nuevos'] > 0}<i class="av-n">{$conteos[$k]['nuevos']}</i>{/if}</a>
  {/foreach}
 </div>
+<div class="dos">
+<div class="dos-main">
 <section class="card av-lista">
  {foreach $avisos as $a}
  {var $ev = $a['evento']}
@@ -48,4 +51,18 @@
  <div class="vacio"><span class="fi">{$ico('bell')|noescape}</span><b>{$t('avisos.vacio')}</b><p>{$t('avisos.vacio.texto')}</p></div>
  {/foreach}
 </section>
+</div>
+<aside class="dos-lat solo-escritorio">
+ <section class="card">
+  <div class="ch"><h3>{$t('avisos.titulo')}</h3></div>
+  <ul class="lkl">
+   {foreach ['todos', 'citaciones', 'turnos', 'otros'] as $k}
+   <li><a class="lk" href="{$url('avisos')}{if $k !== 'todos'}?f={$k}{/if}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('avisos.filtro.' . $k)}</b></span>{if $conteos[$k]['nuevos'] > 0}<i class="av-n">{$conteos[$k]['nuevos']}</i>{/if}</a></li>
+   {/foreach}
+  </ul>
+  {if $conteos['todos']['nuevos'] > 0}<form method="post" action="{$url('avisos/leer')}" style="margin:12px 0 0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('check')|noescape}{$t('avisos.leer_todo')}</button></form>{/if}
+  <a class="bt w" href="{$url('avisos/ajustes')}" style="margin-top:8px">{$ico('gear')|noescape}{$t('avisos.ajustes')}</a>
+ </section>
+</aside>
+</div>
 {/block}
