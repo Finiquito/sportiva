@@ -36,7 +36,7 @@ final class Correo
         $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px">'
             . '<p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
             . '<p>' . $i->t('correo.codigo.cuerpo') . '</p>'
-            . '<p style="font-size:32px;letter-spacing:6px;font-weight:700;color:#215E5E">' . $codigo . '</p>'
+            . '<p style="font-size:32px;letter-spacing:6px;font-weight:700;color:#0F4F4E">' . $codigo . '</p>'
             . '<p style="color:#4B5E5C;font-size:13px">' . $i->t('correo.codigo.pie') . '</p></div>';
         $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.codigo.cuerpo') . "\n\n" . $codigo . "\n\n" . $i->t('correo.codigo.pie');
         return $this->enviar($para, $asunto, $html, $texto);

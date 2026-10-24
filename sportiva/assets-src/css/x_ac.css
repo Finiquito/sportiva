@@ -1,7 +1,7 @@
 .apps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 8px;margin:0 0 16px}
 .apps div{display:grid;justify-items:center;gap:6px;font:500 11px/1.2 var(--font-mono);color:var(--tinta-2);text-align:center}
 .apps i{width:56px;height:56px;border-radius:16px;background:var(--hueso);color:var(--club);display:grid;place-items:center;font-size:26px;font-style:normal}
-.apps i.sp{background:var(--club);box-shadow:0 0 0 3px var(--limon)}
+.apps i.sp{background:var(--club);box-shadow:0 0 0 3px var(--amarillo)}
 .apps i.sp svg{width:22px;height:auto;display:block}
 .apps .sp-l{color:var(--tinta);font-weight:700}
 .mail-l{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2);margin:0 0 4px}

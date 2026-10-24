@@ -1,5 +1,5 @@
 
-/* Hallmark · pantalla única: Agenda móvil · teal + limón · tokens bloqueados */
+/* Hallmark · pantalla única: Agenda móvil · verde + amarillo · tokens bloqueados */
 *{box-sizing:border-box}
 html,body{overflow-x:clip}
 body{margin:0;background:var(--fondo);color:var(--tinta);font:14px/1.45 var(--font-body);-webkit-font-smoothing:antialiased}
@@ -15,9 +15,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .chip-club{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 16px 0 6px;border-radius:999px;background:var(--papel);color:var(--tinta);font-weight:600;font-size:14px;white-space:nowrap}
 .mk{width:32px;height:32px;border-radius:50%;background:var(--club);display:grid;place-items:center;flex:none}
-.mk svg{width:17px;height:auto;display:block}
+.mk svg{width:20px;height:auto;display:block}
 .bell{position:relative;width:44px;height:44px;border-radius:50%;background:var(--papel);color:var(--tinta);display:grid;place-items:center;border:0;font-size:22px}
-.bell b{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--coral);color:var(--papel);font:600 10.5px/18px var(--font-mono);text-align:center}
+.bell b{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--naranja);color:#fff;font:700 10.5px/18px var(--font-mono);text-align:center}
 .hola{margin:0 2px 6px;font:500 12px/1 var(--font-mono);letter-spacing:.04em;color:var(--tinta-2)}
 
 .sheet{position:relative;z-index:1;flex:1;background:var(--hueso);border-radius:28px 28px 0 0;margin-top:-16px;padding:20px 16px 18px}
@@ -36,8 +36,8 @@ h1{font-family:var(--font-display);font-weight:800;font-size:38px;line-height:1;
 .tags{display:flex;gap:8px;align-items:center;margin:0 0 14px;flex-wrap:wrap}
 .tag{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px 0 10px;border-radius:999px;background:var(--hueso);color:var(--tinta);font-weight:700;font-size:13px;white-space:nowrap}
 .tag .pi{font-size:18px;color:var(--club)}
-.tag.lim{background:var(--limon)}
-.tag.pol{background:var(--polvo-t)}
+.tag.lim{background:var(--amarillo)}
+.tag.pol{background:var(--lila-t)}
 .tag.m{font:500 12px var(--font-mono);color:var(--tinta-2);background:transparent;border:1px solid var(--linea);padding:0 9px}
 h2{font-family:var(--font-display);font-weight:800;font-size:25px;line-height:1.08;letter-spacing:-.015em;margin:0 0 12px}
 .meta{display:flex;align-items:center;gap:9px;font:400 13px/1.4 var(--font-mono);color:var(--tinta-2);margin:0 0 6px}
@@ -48,17 +48,17 @@ h2{font-family:var(--font-display);font-weight:800;font-size:25px;line-height:1.
 .horas small{display:flex;align-items:center;gap:7px;font:500 11.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:8px;height:18px}
 .horas small .pi{font-size:16px;color:var(--club)}
 .hora{font:800 46px/1 var(--font-display);letter-spacing:-.03em;color:var(--club);font-variant-numeric:tabular-nums}
-.hl{background:linear-gradient(transparent 62%,var(--limon) 62%,var(--limon) 92%,transparent 92%);padding:0 2px;margin:0 -2px}
+.hl{background:linear-gradient(transparent 62%,var(--amarillo) 62%,var(--amarillo) 92%,transparent 92%);padding:0 2px;margin:0 -2px}
 .sep{align-self:stretch;border-left:1.5px dashed var(--linea-2)}
 
 .voto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .voto button{height:38px;padding:0 6px;border-radius:999px;border:1.5px solid var(--linea-2);background:transparent;font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
 .voto .pi{font-size:17px}
 .voto button.on{background:var(--club);border-color:var(--club);color:var(--papel)}
-.voto button.on .pi{color:var(--limon)}
+.voto button.on .pi{color:var(--amarillo)}
 
 .traslado{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center}
-.ico{width:52px;height:52px;border-radius:18px;background:var(--limon);color:var(--tinta);display:grid;place-items:center;font-size:28px}
+.ico{width:52px;height:52px;border-radius:18px;background:var(--amarillo);color:var(--tinta);display:grid;place-items:center;font-size:28px}
 .traslado .ey{display:block;font:600 11.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--club);margin-bottom:6px}
 .traslado b{display:block;text-wrap:balance;font:800 17px/1.2 var(--font-display);letter-spacing:-.01em}
 .traslado .s{display:block;font:400 12.5px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:2px}

@@ -43,7 +43,7 @@ final class Ajustes
             'usuario'   => $this->get('smtp_usuario'),
             'clave'     => $this->secreto('smtp_clave'),
             'remitente' => $this->get('smtp_remitente'),
-            'nombre'    => $this->get('smtp_nombre', 'Sportiva'),
+            'nombre'    => $this->get('smtp_nombre', 'u330'),
         ];
     }
 }

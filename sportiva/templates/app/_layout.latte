@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#215E5E">
-<title>{block titulo}Sportiva{/block}</title>
+<meta name="theme-color" content="#0F4F4E">
+<title>{block titulo}u330{/block}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<link rel="icon" type="image/svg+xml" href="/plugins/sportiva/assets/marca/logo-favicon.svg">
 <link rel="stylesheet" href="/plugins/sportiva/assets/sportiva.css?v={$cssv}">
 </head>
 <body>
 <div class="app{block claseApp}{/block}">
  <header class="band">
   <div class="top">
-   <span class="lockup lockup--m">{$logo()|noescape}sportiva</span>
-   <span class="chip-club"><span class="mk">{$logo()|noescape}</span>{$club ? $club['nombre'] : 'Sportiva'}</span>
+   <span class="lockup lockup--m">{$logo('principal-verde')|noescape}</span>
+   <span class="chip-club"><span class="mk">{$logo()|noescape}</span>{$club ? $club['nombre'] : 'u330'}</span>
   </div>
  </header>
  <div class="cuerpo">
@@ -26,7 +27,7 @@
   </nav>
   {/if}
   <main class="sheet">
-   {if $flash}<div class="aviso flash" role="status">{$ico('check')|noescape}<div><b>{$flash}</b></div></div>{/if}
+   {if $flash}<div class="aviso flash" role="status"><span class="ia ok">{$ico('check')|noescape}</span><div><b>{$flash}</b></div></div>{/if}
    {block contenido}{/block}
   </main>
  </div>

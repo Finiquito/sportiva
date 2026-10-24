@@ -1,9 +1,9 @@
 /* ---- componentes de la ronda «todas las pantallas» ---- */
 .chev{font-size:18px;color:var(--tinta-2)}
 .bt.s{height:44px;padding:0 18px;background:var(--club);border-color:var(--club);color:var(--papel);font-size:14px}
-.bt.s .pi{color:var(--limon)}
+.bt.s .pi{color:var(--amarillo)}
 .bt.pill-sm{height:36px;padding:0 12px;font-size:12.5px}
-.bt.danger{border-color:var(--coral);color:var(--coral)}
+.bt.danger{border-color:var(--error);color:var(--error)}
 .acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .acciones .bt{flex:1 1 auto}
 .lkl{list-style:none;margin:0;padding:0}
@@ -28,7 +28,7 @@
 .sw i{width:44px;height:26px;border-radius:13px;border:1.5px solid var(--linea-2);background:var(--papel);position:relative;display:block}
 .sw i::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--tinta-2)}
 .sw.on i{background:var(--club);border-color:var(--club)}
-.sw.on i::after{left:21px;background:var(--limon)}
+.sw.on i::after{left:21px;background:var(--amarillo)}
 .sw.on{color:var(--club)}
 .pasos{display:flex;gap:6px;align-items:center;margin:0 0 14px}
 .pasos i{height:6px;flex:1;border-radius:3px;background:var(--gris);display:block}
@@ -42,9 +42,9 @@
 .clubrow+.clubrow{border-top:1.5px dashed var(--linea-2)}
 .clubrow b{display:block;font:700 15px/1.25 var(--font-body)}
 .clubrow small{display:block;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:2px}
-.escudo{width:44px;height:44px;border-radius:14px;background:var(--club);color:var(--limon);display:grid;place-items:center;font:800 17px/1 var(--font-display);flex:none}
-.escudo.b{background:var(--polvo-t);color:var(--club)}
-.escudo.c{background:var(--limon);color:var(--tinta)}
+.escudo{width:44px;height:44px;border-radius:14px;background:var(--club);color:var(--amarillo);display:grid;place-items:center;font:800 17px/1 var(--font-display);flex:none}
+.escudo.b{background:var(--lila-t);color:var(--club)}
+.escudo.c{background:var(--amarillo);color:var(--tinta)}
 .escudo.g{background:var(--hueso);color:var(--club)}
 .foto-ph{border-radius:18px;background:var(--club-t);color:var(--club);display:grid;place-items:center;font-size:30px;min-height:120px}
 .burbujas{display:grid;gap:10px}
@@ -69,7 +69,7 @@
 .vacio .fi{margin:0 auto 10px;width:52px;height:52px;border-radius:18px;font-size:26px}
 .vacio b{display:block;font:800 18px/1.2 var(--font-display);margin-bottom:4px}
 .vacio p{margin:0 0 12px;font:400 13px/1.45 var(--font-mono);color:var(--tinta-2)}
-.aviso{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border-radius:18px;background:var(--club-t);padding:14px}
+.aviso{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;border-radius:18px;background:var(--aviso);padding:14px}
 .aviso b{display:block;font:700 14px/1.3 var(--font-body)}
 .aviso p{margin:3px 0 0;font:400 12.5px/1.45 var(--font-mono);color:var(--tinta-2)}
 .antes-ahora{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:12px 0}
@@ -81,7 +81,7 @@
 .cod{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:0 0 14px}
 .cod span{height:52px;border-radius:14px;border:1.5px solid var(--linea-2);background:var(--papel);display:grid;place-items:center;font:600 22px var(--font-mono)}
 .cod span.v{border-color:var(--club)}
-.paso-n{width:30px;height:30px;border-radius:50%;background:var(--limon);color:var(--tinta);display:grid;place-items:center;font:800 14px var(--font-display);flex:none}
+.paso-n{width:30px;height:30px;border-radius:50%;background:var(--amarillo);color:var(--tinta);display:grid;place-items:center;font:800 14px var(--font-display);flex:none}
 .instr{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:10px 0}
 .instr+.instr{border-top:1.5px dashed var(--linea-2)}
 .instr b{font:700 14.5px/1.3 var(--font-body)}
@@ -132,3 +132,11 @@ a.bt{text-decoration:none;color:inherit}
 .mapa .tiles::after{content:"";display:block;clear:both}
 .mapa .pin{left:50%;top:50%;margin:-40px 0 0 -20px;z-index:2}
 .mapa .osm{position:absolute;right:6px;bottom:4px;z-index:2;font:500 10px/1 var(--font-mono);color:var(--tinta);background:rgba(255,255,255,.8);padding:3px 5px;border-radius:6px}
+
+/* mensajes del sistema: fondo verde claro; solo cambia el ícono */
+.ia{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ia .pi{font-size:15px}
+.ia.ok{background:var(--exito);color:#fff}
+.ia.err{color:var(--error)}
+.ia.am{background:var(--amarillo);color:var(--tinta)}
+.ia.dor{color:var(--dorado-txt)}

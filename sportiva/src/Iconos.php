@@ -28,9 +28,34 @@ final class Iconos
         return (string) preg_replace('/<svg[^>]*>/', '<svg class="pi pw" viewBox="' . self::$bb[$nombre] . '" fill="currentColor" aria-hidden="true">', (string) file_get_contents($f), 1);
     }
 
-    /** «S» del logo (color con CSS: fill). */
-    public static function logo(string $relleno = 'var(--limon)'): string
+    /** Ícono de balón del deporte del club (el de básquet es la cancha hasta tener el balón). */
+    public static function balon(?string $deporte): string
     {
-        return '<svg viewBox="205 453 326 404" aria-hidden="true" style="fill:' . $relleno . '"><path d="M305 458 L322 459 C328 459 330 465 331 476 C340 560 400 620 480 684 C508 702 527 722 527 745 C527 800 480 850 430 850 C421 850 417 844 415 832 C405 760 385 700 325 652 C285 626 212 590 210 548 C215 500 260 458 305 458 Z"/><path d="M385 458 L415 457 C490 458 527 510 527 560 L527 636 C527 644 520 647 510 646 C440 622 372 555 369 488 C369 465 375 458 385 458 Z"/><path d="M226 657 C218 657 209 660 209 678 L209 712 C209 790 255 851 315 851 L352 852 C366 852 371 846 370 826 C362 750 320 690 245 660 C238 658 232 657 226 657 Z"/></svg>';
+        return self::propio(['voley' => 'deporte-voley', 'basquet' => 'cancha-basquet', 'voley-playa' => 'deporte-voley-playa'][(string) $deporte] ?? 'deporte-futbol');
+    }
+
+    public static function cancha(?string $deporte): string
+    {
+        return self::propio(['voley' => 'cancha-voley', 'basquet' => 'cancha-basquet'][(string) $deporte] ?? 'cancha-futbol');
+    }
+
+    /** Logo u330 en SVG en línea: `favicon-verde` (círculo del header), `principal-verde` (sobre fondo verde). */
+    public static function logo(string $variante = 'favicon-verde'): string
+    {
+        $f = dirname(__DIR__) . '/assets/marca/logo-' . preg_replace('/[^a-z-]/', '', $variante) . '.svg';
+        if (!is_file($f)) {
+            return '';
+        }
+        $s = (string) file_get_contents($f);
+        $s = (string) preg_replace(['/<\?xml.*?\?>\s*/s', '/<!--.*?-->\s*/s'], '', $s);
+        $cols = [];
+        if (preg_match_all('/\.(st\d)\s*\{\s*fill:\s*(#\w+)/', $s, $m, PREG_SET_ORDER)) {
+            foreach ($m as $c) {
+                $cols[$c[1]] = $c[2];
+            }
+        }
+        $s = (string) preg_replace('/<defs>.*?<\/defs>/s', '', $s);
+        $s = (string) preg_replace_callback('/class="(st\d)"/', fn(array $x) => 'fill="' . ($cols[$x[1]] ?? '#000') . '"', $s);
+        return (string) preg_replace('/<svg [^>]*viewBox="([^"]+)"[^>]*>/', '<svg viewBox="$1" role="img" aria-label="u330">', $s, 1);
     }
 }

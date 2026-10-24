@@ -1,7 +1,7 @@
 {* Tarjeta de un evento en la agenda. Recibe $e (con jugador/respuesta si es de familia) y $coach. *}
 <article class="card">
  <div class="tags">
-  {if $e['tipo'] === 'partido'}<span class="tag lim">{$propio('balon')|noescape}{$t('tipo.partido')}</span>
+  {if $e['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
   {elseif $e['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
   {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $e['tipo'])}</span>{/if}
   <span class="tag m">{$e['equipo']}{if isset($e['jugador'])} · {$e['jugador']}{/if}</span>
@@ -12,9 +12,9 @@
   <div class="horas">
    {if $e['hora_encuentro']}
    <div><small>{$ico('users-three')|noescape}{$t('hora.encuentro')}</small><span class="hora"><span class="hl">{$h($e['hora_encuentro'])}</span></span></div><span class="sep"></span>
-   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
+   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
    {else}
-   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
+   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
    <div><small>{$ico('timer')|noescape}{$t('hora.partido')}</small><span class="hora">{$h($e['inicio'])}</span></div>
    {/if}
   </div>

@@ -1,5 +1,5 @@
 {layout '_layout.latte'}
-{block titulo}{$t($e ? 'evento.editar' : 'evento.nueva')} · Sportiva{/block}
+{block titulo}{$t($e ? 'evento.editar' : 'evento.nueva')} · u330{/block}
 {block contenido}
 <a class="volver" href="{$e ? $url('evento/' . $e['id']) : $url('agenda')}">{$ico('arrow-left')|noescape}{$t('volver')}</a>
 <h1 style="font-size:34px;margin-bottom:14px">{$t($e ? 'evento.editar' : 'evento.nueva')}</h1>

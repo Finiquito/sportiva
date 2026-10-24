@@ -1,5 +1,5 @@
 {layout '_layout.latte'}
-{block titulo}{$e['titulo']} · Sportiva{/block}
+{block titulo}{$e['titulo']} · u330{/block}
 {block contenido}
 <a class="volver" href="{$url('agenda')}">{$ico('arrow-left')|noescape}{$t('nav.agenda')}</a>
 <h1 style="font-size:34px;margin-bottom:6px">{$e['titulo']}</h1>
@@ -9,7 +9,7 @@
 <div class="col">
  <section class="card">
   <div class="tags">
-   {if $e['tipo'] === 'partido'}<span class="tag lim">{$propio('balon')|noescape}{$t('tipo.partido')}</span>
+   {if $e['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
    {elseif $e['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
    {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $e['tipo'])}</span>{/if}
    <span class="tag m">{$e['equipo']}</span>
@@ -30,9 +30,9 @@
   <div class="horas" style="margin-top:0;padding-top:0;border-top:0">
    {if $e['hora_encuentro']}
    <div><small>{$ico('users-three')|noescape}{$t('hora.encuentro')}</small><span class="hora"><span class="hl">{$h($e['hora_encuentro'])}</span></span></div><span class="sep"></span>
-   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
+   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
    {else}
-   <div><small>{$propio('cancha-futbol')|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
+   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
    <div><small>{$ico('timer')|noescape}{$t('hora.partido')}</small><span class="hora">{$h($e['inicio'])}</span></div>
    {/if}
   </div>
