@@ -21,6 +21,7 @@
  {else}
   <p class="meta" style="margin-top:6px">{$ico('clock')|noescape}{$h($e['inicio'])}{if $e['fin']} – {$h($e['fin'])}{/if}</p>
  {/if}
+ {if !empty($e['toca_llevar'])}<a class="traslado" href="{$url('evento/' . $e['id'])}#turnos" style="text-decoration:none;color:inherit"><span class="ico">{$ico('car')|noescape}</span><div><span class="ey">{$t('turno.te_toca')}</span><b>{$dc($e['inicio'])} · {$h($e['hora_encuentro'] ?: ($e['hora_cancha'] ?: $e['inicio']))}</b></div></a>{/if}
  {if $coach}
   {var $r = $e['resumen']}
   <p class="resumen">

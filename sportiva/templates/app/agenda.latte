@@ -3,7 +3,7 @@
 {block contenido}
 <p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
 <h1>{$t('nav.agenda')}</h1>
-{if $coach}<a class="bt s" href="{$url('evento/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('evento.nueva')}</a>{/if}
+{if $coach}<div class="acciones" style="margin:0 0 12px"><a class="bt s" href="{$url('evento/nuevo')}">{$ico('plus')|noescape}{$t('evento.nueva')}</a><a class="bt" href="{$url('turnos')}">{$ico('car')|noescape}{$t('turno.titulo')}</a></div>{/if}
 {foreach $dias as $dia => $evs}
  <div class="dia">{$ed($dia . ' 00:00:00')}</div>
  {foreach $evs as $e}

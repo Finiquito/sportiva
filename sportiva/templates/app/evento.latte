@@ -82,7 +82,7 @@
   </p>
   {foreach $conv as $c}
   <div class="pers">
-   <span class="avatar">{mb_strtoupper(mb_substr($c['nombre'], 0, 1))}</span>
+   {$avatar($c)|noescape}
    <div><b>{$c['nombre']}</b><small>{$c['equipo']}</small></div>
    {if $c['respuesta'] === 'voy'}<span class="est">{$ico('check')|noescape}{$t('asist.voy')}</span>
    {elseif $c['respuesta'] === 'duda'}<span class="est">{$ico('question')|noescape}{$t('asist.duda')}</span>
@@ -91,6 +91,48 @@
   </div>
   {/foreach}
  </section>
+
+
+ {if $turnos || $elegibles || $puedePedir || $turnoMio}
+ <section class="card" id="turnos">
+  {if $turnoMio}
+  <div class="traslado" style="grid-template-columns:auto minmax(0,1fr)"><span class="ico">{$ico('car')|noescape}</span><div><span class="ey">{$t('turno.te_toca')}</span><b>{$dc($e['inicio'])} · {$h($e['hora_encuentro'] ?: ($e['hora_cancha'] ?: $e['inicio']))}</b>{if $e['hora_encuentro']}<span class="s">{$e['encuentro_texto'] ?: $t('evento.punto_club')}</span>{/if}</div></div>
+  <p class="sis" style="margin:14px 0 6px">{$ico('users-three')|noescape}{$t('turno.sin_cupos')}</p>
+  {/if}
+  <div class="ch" style="margin-top:{$turnoMio ? 14 : 0}px"><h3>{$t('turno.familias')}</h3><span class="est">{$ico('car')|noescape}{count($turnos)}</span></div>
+  {foreach $turnos as $tu}
+  <div class="pers">
+   <span class="avatar">{mb_strtoupper(mb_substr($tu['nombre'], 0, 1))}</span>
+   <div><b>{$tu['nombre']}</b><small>{implode(', ', $tu['hijos'])}</small></div>
+   {if $tu['estado'] === 'pendiente'}
+    {if $puede}
+    <div style="display:flex;gap:6px">
+     <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/' . $tu['familia_id'] . '/aceptar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt s pill-sm" type="submit" aria-label="{$t('turno.aceptar')}">{$ico('check')|noescape}</button></form>
+     <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/' . $tu['familia_id'] . '/rechazar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('turno.rechazar')}">{$ico('x')|noescape}</button></form>
+    </div>
+    {else}<span class="est">{$ico('clock')|noescape}{$t('turno.esperando')}</span>{/if}
+   {elseif $puede}
+   <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/' . $tu['familia_id'] . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('turno.quitar')}">{$ico('x')|noescape}</button></form>
+   {else}<span class="est">{$ico('car')|noescape}</span>{/if}
+  </div>
+  {else}
+  <p class="texto" style="margin:0">{$t('turno.vacio')}</p>
+  {/foreach}
+  {if $puedePedir}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/yo')}"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit" style="margin-top:12px">{$ico('plus')|noescape}{$t('turno.yo_tambien')}</button></form>
+  {/if}
+  {if $puede && $elegibles}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/turnos')}" style="margin-top:14px">
+   <input type="hidden" name="csrf" value="{$csrf}">
+   <label class="campo"><span>{$t('turno.agregar')}</span>
+    <select class="in" name="familia">{foreach $elegibles as $f}<option value="{$f['id']}">{$f['nombre']}</option>{/foreach}</select>
+   </label>
+   <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('turno.agregar_btn')}</button>
+  </form>
+  {/if}
+  {if !$turnoMio}<p class="sis" style="margin:12px 0 0">{$ico('users-three')|noescape}{$t('turno.sin_cupos')}</p>{/if}
+ </section>
+ {/if}
 
  {if $puede}
  <section class="card">

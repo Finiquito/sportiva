@@ -42,6 +42,7 @@ class SportivaPlugin implements PluginInterface
         $plantel = new PlantelController($ctx);
         $familia = new FamiliaController($ctx);
         $foto = new FotoController($ctx);
+        $turno = new TurnoController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -55,6 +56,11 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/mas',               $p([$auth, 'mas']));
         \Flight::route('POST /app/idioma',           $p([$auth, 'cambiarIdioma']));
         \Flight::route('GET /app/agenda',            $p([$agenda, 'agenda']));
+        \Flight::route('GET /app/turnos',                               $p([$turno, 'panel']));
+        \Flight::route('POST /app/turnos/repartir',                     $p([$turno, 'repartir']));
+        \Flight::route('POST /app/evento/@id/turnos',                   $p(fn(string $id) => $turno->agregar($id)));
+        \Flight::route('POST /app/evento/@id/turnos/yo',                $p(fn(string $id) => $turno->pedir($id)));
+        \Flight::route('POST /app/evento/@id/turnos/@fid/@accion',      $p(fn(string $id, string $fid, string $a) => $turno->resolver($id, $fid, $a)));
         \Flight::route('GET /app/evento/nuevo',      $p([$agenda, 'nuevo']));
         \Flight::route('POST /app/evento',           $p([$agenda, 'crear']));
         \Flight::route('GET /app/evento/@id',        $p(fn(string $id) => $agenda->evento($id)));
@@ -95,7 +101,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.3.1';
+        return '0.4.0';
     }
 
     public function provides(): array

@@ -383,6 +383,56 @@ $comoRol('rosa@ejemplo.fr', 'apoderado');
 [$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->inicio());
 check($r === '/app/agenda', 'un apoderado no ve el plantel del entrenador');
 
+seccion('Turnos de traslado');
+$tu = new S\TurnoService($pdo);
+$evT = $d['evento'];
+$dani = $S['pers']->porCorreo('daniela@ejemplo.fr')['id'];
+$ines = $S['pers']->porCorreo('ines.garcia@ejemplo.fr')['id'];
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => (new S\TurnoController($ctx))->agregar($evT), conCsrf(['familia' => $dani]));
+check($tu->delEvento($evT) === [], 'un apoderado no puede asignar turnos');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => (new S\TurnoController($ctx))->agregar($evT), conCsrf(['familia' => $dani]));
+check(count($tu->delEvento($evT)) === 1 && $tu->delEvento($evT)[0]['estado'] === 'confirmado' && in_array('Lucas', $tu->delEvento($evT)[0]['hijos'], true), 'el entrenador anota una familia de turno');
+llamar(fn() => (new S\TurnoController($ctx))->agregar($evT), conCsrf(['familia' => $rosa['id']]));
+check(count($tu->delEvento($evT)) === 1, 'no se agrega una familia sin hijos convocados');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($evT));
+check(str_contains($h, 'Te toca llevar') && str_contains($h, 'Los cupos se reparten'), 'la familia de turno ve «Te toca llevar» y que no hay cupos');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
+check(str_contains($h, 'Te toca llevar'), 'la agenda marca el turno');
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($evT));
+check(str_contains($h, 'Yo también llevo') && !str_contains($h, 'Te toca llevar'), 'otra familia puede pedir sumarse');
+llamar(fn() => (new S\TurnoController($ctx))->pedir($evT), conCsrf());
+check($tu->delEvento($evT)[1]['estado'] === 'pendiente' || ($tu->delEvento($evT)[0]['estado'] === 'pendiente'), '«Yo también llevo» queda pendiente');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($evT));
+check(str_contains($h, 'Esperando al entrenador') && !str_contains($h, 'Yo también llevo'), 'mientras espera no puede pedir otra vez');
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+llamar(fn() => (new S\TurnoController($ctx))->resolver($evT, $ines, 'aceptar'), conCsrf());
+check((array_count_values(array_column($tu->delEvento($evT), 'estado'))['pendiente'] ?? 0) === 1, 'una familia no se acepta sola');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => (new S\TurnoController($ctx))->resolver($evT, $ines, 'aceptar'), conCsrf());
+check(array_column($tu->delEvento($evT), 'estado') === ['confirmado', 'confirmado'], 'el entrenador acepta la solicitud');
+llamar(fn() => (new S\TurnoController($ctx))->resolver($evT, $ines, 'quitar'), conCsrf());
+check(count($tu->delEvento($evT)) === 1, 'el entrenador quita una familia del turno');
+// Repartir entre los próximos partidos, pareja por pareja, empezando por quien menos ha llevado.
+$f1 = date('Y-m-d', strtotime('+20 days')); $f2 = date('Y-m-d', strtotime('+27 days'));
+foreach ([$f1, $f2] as $f) {
+    [$dd] = $S['ev']->normalizar(['tipo' => 'partido', 'titulo' => 'Partido ' . $f, 'fecha' => $f, 'hora_partido' => '15:00', 'cancha_antes' => '45']);
+    $S['ev']->crear($cid, $u12, $dd, null);
+}
+$antes = (int) $pdo->query('SELECT COUNT(*) FROM sportiva_turnos')->fetchColumn();
+$n = $tu->repartir($cid, $u12, 2, date('Y-m-d H:i:s'), null);
+$nuevos = $pdo->query("SELECT ev.titulo, t.familia_id FROM sportiva_turnos t JOIN sportiva_eventos ev ON ev.id = t.evento_id WHERE ev.titulo LIKE 'Partido 20%' ORDER BY ev.inicio")->fetchAll();
+check($n >= 2 && count(array_filter($nuevos, fn($x) => $x['titulo'] === 'Partido ' . $f1)) === 2, 'se reparten dos familias por partido');
+$fam1 = array_column(array_filter($nuevos, fn($x) => $x['titulo'] === 'Partido ' . $f1), 'familia_id');
+$fam2 = array_column(array_filter($nuevos, fn($x) => $x['titulo'] === 'Partido ' . $f2), 'familia_id');
+check($fam1 !== [] && $fam2 !== [] && array_intersect($fam1, $fam2) === [], 'en el segundo partido llevan otras familias (reparto parejo)');
+check($tu->repartir($cid, $u12, 2, date('Y-m-d H:i:s'), null) === 0, 'repartir otra vez no pisa lo ya asignado');
+[$h] = llamar(fn() => (new S\TurnoController($ctx))->panel());
+check(str_contains($h, 'Repartir turnos') && str_contains($h, 'Partido ' . $f1), 'el panel de turnos del entrenador');
+
 echo "\n\n";
 if ($GLOBALS['fallas']) {
     echo count($GLOBALS['fallas']) . " fallas:\n - " . implode("\n - ", $GLOBALS['fallas']) . "\n";

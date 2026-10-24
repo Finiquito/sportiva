@@ -47,7 +47,9 @@ final class AgendaController extends AppBase
             $this->ir('/app/feed');
             return;
         }
+        $mios = $this->rol === 'apoderado' ? (new TurnoService($this->pdo))->eventosDeTurno($this->persona['id'], $this->club['id'], $desde) : [];
         foreach ($filas as $f) {
+            $f['toca_llevar'] = isset($mios[$f['id']]);
             $dias[Tiempo::dia($f['inicio'])][] = $f;
         }
         echo $this->vista()->pagina('agenda.latte', ['activa' => 'agenda', 'dias' => $dias, 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona()]);
@@ -80,7 +82,20 @@ final class AgendaController extends AppBase
         }
         $puede = self::esCoach($this->rol) && in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true);
         $enlaces = Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::enlaces((string) $e['lugar_lat'], (string) $e['lugar_lon']) : null;
+        $tu = new TurnoService($this->pdo);
+        $turnos = $tu->delEvento($id);
+        $misFam = $this->rol === 'apoderado' ? $tu->familiasDe($this->persona['id'], $id) : [];
+        $mioConf = false;
+        $mioPend = false;
+        foreach ($turnos as $t) {
+            if (in_array($t['familia_id'], $misFam, true)) {
+                $mioConf = $mioConf || $t['estado'] === 'confirmado';
+                $mioPend = $mioPend || $t['estado'] === 'pendiente';
+            }
+        }
         echo $this->vista()->pagina('evento.latte', [
+            'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
+            'elegibles' => $puede ? $tu->elegibles($id) : [],
             'activa' => 'agenda', 'e' => $e, 'conv' => $conv, 'mios' => $mios, 'resumen' => $ev->resumen($id), 'puede' => $puede,
             'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar']) : '',
             'enlaces' => $enlaces, 'zona' => $this->zona(),

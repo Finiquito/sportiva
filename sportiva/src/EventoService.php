@@ -130,7 +130,7 @@ final class EventoService extends Repo
     public function convocados(string $evento): array
     {
         return $this->filas(
-            'SELECT j.id, j.nombre, j.nacimiento, eq.nombre AS equipo, a.respuesta, a.updated_at AS respondio
+            'SELECT j.id, j.nombre, j.nacimiento, eq.nombre AS equipo, a.respuesta, a.updated_at AS respondio, (SELECT f.version FROM sportiva_fotos f WHERE f.jugador_id = j.id) AS foto
              FROM sportiva_convocados c JOIN sportiva_jugadores j ON j.id = c.jugador_id JOIN sportiva_equipos eq ON eq.id = j.equipo_id
              LEFT JOIN sportiva_asistencias a ON a.evento_id = c.evento_id AND a.jugador_id = j.id
              WHERE c.evento_id = ? ORDER BY j.nombre',
