@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.13.2";
+  --css-v:"0.13.3";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -631,3 +631,19 @@ html,body{background:var(--club)}
 .voto button{min-width:0;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:359px){.ev-horas small{letter-spacing:0;font-size:10px}.ev-horas b{font-size:19px}}
 @media (max-width:340px){.voto button{font-size:12.5px;gap:4px;padding:0 3px}.voto .pi{font-size:15px}}
+.ev .horas{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:0;align-items:end;margin:14px 0 0;padding:14px 0 0;border-top:1.5px dashed var(--linea-2)}
+.ev .horas>div{min-width:0;padding:0 12px}
+.ev .horas>div:first-child{padding-left:0}
+.ev .horas>div+div{border-left:1.5px dashed var(--linea-2)}
+.ev .horas small{margin-bottom:8px}
+.ev .horas .hora{display:block;font-size:38px;white-space:nowrap}
+.ev .horas.n3 .hora{font-size:30px}
+.ev .horas.n1 .hora{font-size:34px}
+@media (max-width:340px){.ev .horas .hora{font-size:30px}.ev .horas.n3 .hora{font-size:24px}.ev .horas small{letter-spacing:0;font-size:10px}}
+.ev-lugar{margin:0 0 0}
+.ev .horas small{white-space:nowrap;gap:5px;letter-spacing:.03em;overflow:hidden}
+.ev .horas small .pi{font-size:15px;flex:none}
+.ev .horas small .pw{width:auto;height:11px}
+.ev .horas.n3>div{padding:0 9px}
+.ev .horas.n3>div:first-child{padding-left:0}
+@media (max-width:340px){.ev .horas.n3 small .pi{display:none}.ev .horas.n3>div{padding:0 6px}}
