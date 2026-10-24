@@ -226,3 +226,5 @@ details.avanzado{margin:4px 0 12px}
 details.avanzado summary{cursor:pointer;font:600 13px/1.3 var(--font-body);color:var(--club);padding:6px 0}
 /* Con la app instalada en el iPhone, el sistema pone un velo bajo la hora: bajamos un poco el contenido */
 @media (display-mode: standalone) and (max-width: 999px){.band{padding-top:calc(12px + env(safe-area-inset-top) + 30px)}}
+/* Fondo raíz verde sólido: iOS lo toma como color bajo la barra de estado (con degradado cae a un velo claro) */
+html,body{background:var(--club)}
