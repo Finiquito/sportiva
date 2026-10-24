@@ -9,7 +9,7 @@ out=assets/sportiva.css
   cat assets-src/css/tokens.css assets-src/css/mobile.css assets-src/css/shared.css assets-src/css/components.css
   for f in assets-src/css/x_*.css; do cat "$f"; done
   cat assets-src/app.css
-} | sed -e 's#url("{{GRANO}}")#url("grano.png")#g' | python3 -c "
+} | sed -e 's#url("{{GRANO}}")#url("grano.png")#g' -e "s#__VERSION__#$(php -r 'echo json_decode(file_get_contents("plugin.json"), true)["version"];')#" | python3 -c "
 import re,sys
 t=sys.stdin.read()
 t=re.sub(r'/\*(?!\s*Sportiva).*?\*/','',t,flags=re.S)

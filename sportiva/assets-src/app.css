@@ -118,3 +118,7 @@ a.bell{text-decoration:none;flex:none}
 .med .foto-ph{min-height:120px}
 
 .adj{display:block;max-width:100%;max-height:260px;border-radius:12px;margin-top:8px}
+
+.pie-version{margin:28px 0 8px;font:500 11px/1.5 var(--font-mono);color:var(--tinta-2);text-align:center;opacity:.8}
+.pie-version code{font:inherit}
+.pie-version.viejo{color:var(--error);opacity:1}

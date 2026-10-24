@@ -417,5 +417,6 @@
  "adjunto.error.tamano": "La photo est trop lourde.",
  "adjunto.error.archivo": "Impossible d’envoyer la photo.",
  "adjunto.error.tipo": "Envoie une photo JPG, PNG ou WebP.",
- "adjunto.error.muchas": "Tu as envoyé beaucoup de photos d’affilée. Réessaie plus tard."
+ "adjunto.error.muchas": "Tu as envoyé beaucoup de photos d’affilée. Réessaie plus tard.",
+ "pie.css_vieja": "· la feuille de style chargée est ancienne : recharge la page"
 }

@@ -54,6 +54,7 @@ class SportivaPlugin implements PluginInterface
         $avisos = new AvisosController($ctx);
         $medios = new MedioController($ctx);
         $adjuntos = new AdjuntoController($ctx);
+        $recursos = new RecursosController();
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -124,6 +125,8 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/consulta',                            $p([$consulta, 'crear']));
         \Flight::route('GET /app/consulta/@id',                         $p(fn(string $id) => $consulta->ver($id)));
         \Flight::route('POST /app/consulta/@id',                        $p(fn(string $id) => $consulta->responder($id)));
+        \Flight::route('GET /app/estilos',                               [$recursos, 'css']);
+        \Flight::route('GET /app/recurso/@nombre',                       fn(string $n) => $recursos->recurso($n));
         \Flight::route('GET /app/sw.js',                                $p([$avisos, 'sw']));
         \Flight::route('GET /app/manifest.webmanifest',                 $p([$avisos, 'manifest']));
         \Flight::route('GET /app/cron/@token',                          $p(fn(string $t) => $avisos->cron($t)));
@@ -144,7 +147,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.8.0';
+        return '0.8.1';
     }
 
     public function provides(): array

@@ -11,9 +11,9 @@
 <title>{block titulo}u330{/block}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
-<link rel="icon" type="image/svg+xml" href="/plugins/sportiva/assets/marca/favicon.svg">
-<link rel="apple-touch-icon" href="/plugins/sportiva/assets/marca/apple-touch-icon.png">
-<link rel="stylesheet" href="/plugins/sportiva/assets/sportiva.css?v={$cssv}">
+<link rel="icon" type="image/svg+xml" href="/app/recurso/favicon">
+<link rel="apple-touch-icon" href="/app/recurso/apple-touch-icon">
+<link rel="stylesheet" href="/app/estilos?v={$cssv}">
 </head>
 <body>
 <div class="app{block claseApp}{/block}">
@@ -38,7 +38,9 @@
    {if $flash}<div class="aviso flash" role="status"><span class="ia ok">{$ico('check')|noescape}</span><div><b>{$flash}</b></div></div>{/if}
    {if $flashError}<div class="aviso flash" role="alert"><span class="ia err">{$ico('warning-circle')|noescape}</span><div><b>{$flashError}</b></div></div>{/if}
    {block contenido}{/block}
-  </main>
+  <footer class="pie-version" id="pie-version" data-plugin="{$version}">u330 v{$version} · css <span data-css>…</span> <code>{$cssv}</code> <b data-aviso hidden>{$t('pie.css_vieja')}</b></footer>
+<script n:syntax="off">(function(){var f=document.getElementById('pie-version');if(!f)return;var v=(getComputedStyle(document.documentElement).getPropertyValue('--css-v')||'').replace(/["'\s]/g,'');f.querySelector('[data-css]').textContent=v||'?';if(v!==f.dataset.plugin){f.classList.add('viejo');f.querySelector('[data-aviso]').hidden=false;}})();</script>
+</main>
  </div>
 </div>
 <script n:syntax="off">

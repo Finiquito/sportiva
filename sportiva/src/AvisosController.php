@@ -127,7 +127,7 @@ self.addEventListener('push', function (e) {
   try { d = e.data ? e.data.json() : {}; } catch (x) {}
   e.waitUntil(self.registration.showNotification(d.t || 'u330', {
     body: d.b || '', data: { u: d.u || '/app/avisos' },
-    icon: '/plugins/sportiva/assets/marca/icon-192.png', badge: '/plugins/sportiva/assets/marca/icon-192.png'
+    icon: '/app/recurso/icon-192', badge: '/app/recurso/icon-192'
   }));
 });
 self.addEventListener('notificationclick', function (e) {
@@ -148,8 +148,8 @@ JS;
             'name' => 'u330', 'short_name' => 'u330', 'start_url' => '/app', 'scope' => '/app/', 'display' => 'standalone',
             'background_color' => '#F7F1E8', 'theme_color' => '#0F4F4E',
             'icons' => [
-                ['src' => '/plugins/sportiva/assets/marca/icon-192.png', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any maskable'],
-                ['src' => '/plugins/sportiva/assets/marca/icon-512.png', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any maskable'],
+                ['src' => '/app/recurso/icon-192', 'sizes' => '192x192', 'type' => 'image/png', 'purpose' => 'any maskable'],
+                ['src' => '/app/recurso/icon-512', 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any maskable'],
             ],
         ], JSON_UNESCAPED_SLASHES);
     }

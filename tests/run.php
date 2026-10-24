@@ -798,6 +798,17 @@ check($fs->post($pf) === null && $ad->buscar($ap) === null && $ad->buscar($ac) =
 $_FILES = [];
 foreach (glob("$dirA/*") as $f) { @unlink($f); } @rmdir($dirA);
 
+seccion('Hoja de estilos y recursos servidos por PHP');
+$css = S\RecursosController::contenidoCss();
+check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');
+check($css !== null && !str_contains($css, 'url("grano.png")') && str_contains($css, '/app/recurso/grano'), 'las imágenes de la hoja apuntan a /app/recurso');
+check(strlen(S\RecursosController::hashCss()) === 10, 'hash de la hoja para forzar la versión');
+check(S\RecursosController::archivo('favicon')['mime'] === 'image/svg+xml' && S\RecursosController::archivo('icon-192')['mime'] === 'image/png', 'se sirven los íconos de la app');
+check(S\RecursosController::archivo('../plugin.json') === null && S\RecursosController::archivo('sportiva.css') === null && S\RecursosController::archivo('') === null, 'solo se sirven los archivos de la lista');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
+check(str_contains($h, 'href="/app/estilos?v=' . S\RecursosController::hashCss() . '"') && str_contains($h, 'id="pie-version"') && str_contains($h, 'u330 v' . S\RecursosController::versionPlugin()), 'cada pantalla muestra la versión del plugin y de la hoja de estilos en el pie');
+
 echo "\n\n";
 if ($GLOBALS['fallas']) {
     echo count($GLOBALS['fallas']) . " fallas:\n - " . implode("\n - ", $GLOBALS['fallas']) . "\n";

@@ -417,5 +417,6 @@
  "adjunto.error.tamano": "La foto pesa demasiado.",
  "adjunto.error.archivo": "No se pudo subir la foto.",
  "adjunto.error.tipo": "Sube una foto JPG, PNG o WebP.",
- "adjunto.error.muchas": "Subiste muchas fotos seguidas. Prueba en un rato."
+ "adjunto.error.muchas": "Subiste muchas fotos seguidas. Prueba en un rato.",
+ "pie.css_vieja": "· la hoja de estilos cargada es antigua: recarga la página"
 }
