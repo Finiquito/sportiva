@@ -62,7 +62,7 @@ filas=''.join(fila(*p) for p in pares)
 def tarjeta(nuevo):
     if nuevo:
         b='background:var(--naranja);color:#fff';tag_ent='background:var(--lila-t);color:var(--tinta)'
-        logo='<span class="mk2">%s</span>'%svgfile('logo-favicon','','u330')
+        logo='<span class="mk2">%s</span>'%fijo('logo-favicon-verde','','u330')
         aviso1='<div class="aviso"><span class="ia am">%s</span>Cambió el lugar del partido · hoy 10:12</div>'%EXC
         aviso2='<div class="aviso"><span class="ia ok">%s</span>Asistencia guardada</div>'%CHK
     else:
@@ -149,9 +149,9 @@ html='''<!doctype html>
  <figure class="lbox verde" style="margin:0">'''+fijo('logo-principal-verde','w2')+'''<figcaption>Principal · sobre verde</figcaption></figure>
  <figure class="lbox hueso" style="margin:0">'''+svgfile('logo-favicon','w3')+'''<figcaption>Favicon · ícono de app</figcaption></figure>
  <figure class="lbox verde" style="margin:0">'''+fijo('logo-favicon-verde','w3')+'''<figcaption>Favicon · sobre verde</figcaption></figure>
- <figure class="lbox verde" style="margin:0"><span class="chip"><span class="mk2">'''+svgfile('logo-favicon','','u330')+'''</span>FCJ Orée de l’Autize</span><figcaption>Header de la app · U invertida sobre círculo verde</figcaption></figure>
+ <figure class="lbox verde" style="margin:0"><span class="chip"><span class="mk2">'''+fijo('logo-favicon-verde','','u330')+'''</span>FCJ Orée de l’Autize</span><figcaption>Header de la app · favicon sobre verde en círculo verde</figcaption></figure>
 </div>
-<div class="nota"><b>Sobre verde</b> se usan las versiones que diseñaste (<code>logo-principal-verde.svg</code> y <code>logo-favicon-verde.svg</code>): palabra en amarillo, U naranja y lila, tapas en hueso. En el header de la app va solo la U del favicon, invertida, dentro del círculo verde. La versión larga usa lila en la U; la principal y el favicon, naranja.</div>
+<div class="nota"><b>Sobre verde</b> se usan las versiones que diseñaste (<code>logo-principal-verde.svg</code> y <code>logo-favicon-verde.svg</code>): palabra en amarillo, U naranja y lila, tapas en hueso. En el header de la app va el favicon sobre verde dentro del círculo verde. La versión larga usa lila en la U; la principal y el favicon, naranja.</div>
 
 <h2>Íconos</h2>
 <p>Mismo trazo que el resto de la interfaz, en verde. Los de logros van en dorado (<code>--dorado-txt</code> sobre claro, dorado puro sobre verde).</p>
