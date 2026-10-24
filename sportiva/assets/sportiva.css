@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.9.0";
+  --css-v:"0.10.0";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -482,3 +482,15 @@ a.bell{text-decoration:none;flex:none}
 .pie-version.viejo{color:var(--error);opacity:1}
 .grupo-pills .pill{display:inline-flex;align-items:center;gap:6px}
 .grupo-pills .pill .pi{width:16px;height:16px;flex:none}
+.ficha-evento h1{font-size:34px;line-height:1.05;margin:12px 0 8px}
+.ficha-evento .cuando{display:flex;align-items:center;gap:9px;margin:0;font:600 15px/1.35 var(--font-body)}
+.ficha-evento .cuando .pi{font-size:20px;color:var(--club)}
+.ficha-evento .hora-grande{font:600 38px/1 var(--font-mono);letter-spacing:-.03em;margin:12px 0 0;color:var(--club)}
+.ficha-evento .lugar-linea{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;padding-top:14px;border-top:1.5px dashed var(--linea-2)}
+.ficha-evento .lugar-linea .pi{font-size:22px;color:var(--club);flex:none;margin-top:1px}
+.ficha-evento .lugar-linea b{display:block;font:700 15px/1.3 var(--font-body)}
+.ficha-evento .lugar-linea small{display:block;font:400 12.5px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:2px}
+details.citar{border-top:1.5px dashed var(--linea-2);padding:10px 0}
+details.citar:first-of-type{border-top:0}
+details.citar summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;list-style:none}
+details.citar summary::-webkit-details-marker{display:none}

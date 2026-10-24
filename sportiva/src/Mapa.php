@@ -50,4 +50,57 @@ final class Mapa
         $q = rawurlencode($lat) . ',' . rawurlencode($lon);
         return ['google' => 'https://www.google.com/maps/search/?api=1&query=' . $q, 'waze' => 'https://waze.com/ul?ll=' . $q . '&navigate=yes'];
     }
+
+    /** Enlaces para llegar a un lugar: con coordenadas si las tiene; si no, buscando por nombre y dirección. @param array<string, mixed> $l @return array{google: string, waze: string}|null */
+    public static function enlacesLugar(array $l): ?array
+    {
+        $lat = isset($l['lugar_lat']) ? $l['lugar_lat'] : ($l['lat'] ?? null);
+        $lon = isset($l['lugar_lon']) ? $l['lugar_lon'] : ($l['lon'] ?? null);
+        if (self::valido($lat !== null ? (string) $lat : null, $lon !== null ? (string) $lon : null)) {
+            return self::enlaces((string) $lat, (string) $lon);
+        }
+        $q = trim(((string) ($l['lugar'] ?? $l['nombre'] ?? '')) . ' ' . ((string) ($l['lugar_direccion'] ?? $l['direccion'] ?? '')));
+        if ($q === '') {
+            return null;
+        }
+        return ['google' => 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($q), 'waze' => 'https://waze.com/ul?q=' . rawurlencode($q) . '&navigate=yes'];
+    }
+
+    /** Saca latitud y longitud de un enlace largo de Google Maps u OpenStreetMap (o de «lat, lon» pegado). @return array{0: string, 1: string}|null */
+    public static function coordenadasDeEnlace(string $t): ?array
+    {
+        $t = urldecode(trim($t));
+        foreach (['/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/', '/!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/', '/[?&](?:q|ll|query|destination)=(-?\d{1,2}\.\d+)[, ](-?\d{1,3}\.\d+)/', '/mlat=(-?\d{1,2}\.\d+)&mlon=(-?\d{1,3}\.\d+)/', '/^\s*(-?\d{1,2}\.\d+)\s*[,;]\s*(-?\d{1,3}\.\d+)\s*$/'] as $re) {
+            if (preg_match($re, $t, $m) && self::valido($m[1], $m[2])) {
+                return [$m[1], $m[2]];
+            }
+        }
+        return null;
+    }
+
+    /** Texto para compartir un evento por WhatsApp u otra app. @param array<string, mixed> $e */
+    public static function textoCompartir(array $e, I18n $i, string $urlEvento): string
+    {
+        $l = [$i->t('compartir.' . ($e['tipo'] === 'partido' ? 'partido' : 'evento'), ['titulo' => $e['titulo'], 'equipo' => $e['equipo']])];
+        $l[] = Tiempo::diaLargo($e['inicio'], $i);
+        if ($e['tipo'] === 'partido') {
+            $h = [];
+            if (!empty($e['hora_encuentro'])) {
+                $h[] = $i->t('hora.encuentro') . ' ' . Tiempo::hora($e['hora_encuentro']);
+            }
+            $h[] = $i->t('hora.cancha') . ' ' . Tiempo::hora($e['hora_cancha'] ?: $e['inicio']);
+            $h[] = $i->t('hora.partido') . ' ' . Tiempo::hora($e['inicio']);
+            $l[] = implode(' · ', $h);
+        } else {
+            $l[] = Tiempo::hora($e['inicio']) . (!empty($e['fin']) ? ' – ' . Tiempo::hora($e['fin']) : '');
+        }
+        if (!empty($e['lugar'])) {
+            $l[] = '📍 ' . $e['lugar'] . (!empty($e['lugar_direccion']) ? ', ' . $e['lugar_direccion'] : '');
+            if (($en = self::enlacesLugar($e)) !== null) {
+                $l[] = $en['google'];
+            }
+        }
+        $l[] = $urlEvento;
+        return implode("\n", $l);
+    }
 }

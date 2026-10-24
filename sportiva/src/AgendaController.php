@@ -50,6 +50,7 @@ final class AgendaController extends AppBase
         $mios = $this->rol === 'apoderado' ? (new TurnoService($this->pdo))->eventosDeTurno($this->persona['id'], $this->club['id'], $desde) : [];
         foreach ($filas as $f) {
             $f['toca_llevar'] = isset($mios[$f['id']]);
+            $f['compartir'] = Mapa::textoCompartir($f, $this->i18n, $this->urlAbsoluta('/app/evento/' . $f['id']));
             $dias[Tiempo::dia($f['inicio'])][] = $f;
         }
         echo $this->vista()->pagina('agenda.latte', ['activa' => 'agenda', 'dias' => $dias, 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona()]);
@@ -81,7 +82,7 @@ final class AgendaController extends AppBase
             $mios = $j ? array_values(array_filter($conv, fn($c) => $c['id'] === $j['id'])) : [];
         }
         $puede = self::esCoach($this->rol) && in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true);
-        $enlaces = Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::enlaces((string) $e['lugar_lat'], (string) $e['lugar_lon']) : null;
+        $enlaces = $e['lugar'] ? Mapa::enlacesLugar($e) : null;
         $tu = new TurnoService($this->pdo);
         $turnos = $tu->delEvento($id);
         $misFam = $this->rol === 'apoderado' ? $tu->familiasDe($this->persona['id'], $id) : [];
@@ -100,7 +101,7 @@ final class AgendaController extends AppBase
             'activa' => 'agenda', 'e' => $e, 'conv' => $conv, 'mios' => $mios, 'resumen' => $ev->resumen($id), 'puede' => $puede,
             'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar']) : '',
             'enlaces' => $enlaces, 'zona' => $this->zona(),
-            'edita' => $this->i18n,
+            'compartir' => Mapa::textoCompartir($e, $this->i18n, $this->urlAbsoluta('/app/evento/' . $id)), 'serie' => $puede ? (new SerieService($this->pdo))->deEvento($id) : null,
         ]);
     }
 
@@ -135,13 +136,45 @@ final class AgendaController extends AppBase
 
     // ---- entrenadores: crear / editar / cancelar ------------------------------------------------
 
-    private function formulario(?array $e, array $datos, array $errores): void
+    /** Jugadores de cada categoría para elegir a quién citar. @return array<int, array<string, mixed>> */
+    private function plantel(): array
+    {
+        $ev = $this->eventos();
+        $r = [];
+        foreach ((new ClubService($this->pdo))->equipos($this->club['id']) as $q) {
+            $q['jugadores'] = $ev->jugadoresDe($q['id']);
+            $r[] = $q;
+        }
+        return $r;
+    }
+
+    /** Fechas de la repetición con su estado (se hace / se salta y por qué). @param array<string, mixed> $in @return array<string, array{hacer: bool, motivo: string}> */
+    private function previewDe(array $in): array
+    {
+        if (empty($in['repetir'])) {
+            return [];
+        }
+        $visto = array_flip(array_filter((array) ($in['visto'] ?? []), 'is_string'));
+        $hacer = (array) ($in['hacer'] ?? []);
+        $motivos = (array) ($in['motivo'] ?? []);
+        $r = [];
+        foreach (SerieService::generar((string) ($in['fecha'] ?? ''), (array) ($in['dias'] ?? []), (int) ($in['meses'] ?? 1)) as $f) {
+            $salta = isset($visto[$f]) && !isset($hacer[$f]);
+            $r[$f] = ['hacer' => !$salta, 'motivo' => $salta ? mb_substr(trim((string) ($motivos[$f] ?? '')), 0, 160) : ''];
+        }
+        return $r;
+    }
+
+    private function formulario(?array $e, array $datos, array $errores, array $preview = []): void
     {
         $lug = new LugarService($this->pdo);
+        if (!isset($datos['jugadores_sel'])) {
+            $datos['jugadores_sel'] = $e ? $this->eventos()->convocadosIds($e['id']) : ($datos['jugadores'] ?? []);
+        }
         echo $this->vista()->pagina('evento-form.latte', [
             'activa' => 'agenda', 'e' => $e, 'd' => $datos, 'errores' => $errores,
             'equipos' => $this->gestionables(), 'todosEquipos' => (new ClubService($this->pdo))->equipos($this->club['id']),
-            'lugares' => $lug->delClub($this->club['id']),
+            'lugares' => $lug->delClub($this->club['id']), 'plantel' => $this->plantel(), 'preview' => $preview,
         ]);
     }
 
@@ -154,7 +187,8 @@ final class AgendaController extends AppBase
         $eq = $this->gestionables();
         $this->formulario(null, [
             'tipo' => 'partido', 'fecha' => '', 'hora_partido' => '', 'cancha_antes' => '45', 'hay_encuentro' => '', 'equipo_id' => $eq[0]['id'] ?? '',
-            'titulo' => '', 'rival' => '', 'lugar_id' => '', 'encuentro_texto' => '', 'nota' => '', 'extra' => [],
+            'titulo' => '', 'rival' => '', 'lugar_id' => '', 'encuentro_texto' => '', 'nota' => '', 'extra' => [], 'dias' => [], 'meses' => '2',
+            'jugadores_sel' => array_column($this->eventos()->jugadoresDe($eq[0]['id'] ?? ''), 'id'),
         ], []);
     }
 
@@ -164,6 +198,9 @@ final class AgendaController extends AppBase
         $d = $_POST;
         unset($d['csrf']);
         $d['extra'] = array_values(array_filter((array) ($_POST['extra'] ?? []), 'is_string'));
+        if (!empty($_POST['jugadores_presente'])) {
+            $d['jugadores'] = array_values(array_filter((array) ($_POST['jugadores'] ?? []), 'is_string'));
+        }
         return $d;
     }
 
@@ -174,6 +211,9 @@ final class AgendaController extends AppBase
         if (empty($in['lugar_id']) && $nombre !== '') {
             $lat = trim((string) ($in['lugar_lat'] ?? ''));
             $lon = trim((string) ($in['lugar_lon'] ?? ''));
+            if (!Mapa::valido($lat, $lon) && ($c = Mapa::coordenadasDeEnlace((string) ($in['lugar_enlace'] ?? ''))) !== null) {
+                [$lat, $lon] = $c;
+            }
             $ok = Mapa::valido($lat, $lon);
             $in['lugar_id'] = (new LugarService($this->pdo))->crear($this->club['id'], [
                 'nombre' => $nombre, 'direccion' => trim((string) ($in['lugar_direccion'] ?? '')) ?: null, 'lat' => $ok ? $lat : null, 'lon' => $ok ? $lon : null,
@@ -197,12 +237,41 @@ final class AgendaController extends AppBase
         $this->lugarEnLinea($in);
         $svc = $this->eventos();
         [$d, $err] = $svc->normalizar($in);
-        if ($err !== []) {
-            $this->formulario(null, $in, $err);
-            return;
+        $jug = isset($in['jugadores']) ? $svc->jugadoresDelClub($this->club['id'], $in['jugadores']) : null;
+        if ($jug === []) {
+            $err['jugadores'] = 'evento.error.convocados';
         }
         $extra = array_values(array_intersect($in['extra'], array_column((new ClubService($this->pdo))->equipos($this->club['id']), 'id')));
-        $id = $svc->crear($this->club['id'], $equipo, $d, $this->persona['id'], $extra);
+        $preview = $this->previewDe($in);
+        if ($err !== []) {
+            $this->formulario(null, $in, $err, $preview);
+            return;
+        }
+        if ($preview !== []) {
+            $ok = array_filter($preview, fn($p) => $p['hacer']);
+            if (($in['accion'] ?? '') === 'ver' || empty($in['visto'])) {
+                $this->formulario(null, $in, [], $preview);
+                return;
+            }
+            if ($ok === []) {
+                $this->formulario(null, $in, ['repetir' => 'evento.error.sin_fechas'], $preview);
+                return;
+            }
+            $fechas = [];
+            foreach ($preview as $f => $p) {
+                $fechas[$f] = $p['hacer'] ? null : $p['motivo'];
+            }
+            $dias = array_values(array_filter(array_map('intval', (array) ($in['dias'] ?? [])), fn($x) => $x >= 1 && $x <= 7));
+            [$sid, $creados] = (new SerieService($this->pdo))->crear($this->club['id'], $equipo, SerieService::plantilla($d, $jug, $extra), $dias, $fechas, $this->persona['id'], $svc);
+            $primero = $d['titulo'];
+            $n = count($creados);
+            $desde = array_key_first($ok);
+            $hasta = array_key_last($ok);
+            $this->notificar($svc->adultosDe($jug ?? array_column($svc->jugadoresDe($equipo), 'id')), 'agenda', fn(I18n $i) => [$i->t('aviso.serie.nueva', ['titulo' => $primero]), $i->t('aviso.serie.nueva_cuerpo', ['n' => $n, 'desde' => Tiempo::diaCorto($desde . ' 00:00:00', $i), 'hasta' => Tiempo::diaCorto($hasta . ' 00:00:00', $i)])], '/app/serie/' . $sid);
+            $this->ctx->redirect('/app/serie/' . $sid, $this->i18n->t('evento.serie_creada', ['n' => $n]));
+            return;
+        }
+        $id = $svc->crear($this->club['id'], $equipo, $d, $this->persona['id'], $extra, $jug);
         $this->avisarEvento($id, $d, 'aviso.evento.nuevo');
         $this->ctx->redirect('/app/evento/' . $id, $this->i18n->t('evento.publicado'));
     }
@@ -246,7 +315,23 @@ final class AgendaController extends AppBase
             $this->formulario($e, $in, $err);
             return;
         }
+        $antes = $svc->convocadosIds($id);
+        $jug = isset($in['jugadores']) ? $svc->jugadoresDelClub($this->club['id'], $in['jugadores']) : null;
+        if ($jug === []) {
+            $this->formulario($e, $in, ['jugadores' => 'evento.error.convocados']);
+            return;
+        }
         $svc->actualizar($id, $d);
+        if ($jug !== null) {
+            $svc->convocar($id, $this->club['id'], [$e['equipo_id']], $jug);
+            $titulo = (string) $d['titulo'];
+            $inicio = (string) $d['inicio'];
+            foreach (['aviso.evento.citado' => array_diff($jug, $antes), 'aviso.evento.descitado' => array_diff($antes, $jug)] as $clave => $ids) {
+                if ($ids !== []) {
+                    $this->notificar($svc->adultosDe(array_values($ids)), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id);
+                }
+            }
+        }
         if ($d['lugar_id'] !== $e['lugar_id']) {
             $this->avisarEvento($id, $d, 'aviso.evento.lugar');
         } elseif ($d['inicio'] !== $e['inicio'] || $d['hora_cancha'] !== $e['hora_cancha'] || $d['hora_encuentro'] !== $e['hora_encuentro']) {

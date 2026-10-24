@@ -102,6 +102,13 @@ abstract class AppBase
         (new Notificador($this->ctx, $this->pdo))->avisar($personas, (string) $this->club['id'], $cat, $texto, $url, $this->persona['id'] ?? null);
     }
 
+    /** Dirección completa de una ruta de la app (para compartir fuera de ella). */
+    protected function urlAbsoluta(string $ruta): string
+    {
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+        return ($host === '' ? '' : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $host)) . $ruta;
+    }
+
     public static function esCoach(?string $rol): bool
     {
         return $rol === 'entrenador' || $rol === 'encargado';

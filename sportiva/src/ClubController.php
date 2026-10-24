@@ -207,6 +207,9 @@ final class ClubController extends AppBase
             'nombre' => trim((string) ($_POST['nombre'] ?? '')), 'club_local' => trim((string) ($_POST['club_local'] ?? '')) ?: null, 'direccion' => trim((string) ($_POST['direccion'] ?? '')) ?: null,
             'lat' => trim((string) ($_POST['lat'] ?? '')), 'lon' => trim((string) ($_POST['lon'] ?? '')),
         ];
+        if ($d['lat'] === '' && $d['lon'] === '' && ($co = Mapa::coordenadasDeEnlace((string) ($_POST['enlace'] ?? ''))) !== null) {
+            [$d['lat'], $d['lon']] = $co;
+        }
         $err = [];
         if ($d['nombre'] === '' || mb_strlen($d['nombre']) > 160) {
             $err['nombre'] = 'club.error.nombre';

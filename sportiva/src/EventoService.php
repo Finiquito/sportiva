@@ -107,6 +107,35 @@ final class EventoService extends Repo
         $this->ejecutar("UPDATE sportiva_eventos SET estado = 'cancelado', updated_at = ? WHERE id = ?", [Tiempo::sello(), $id]);
     }
 
+    public function reactivar(string $id): void
+    {
+        $this->ejecutar("UPDATE sportiva_eventos SET estado = 'publicado', updated_at = ? WHERE id = ?", [Tiempo::sello(), $id]);
+    }
+
+    /** @return array<int, string> */
+    public function convocadosIds(string $evento): array
+    {
+        return array_column($this->filas('SELECT jugador_id FROM sportiva_convocados WHERE evento_id = ?', [$evento]), 'jugador_id');
+    }
+
+    /** Solo los jugadores de este club. @param array<int, string> $ids @return array<int, string> */
+    public function jugadoresDelClub(string $club, array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+        return array_column($this->filas('SELECT id FROM sportiva_jugadores WHERE club_id = ? AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')', array_merge([$club], array_values($ids))), 'id');
+    }
+
+    /** Adultos de estos jugadores. @param array<int, string> $jugadores @return array<int, string> */
+    public function adultosDe(array $jugadores): array
+    {
+        if ($jugadores === []) {
+            return [];
+        }
+        return array_column($this->filas('SELECT DISTINCT persona_id FROM sportiva_apoderados_jugadores WHERE jugador_id IN (' . implode(',', array_fill(0, count($jugadores), '?')) . ')', array_values($jugadores)), 'persona_id');
+    }
+
     /** @param string[] $equipos @param string[]|null $jugadores */
     public function convocar(string $evento, string $club, array $equipos, ?array $jugadores): void
     {
@@ -153,7 +182,7 @@ final class EventoService extends Repo
     /** @return array<int, array<string, mixed>> */
     public function delClubDesde(string $club, string $desde, ?array $equipos = null, bool $borradores = false): array
     {
-        $sql = 'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
+        $sql = 'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
                 WHERE ev.club_id = ? AND ev.inicio >= ? AND ev.estado <> ?';
         $p = [$club, $desde, 'cancelado'];
         if ($equipos !== null) {
@@ -173,7 +202,7 @@ final class EventoService extends Repo
     public function paraApoderado(string $persona, string $club, string $desde): array
     {
         return $this->filas(
-            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
+            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
              FROM sportiva_apoderados_jugadores aj
              JOIN sportiva_jugadores j ON j.id = aj.jugador_id
              JOIN sportiva_convocados c ON c.jugador_id = j.id
@@ -191,7 +220,7 @@ final class EventoService extends Repo
     public function paraJugador(string $persona, string $club, string $desde): array
     {
         return $this->filas(
-            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
+            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
              FROM sportiva_jugadores j
              JOIN sportiva_convocados c ON c.jugador_id = j.id
              JOIN sportiva_eventos ev ON ev.id = c.evento_id

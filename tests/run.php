@@ -177,7 +177,7 @@ entrarComo($pdo, 'camila@ejemplo.fr');
 llamar(fn() => (new S\AgendaController($ctx))->responder($ev), conCsrf(['jugador' => $tomas, 'respuesta' => 'no']));
 check($pdo->query("SELECT respuesta FROM sportiva_asistencias WHERE jugador_id = '{$tomas}'")->fetchColumn() === 'no', 'la encargada puede marcar por un jugador');
 [$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($ev));
-check(str_contains($h, 'Quién va') && str_contains($h, 'Editar'), 'la encargada ve asistencia y puede editar');
+check(str_contains($h, 'Citados') && str_contains($h, 'Editar'), 'la encargada ve asistencia y puede editar');
 $r = $S['ev']->resumen($ev);
 check($r['duda'] === 1 && $r['no'] === 1 && $r['sin'] === 4 && $r['total'] === 6, 'resumen: ' . json_encode($r));
 
@@ -1015,6 +1015,134 @@ check($r === '/app/mas', 'Familias del equipo es solo para apoderados');
 check($r === '/app/perfil', 'cambiar idioma vuelve a Mi perfil');
 [$h, $r] = llamar(fn() => (new S\AuthController($ctx))->cambiarIdioma(), conCsrf(['idioma' => 'es', 'volver' => 'https://malo.com']));
 check($r === '/app/mas', 'el idioma no redirige a sitios externos');
+
+
+seccion('Planificación repetida, citados, mapas y compartir');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$ag = new S\AgendaController($ctx);
+$sc = new S\SerieController($ctx);
+$sv = new S\SerieService($pdo);
+$lugar0 = $pdo->query("SELECT id FROM sportiva_lugares WHERE club_id = '{$cid}' LIMIT 1")->fetchColumn();
+// generar fechas
+$f = S\SerieService::generar('2030-03-05', [4], 1); // martes 5 mar 2030 + jueves
+check($f[0] === '2030-03-05' && in_array('2030-03-07', $f, true) && !in_array('2030-03-06', $f, true) && end($f) <= '2030-04-05', 'se generan las fechas de los días elegidos (el día de inicio siempre cuenta)');
+check(count(S\SerieService::generar('2030-01-01', [1, 2, 3, 4, 5, 6, 7], 12)) <= 120, 'la repetición tiene un tope de fechas');
+check(S\SerieService::generar('mala', [1], 1) === [], 'una fecha mala no genera nada');
+// crear con vista previa
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$base = ['tipo' => 'entreno', 'equipo_id' => $u12, 'titulo' => 'Entreno martes', 'fecha' => '2030-03-05', 'hora_partido' => '18:00', 'hora_fin' => '19:30', 'lugar_id' => $lugar0, 'repetir' => '1', 'dias' => ['2', '4'], 'meses' => '1', 'jugadores_presente' => '1', 'jugadores' => array_column($S['ev']->jugadoresDe($u12), 'id')];
+[$h, $r] = llamar(fn() => $ag->crear(), conCsrf($base + ['accion' => 'ver']));
+check($r === null && str_contains($h, 'name="hacer[2030-03-05]"') && str_contains($h, 'name="hacer[2030-03-07]"') && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_eventos WHERE titulo = 'Entreno martes'")->fetchColumn() === 0, '«Ver fechas» muestra las fechas sin crear nada');
+[$h, $r] = llamar(fn() => $ag->crear(), conCsrf($base));
+check($r === null && str_contains($h, 'name="hacer[') && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_eventos WHERE titulo = 'Entreno martes'")->fetchColumn() === 0, 'al publicar sin haber visto las fechas, primero las muestra');
+$todas = S\SerieService::generar('2030-03-05', [2, 4], 1);
+$visto = $todas;
+$hacer = array_fill_keys(array_diff($todas, ['2030-03-07']), '1'); // se salta el jueves 7
+$antesAv = (int) $pdo->query('SELECT COUNT(*) FROM sportiva_avisos')->fetchColumn();
+[$h, $r] = llamar(fn() => $ag->crear(), conCsrf($base + ['visto' => $visto, 'hacer' => $hacer, 'motivo' => ['2030-03-07' => 'Feriado']]));
+$serieId = $pdo->query("SELECT id FROM sportiva_series ORDER BY created_at DESC, id DESC LIMIT 1")->fetchColumn();
+check($serieId && $r === '/app/serie/' . $serieId, 'se publica la planificación y lleva a ella');
+$nEv = (int) $pdo->query("SELECT COUNT(*) FROM sportiva_eventos WHERE titulo = 'Entreno martes'")->fetchColumn();
+check($nEv === count($todas) - 1, 'se crea un evento por fecha, menos la saltada');
+$om = $pdo->query("SELECT omitida, motivo, evento_id FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}' AND fecha = '2030-03-07'")->fetch();
+check($om && $om['omitida'] == 1 && $om['motivo'] === 'Feriado' && $om['evento_id'] === null, 'la fecha saltada queda con su motivo');
+$tit = fn($pid) => $pdo->query("SELECT titulo FROM sportiva_avisos WHERE persona_id = '{$pid}' ORDER BY created_at DESC, id DESC")->fetchAll(PDO::FETCH_COLUMN);
+$dani = $S['pers']->porCorreo('daniela@ejemplo.fr')['id'];
+check(count(array_filter($tit($dani), fn($t) => str_contains($t, 'Nueva planificación'))) === 1, 'las familias reciben un solo aviso por la planificación nueva');
+// el evento 1 pertenece a la serie
+$e1 = $pdo->query("SELECT evento_id FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}' AND evento_id IS NOT NULL ORDER BY fecha LIMIT 1")->fetchColumn();
+[$h] = llamar(fn() => $ag->evento($e1));
+check(str_contains($h, '/app/serie/' . $serieId), 'el evento enlaza a su planificación');
+// la planificación es de los entrenadores del equipo
+[$h] = llamar(fn() => $sc->ver($serieId));
+check(str_contains($h, 'name="hacer[2030-03-05]"') && str_contains($h, 'Feriado'), 'la planificación muestra las fechas y el motivo');
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $sc->ver($serieId));
+check(str_contains($h, '404') || $h === '', 'un entrenador de otro equipo no abre la planificación');
+llamar(fn() => $sc->guardar($serieId), conCsrf(['visto' => ['2030-03-05'], 'motivo' => ['2030-03-05' => 'x']]));
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_eventos WHERE titulo = 'Entreno martes' AND estado = 'cancelado'")->fetchColumn() === 0, 'ni la modifica');
+// quitar una fecha ya guardada → cancela y avisa
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$quitar = '2030-03-12';
+$hacer2 = array_fill_keys(array_diff($todas, ['2030-03-07', $quitar]), '1');
+$antes = count($tit($dani));
+llamar(fn() => $sc->guardar($serieId), conCsrf(['visto' => $todas, 'hacer' => $hacer2, 'motivo' => ['2030-03-07' => 'Feriado', $quitar => 'Torneo']]));
+$ef = $pdo->query("SELECT e.estado FROM sportiva_serie_fechas f JOIN sportiva_eventos e ON e.id = f.evento_id WHERE f.serie_id = '{$serieId}' AND f.fecha = '{$quitar}'")->fetchColumn();
+check($ef === 'cancelado', 'al quitar una fecha guardada se cancela su evento');
+$av = $tit($dani);
+check(count($av) === $antes + 1 && str_contains($av[0], 'Cambios en la planificación'), 'quitar una fecha avisa a las familias (un solo aviso)');
+$cuerpo = $pdo->query("SELECT cuerpo FROM sportiva_avisos WHERE persona_id = '{$dani}' ORDER BY created_at DESC, id DESC LIMIT 1")->fetchColumn();
+check(str_contains((string) $cuerpo, 'Torneo'), 'el aviso dice por qué se suspende');
+// no aparece en la agenda de la familia
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$evQ = $pdo->query("SELECT evento_id FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}' AND fecha = '{$quitar}'")->fetchColumn();
+[$h] = llamar(fn() => $ag->evento($evQ));
+check(str_contains($h, '404') || $h === '' || !str_contains($h, 'Entreno martes'), 'una fecha cancelada ya no se muestra a la familia');
+// volver a ponerla
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $sc->guardar($serieId), conCsrf(['visto' => $todas, 'hacer' => array_fill_keys(array_diff($todas, ['2030-03-07']), '1')]));
+check($pdo->query("SELECT estado FROM sportiva_eventos WHERE id = '{$evQ}'")->fetchColumn() === 'publicado', 'volver a marcar una fecha la recupera');
+// la fecha saltada al crear se puede poner después
+llamar(fn() => $sc->guardar($serieId), conCsrf(['visto' => $todas, 'hacer' => array_fill_keys($todas, '1')]));
+check($pdo->query("SELECT evento_id FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}' AND fecha = '2030-03-07'")->fetchColumn() !== null, 'una fecha saltada desde el comienzo se puede agregar después');
+// extender
+$antesN = (int) $pdo->query("SELECT COUNT(*) FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}'")->fetchColumn();
+llamar(fn() => $sc->guardar($serieId), conCsrf(['visto' => [], 'meses' => '1', 'dias' => ['2', '4']]));
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_serie_fechas WHERE serie_id = '{$serieId}'")->fetchColumn() > $antesN, 'se puede extender la planificación por más meses');
+// Citados
+$j12 = array_column($S['ev']->jugadoresDe($u12), 'id');
+$conv = ['tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'U12 vs Citados', 'fecha' => '2030-05-04', 'hora_partido' => '14:00', 'cancha_antes' => '45', 'lugar_id' => $lugar0, 'jugadores_presente' => '1', 'jugadores' => array_slice($j12, 0, 3)];
+[$h, $r] = llamar(fn() => $ag->crear(), conCsrf($conv));
+$pid = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'U12 vs Citados'")->fetchColumn();
+check($pid && count($S['ev']->convocadosIds($pid)) === 3, 'un partido cita solo a los jugadores elegidos');
+[$h] = llamar(fn() => $ag->crear(), conCsrf(['titulo' => 'Sin nadie', 'jugadores' => []] + $conv));
+check(str_contains($h, 'class="error"') && !$pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Sin nadie'")->fetchColumn(), 'no se publica sin citar a nadie');
+$ajeno = $pdo->query("SELECT j.id FROM sportiva_jugadores j WHERE j.club_id <> '{$cid}' LIMIT 1")->fetchColumn();
+[$h, $r] = llamar(fn() => $ag->crear(), conCsrf(['titulo' => 'Con ajeno', 'jugadores' => array_merge([$j12[0]], $ajeno ? [$ajeno] : [])] + $conv));
+$pa = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Con ajeno'")->fetchColumn();
+check($pa && count($S['ev']->convocadosIds($pa)) === 1, 'no se pueden citar jugadores de otro club');
+// vistas de la familia: citados y confirmaron
+$hijoCitado = $S['ev']->convocadosIds($pid)[0];
+$ap = $pdo->query("SELECT persona_id FROM sportiva_apoderados_jugadores WHERE jugador_id = '{$hijoCitado}' AND titular = 1")->fetchColumn();
+$apEmail = $pdo->query("SELECT email FROM sportiva_personas WHERE id = '{$ap}'")->fetchColumn();
+$comoRol($apEmail, 'apoderado');
+llamar(fn() => $ag->responder($pid), conCsrf(['jugador' => $hijoCitado, 'respuesta' => 'voy']));
+[$h] = llamar(fn() => $ag->evento($pid));
+check(str_contains($h, 'Citados') && str_contains($h, 'Confirmaron asistencia') && str_contains($h, '1 de 3'), 'la familia ve la lista de citados y la de quienes confirmaron');
+$noCit = array_values(array_diff($j12, $S['ev']->convocadosIds($pid)))[0] ?? null;
+if ($noCit) {
+    $nom = $pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$noCit}'")->fetchColumn();
+    check(!str_contains($h, '<b>' . $nom . '</b>'), 'un jugador no citado no aparece en las listas');
+}
+// editar citados: avisa a quienes entran y salen
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$nuevoJ = $noCit ?: $j12[0];
+[$h] = llamar(fn() => $ag->editar($pid));
+check(str_contains($h, 'name="jugadores[]"') && str_contains($h, 'checked'), 'el formulario de edición muestra a los citados');
+$apNuevo = $pdo->query("SELECT persona_id FROM sportiva_apoderados_jugadores WHERE jugador_id = '{$nuevoJ}' LIMIT 1")->fetchColumn();
+$antesN = count($tit($apNuevo));
+llamar(fn() => $ag->actualizar($pid), conCsrf(['jugadores' => array_merge([$S['ev']->convocadosIds($pid)[0]], [$nuevoJ]), 'tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'U12 vs Citados', 'fecha' => '2030-05-04', 'hora_partido' => '14:00', 'cancha_antes' => '45', 'lugar_id' => $lugar0, 'jugadores_presente' => '1']));
+check(in_array($nuevoJ, $S['ev']->convocadosIds($pid), true) && count($S['ev']->convocadosIds($pid)) <= 3, 'se cambian los citados de un evento');
+check(count($tit($apNuevo)) > $antesN && count(array_filter(array_slice($tit($apNuevo), 0, 2), fn($t) => str_contains($t, 'Citaron') || str_contains($t, 'Ton enfant est convoqué'))) === 1, 'quien entra a la lista recibe un aviso');
+// Mapas y compartir
+check(S\Mapa::coordenadasDeEnlace('https://www.google.com/maps/place/Stade/@46.480236,-0.599575,17z/data=!3m1') === ['46.480236', '-0.599575'], 'se sacan las coordenadas de un enlace de Google Maps');
+check(S\Mapa::coordenadasDeEnlace('https://maps.google.com/?q=-33.4489,-70.6693') === ['-33.4489', '-70.6693'] && S\Mapa::coordenadasDeEnlace('-33.45, -70.66') === ['-33.45', '-70.66'] && S\Mapa::coordenadasDeEnlace('hola') === null, 'también de ?q=, de «lat, lon» y rechaza lo que no lo es');
+$sin = S\Mapa::enlacesLugar(['lugar' => 'Cancha Norte', 'lugar_direccion' => 'Calle 1', 'lugar_lat' => null, 'lugar_lon' => null]);
+check($sin !== null && str_contains($sin['google'], 'Cancha%20Norte') && str_contains($sin['waze'], 'q='), 'un lugar sin coordenadas igual ofrece Google Maps y Waze buscando por nombre y dirección');
+$con = S\Mapa::enlacesLugar(['lugar' => 'X', 'lugar_lat' => '46.1', 'lugar_lon' => '-0.3']);
+check(str_contains($con['google'], 'query=46.1,-0.3') && str_contains($con['waze'], 'll='), 'con coordenadas usa el punto exacto');
+$comoRol($apEmail, 'apoderado');
+[$h] = llamar(fn() => $ag->evento($pid));
+check(str_contains($h, 'https://wa.me/?text=') && str_contains($h, 'Google Maps') && str_contains($h, 'Waze') && str_contains($h, 'data-compartir'), 'la convocatoria tiene mapa, Google Maps, Waze y compartir por WhatsApp');
+check(str_contains(urldecode($h), 'Estadio del club') || str_contains($h, 'Estadio'), 'el texto para compartir lleva el lugar');
+[$h] = llamar(fn() => $ag->agenda());
+check(str_contains($h, 'wa.me/?text=') && str_contains($h, 'Cómo llegar'), 'la tarjeta de la agenda tiene compartir y cómo llegar');
+$lg2 = $S['ev'];
+llamar(fn() => (new S\ClubController($ctx))->guardarLugar(), []);
+$comoRol('sylvie@ejemplo.fr', 'directiva');
+llamar(fn() => (new S\ClubController($ctx))->guardarLugar(), conCsrf(['nombre' => 'Con enlace', 'enlace' => 'https://www.google.com/maps/@46.5,-0.4,15z']));
+check($pdo->query("SELECT lat FROM sportiva_lugares WHERE nombre = 'Con enlace'")->fetchColumn() === '46.5', 'el lugar toma sus coordenadas del enlace pegado');
 
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();

@@ -56,6 +56,7 @@ class SportivaPlugin implements PluginInterface
         $adjuntos = new AdjuntoController($ctx);
         $recursos = new RecursosController();
         $club = new ClubController($ctx);
+        $serie = new SerieController($ctx);
         $personas = new PersonasController($ctx);
         $perfil = new PerfilController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
@@ -126,6 +127,8 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/medio/@id/@variante',                  $p(fn(string $id, string $v) => $medios->servir($id, $v)));
         \Flight::route('POST /app/medio/@id/borrar',                    $p(fn(string $id) => $medios->borrar($id)));
         \Flight::route('POST /app/medio/@id/reportar',                  $p(fn(string $id) => $medios->reportar($id)));
+        \Flight::route('GET /app/serie/@id',                            $p(fn(string $id) => $serie->ver($id)));
+        \Flight::route('POST /app/serie/@id',                           $p(fn(string $id) => $serie->guardar($id)));
         \Flight::route('GET /app/evento/nuevo',      $p([$agenda, 'nuevo']));
         \Flight::route('POST /app/evento',           $p([$agenda, 'crear']));
         \Flight::route('GET /app/evento/@id',        $p(fn(string $id) => $agenda->evento($id)));
@@ -192,7 +195,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.9.0';
+        return '0.10.0';
     }
 
     public function provides(): array

@@ -16,4 +16,5 @@
   <p>{$t($coach ? 'agenda.vacio.coach' : 'agenda.vacio.familia')}</p>
  </section>
 {/foreach}
+<script n:syntax="off">(function(){document.querySelectorAll('[data-compartir]').forEach(function(a){a.addEventListener('click',function(e){if(!navigator.share)return;e.preventDefault();navigator.share({title:a.dataset.titulo,text:a.dataset.compartir}).catch(function(){});});});})();</script>
 {/block}
