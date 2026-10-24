@@ -168,7 +168,7 @@ final class ClubController extends AppBase
         $lon = (string) ($d['lon'] ?? '');
         $svc = new LugarService($this->pdo);
         echo $this->vista()->pagina('club-lugar.latte', [
-            'activa' => 'club', 'l' => $l, 'd' => $d, 'errores' => $err, 'enUso' => $l ? $svc->enUso($l['id']) : 0,
+            'activa' => 'club', 'l' => $l, 'd' => $d + ['local' => $l ? (int) $svc->esLocal($l['id']) : ($d['local'] ?? 0)], 'errores' => $err, 'enUso' => $l ? $svc->enUso($l['id']) : 0,
             'mapa' => Mapa::valido($lat, $lon) ? Mapa::html($lat, $lon, 16, (string) ($d['nombre'] ?? '')) : '', 'enlaces' => Mapa::valido($lat, $lon) ? Mapa::enlaces($lat, $lon) : null,
         ]);
     }
@@ -233,6 +233,7 @@ final class ClubController extends AppBase
         if (!empty($_POST['predeterminado'])) {
             $svc->predeterminar($this->club['id'], $lid);
         }
+        $svc->marcarLocal($this->club['id'], $lid, !empty($_POST['local']));
         $this->ctx->redirect('/app/club/lugares', $this->i18n->t('club.lugar_guardado'));
     }
 

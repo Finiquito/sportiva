@@ -48,12 +48,38 @@ final class AgendaController extends AppBase
             return;
         }
         $mios = $this->rol === 'apoderado' ? (new TurnoService($this->pdo))->eventosDeTurno($this->persona['id'], $this->club['id'], $desde) : [];
-        foreach ($filas as $f) {
+        foreach ($filas as &$f) {
             $f['toca_llevar'] = isset($mios[$f['id']]);
             $f['compartir'] = Mapa::textoCompartir($f, $this->i18n, $this->urlAbsoluta('/app/evento/' . $f['id']));
-            $dias[Tiempo::dia($f['inicio'])][] = $f;
         }
-        echo $this->vista()->pagina('agenda.latte', ['activa' => 'agenda', 'dias' => $dias, 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona()]);
+        unset($f);
+        // El próximo evento (de cualquier tipo) queda fijo arriba. Debajo, solo los próximos días y pocos entrenamientos:
+        // una planificación de todo el año no puede llenar la agenda.
+        $proximo = [];
+        $resto = [];
+        $oculto = 0;
+        $dias_ = max(10, min(90, (int) round(((int) ($_GET['dias'] ?? 10)) / 10) * 10));
+        $limite = (new \DateTimeImmutable(substr($desde, 0, 10)))->modify('+' . $dias_ . ' days')->format('Y-m-d') . ' 23:59:59';
+        $topeEntrenos = 2 * intdiv($dias_, 10);
+        $primero = $filas[0]['id'] ?? null;
+        $entrenos = [];
+        foreach ($filas as $f) {
+            if ($f['id'] === $primero) {
+                $proximo[] = $f;
+                continue;
+            }
+            $dentro = $f['inicio'] <= $limite;
+            if ($dentro && $f['tipo'] === 'entreno') {
+                $entrenos[$f['id']] = true;
+                $dentro = count($entrenos) <= $topeEntrenos;
+            }
+            if ($dentro) {
+                $resto[Tiempo::dia($f['inicio'])][] = $f;
+            } else {
+                $oculto++;
+            }
+        }
+        echo $this->vista()->pagina('agenda.latte', ['activa' => 'agenda', 'proximo' => $proximo, 'dias' => $resto, 'oculto' => $oculto, 'masDias' => min(90, $dias_ + 10), 'hijos' => $hijos, 'coach' => self::esCoach($this->rol), 'zona' => $this->zona()]);
     }
 
     public function evento(string $id): void
@@ -131,7 +157,8 @@ final class AgendaController extends AppBase
     {
         $titulo = (string) $d['titulo'];
         $inicio = (string) $d['inicio'];
-        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($id), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id);
+        $motivo = ['aviso.evento.nuevo' => 'nueva', 'aviso.evento.lugar' => 'lugar', 'aviso.evento.hora' => 'hora', 'aviso.evento.cancelado' => 'cancelado'][$clave] ?? 'otro';
+        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($id), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id, ['id' => $id, 'motivo' => $motivo]);
     }
 
     // ---- entrenadores: crear / editar / cancelar ------------------------------------------------
@@ -174,7 +201,7 @@ final class AgendaController extends AppBase
         echo $this->vista()->pagina('evento-form.latte', [
             'activa' => 'agenda', 'e' => $e, 'd' => $datos, 'errores' => $errores,
             'equipos' => $this->gestionables(), 'todosEquipos' => (new ClubService($this->pdo))->equipos($this->club['id']),
-            'lugares' => $lug->delClub($this->club['id']), 'plantel' => $this->plantel(), 'preview' => $preview,
+            'lugares' => $lug->delClub($this->club['id']), 'locales' => array_column($lug->locales($this->club['id']), 'id'), 'plantel' => $this->plantel(), 'preview' => $preview,
         ]);
     }
 
@@ -215,9 +242,13 @@ final class AgendaController extends AppBase
                 [$lat, $lon] = $c;
             }
             $ok = Mapa::valido($lat, $lon);
-            $in['lugar_id'] = (new LugarService($this->pdo))->crear($this->club['id'], [
+            $ls = new LugarService($this->pdo);
+            $in['lugar_id'] = $ls->crear($this->club['id'], [
                 'nombre' => $nombre, 'direccion' => trim((string) ($in['lugar_direccion'] ?? '')) ?: null, 'lat' => $ok ? $lat : null, 'lon' => $ok ? $lon : null,
             ]);
+            if (!empty($in['lugar_local'])) {
+                $ls->marcarLocal($this->club['id'], $in['lugar_id'], true);
+            }
         }
     }
 
@@ -228,6 +259,9 @@ final class AgendaController extends AppBase
             return;
         }
         $in = $this->entrada();
+        if (($in['tipo'] ?? '') !== 'entreno') {
+            unset($in['repetir']);
+        }
         $equipo = (string) ($in['equipo_id'] ?? '');
         $permit = array_column($this->gestionables(), 'id');
         if (!$this->csrfOk() || !in_array($equipo, $permit, true)) {
@@ -328,7 +362,7 @@ final class AgendaController extends AppBase
             $inicio = (string) $d['inicio'];
             foreach (['aviso.evento.citado' => array_diff($jug, $antes), 'aviso.evento.descitado' => array_diff($antes, $jug)] as $clave => $ids) {
                 if ($ids !== []) {
-                    $this->notificar($svc->adultosDe(array_values($ids)), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id);
+                    $this->notificar($svc->adultosDe(array_values($ids)), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id, ['id' => $id, 'motivo' => $clave === 'aviso.evento.citado' ? 'citado' : 'descitado']);
                 }
             }
         }

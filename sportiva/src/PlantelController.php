@@ -52,7 +52,42 @@ final class PlantelController extends AppBase
             'activa' => 'plantel', 'equipos' => $eqs, 'equipo' => $equipo,
             'jugadores' => $equipo ? $svc->delEquipo($equipo['id']) : [],
             'pendientes' => count($svc->pendientes($this->club['id'], array_column($eqs, 'id'))),
+            'locales' => (new LugarService($this->pdo))->locales($this->club['id']),
+            'otrosLugares' => array_values(array_filter((new LugarService($this->pdo))->delClub($this->club['id']), fn($l) => !(new LugarService($this->pdo))->esLocal($l['id']))),
         ]);
+    }
+
+    /** Agrega un lugar donde somos local: uno ya existente o uno nuevo (con enlace de Google Maps opcional). */
+    public function localAgregar(): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        if ($this->csrfOk()) {
+            $ls = new LugarService($this->pdo);
+            $id = (string) ($_POST['lugar_id'] ?? '');
+            $nombre = trim((string) ($_POST['nombre'] ?? ''));
+            if ($id === '' && $nombre !== '') {
+                $lat = '';
+                $lon = '';
+                if (($c = Mapa::coordenadasDeEnlace((string) ($_POST['enlace'] ?? ''))) !== null) {
+                    [$lat, $lon] = $c;
+                }
+                $id = $ls->crear($this->club['id'], ['nombre' => $nombre, 'direccion' => trim((string) ($_POST['direccion'] ?? '')) ?: null, 'lat' => $lat ?: null, 'lon' => $lon ?: null]);
+            }
+            if ($id !== '') {
+                $ls->marcarLocal($this->club['id'], $id, true);
+            }
+        }
+        $this->ir('/app/plantel#locales');
+    }
+
+    public function localQuitar(string $id): void
+    {
+        if ($this->entrar() && $this->csrfOk()) {
+            (new LugarService($this->pdo))->marcarLocal($this->club['id'], $id, false);
+        }
+        $this->ir('/app/plantel#locales');
     }
 
     private function formularioNuevo(array $d, array $err): void

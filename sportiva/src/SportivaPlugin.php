@@ -137,6 +137,8 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/evento/@id/asistencia', $p(fn(string $id) => $agenda->responder($id)));
         \Flight::route('POST /app/evento/@id/cancelar',   $p(fn(string $id) => $agenda->cancelar($id)));
         \Flight::route('GET /app/plantel',                              $p([$plantel, 'inicio']));
+        \Flight::route('POST /app/plantel/locales',                     $p([$plantel, 'localAgregar']));
+        \Flight::route('POST /app/plantel/locales/@id/quitar',          $p(fn(string $id) => $plantel->localQuitar($id)));
         \Flight::route('GET /app/plantel/nuevo',                        $p([$plantel, 'nuevo']));
         \Flight::route('POST /app/plantel',                             $p([$plantel, 'crear']));
         \Flight::route('GET /app/plantel/solicitudes',                  $p([$plantel, 'solicitudes']));
@@ -195,7 +197,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.10.0';
+        return '0.11.0';
     }
 
     public function provides(): array

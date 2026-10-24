@@ -37,7 +37,9 @@ final class AvisosController extends AppBase
     public function lista(): void
     {
         if ($this->entrar()) {
-            echo $this->vista()->pagina('avisos.latte', ['activa' => 'mas', 'avisos' => $this->svc()->lista($this->persona['id'], $this->club['id'])]);
+            $f = in_array($_GET['f'] ?? '', ['citaciones', 'turnos', 'otros'], true) ? (string) $_GET['f'] : 'todos';
+            $r = $this->svc()->listaFiltrada($this->persona['id'], $this->club['id'], $f);
+            echo $this->vista()->pagina('avisos.latte', ['activa' => 'mas', 'avisos' => $r['avisos'], 'conteos' => $r['conteos'], 'filtro' => $f]);
         }
     }
 

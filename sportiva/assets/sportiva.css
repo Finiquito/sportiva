@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.10.0";
+  --css-v:"0.11.0";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -494,3 +494,58 @@ details.citar{border-top:1.5px dashed var(--linea-2);padding:10px 0}
 details.citar:first-of-type{border-top:0}
 details.citar summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer;list-style:none}
 details.citar summary::-webkit-details-marker{display:none}
+.av-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.av-iconos{display:flex;gap:6px}
+.av-filtros{flex-wrap:nowrap;overflow-x:auto}
+.av-filtros .pill{white-space:nowrap}
+.av-n{font:600 11px/1 var(--font-mono);font-style:normal;margin-left:6px;background:var(--naranja);color:#fff;border-radius:999px;padding:3px 6px}
+.av-lista{padding:4px 14px}
+.av{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;text-decoration:none;color:inherit}
+.av+.av{border-top:1.5px dashed var(--linea-2)}
+.av-fecha{display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;height:50px;border-radius:14px;background:var(--club);color:#F7F1E8;flex:none}
+.av-fecha small{font:500 10px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.av-fecha b{font:800 21px/1 var(--font-display, 'Bricolage Grotesque');margin-top:3px}
+.av-fecha.canc{opacity:.55}
+.av .av-ico{width:46px;height:46px}
+.av .av-ico.verde{background:var(--club);color:#F7F1E8}
+.av-txt b{display:block;font:700 14.5px/1.3 var(--font-body)}
+.av-txt small{display:block;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:3px}
+.av-cita{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:4px 0 0;font:500 13px/1.3 var(--font-mono);color:var(--tinta)}
+.av-dia{font-weight:600}
+.av-h small{display:inline;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--tinta-2);margin:0 4px 0 0}
+.av-h.clave{font-weight:600;color:var(--club);background:linear-gradient(transparent 66%,var(--limon,#F6F24A) 66%,var(--limon,#F6F24A) 94%,transparent 94%);padding:0 2px}
+.av-tag{font:600 10.5px/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--naranja-txt,#B53D00)}
+.av-cita.canc .av-dia,.av-cita.canc .av-h{text-decoration:line-through}
+.av-ago{display:flex;align-items:center;gap:6px;font:400 11px/1 var(--font-mono);color:var(--tinta-2);white-space:nowrap;margin-top:3px}
+.av-punto{width:9px;height:9px;border-radius:50%;background:var(--naranja);display:inline-block}
+.av.nuevo .av-txt b{font-weight:800}
+.ev-cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.ev-cab .tag{height:28px;font-size:12.5px}
+.ev-quien{font:500 12.5px/1.3 var(--font-body);color:var(--tinta-2)}
+.ev-quien b{color:var(--tinta);font-weight:700}
+.ev-t{font:700 21px/1.2 var(--font-body);letter-spacing:-.01em;margin:0 0 12px}
+.ev-t a{color:var(--tinta);text-decoration:none}
+.ev-horas{display:flex;gap:0;background:var(--hueso);border-radius:14px;padding:10px 4px}
+.ev-horas>div{flex:1 1 0;min-width:0;padding:0 12px}
+.ev-horas>div+div{border-left:1.5px dashed var(--linea-2)}
+.ev-horas small{display:block;font:600 10.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:6px}
+.ev-horas b{display:block;font:600 21px/1.1 var(--font-mono);letter-spacing:-.02em;color:var(--tinta)}
+.ev-horas .clave b{color:var(--club)}
+.ev-lugar{display:flex;align-items:center;gap:8px;margin:12px 0 0;font:500 14px/1.35 var(--font-body);color:var(--tinta)}
+.ev-lugar .pi{font-size:18px;color:var(--club);flex:none}
+.ev .traslado{margin:12px 0 0}
+.ev-voto{margin:14px 0 0}
+.ev-pie{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 0;padding-top:12px;border-top:1.5px dashed var(--linea-2)}
+.ev-acc{display:flex;gap:6px;flex-wrap:wrap}
+.ev-abrir{display:inline-flex;align-items:center;gap:6px;font:700 13.5px/1 var(--font-body);color:var(--club);text-decoration:none;white-space:nowrap}
+.ev-abrir .pi{font-size:16px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 88px);z-index:60;display:flex;justify-content:center;pointer-events:none}
+.toast[hidden]{display:none}
+.toast .aviso{margin:0;max-width:420px;width:100%;box-shadow:0 8px 24px rgba(16,32,31,.18);pointer-events:auto}
+.toast.entra{animation:toast-in .2s ease-out both}
+.toast.sale{animation:toast-out .25s ease-in both}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes toast-out{from{opacity:1}to{opacity:0;transform:translateY(8px)}}
+@media (min-width:1000px){.toast{bottom:28px}}
+@media (prefers-reduced-motion:reduce){.toast.entra,.toast.sale{animation:none}}
+[hidden]{display:none!important}

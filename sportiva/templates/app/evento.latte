@@ -32,14 +32,17 @@
   <div class="punto"><span class="fi">{$ico('users-three')|noescape}</span><div><span class="ey">{$t('evento.punto')}</span><b>{$e['encuentro_texto'] ?: $t('evento.punto_club')}</b></div></div>
   {/if}
   {if $e['lugar']}<p class="lugar-linea">{$ico('map-pin')|noescape}<span><b>{$e['lugar']}</b>{if $e['lugar_direccion']}<small>{$e['lugar_direccion']}</small>{/if}</span></p>{/if}
-  {$mapa|noescape}
-  <div class="nav">
-   {if $enlaces}
+  {var $local = !empty($e['lugar_local'])}
+  {var $verCamino = $e['lugar'] && !$local}
+  {var $verComp = !$local || $e['tipo'] !== 'entreno'}
+  {if $verCamino}{$mapa|noescape}{/if}
+  {if $verCamino || $verComp}<div class="nav">
+   {if $enlaces && $verCamino}
    <a class="bt" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Google Maps</a>
    <a class="bt" href="{$enlaces['waze']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Waze</a>
    {/if}
-   <a class="bt s" href="https://wa.me/?text={rawurlencode($compartir)}" target="_blank" rel="noopener" data-compartir="{$compartir}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>
-  </div>
+   {if $verComp}<a class="bt s" href="https://wa.me/?text={rawurlencode($compartir)}" target="_blank" rel="noopener" data-compartir="{$compartir}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>{/if}
+  </div>{/if}
  </section>
 
  {if $e['nota'] || $rol === 'apoderado' || $rol === 'jugador'}
@@ -49,7 +52,7 @@
   {if $rol === 'apoderado' && $e['estado'] === 'publicado'}
    {foreach $mios as $j}
    <span class="mini-t" style="margin-top:14px">{$t('asist.tuya')} · {$j['nombre']}</span>
-   <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}">
+   <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}" data-ok="{$t('asist.guardada')}">
     <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="jugador" value="{$j['id']}">
     <div class="voto">
      {foreach [['voy', 'check'], ['duda', 'question'], ['no', 'x']] as [$k, $ic]}

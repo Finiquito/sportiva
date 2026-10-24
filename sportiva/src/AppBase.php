@@ -97,9 +97,9 @@ abstract class AppBase
     }
 
     /** Deja un aviso (campana, push, correo) a estas personas, sin avisarle a quien lo provocó. @param array<int, string> $personas @param callable(I18n): array{0: string, 1: string} $texto */
-    protected function notificar(array $personas, string $cat, callable $texto, string $url): void
+    protected function notificar(array $personas, string $cat, callable $texto, string $url, ?array $evento = null): void
     {
-        (new Notificador($this->ctx, $this->pdo))->avisar($personas, (string) $this->club['id'], $cat, $texto, $url, $this->persona['id'] ?? null);
+        (new Notificador($this->ctx, $this->pdo))->avisar($personas, (string) $this->club['id'], $cat, $texto, $url, $this->persona['id'] ?? null, $evento);
     }
 
     /** Dirección completa de una ruta de la app (para compartir fuera de ella). */

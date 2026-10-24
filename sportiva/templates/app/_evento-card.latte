@@ -1,45 +1,39 @@
-{* Tarjeta de un evento en la agenda. Recibe $e (con jugador/respuesta si es de familia) y $coach. *}
-<article class="card">
- <div class="tags">
+{* Tarjeta de un evento en la agenda. Recibe $e (con jugador/respuesta si es de familia) y $coach.
+   Orden de lectura: qué es → qué es y cuándo → dónde → qué me toca → qué respondo → acciones. *}
+{var $local = !empty($e['lugar_local'])}
+{var $verCamino = $e['lugar'] && $e['estado'] === 'publicado' && !$local}
+{var $verComp = $e['estado'] === 'publicado' && (!$local || $e['tipo'] !== 'entreno')}
+{var $en = $verCamino ? \TypeDock\Plugin\Sportiva\Mapa::enlacesLugar($e) : null}
+<article class="card ev">
+ <div class="ev-cab">
   {if $e['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
   {elseif $e['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
   {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $e['tipo'])}</span>{/if}
-  <span class="tag m">{$e['equipo']}{if isset($e['jugador'])} · {$e['jugador']}{/if}</span>
+  <span class="ev-quien">{$e['equipo']}{if isset($e['jugador'])} · <b>{$e['jugador']}</b>{/if}</span>
  </div>
- <h2>{$e['titulo']}</h2>
- {if $e['lugar']}<p class="meta">{$ico('map-pin')|noescape}{$e['lugar']}</p>{/if}
- {if $e['tipo'] === 'partido'}
-  <div class="horas">
-   {if $e['hora_encuentro']}
-   <div><small>{$ico('users-three')|noescape}{$t('hora.encuentro')}</small><span class="hora"><span class="hl">{$h($e['hora_encuentro'])}</span></span></div><span class="sep"></span>
-   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
-   {else}
-   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
-   <div><small>{$ico('timer')|noescape}{$t('hora.partido')}</small><span class="hora">{$h($e['inicio'])}</span></div>
-   {/if}
-  </div>
- {else}
-  <p class="meta" style="margin-top:6px">{$ico('clock')|noescape}{$h($e['inicio'])}{if $e['fin']} – {$h($e['fin'])}{/if}</p>
- {/if}
- {if $e['lugar'] && $e['estado'] === 'publicado'}
- {var $en = \TypeDock\Plugin\Sportiva\Mapa::enlacesLugar($e)}
- <div class="nav" style="margin:10px 0 0">
-  {if $en}<a class="bt pill-sm" href="{$en['google']}" target="_blank" rel="noopener">{$ico('map-pin')|noescape}{$t('mapa.como_llegar')}</a>{/if}
-  <a class="bt pill-sm" href="https://wa.me/?text={rawurlencode($e['compartir'] ?? '')}" target="_blank" rel="noopener" data-compartir="{$e['compartir'] ?? ''}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>
+ <h2 class="ev-t"><a href="{$url('evento/' . $e['id'])}">{$e['titulo']}</a></h2>
+ <div class="ev-horas">
+  {if $e['tipo'] === 'partido'}
+   {if $e['hora_encuentro']}<div><small>{$t('hora.encuentro')}</small><b>{$h($e['hora_encuentro'])}</b></div>{/if}
+   {if $e['hora_cancha'] && $e['hora_cancha'] !== $e['inicio']}<div><small>{$t('hora.cancha')}</small><b>{$h($e['hora_cancha'])}</b></div>{/if}
+   <div class="clave"><small>{$t('hora.partido')}</small><b>{$h($e['inicio'])}</b></div>
+  {else}
+   {if $e['hora_encuentro']}<div><small>{$t('hora.encuentro')}</small><b>{$h($e['hora_encuentro'])}</b></div>{/if}
+   <div class="clave"><small>{$t($e['fin'] ? 'hora.horario' : 'hora.inicio')}</small><b>{$h($e['inicio'])}{if $e['fin']} – {$h($e['fin'])}{/if}</b></div>
+  {/if}
  </div>
- {/if}
+ {if $e['lugar']}<p class="ev-lugar">{$ico('map-pin')|noescape}<span>{$e['lugar']}</span></p>{/if}
  {if !empty($e['toca_llevar'])}<a class="traslado" href="{$url('evento/' . $e['id'])}#turnos" style="text-decoration:none;color:inherit"><span class="ico">{$ico('car')|noescape}</span><div><span class="ey">{$t('turno.te_toca')}</span><b>{$dc($e['inicio'])} · {$h($e['hora_encuentro'] ?: ($e['hora_cancha'] ?: $e['inicio']))}</b></div></a>{/if}
  {if $coach}
   {var $r = $e['resumen']}
-  <p class="resumen">
+  <p class="resumen" style="margin:12px 0 0">
    <span class="est">{$ico('check')|noescape}{$t('asist.voy')} {$r['voy']}</span>
    <span class="est">{$ico('question')|noescape}{$t('asist.duda')} {$r['duda']}</span>
    <span class="est">{$ico('x')|noescape}{$t('asist.no')} {$r['no']}</span>
    <span class="est">{$ico('clock')|noescape}{$t('asist.sin')} {$r['sin']}</span>
   </p>
-  <a class="bt w" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
  {elseif isset($e['jugador_id']) && $rol === 'apoderado' && $e['tipo'] !== 'especial'}
-  <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}">
+  <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}" class="ev-voto" data-ok="{$t('asist.guardada')}">
    <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="jugador" value="{$e['jugador_id']}"><input type="hidden" name="volver" value="/app/agenda">
    <div class="voto">
     {foreach [['voy', 'check'], ['duda', 'question'], ['no', 'x']] as [$k, $ic]}
@@ -47,8 +41,12 @@
     {/foreach}
    </div>
   </form>
-  <a class="bt w" style="margin-top:8px" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
- {else}
-  <a class="bt w" style="margin-top:12px" href="{$url('evento/' . $e['id'])}">{$t('abrir')}</a>
  {/if}
+ <div class="ev-pie">
+  <span class="ev-acc">
+   {if $en}<a class="bt pill-sm" href="{$en['google']}" target="_blank" rel="noopener">{$ico('map-pin')|noescape}{$t('mapa.como_llegar')}</a>{/if}
+   {if $verComp}<a class="bt pill-sm" href="https://wa.me/?text={rawurlencode($e['compartir'] ?? '')}" target="_blank" rel="noopener" data-compartir="{$e['compartir'] ?? ''}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>{/if}
+  </span>
+  <a class="ev-abrir" href="{$url('evento/' . $e['id'])}">{$t('abrir')} {$ico('arrow-right')|noescape}</a>
+ </div>
 </article>

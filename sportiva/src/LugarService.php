@@ -53,7 +53,27 @@ final class LugarService extends Repo
         if ($this->enUso($id) > 0) {
             return false;
         }
+        $this->ejecutar('DELETE FROM sportiva_lugares_locales WHERE lugar_id = ?', [$id]);
         $this->ejecutar('DELETE FROM sportiva_lugares WHERE id = ?', [$id]);
         return true;
+    }
+
+    public function esLocal(?string $id): bool
+    {
+        return $id !== null && $id !== '' && $this->fila('SELECT lugar_id FROM sportiva_lugares_locales WHERE lugar_id = ?', [$id]) !== null;
+    }
+
+    public function marcarLocal(string $club, string $id, bool $local): void
+    {
+        $this->ejecutar('DELETE FROM sportiva_lugares_locales WHERE lugar_id = ?', [$id]);
+        if ($local && $this->fila('SELECT id FROM sportiva_lugares WHERE id = ? AND club_id = ?', [$id, $club]) !== null) {
+            $this->ejecutar('INSERT INTO sportiva_lugares_locales (lugar_id, club_id) VALUES (?, ?)', [$id, $club]);
+        }
+    }
+
+    /** Lugares donde el club es local. @return array<int, array<string, mixed>> */
+    public function locales(string $club): array
+    {
+        return $this->filas('SELECT l.* FROM sportiva_lugares l JOIN sportiva_lugares_locales x ON x.lugar_id = l.id WHERE l.club_id = ? ORDER BY l.nombre', [$club]);
     }
 }

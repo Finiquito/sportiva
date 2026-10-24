@@ -33,7 +33,7 @@ final class Notificador
      * Deja un aviso para cada persona. `$texto` recibe el I18n de cada una y devuelve [título, cuerpo].
      * @param array<int, string> $personas @param callable(I18n): array{0: string, 1: string} $texto
      */
-    public function avisar(array $personas, string $club, string $cat, callable $texto, string $url, ?string $excluir = null): int
+    public function avisar(array $personas, string $club, string $cat, callable $texto, string $url, ?string $excluir = null, ?array $evento = null): int
     {
         $porIdioma = [];
         foreach (array_unique(array_filter($personas)) as $p) {
@@ -44,7 +44,7 @@ final class Notificador
         $n = 0;
         foreach ($porIdioma as $idioma => $ids) {
             [$titulo, $cuerpo] = $texto(new I18n($idioma));
-            $n += $this->avisos->crear($ids, $club, $cat, $titulo, $cuerpo, $url);
+            $n += $this->avisos->crear($ids, $club, $cat, $titulo, $cuerpo, $url, null, $evento);
         }
         if ($n > 0) {
             $this->entregarAlTerminar();

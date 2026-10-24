@@ -44,7 +44,7 @@ final class AvisoService extends Repo
     }
 
     /** Deja un aviso en la cola para cada persona (sin repetir y sin avisarle a quien lo provocó). @param array<int, string> $personas */
-    public function crear(array $personas, string $club, string $cat, string $titulo, string $cuerpo, string $url, ?string $excluir = null): int
+    public function crear(array $personas, string $club, string $cat, string $titulo, string $cuerpo, string $url, ?string $excluir = null, ?array $evento = null): int
     {
         $n = 0;
         foreach (array_unique(array_filter($personas)) as $p) {
@@ -52,13 +52,63 @@ final class AvisoService extends Repo
                 continue;
             }
             $pr = $this->pref($p, $cat);
+            $aid = $this->id();
             $this->ejecutar(
                 'INSERT INTO sportiva_avisos (id, persona_id, club_id, categoria, titulo, cuerpo, url, created_at, push_pendiente, correo_pendiente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [$this->id(), $p, $club, $cat, mb_substr($titulo, 0, 190), mb_substr($cuerpo, 0, 255), $url, Tiempo::sello(), $pr['push'] && $this->tieneSuscripcion($p) ? 1 : 0, $pr['correo'] ? 1 : 0]
+                [$aid, $p, $club, $cat, mb_substr($titulo, 0, 190), mb_substr($cuerpo, 0, 255), $url, Tiempo::sello(), $pr['push'] && $this->tieneSuscripcion($p) ? 1 : 0, $pr['correo'] ? 1 : 0]
             );
+            if ($evento !== null) {
+                $this->ejecutar('INSERT INTO sportiva_avisos_evento (aviso_id, evento_id, motivo) VALUES (?, ?, ?)', [$aid, $evento['id'], mb_substr((string) $evento['motivo'], 0, 12)]);
+            }
             $n++;
         }
         return $n;
+    }
+
+    /** Grupo de filtro de un aviso: citaciones, turnos u otros. */
+    public static function grupo(string $categoria): string
+    {
+        return $categoria === 'agenda' ? 'citaciones' : ($categoria === 'turnos' ? 'turnos' : 'otros');
+    }
+
+    /**
+     * Avisos con los datos de su citación (si la tienen) y el grupo; `$filtro` = todos | citaciones | turnos | otros.
+     * @return array{avisos: array<int, array<string, mixed>>, conteos: array<string, array{total: int, nuevos: int}>}
+     */
+    public function listaFiltrada(string $persona, string $club, string $filtro = 'todos', int $limite = 60): array
+    {
+        $todos = $this->filas(
+            'SELECT a.*, ae.evento_id, ae.motivo FROM sportiva_avisos a LEFT JOIN sportiva_avisos_evento ae ON ae.aviso_id = a.id WHERE a.persona_id = ? AND a.club_id = ? ORDER BY a.created_at DESC, a.id DESC LIMIT ' . (int) $limite,
+            [$persona, $club]
+        );
+        $con = ['todos' => ['total' => 0, 'nuevos' => 0], 'citaciones' => ['total' => 0, 'nuevos' => 0], 'turnos' => ['total' => 0, 'nuevos' => 0], 'otros' => ['total' => 0, 'nuevos' => 0]];
+        $ids = [];
+        foreach ($todos as &$a) {
+            $a['grupo'] = self::grupo((string) $a['categoria']);
+            foreach (['todos', $a['grupo']] as $g) {
+                $con[$g]['total']++;
+                $con[$g]['nuevos'] += $a['leido_en'] ? 0 : 1;
+            }
+            if ($a['evento_id']) {
+                $ids[$a['evento_id']] = true;
+            }
+        }
+        unset($a);
+        $evs = [];
+        if ($ids !== []) {
+            $loc = '(SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local';
+            foreach ($this->filas("SELECT ev.id, ev.tipo, ev.titulo, ev.inicio, ev.fin, ev.hora_cancha, ev.hora_encuentro, ev.estado, eq.nombre AS equipo, l.nombre AS lugar, {$loc} FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id WHERE ev.id IN (" . implode(',', array_fill(0, count($ids), '?')) . ')', array_keys($ids)) as $e) {
+                $evs[$e['id']] = $e;
+            }
+        }
+        $r = [];
+        foreach ($todos as $a) {
+            $a['evento'] = $a['evento_id'] ? ($evs[$a['evento_id']] ?? null) : null;
+            if ($filtro === 'todos' || $a['grupo'] === $filtro) {
+                $r[] = $a;
+            }
+        }
+        return ['avisos' => $r, 'conteos' => $con];
     }
 
     public function sinLeer(string $persona, string $club): int

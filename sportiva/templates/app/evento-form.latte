@@ -1,6 +1,7 @@
 {layout '_layout.latte'}
 {block titulo}{$t($e ? 'evento.editar' : 'evento.nueva')} · u330{/block}
 {block contenido}
+{var $tp = $d['tipo'] ?? 'partido'}
 <a class="volver" href="{$e ? $url('evento/' . $e['id']) : $url('agenda')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1 style="font-size:34px;margin-bottom:14px">{$t($e ? 'evento.editar' : 'evento.nueva')}</h1>
 <form method="post" action="{$e ? $url('evento/' . $e['id']) : $url('evento')}" novalidate>
@@ -19,30 +20,30 @@
    {if $e}<input type="hidden" name="equipo_id" value="{$e['equipo_id']}">{/if}
   </label>
   <label class="campo"><span>{$t('evento.titulo')}</span><input class="in" type="text" name="titulo" value="{$d['titulo'] ?? ''}" maxlength="200">{if isset($errores['titulo'])}<small class="error" role="alert">{$t($errores['titulo'])}</small>{/if}</label>
-  <label class="campo"><span>{$t('evento.rival')}</span><input class="in" type="text" name="rival" value="{$d['rival'] ?? ''}" maxlength="120"></label>
+  <label class="campo" data-tipos="partido" n:attr="hidden => $tp !== 'partido'"><span>{$t('evento.rival')}</span><input class="in" type="text" name="rival" value="{$d['rival'] ?? ''}" maxlength="120"></label>
  </section>
 
  <section class="card">
   <div class="ch"><h3>{$t('evento.cuando')}</h3></div>
   <label class="campo"><span>{$t('evento.fecha')}</span><input class="in" type="date" name="fecha" value="{$d['fecha'] ?? ''}">{if isset($errores['fecha'])}<small class="error" role="alert">{$t($errores['fecha'])}</small>{/if}</label>
   <label class="campo"><span>{$t('evento.hora_partido')}</span><input class="in" type="time" name="hora_partido" value="{$d['hora_partido'] ?? ''}"></label>
-  <label class="campo"><span>{$t('evento.hora_fin')}</span><input class="in" type="time" name="hora_fin" value="{$d['hora_fin'] ?? ''}"></label>
-  <label class="campo"><span>{$t('evento.hora_cancha')}</span>
+  <label class="campo" data-tipos="entreno especial stage" n:attr="hidden => $tp !== 'entreno' && $tp !== 'especial' && $tp !== 'stage'"><span>{$t('evento.hora_fin')}</span><input class="in" type="time" name="hora_fin" value="{$d['hora_fin'] ?? ''}"></label>
+  <label class="campo" data-tipos="partido" n:attr="hidden => $tp !== 'partido'"><span>{$t('evento.hora_cancha')}</span>
    <input class="in" type="time" name="hora_cancha" value="{$d['hora_cancha'] ?? ''}">
    <small>{$t('evento.cancha_ayuda')}</small>
    {if isset($errores['hora_cancha'])}<small class="error" role="alert">{$t($errores['hora_cancha'])}</small>{/if}
   </label>
-  <label class="campo"><span>{$t('evento.cancha_antes')}</span>
+  <label class="campo" data-tipos="partido" n:attr="hidden => $tp !== 'partido'"><span>{$t('evento.cancha_antes')}</span>
    <select class="in" name="cancha_antes">
     {foreach ['30', '45', '60'] as $m}<option value="{$m}" {if ($d['cancha_antes'] ?? '45') === $m}selected{/if}>{$t('evento.min_antes', ['n' => $m])}</option>{/foreach}
    </select>
   </label>
-  <label class="tog"><span><b>{$t('evento.hay_encuentro')}</b><small>{$t('evento.encuentro_ayuda')}</small></span><input type="checkbox" name="hay_encuentro" value="1" {if !empty($d['hay_encuentro'])}checked{/if}></label>
-  <label class="campo"><span>{$t('evento.hora_encuentro')}</span><input class="in" type="time" name="hora_encuentro" value="{$d['hora_encuentro'] ?? ''}">{if isset($errores['hora_encuentro'])}<small class="error" role="alert">{$t($errores['hora_encuentro'])}</small>{/if}</label>
-  <label class="campo"><span>{$t('evento.punto')}</span><input class="in" type="text" name="encuentro_texto" value="{$d['encuentro_texto'] ?? ''}" maxlength="255" placeholder="{$t('evento.punto_club')}"></label>
+  <label class="tog" data-tipos="partido especial stage" n:attr="hidden => $tp !== 'partido' && $tp !== 'especial' && $tp !== 'stage'"><span><b>{$t('evento.hay_encuentro')}</b><small>{$t('evento.encuentro_ayuda')}</small></span><input type="checkbox" name="hay_encuentro" value="1" {if !empty($d['hay_encuentro'])}checked{/if}></label>
+  <label class="campo" data-tipos="partido especial stage" n:attr="hidden => $tp !== 'partido' && $tp !== 'especial' && $tp !== 'stage'"><span>{$t('evento.hora_encuentro')}</span><input class="in" type="time" name="hora_encuentro" value="{$d['hora_encuentro'] ?? ''}">{if isset($errores['hora_encuentro'])}<small class="error" role="alert">{$t($errores['hora_encuentro'])}</small>{/if}</label>
+  <label class="campo" data-tipos="partido especial stage" n:attr="hidden => $tp !== 'partido' && $tp !== 'especial' && $tp !== 'stage'"><span>{$t('evento.punto')}</span><input class="in" type="text" name="encuentro_texto" value="{$d['encuentro_texto'] ?? ''}" maxlength="255" placeholder="{$t('evento.punto_club')}"></label>
  </section>
 {if !$e}
- <section class="card">
+ <section class="card" data-tipos="entreno" n:attr="hidden => $tp !== 'entreno' && !$preview">
   <label class="tog"><span><b>{$t('evento.repetir')}</b><small>{$t('evento.repetir_ayuda')}</small></span><input type="checkbox" name="repetir" value="1" {if !empty($d['repetir']) || $preview}checked{/if}></label>
   <div class="ch"><h3>{$t('evento.dias')}</h3></div>
   <div class="grupo-pills">
@@ -54,7 +55,7 @@
    <select class="in" name="meses">{foreach [1, 2, 3, 4, 5, 6, 9, 12] as $m}<option value="{$m}" {if (string) ($d['meses'] ?? '2') === (string) $m}selected{/if}>{$n('evento.n_meses', $m)}</option>{/foreach}</select>
   </label>
   {if isset($errores['repetir'])}<small class="error" role="alert">{$t($errores['repetir'])}</small>{/if}
-  <button class="bt" type="submit" name="accion" value="ver">{$ico('calendar-dots')|noescape}{$t('evento.ver_fechas')}</button>
+  <button class="bt" type="submit" name="accion" value="ver" data-ok="{$t('evento.fechas_listas')}">{$ico('calendar-dots')|noescape}{$t('evento.ver_fechas')}</button>
  </section>
  {if $preview}
  <section class="card" id="fechas">
@@ -72,14 +73,14 @@
 {/if}
 
  <section class="card">
-  <div class="ch"><h3>{$t('evento.citados')}</h3></div>
+  <div class="ch"><h3>{$t('evento.citados')}</h3><span class="est" id="cuenta-citados" data-uno="{$t('evento.citados_n.uno')}" data-otros="{$t('evento.citados_n.otros')}">{$n('evento.citados_n', count($d['jugadores_sel']))}</span></div>
   <p class="texto" style="margin:0 0 10px;font-size:13px">{$t('evento.citados_ayuda')}</p>
   {if isset($errores['jugadores'])}<small class="error" role="alert">{$t($errores['jugadores'])}</small>{/if}
   <input type="hidden" name="jugadores_presente" value="1">
   {foreach $plantel as $q}
   {if $q['jugadores']}
   <details class="citar" data-equipo="{$q['id']}" {if ($d['equipo_id'] ?? '') === $q['id'] || array_intersect(array_column($q['jugadores'], 'id'), $d['jugadores_sel'])}open{/if}>
-   <summary><b>{$q['nombre']}</b> <button type="button" class="bt pill-sm" data-todos="1">{$t('evento.todos')}</button> <button type="button" class="bt pill-sm" data-ninguno="1">{$t('evento.ninguno')}</button></summary>
+   <summary><b>{$q['nombre']}</b> <span class="est cn">{count(array_intersect(array_column($q['jugadores'], 'id'), $d['jugadores_sel']))}/{count($q['jugadores'])}</span> <button type="button" class="bt pill-sm" data-todos="1">{$t('evento.todos')}</button> <button type="button" class="bt pill-sm" data-ninguno="1">{$t('evento.ninguno')}</button></summary>
    <div class="grupo-pills" style="margin-top:8px">
     {foreach $q['jugadores'] as $j}
     <label class="pill-radio"><input type="checkbox" name="jugadores[]" value="{$j['id']}" {if in_array($j['id'], $d['jugadores_sel'], true)}checked{/if}><span class="pill">{$j['nombre']}</span></label>
@@ -95,13 +96,15 @@
   <label class="campo"><span>{$t('evento.lugar_elegir')}</span>
    <select class="in" name="lugar_id">
     <option value="">—</option>
-    {foreach $lugares as $l}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/foreach}
+    <optgroup label="{$t('evento.lugares_local')}">{foreach $lugares as $l}{if in_array($l['id'], $locales, true)}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
+    <optgroup label="{$t('evento.lugares_visita')}">{foreach $lugares as $l}{if !in_array($l['id'], $locales, true)}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
    </select>
    {if isset($errores['lugar_id'])}<small class="error" role="alert">{$t($errores['lugar_id'])}</small>{/if}
   </label>
   <p class="mini-t">{$t('evento.lugar_nuevo')}</p>
   <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="lugar_nombre" value="{$d['lugar_nombre'] ?? ''}"></label>
   <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="lugar_direccion" value="{$d['lugar_direccion'] ?? ''}"></label>
+  <label class="tog"><span><b>{$t('evento.lugar_local')}</b></span><input type="checkbox" name="lugar_local" value="1" {if !empty($d['lugar_local'])}checked{/if}></label>
   <label class="campo"><span>{$t('evento.lugar_enlace')}</span><input class="in" type="url" name="lugar_enlace" value="{$d['lugar_enlace'] ?? ''}" placeholder="https://www.google.com/maps/…"><small>{$t('evento.lugar_enlace_ayuda')}</small></label>
   <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" name="lugar_lat" value="{$d['lugar_lat'] ?? ''}" inputmode="decimal" placeholder="46.480236"></label>
   <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" name="lugar_lon" value="{$d['lugar_lon'] ?? ''}" inputmode="decimal" placeholder="-0.599575"></label>
@@ -113,7 +116,13 @@
  </section>
 </form>
 <script n:syntax="off">(function(){var f=document.querySelector('form');if(!f)return;
-f.querySelectorAll('details.citar').forEach(function(d){d.querySelectorAll('[data-todos],[data-ninguno]').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var on=b.hasAttribute('data-todos');d.open=true;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=on;});});});});
-var sel=f.querySelector('select[name=equipo_id]');if(sel&&!sel.disabled){sel.addEventListener('change',function(){f.querySelectorAll('details.citar').forEach(function(d){var m=d.dataset.equipo===sel.value;d.open=m||d.open;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=m;});});});}
+function tipo(){var r=f.querySelector('input[name=tipo]:checked');return r?r.value:'partido';}
+function ver(){var t=tipo();f.querySelectorAll('[data-tipos]').forEach(function(e){e.hidden=e.dataset.tipos.split(' ').indexOf(t)===-1;});}
+f.querySelectorAll('input[name=tipo]').forEach(function(r){r.addEventListener('change',ver);});ver();
+var cu=document.getElementById('cuenta-citados');
+function cuenta(){var n=f.querySelectorAll('input[name="jugadores[]"]:checked').length;if(cu)cu.textContent=(n===1?cu.dataset.uno:cu.dataset.otros).replace('{n}',n);f.querySelectorAll('details.citar').forEach(function(d){var cs=d.querySelectorAll('input[type=checkbox]'),on=d.querySelectorAll('input[type=checkbox]:checked').length,c=d.querySelector('.cn');if(c)c.textContent=on+'/'+cs.length;});}
+f.addEventListener('change',function(e){if(e.target.name==='jugadores[]')cuenta();});
+f.querySelectorAll('details.citar').forEach(function(d){d.querySelectorAll('[data-todos],[data-ninguno]').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var on=b.hasAttribute('data-todos');d.open=true;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=on;});cuenta();});});});
+var sel=f.querySelector('select[name=equipo_id]');if(sel&&!sel.disabled){sel.addEventListener('change',function(){f.querySelectorAll('details.citar').forEach(function(d){var m=d.dataset.equipo===sel.value;d.open=m||d.open;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=m;});});cuenta();});}
 })();</script>
 {/block}

@@ -1144,6 +1144,88 @@ $comoRol('sylvie@ejemplo.fr', 'directiva');
 llamar(fn() => (new S\ClubController($ctx))->guardarLugar(), conCsrf(['nombre' => 'Con enlace', 'enlace' => 'https://www.google.com/maps/@46.5,-0.4,15z']));
 check($pdo->query("SELECT lat FROM sportiva_lugares WHERE nombre = 'Con enlace'")->fetchColumn() === '46.5', 'el lugar toma sus coordenadas del enlace pegado');
 
+
+seccion('Agenda compacta, avisos de citación y lugares locales');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$ag = new S\AgendaController($ctx);
+$ls = new S\LugarService($pdo);
+$lugarX = $pdo->query("SELECT id FROM sportiva_lugares WHERE club_id = '{$cid}' LIMIT 1")->fetchColumn();
+$manana = (new DateTimeImmutable('tomorrow'))->format('Y-m-d');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$todasF = S\SerieService::generar($manana, [1, 2, 3, 4, 5, 6, 7], 2);
+$baseS = ['tipo' => 'entreno', 'equipo_id' => $u12, 'titulo' => 'Entreno largo', 'fecha' => $manana, 'hora_partido' => '18:00', 'hora_fin' => '19:00', 'lugar_id' => $lugarX, 'repetir' => '1', 'dias' => ['1', '2', '3', '4', '5', '6', '7'], 'meses' => '2', 'jugadores_presente' => '1', 'jugadores' => array_column($S['ev']->jugadoresDe($u12), 'id')];
+llamar(fn() => $ag->crear(), conCsrf($baseS + ['visto' => $todasF, 'hacer' => array_fill_keys($todasF, '1')]));
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_eventos WHERE titulo = 'Entreno largo'")->fetchColumn() === count($todasF), 'una planificación larga crea muchos entrenamientos');
+[$h] = llamar(fn() => $ag->agenda());
+$cuenta = fn(string $x) => preg_match_all('/class="ev-t"><a [^>]*>Entreno largo</', $x);
+check($cuenta($h) <= 3, 'la agenda no muestra todos los entrenamientos (máximo 2 y el próximo fijo)');
+check(str_contains($h, 'Próximo') && str_contains($h, 'Ver más fechas'), 'el próximo evento queda fijo arriba y hay «Ver más fechas»');
+$pos = strpos($h, 'Próximo');
+$primera = strpos($h, 'class="card ev"');
+check($pos !== false && $primera !== false && $pos < $primera, 'la etiqueta «Próximo» va antes de la primera tarjeta');
+[$h2] = llamar(fn() => $ag->agenda(), [], ['dias' => '30']);
+check($cuenta($h2) > $cuenta($h) && $cuenta($h2) <= 7, '«Ver más fechas» muestra otros 10 días, con más entrenamientos');
+// partidos dentro de la ventana siempre salen
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h3] = llamar(fn() => $ag->agenda());
+check(str_contains($h3, 'class="card ev"'), 'la tarjeta de la agenda usa el formato compacto');
+// reglas de local: entrenamiento en un lugar local no lleva cómo llegar ni compartir
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$ls->marcarLocal($cid, $lugarX, true);
+$entr = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Entreno largo' ORDER BY inicio LIMIT 1")->fetchColumn();
+[$h] = llamar(fn() => $ag->evento($entr));
+check(!str_contains($h, 'Waze') && !str_contains($h, 'wa.me/?text=') && !str_contains($h, 'class="mapa"'), 'un entrenamiento en lugar local no muestra mapa, cómo llegar ni compartir');
+$partL = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido en casa', 'rival' => 'X', 'inicio' => '2030-06-01 15:00:00', 'fin' => null, 'hora_cancha' => '2030-06-01 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $lugarX, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
+[$h] = llamar(fn() => $ag->evento($partL));
+check(str_contains($h, 'wa.me/?text=') && !str_contains($h, 'Waze'), 'un partido en casa se puede compartir pero no pide cómo llegar');
+$ls->marcarLocal($cid, $lugarX, false);
+[$h] = llamar(fn() => $ag->evento($entr));
+check(str_contains($h, 'Waze') && str_contains($h, 'wa.me/?text='), 'de visita (lugar no local) sí hay mapa, cómo llegar y compartir');
+$ls->marcarLocal($cid, $lugarX, true);
+// formulario: campos según el tipo
+[$h] = llamar(fn() => $ag->nuevo());
+check(preg_match('/data-tipos="entreno especial stage"[^>]*hidden/', $h) === 1 && !preg_match('/name="rival"[^>]*>/', '') && preg_match('/data-tipos="partido"[^>]*>(?:(?!hidden).)*name="rival"/s', $h) === 1, 'para un partido el formulario muestra el rival y oculta lo del entrenamiento');
+[$dn, $en] = $S['ev']->normalizar(['tipo' => 'entreno', 'fecha' => '2030-01-01', 'hora_partido' => '18:00', 'hora_fin' => '19:00', 'hora_cancha' => '17:00', 'hay_encuentro' => '1', 'hora_encuentro' => '16:00', 'rival' => 'Nadie', 'titulo' => 'E', 'lugar_id' => 'x']);
+check($dn['hora_cancha'] === null && $dn['hora_encuentro'] === null && $dn['rival'] === null && $dn['fin'] === '2030-01-01 19:00:00', 'un entrenamiento no guarda rival, encuentro ni hora en cancha');
+[$dp] = $S['ev']->normalizar(['tipo' => 'partido', 'fecha' => '2030-01-01', 'hora_partido' => '15:00', 'hora_fin' => '17:00', 'cancha_antes' => '45', 'rival' => 'Y', 'titulo' => 'P', 'lugar_id' => 'x']);
+check($dp['fin'] === null && $dp['hora_cancha'] === '2030-01-01 14:15:00' && $dp['rival'] === 'Y', 'un partido no guarda hora de fin y calcula la hora en cancha');
+[$h] = llamar(fn() => $ag->nuevo());
+check(str_contains($h, 'id="cuenta-citados"') && str_contains($h, 'class="est cn"'), 'el formulario cuenta los citados (total y por categoría)');
+// Plantel: lugares locales
+$pl = new S\PlantelController($ctx);
+[$h] = llamar(fn() => $pl->inicio());
+check(str_contains($h, 'id="locales"') && str_contains($h, 'Dónde entrenamos'), 'el plantel lista los lugares donde somos local');
+llamar(fn() => $pl->localAgregar(), conCsrf(['nombre' => 'Gimnasio Municipal', 'direccion' => 'Av. 1', 'enlace' => 'https://www.google.com/maps/@46.4,-0.5,17z']));
+$gm = $pdo->query("SELECT id, lat FROM sportiva_lugares WHERE nombre = 'Gimnasio Municipal'")->fetch();
+check($gm && $gm['lat'] === '46.4' && $ls->esLocal($gm['id']), 'se agrega un lugar local nuevo con su ubicación');
+llamar(fn() => $pl->localQuitar($gm['id']), conCsrf());
+check(!$ls->esLocal($gm['id']), 'se deja de ser local en un lugar');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => $pl->localAgregar(), conCsrf(['nombre' => 'Intruso']));
+check($pdo->query("SELECT id FROM sportiva_lugares WHERE nombre = 'Intruso'")->fetchColumn() === false, 'una familia no agrega lugares locales');
+// Avisos: citación con fecha y hora, filtros
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $ag->crear(), conCsrf(['tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'Partido avisos', 'fecha' => '2030-07-06', 'hora_partido' => '16:00', 'cancha_antes' => '45', 'lugar_id' => $lugarX, 'jugadores_presente' => '1', 'jugadores' => array_column($S['ev']->jugadoresDe($u12), 'id')]));
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$av = new S\AvisosController($ctx);
+[$h] = llamar(fn() => $av->lista());
+check(str_contains($h, 'class="av av-fecha') || str_contains($h, 'av-fecha'), 'el aviso de una citación muestra la fecha de la cita en el ícono');
+check(str_contains($h, 'av-h clave') && str_contains($h, '16:00'), 'el aviso de una citación destaca la hora de la cita');
+check(str_contains($h, 'Citaciones') && str_contains($h, 'Turnos') && str_contains($h, 'Otros'), 'los avisos tienen filtros Citaciones, Turnos y Otros');
+[$h] = llamar(fn() => $av->lista(), [], ['f' => 'turnos']);
+check(!str_contains($h, 'Partido avisos'), 'el filtro Turnos oculta las citaciones');
+[$h] = llamar(fn() => $av->lista(), [], ['f' => 'citaciones']);
+check(str_contains($h, 'Partido avisos'), 'el filtro Citaciones muestra las citaciones');
+// una cancelación aparece como cancelada
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$pa = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Partido avisos'")->fetchColumn();
+llamar(fn() => $ag->cancelar($pa), conCsrf());
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $av->lista(), [], ['f' => 'citaciones']);
+check(str_contains($h, 'Cancelada'), 'una citación cancelada se marca como cancelada en los avisos');
+check(S\Tiempo::hace(S\Tiempo::sello(), new S\I18n('es')) === 'ahora', 'la publicación se muestra como «ahora»');
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');

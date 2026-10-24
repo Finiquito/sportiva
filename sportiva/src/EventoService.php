@@ -15,7 +15,7 @@ final class EventoService extends Repo
     public function buscar(string $id): ?array
     {
         return $this->fila(
-            'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon
+            'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local
              FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id WHERE ev.id = ?',
             [$id]
         );
@@ -44,8 +44,15 @@ final class EventoService extends Repo
         if ($inicio === null) {
             $e['fecha'] = 'evento.error.fecha';
         }
-        $fin = self::unir($fecha, (string) ($in['hora_fin'] ?? ''));
-        $cancha = self::unir($fecha, (string) ($in['hora_cancha'] ?? ''));
+        $fin = $tipo === 'partido' ? null : self::unir($fecha, (string) ($in['hora_fin'] ?? ''));
+        $cancha = $tipo === 'partido' ? self::unir($fecha, (string) ($in['hora_cancha'] ?? '')) : null;
+        if ($tipo === 'entreno') {
+            $in['hay_encuentro'] = null;
+            $in['rival'] = null;
+            $in['encuentro_texto'] = null;
+        } elseif ($tipo !== 'partido') {
+            $in['rival'] = null;
+        }
         $encuentro = !empty($in['hay_encuentro']) ? self::unir($fecha, (string) ($in['hora_encuentro'] ?? '')) : null;
         if ($tipo === 'partido' && $cancha === null && $inicio !== null) {
             $min = (int) ($in['cancha_antes'] ?? 45);
@@ -182,7 +189,7 @@ final class EventoService extends Repo
     /** @return array<int, array<string, mixed>> */
     public function delClubDesde(string $club, string $desde, ?array $equipos = null, bool $borradores = false): array
     {
-        $sql = 'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
+        $sql = 'SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
                 WHERE ev.club_id = ? AND ev.inicio >= ? AND ev.estado <> ?';
         $p = [$club, $desde, 'cancelado'];
         if ($equipos !== null) {
@@ -202,7 +209,7 @@ final class EventoService extends Repo
     public function paraApoderado(string $persona, string $club, string $desde): array
     {
         return $this->filas(
-            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
+            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
              FROM sportiva_apoderados_jugadores aj
              JOIN sportiva_jugadores j ON j.id = aj.jugador_id
              JOIN sportiva_convocados c ON c.jugador_id = j.id
@@ -220,7 +227,7 @@ final class EventoService extends Repo
     public function paraJugador(string $persona, string $club, string $desde): array
     {
         return $this->filas(
-            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
+            "SELECT ev.*, eq.nombre AS equipo, l.nombre AS lugar, l.direccion AS lugar_direccion, l.lat AS lugar_lat, l.lon AS lugar_lon, (SELECT COUNT(*) FROM sportiva_lugares_locales xl WHERE xl.lugar_id = ev.lugar_id) AS lugar_local, j.id AS jugador_id, j.nombre AS jugador, a.respuesta
              FROM sportiva_jugadores j
              JOIN sportiva_convocados c ON c.jugador_id = j.id
              JOIN sportiva_eventos ev ON ev.id = c.evento_id

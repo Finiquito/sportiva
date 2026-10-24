@@ -28,4 +28,28 @@
 {else}
 <section class="card vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('plantel.sin_equipos')}</b></section>
 {/if}
+<section class="card" id="locales">
+ <div class="ch"><h3>{$t('plantel.locales')}</h3><span class="est">{$ico('map-pin')|noescape}{count($locales)}</span></div>
+ <p class="texto" style="margin:0 0 8px;font-size:13px">{$t('plantel.locales.sub')}</p>
+ {foreach $locales as $l}
+ <div class="pers">
+  <span class="fi">{$ico('map-pin')|noescape}</span>
+  <div><b>{$l['nombre']}</b>{if $l['direccion']}<small>{$l['direccion']}</small>{/if}</div>
+  <form method="post" action="{$url('plantel/locales/' . $l['id'] . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('plantel.locales.quitar')}" title="{$t('plantel.locales.quitar')}">{$ico('x')|noescape}</button></form>
+ </div>
+ {else}
+ <p class="texto" style="margin:0 0 8px">{$t('plantel.locales.vacio')}</p>
+ {/foreach}
+ <form method="post" action="{$url('plantel/locales')}" style="margin-top:12px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  {if $otrosLugares}
+  <label class="campo"><span>{$t('plantel.locales.elegir')}</span><select class="in" name="lugar_id"><option value="">—</option>{foreach $otrosLugares as $l}<option value="{$l['id']}">{$l['nombre']}</option>{/foreach}</select></label>
+  <p class="mini-t">{$t('plantel.locales.nuevo')}</p>
+  {/if}
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="nombre" maxlength="160"></label>
+  <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="direccion" maxlength="255"></label>
+  <label class="campo"><span>{$t('evento.lugar_enlace')}</span><input class="in" type="url" name="enlace" placeholder="https://www.google.com/maps/…"></label>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('plantel.locales.agregar')}</button>
+ </form>
+</section>
 {/block}

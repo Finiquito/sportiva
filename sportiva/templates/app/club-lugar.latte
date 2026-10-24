@@ -14,6 +14,7 @@
   <label class="campo"><span>{$t('evento.lugar_enlace')}</span><input class="in" type="url" name="enlace" placeholder="https://www.google.com/maps/…"><small>{$t('evento.lugar_enlace_ayuda')}</small></label>
   <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" inputmode="decimal" name="lat" value="{$d['lat'] ?? ''}" maxlength="24" placeholder="46.6">{if isset($errores['lat'])}<small class="error" role="alert">{$t($errores['lat'])}</small>{/if}</label>
   <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" inputmode="decimal" name="lon" value="{$d['lon'] ?? ''}" maxlength="24" placeholder="-0.3"></label>
+  <label class="tog" style="display:flex;gap:10px;align-items:center;margin:4px 0 10px"><input type="checkbox" name="local" value="1" {if !empty($d['local'])}checked{/if}><span>{$t('evento.lugar_local')}</span></label>
   <label class="tog" style="display:flex;gap:10px;align-items:center;margin:4px 0 14px"><input type="checkbox" name="predeterminado" value="1" {if !empty($d['predeterminado'])}checked{/if}><span>{$t('club.lugar.predeterminado')}</span></label>
   <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
  </section>

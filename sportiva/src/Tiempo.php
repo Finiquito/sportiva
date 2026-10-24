@@ -26,6 +26,25 @@ final class Tiempo
         return (self::$ahora ?? new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
     }
 
+    /** «hace 2 h» para fechas de publicación (los registros se guardan con sello()). */
+    public static function hace(string $sello, I18n $i): string
+    {
+        $seg = max(0, strtotime(self::sello() . ' UTC') - strtotime($sello . ' UTC'));
+        if ($seg < 90) {
+            return $i->t('tiempo.ahora');
+        }
+        if ($seg < 3600) {
+            return $i->t('tiempo.min', ['n' => intdiv($seg, 60)]);
+        }
+        if ($seg < 86400) {
+            return $i->t('tiempo.h', ['n' => intdiv($seg, 3600)]);
+        }
+        if ($seg < 7 * 86400) {
+            return $i->t('tiempo.d', ['n' => intdiv($seg, 86400)]);
+        }
+        return self::diaCorto($sello, $i);
+    }
+
     /** «Sáb 24 oct» según el idioma (los nombres salen del archivo de idioma). */
     public static function diaCorto(string $fecha, I18n $i): string
     {
