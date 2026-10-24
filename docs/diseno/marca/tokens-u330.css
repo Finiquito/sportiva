@@ -1,5 +1,5 @@
 /* u330 · tokens de color (paleta de marca). Se aplican a la app reemplazando los de Sportiva.
-   Regla: naranja, lila, dorado y éxito son RELLENOS (con texto tinta o verde); para texto o íconos sobre claro se usan sus versiones -txt. */
+   Regla: naranja, lila, dorado y éxito son RELLENOS de chips (con texto tinta); para texto o íconos sobre claro se usan sus versiones -txt. */
 :root{
   /* marca */
   --verde:#0F4F4E;      /* base: cabecera, botones, horas, color de club por defecto */
@@ -8,7 +8,7 @@
   --naranja:#FC5603;    /* ahora: en vivo, cambios, avisos urgentes */
   --lila:#BD8DFF;       /* entrenamientos e información secundaria */
   --dorado:#BD984A;     /* logros: medalla, copa, podio, eventos especiales */
-  --exito:#00AB05;      /* confirmado, activo, listo */
+  --exito:#00AB05;      /* confirmado, activo, listo (ícono; nunca como fondo de aviso) */
   --papel:#FFFFFF;
   /* apoyo */
   --tinta:#10201F;      /* texto */
@@ -17,11 +17,13 @@
   --gris:#D9D6CC;
   /* versiones para TEXTO e íconos sobre hueso o blanco (contraste ≥ 4.5) */
   --naranja-txt:#B93C00; --lila-txt:#6A3FC4; --dorado-txt:#7A5A1A; --exito-txt:#006B03;
-  /* fondos suaves de chips y avisos */
+  --error:#B9341A;      /* rojo: solo errores y acciones que borran */
+  /* mensajes del sistema: SIEMPRE el verde claro de siempre; solo cambia el ícono (verde, rojo, amarillo o dorado) */
+  --aviso:color-mix(in oklab,var(--verde) 10%,#fff);
+  /* fondos suaves de chips */
   --naranja-t:color-mix(in oklab,var(--naranja) 16%,#fff);
   --lila-t:color-mix(in oklab,var(--lila) 28%,#fff);
   --dorado-t:color-mix(in oklab,var(--dorado) 24%,#fff);
-  --exito-t:color-mix(in oklab,var(--exito) 14%,#fff);
   --amarillo-t:color-mix(in oklab,var(--amarillo) 40%,#fff);
   /* color del club (cada club puede cambiarlo; debe dar ≥ 4.5:1 con texto blanco) */
   --club:var(--verde); --club-t:color-mix(in oklab,var(--club) 10%,var(--papel));
