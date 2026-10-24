@@ -70,6 +70,18 @@ final class Correo
         return $this->enviar($para, $asunto, $html, $texto);
     }
 
+    /** Aviso de consulta nueva o respuesta (sin el texto: el contenido es privado y se lee dentro de la app). */
+    public function consulta(string $para, string $nombre, string $asunto, string $quien, string $ruta, I18n $i): bool
+    {
+        $nombre = htmlspecialchars($nombre, ENT_QUOTES);
+        $v = ['quien' => htmlspecialchars($quien, ENT_QUOTES), 'asunto' => htmlspecialchars($asunto, ENT_QUOTES)];
+        $url = $this->base() . $ruta;
+        $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px"><p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
+            . '<p>' . $i->t('correo.consulta.cuerpo', $v) . '</p><p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.consulta.boton') . '</a></p></div>';
+        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.consulta.cuerpo', $v) . "\n\n" . $url;
+        return $this->enviar($para, $i->t('correo.consulta.asunto', $v), $html, $texto);
+    }
+
     private function base(): string
     {
         $host = (string) ($_SERVER['HTTP_HOST'] ?? '');

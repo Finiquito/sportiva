@@ -1,0 +1,20 @@
+{layout '_layout.latte'}
+{block titulo}{$c['asunto']} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url($lado === 'staff' ? 'consultas' : 'actividad')}">{$ico('arrow-right')|noescape}{$t($lado === 'staff' ? 'nav.consultas' : 'nav.actividad')}</a>
+<h1 style="font-size:30px;margin-bottom:6px">{$c['asunto']}</h1>
+<p class="sub" style="margin:0 2px 14px">{$c['jugador']} · {$c['equipo']}{if $c['evento']} · {$c['evento']}{/if}</p>
+<p class="sis" style="margin:0 0 12px">{$ico('lock')|noescape}{$t($lado === 'staff' ? 'consulta.privada.staff' : 'consulta.privada.familia')}</p>
+<section class="card">
+ <div class="burbujas">
+  {foreach $mensajes as $m}
+  <div class="burb"><span class="avatar{if $m['lado'] === 'staff'} lim{/if}">{mb_strtoupper(mb_substr($m['autor'], 0, 1))}</span><div class="tx"><b>{$m['autor']} · {$dc($m['created_at'])} {$h($m['created_at'])}</b><span style="white-space:pre-line">{$m['texto']}</span></div></div>
+  {/foreach}
+ </div>
+ <form method="post" action="{$url('consulta/' . $c['id'])}" style="margin-top:16px" novalidate id="abajo">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('consulta.responder')}</span><textarea class="in" name="texto" rows="3" maxlength="2000">{$texto}</textarea>{if isset($errores['texto'])}<small class="error" role="alert">{$t($errores['texto'])}</small>{/if}</label>
+  <button class="bt s" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('feed.enviar')}</button>
+ </form>
+</section>
+{/block}

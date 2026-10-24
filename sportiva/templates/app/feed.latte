@@ -1,0 +1,36 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.feed')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
+<h1>{$t('nav.feed')}</h1>
+{if $puedePublicar}<a class="bt s" href="{$url('feed/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('feed.publicar')}</a>{/if}
+{if $tieneEquipos || $vista === 'club'}
+<div class="grupo-pills">
+ {if $tieneEquipos}<a class="pill{if $vista === 'equipo'} on{/if}" href="{$url('feed')}?v=equipo" style="display:inline-flex;align-items:center;text-decoration:none" {if $vista === 'equipo'}aria-current="true"{/if}>{$t('feed.equipo')}</a>{/if}
+ <a class="pill{if $vista === 'club'} on{/if}" href="{$url('feed')}?v=club" style="display:inline-flex;align-items:center;text-decoration:none" {if $vista === 'club'}aria-current="true"{/if}>{$t('feed.club')}</a>
+</div>
+{/if}
+{foreach $items as $it}
+ {if $it['k'] === 'post'}
+ {var $p = $it['p']}
+ <article class="card post">
+  {if $p['fijado']}<div class="tags"><span class="tag">{$ico('push-pin')|noescape}{$t('feed.fijado')}</span></div>{/if}
+  <div class="post-h">
+   <span class="avatar">{mb_strtoupper(mb_substr($p['autor'], 0, 1))}</span>
+   <div><b>{$p['autor']}</b><small class="sub" style="margin-top:2px">{$p['equipo'] ?: $t('feed.todo_club')} · {$dc($p['created_at'])}</small></div>
+  </div>
+  {if $p['titulo']}<h2 style="font-size:20px;margin:0 0 8px">{$p['titulo']}</h2>{/if}
+  <p class="tx" style="white-space:pre-line">{$p['texto']}</p>
+  <div class="post-f"><a class="bt" href="{$url('feed/' . $p['id'])}">{$ico('chat-circle-dots')|noescape}{if $p['comentarios'] > 0}{$n('feed.comentarios', (int) $p['comentarios'])}{else}{$t('feed.comentar')}{/if}</a></div>
+ </article>
+ {else}
+ {var $c = $it['p']}
+ <article class="card"><div class="hilo">
+  <span class="fi lim">{$ico('calendar-blank')|noescape}</span>
+  <div><span class="ey">{$t('feed.convocatoria')}</span><b>{$c['titulo']}</b><p>{$dc($c['inicio'])} · {$h($c['inicio'])} · {$c['equipo']}</p><a class="bt" href="{$url('evento/' . $c['id'])}">{$t('abrir')}</a></div>
+ </div></article>
+ {/if}
+{else}
+<section class="card vacio"><span class="fi">{$ico('newspaper')|noescape}</span><b>{$t('feed.vacio.titulo')}</b><p>{$t($puedePublicar ? 'feed.vacio.coach' : 'feed.vacio.familia')}</p></section>
+{/foreach}
+{/block}

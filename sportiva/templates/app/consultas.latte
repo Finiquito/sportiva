@@ -1,0 +1,21 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.consultas')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
+<h1>{$t('nav.consultas')}</h1>
+<div class="grupo-pills">
+ <a class="pill{if $vista === 'pendientes'} on{/if}" href="{$url('consultas')}" style="display:inline-flex;align-items:center;text-decoration:none">{$t('consulta.pendientes')} · {$pendientes}</a>
+ <a class="pill{if $vista === 'todas'} on{/if}" href="{$url('consultas')}?v=todas" style="display:inline-flex;align-items:center;text-decoration:none">{$t('consulta.todas')}</a>
+</div>
+<section class="card">
+ {foreach $lista as $c}
+ <a class="pers" href="{$url('consulta/' . $c['id'])}" style="text-decoration:none;color:inherit">
+  <span class="fi">{$ico('chat-circle-dots')|noescape}</span>
+  <div><b>{$t('consulta.familia_de', ['nombre' => $c['familia']])}</b><small>{$c['jugador']} · {$c['equipo']}<br>{$c['asunto']}</small></div>
+  {if $c['nueva_staff']}<span class="tag lim">{$t('consulta.nueva')}</span>{elseif $c['ultimo_de'] === 'staff'}<span class="est">{$ico('check')|noescape}{$t('consulta.respondida')}</span>{/if}
+ </a>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('check')|noescape}</span><b>{$t('consulta.sin_pendientes')}</b></div>
+ {/foreach}
+</section>
+{/block}

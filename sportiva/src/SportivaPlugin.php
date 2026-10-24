@@ -43,6 +43,8 @@ class SportivaPlugin implements PluginInterface
         $familia = new FamiliaController($ctx);
         $foto = new FotoController($ctx);
         $turno = new TurnoController($ctx);
+        $feed = new FeedController($ctx);
+        $consulta = new ConsultaController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -91,6 +93,20 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/plantel/jugador/@id/foto/quitar',     $p(fn(string $id) => $foto->quitar($id, 'coach')));
         \Flight::route('POST /app/familia/hijo/@id/foto',               $p(fn(string $id) => $foto->subir($id, 'familia')));
         \Flight::route('POST /app/familia/hijo/@id/foto/quitar',        $p(fn(string $id) => $foto->quitar($id, 'familia')));
+        \Flight::route('GET /app/feed',                                 $p([$feed, 'inicio']));
+        \Flight::route('GET /app/feed/nuevo',                           $p([$feed, 'nuevo']));
+        \Flight::route('POST /app/feed',                                $p([$feed, 'crear']));
+        \Flight::route('GET /app/feed/@id',                             $p(fn(string $id) => $feed->ver($id)));
+        \Flight::route('POST /app/feed/@id/comentario',                 $p(fn(string $id) => $feed->comentar($id)));
+        \Flight::route('POST /app/feed/@id/fijar',                      $p(fn(string $id) => $feed->fijar($id)));
+        \Flight::route('POST /app/feed/@id/borrar',                     $p(fn(string $id) => $feed->borrar($id)));
+        \Flight::route('POST /app/feed/@id/comentario/@cid/borrar',     $p(fn(string $id, string $cid) => $feed->borrarComentario($id, $cid)));
+        \Flight::route('GET /app/actividad',                            $p([$consulta, 'actividad']));
+        \Flight::route('GET /app/consultas',                            $p([$consulta, 'lista']));
+        \Flight::route('GET /app/consulta/nueva',                       $p([$consulta, 'nueva']));
+        \Flight::route('POST /app/consulta',                            $p([$consulta, 'crear']));
+        \Flight::route('GET /app/consulta/@id',                         $p(fn(string $id) => $consulta->ver($id)));
+        \Flight::route('POST /app/consulta/@id',                        $p(fn(string $id) => $consulta->responder($id)));
         \Flight::route('GET /app/@seccion',          $p(fn(string $s) => $auth->pronto($s)));
     }
 
@@ -101,7 +117,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.4.0';
+        return '0.5.0';
     }
 
     public function provides(): array

@@ -56,6 +56,7 @@
     </div>
    </form>
    {/foreach}
+   {if $mios}<a class="bt w" href="{$url('consulta/nueva')}?evento={$e['id']}&amp;jugador={$mios[0]['id']}" style="margin-top:12px">{$ico('chat-circle-dots')|noescape}{$t('consulta.preguntar')}</a>{/if}
   {elseif $rol === 'jugador'}
    {foreach $mios as $j}
    <p class="sis" style="margin-top:14px">{$ico('lock')|noescape}{$t('asist.solo_lectura')}{if $j['respuesta']} · {$t('asist.' . $j['respuesta'] . '_largo')}{/if}</p>

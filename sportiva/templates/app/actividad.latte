@@ -1,0 +1,34 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.actividad')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
+<h1>{$t('nav.actividad')}</h1>
+<div class="dia">{$t('consulta.titulo')}</div>
+{foreach $consultas as $c}
+<a class="card hilo" href="{$url('consulta/' . $c['id'])}" style="text-decoration:none;color:inherit">
+ <span class="fi">{$ico('chat-circle-dots')|noescape}</span>
+ <div><span class="ey">{$t('consulta.privada')}</span><b>{$c['asunto']}</b><p>{$c['jugador']} · {$c['ultimo']}</p>
+  <div class="chips">{if $c['ultimo_de'] === 'staff'}<span class="est">{$ico('check')|noescape}{$t('consulta.respondida')}</span>{else}<span class="est">{$ico('clock')|noescape}{$t('consulta.esperando')}</span>{/if}{if $c['nueva_familia']}<span class="tag lim">{$t('consulta.nueva')}</span>{/if}</div>
+ </div>
+</a>
+{else}
+<section class="card vacio"><span class="fi">{$ico('chat-circle-dots')|noescape}</span><b>{$t('consulta.vacio.titulo')}</b><p>{$t('consulta.vacio.texto')}</p></section>
+{/foreach}
+<a class="bt s w" href="{$url('consulta/nueva')}" style="margin-bottom:6px">{$ico('plus')|noescape}{$t('consulta.nueva_btn')}</a>
+
+<div class="dia">{$t('actividad.asistencias')}</div>
+<section class="card">
+ {foreach $asistencias as $a}
+ <a class="pers" href="{$url('evento/' . $a['id'])}" style="text-decoration:none;color:inherit">
+  <span class="fi">{$ico($a['tipo'] === 'partido' ? 'trophy' : 'calendar-blank')|noescape}</span>
+  <div><b>{$a['titulo']}</b><small>{$dc($a['inicio'])} · {$h($a['inicio'])} · {$a['jugador']}</small></div>
+  {if $a['respuesta'] === 'voy'}<span class="est">{$ico('check')|noescape}{$t('asist.voy')}</span>
+  {elseif $a['respuesta'] === 'duda'}<span class="est">{$ico('question')|noescape}{$t('asist.duda')}</span>
+  {elseif $a['respuesta'] === 'no'}<span class="est">{$ico('x')|noescape}{$t('asist.no')}</span>
+  {else}<span class="est">{$ico('clock')|noescape}{$t('asist.sin')}</span>{/if}
+ </a>
+ {else}
+ <p class="texto" style="margin:0">{$t('actividad.sin_asistencias')}</p>
+ {/foreach}
+</section>
+{/block}

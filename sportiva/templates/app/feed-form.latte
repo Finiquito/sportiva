@@ -1,0 +1,22 @@
+{layout '_layout.latte'}
+{block titulo}{$t('feed.publicar')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('feed')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:14px">{$t('feed.publicar')}</h1>
+<form method="post" action="{$url('feed')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('feed.para')}</span>
+   <select class="in" name="destino">
+    {foreach $destinos as $q}<option value="{$q['id']}" {if ($d['destino'] ?? '') === $q['id']}selected{/if}>{$q['nombre']}</option>{/foreach}
+    {if $puedeClub}<option value="club" {if ($d['destino'] ?? '') === 'club'}selected{/if}>{$t('feed.todo_club')}</option>{/if}
+   </select>
+   {if isset($errores['destino'])}<small class="error" role="alert">{$t($errores['destino'])}</small>{/if}
+  </label>
+  <label class="campo"><span>{$t('feed.titulo')}</span><input class="in" type="text" name="titulo" value="{$d['titulo'] ?? ''}" maxlength="160">{if isset($errores['titulo'])}<small class="error" role="alert">{$t($errores['titulo'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('feed.texto')}</span><textarea class="in" name="texto" rows="6" maxlength="2000">{$d['texto'] ?? ''}</textarea>{if isset($errores['texto'])}<small class="error" role="alert">{$t($errores['texto'])}</small>{/if}</label>
+  <label class="tog"><span><b>{$t('feed.fijar')}</b><small>{$t('feed.fijar.ayuda')}</small></span><input type="checkbox" name="fijado" value="1" {if !empty($d['fijado'])}checked{/if}></label>
+ </section>
+ <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('feed.publicar')}</button>
+</form>
+{/block}

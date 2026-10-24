@@ -1,0 +1,200 @@
+<?php
+declare(strict_types=1);
+
+namespace TypeDock\Plugin\Sportiva;
+
+/** Feed: la hoja de ruta del equipo. Publican entrenadores, encargados y directiva; las familias comentan. */
+final class FeedController extends AppBase
+{
+    private function svc(): FeedService
+    {
+        return new FeedService($this->pdo);
+    }
+
+    /** @return array<int, string>|null */
+    private function equipos(): ?array
+    {
+        return $this->svc()->equiposDe((string) $this->rol, $this->persona['id'], $this->club['id'], $this->gestionables());
+    }
+
+    private function puedePublicar(): bool
+    {
+        return self::esCoach($this->rol) || $this->rol === 'directiva';
+    }
+
+    /** Destinos posibles al publicar: equipos y, para encargado y directiva, todo el club. @return array<int, array<string, mixed>> */
+    private function destinos(): array
+    {
+        return $this->rol === 'entrenador' ? $this->gestionables() : (new ClubService($this->pdo))->equipos($this->club['id']);
+    }
+
+    private function puedeClub(): bool
+    {
+        return $this->rol === 'encargado' || $this->rol === 'directiva';
+    }
+
+    private function puedeModerar(array $post): bool
+    {
+        return $post['autor_id'] === $this->persona['id'] || $this->puedeClub() || ($this->rol === 'entrenador' && $post['equipo_id'] !== null && in_array($post['equipo_id'], array_column($this->gestionables(), 'id'), true));
+    }
+
+    private function entrar(): bool
+    {
+        if (($r = $this->exigir()) !== null) {
+            $this->ir($r);
+            return false;
+        }
+        return true;
+    }
+
+    public function inicio(): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        $svc = $this->svc();
+        $eq = $this->equipos();
+        $vista = (string) ($_GET['v'] ?? '');
+        if (!in_array($vista, ['equipo', 'club'], true)) {
+            $vista = $eq === [] ? 'club' : ($this->rol === 'directiva' ? 'club' : 'equipo');
+        }
+        $posts = $svc->posts($this->club['id'], $eq, $vista);
+        $items = array_map(fn($p) => ['k' => 'post', 'f' => (int) $p['fijado'], 't' => $p['created_at'], 'p' => $p], $posts);
+        if ($vista === 'equipo') {
+            $desde = Tiempo::ahora((string) $this->club['zona'])->modify('-14 days')->format('Y-m-d H:i:s');
+            $hoy = Tiempo::ahora((string) $this->club['zona'])->format('Y-m-d') . ' 00:00:00';
+            foreach ($svc->convocatorias($this->club['id'], $eq, $desde) as $c) {
+                $c['inicio'] >= $hoy && $items[] = ['k' => 'evento', 'f' => 0, 't' => $c['created_at'], 'p' => $c];
+            }
+        }
+        usort($items, fn($a, $b) => [$b['f'], $b['t']] <=> [$a['f'], $a['t']]);
+        echo $this->vista()->pagina('feed.latte', [
+            'activa' => 'feed', 'items' => $items, 'vista' => $vista, 'puedePublicar' => $this->puedePublicar(), 'tieneEquipos' => $eq !== [],
+        ]);
+    }
+
+    private function formulario(array $d, array $err): void
+    {
+        echo $this->vista()->pagina('feed-form.latte', ['activa' => 'feed', 'd' => $d, 'errores' => $err, 'destinos' => $this->destinos(), 'puedeClub' => $this->puedeClub()]);
+    }
+
+    public function nuevo(): void
+    {
+        if ($this->entrar()) {
+            if (!$this->puedePublicar()) {
+                $this->ir('/app/feed');
+                return;
+            }
+            $dest = $this->destinos();
+            $this->formulario(['destino' => $this->puedeClub() && $this->rol === 'directiva' ? 'club' : ($dest[0]['id'] ?? 'club')], []);
+        }
+    }
+
+    public function crear(): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        if (!$this->puedePublicar() || !$this->csrfOk()) {
+            $this->ir('/app/feed');
+            return;
+        }
+        $svc = $this->svc();
+        [$d, $err] = $svc->normalizar($_POST);
+        $equipo = null;
+        if ($d['destino'] === 'club') {
+            if (!$this->puedeClub()) {
+                $err['destino'] = 'feed.error.destino';
+            }
+        } elseif (in_array($d['destino'], array_column($this->destinos(), 'id'), true)) {
+            $equipo = $d['destino'];
+        } else {
+            $err['destino'] = 'feed.error.destino';
+        }
+        if ($err) {
+            $this->formulario($_POST, $err);
+            return;
+        }
+        $id = $svc->crear($this->club['id'], $equipo, $this->persona['id'], $d);
+        $this->ctx->redirect('/app/feed?v=' . ($equipo === null ? 'club' : 'equipo'), $this->i18n->t('feed.publicado'));
+    }
+
+    /** Post visible para esta persona o null. */
+    private function postVisible(string $id): ?array
+    {
+        $p = $this->svc()->post($id);
+        return $p !== null && $this->svc()->visible($p, $this->club['id'], $this->equipos()) ? $p : null;
+    }
+
+    public function ver(string $id): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        $p = $this->postVisible($id);
+        if ($p === null) {
+            \Flight::notFound();
+            return;
+        }
+        echo $this->vista()->pagina('feed-post.latte', [
+            'activa' => 'feed', 'p' => $p, 'comentarios' => $this->svc()->comentarios($id), 'puedeComentar' => $this->rol !== 'jugador',
+            'moderar' => $this->puedeModerar($p), 'errores' => [], 'texto' => '',
+        ]);
+    }
+
+    public function comentar(string $id): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        $p = $this->postVisible($id);
+        if ($p === null || $this->rol === 'jugador' || !$this->csrfOk()) {
+            $this->ir('/app/feed');
+            return;
+        }
+        if (!$this->svc()->comentar($id, $this->persona['id'], (string) ($_POST['texto'] ?? ''))) {
+            echo $this->vista()->pagina('feed-post.latte', [
+                'activa' => 'feed', 'p' => $p, 'comentarios' => $this->svc()->comentarios($id), 'puedeComentar' => true,
+                'moderar' => $this->puedeModerar($p), 'errores' => ['texto' => 'feed.error.comentario'], 'texto' => (string) ($_POST['texto'] ?? ''),
+            ]);
+            return;
+        }
+        $this->ir('/app/feed/' . $id . '#comentarios');
+    }
+
+    public function fijar(string $id): void
+    {
+        if ($this->entrar()) {
+            $p = $this->postVisible($id);
+            if ($p !== null && $this->puedeModerar($p) && $this->csrfOk()) {
+                $this->svc()->fijar($id, !(int) $p['fijado']);
+            }
+            $this->ir('/app/feed/' . $id);
+        }
+    }
+
+    public function borrar(string $id): void
+    {
+        if ($this->entrar()) {
+            $p = $this->postVisible($id);
+            if ($p !== null && $this->puedeModerar($p) && $this->csrfOk()) {
+                $this->svc()->borrar($id);
+                $this->ctx->redirect('/app/feed', $this->i18n->t('feed.borrado'));
+                return;
+            }
+            $this->ir('/app/feed');
+        }
+    }
+
+    public function borrarComentario(string $id, string $cid): void
+    {
+        if ($this->entrar()) {
+            $p = $this->postVisible($id);
+            $c = $this->svc()->comentario($cid);
+            if ($p !== null && $c !== null && $c['post_id'] === $id && ($c['persona_id'] === $this->persona['id'] || $this->puedeModerar($p)) && $this->csrfOk()) {
+                $this->svc()->borrarComentario($cid);
+            }
+            $this->ir('/app/feed/' . $id . '#comentarios');
+        }
+    }
+}
