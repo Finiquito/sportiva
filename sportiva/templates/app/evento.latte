@@ -123,6 +123,14 @@
   <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/yo')}"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit" style="margin-top:12px">{$ico('plus')|noescape}{$t('turno.yo_tambien')}</button></form>
   {/if}
   {if $puede && $elegibles}
+  <div class="asignar-fila">
+  <form method="post" action="{$url('evento/' . $e['id'] . '/turnos/asignar')}" class="asignar">
+   <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="volver" value="evento">
+   <label class="sr" for="pp-{$e['id']}">{$t('turno.por_partido')}</label>
+   <select class="in" id="pp-{$e['id']}" name="por_partido" style="width:auto;min-height:44px">{foreach [1, 2, 3, 4] as $k}<option value="{$k}" {if $k === 2}selected{/if}>{$k}</option>{/foreach}</select>
+   <button class="bt s" type="submit">{$ico('car')|noescape}{$t('turno.asignar')}</button>
+  </form>
+  </div>
   <form method="post" action="{$url('evento/' . $e['id'] . '/turnos')}" style="margin-top:14px">
    <input type="hidden" name="csrf" value="{$csrf}">
    <label class="campo"><span>{$t('turno.agregar')}</span>

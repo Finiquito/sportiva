@@ -331,5 +331,9 @@
  "correo.consulta.asunto": "Consulta: {asunto}",
  "correo.consulta.cuerpo": "{quien} escribió en la consulta «{asunto}». Léela y responde dentro de u330.",
  "correo.consulta.boton": "Abrir la consulta",
- "consulta.preguntar": "Preguntar al entrenador"
+ "consulta.preguntar": "Preguntar al entrenador",
+ "turno.asignar": "Asignar",
+ "turno.asignados.uno": "Se asignó {n} familia al turno.",
+ "turno.asignados.otros": "Se asignaron {n} familias al turno.",
+ "turno.nada_que_asignar": "Ese turno ya tiene las familias pedidas o no quedan familias por asignar."
 }

@@ -41,6 +41,23 @@ final class TurnoController extends AppBase
         $this->volver($id);
     }
 
+    /** «Asignar»: completa el turno de un partido ya creado con las familias que menos han llevado. */
+    public function asignar(string $id): void
+    {
+        if (($r = $this->exigirCoach()) !== null) {
+            $this->ir($r);
+            return;
+        }
+        $e = $this->evento($id);
+        $volver = ($_POST['volver'] ?? '') === 'panel' ? '/app/turnos' : '/app/evento/' . $id . '#turnos';
+        if ($e !== null && $this->puedeGestionar($e) && $this->csrfOk()) {
+            $n = $this->svc()->asignar($id, (int) ($_POST['por_partido'] ?? 2), $this->persona['id']);
+            $this->ctx->redirect($volver, $n > 0 ? $this->i18n->n('turno.asignados', $n) : $this->i18n->t('turno.nada_que_asignar'));
+            return;
+        }
+        $this->ir($volver);
+    }
+
     public function resolver(string $id, string $familia, string $accion): void
     {
         if (($r = $this->exigirCoach()) !== null) {

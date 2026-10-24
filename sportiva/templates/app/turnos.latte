@@ -33,7 +33,15 @@
  {else}
  <p class="texto" style="margin:0">{$t('turno.vacio')}</p>
  {/foreach}
- <a class="bt w" href="{$url('evento/' . $p['id'])}#turnos" style="margin-top:12px">{$t('abrir')}</a>
+ <div class="asignar-fila">
+  <form method="post" action="{$url('evento/' . $p['id'] . '/turnos/asignar')}" class="asignar">
+   <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="volver" value="panel">
+   <label class="sr" for="pp-{$p['id']}">{$t('turno.por_partido')}</label>
+   <select class="in" id="pp-{$p['id']}" name="por_partido" style="width:auto;min-height:44px">{foreach [1, 2, 3, 4] as $k}<option value="{$k}" {if $k === 2}selected{/if}>{$k}</option>{/foreach}</select>
+   <button class="bt s" type="submit">{$ico('car')|noescape}{$t('turno.asignar')}</button>
+  </form>
+  <a class="bt" href="{$url('evento/' . $p['id'])}#turnos">{$t('abrir')}</a>
+ </div>
 </section>
 {else}
 <section class="card vacio"><span class="fi">{$ico('car')|noescape}</span><b>{$t('turno.sin_partidos')}</b></section>

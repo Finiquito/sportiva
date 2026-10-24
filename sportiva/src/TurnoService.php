@@ -96,6 +96,35 @@ final class TurnoService extends Repo
     }
 
     /**
+     * Completa el turno de un evento hasta `$hasta` familias, tomando entre las que tienen hijos convocados
+     * las que menos han llevado en ese equipo. @return int familias agregadas
+     */
+    public function asignar(string $evento, int $hasta, ?string $por): int
+    {
+        $hasta = max(1, min(6, $hasta));
+        $faltan = $hasta - count($this->delEvento($evento));
+        if ($faltan <= 0) {
+            return 0;
+        }
+        $e = $this->fila('SELECT equipo_id FROM sportiva_eventos WHERE id = ?', [$evento]);
+        $cand = [];
+        foreach ($this->elegibles($evento) as $f) {
+            $cand[] = $f + ['n' => (int) ($this->fila(
+                "SELECT COUNT(*) AS n FROM sportiva_turnos t JOIN sportiva_eventos ev ON ev.id = t.evento_id
+                 WHERE t.familia_id = ? AND ev.equipo_id = ? AND t.estado = 'confirmado'",
+                [$f['id'], $e['equipo_id'] ?? '']
+            )['n'] ?? 0)];
+        }
+        usort($cand, fn($a, $b) => [$a['n'], $a['nombre']] <=> [$b['n'], $b['nombre']]);
+        $n = 0;
+        foreach (array_slice($cand, 0, $faltan) as $f) {
+            $this->agregar($evento, $f['id'], $por);
+            $n++;
+        }
+        return $n;
+    }
+
+    /**
      * Reparte turnos entre los próximos partidos de un equipo que aún no tienen ninguno: a cada partido van las
      * `$porPartido` familias con menos turnos hasta ese momento. @return int partidos completados
      */

@@ -432,6 +432,22 @@ check($fam1 !== [] && $fam2 !== [] && array_intersect($fam1, $fam2) === [], 'en 
 check($tu->repartir($cid, $u12, 2, date('Y-m-d H:i:s'), null) === 0, 'repartir otra vez no pisa lo ya asignado');
 [$h] = llamar(fn() => (new S\TurnoController($ctx))->panel());
 check(str_contains($h, 'Repartir turnos') && str_contains($h, 'Partido ' . $f1), 'el panel de turnos del entrenador');
+// «Asignar» en un partido ya creado: completa con las familias que menos han llevado.
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$ddp] = $S['ev']->normalizar(['tipo' => 'partido', 'titulo' => 'Partido asignar', 'fecha' => date('Y-m-d', strtotime('+40 days')), 'hora_partido' => '16:00', 'cancha_antes' => '45']);
+$evA = $S['ev']->crear($cid, $u12, $ddp, null);
+[$h, $r] = llamar(fn() => (new S\TurnoController($ctx))->asignar($evA), conCsrf(['por_partido' => '2', 'volver' => 'panel']));
+check($r === '/app/turnos' && count($tu->delEvento($evA)) === 2, 'Asignar completa el partido con dos familias');
+llamar(fn() => (new S\TurnoController($ctx))->asignar($evA), conCsrf(['por_partido' => '2']));
+check(count($tu->delEvento($evA)) === 2, 'Asignar otra vez no repite familias');
+llamar(fn() => (new S\TurnoController($ctx))->asignar($evA), conCsrf(['por_partido' => '3']));
+check(count($tu->delEvento($evA)) === 3, 'se puede subir a tres familias');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => (new S\TurnoController($ctx))->asignar($evA), conCsrf(['por_partido' => '4']));
+check(count($tu->delEvento($evA)) === 3, 'una familia no puede asignar');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => (new S\TurnoController($ctx))->panel());
+check(substr_count($h, 'turnos/asignar') >= 2 && str_contains($h, 'Asignar'), 'el panel de turnos tiene el botón Asignar en cada partido');
 
 seccion('Feed');
 $fs = new S\FeedService($pdo);

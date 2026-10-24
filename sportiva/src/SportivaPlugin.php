@@ -61,6 +61,7 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/turnos',                               $p([$turno, 'panel']));
         \Flight::route('POST /app/turnos/repartir',                     $p([$turno, 'repartir']));
         \Flight::route('POST /app/evento/@id/turnos',                   $p(fn(string $id) => $turno->agregar($id)));
+        \Flight::route('POST /app/evento/@id/turnos/asignar',           $p(fn(string $id) => $turno->asignar($id)));
         \Flight::route('POST /app/evento/@id/turnos/yo',                $p(fn(string $id) => $turno->pedir($id)));
         \Flight::route('POST /app/evento/@id/turnos/@fid/@accion',      $p(fn(string $id, string $fid, string $a) => $turno->resolver($id, $fid, $a)));
         \Flight::route('GET /app/evento/nuevo',      $p([$agenda, 'nuevo']));

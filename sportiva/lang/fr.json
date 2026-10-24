@@ -331,5 +331,9 @@
  "correo.consulta.asunto": "Question : {asunto}",
  "correo.consulta.cuerpo": "{quien} a écrit dans la question « {asunto} ». Lis-la et réponds dans u330.",
  "correo.consulta.boton": "Ouvrir la question",
- "consulta.preguntar": "Poser une question à l’entraîneur"
+ "consulta.preguntar": "Poser une question à l’entraîneur",
+ "turno.asignar": "Assigner",
+ "turno.asignados.uno": "{n} famille assignée au tour.",
+ "turno.asignados.otros": "{n} familles assignées au tour.",
+ "turno.nada_que_asignar": "Ce tour a déjà les familles demandées ou il ne reste plus de famille à assigner."
 }
