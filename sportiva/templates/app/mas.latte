@@ -8,6 +8,12 @@
   <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('user-circle')|noescape}</span><span><b>{$persona['nombre']}</b><small>{$persona['email']} · {$t('rol.' . $rol)}</small></span></span></li>
  </ul>
 </section>
+<section class="card" id="instalar" hidden>
+ <div class="ch"><h3>{$t('instalar.titulo')}</h3></div>
+ <p class="texto" style="margin:0 0 8px">{$t('instalar.texto')}</p>
+ <p class="sis" style="margin:0 0 6px">{$ico('device-mobile')|noescape}<span id="instalar-pasos" data-ios="{$t('instalar.ios')}" data-otro="{$t('instalar.otro')}"></span></p>
+</section>
+<script n:syntax="off">(function(){var c=document.getElementById('instalar');if(!c)return;var sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;if(sa)return;var ios=/iPhone|iPad|iPod/.test(navigator.userAgent);var p=document.getElementById('instalar-pasos');p.textContent=ios?p.dataset.ios:p.dataset.otro;c.hidden=false;})();</script>
 <section class="card">
  <ul class="lkl">
   <li><a class="lk" href="{$url('avisos/ajustes')}" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('bell')|noescape}</span><span><b>{$t('avisos.titulo')}</b><small>{$t('avisos.mas.sub')}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>

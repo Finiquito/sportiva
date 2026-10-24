@@ -39,7 +39,7 @@ final class Vista
             'persona' => $this->persona,
             'tabs'    => $this->rol ? self::TABS[$this->rol] ?? [] : [],
             'url'     => fn(string $p = '') => '/app' . ($p === '' ? '' : '/' . ltrim($p, '/')),
-            'cssv'    => '3',
+            'cssv'    => (string) @filemtime(dirname(__DIR__) . '/assets/sportiva.css'),
             'activa'  => null,
             'flash'   => $this->ctx->getFlash('success'),
             'sinLeer' => fn() => $this->persona && $this->club ? (new AvisoService($this->ctx->db()->pdo()))->sinLeer($this->persona['id'], $this->club['id']) : 0,

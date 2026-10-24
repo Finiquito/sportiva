@@ -424,5 +424,9 @@
  "aviso.medios.video": "Video nuevo: {titulo}",
  "aviso.medios.reporte_foto": "{quien} pide quitar una foto",
  "aviso.medios.reporte_video": "{quien} pide quitar un video",
- "aviso.video.caduca": "Tu video de «{titulo}» se borra pronto"
+ "aviso.video.caduca": "Tu video de «{titulo}» se borra pronto",
+ "instalar.titulo": "Instala u330 en tu teléfono",
+ "instalar.texto": "Así se abre a pantalla completa, sin la barra del navegador, y puedes recibir notificaciones.",
+ "instalar.ios": "iPhone: toca Compartir (el cuadro con la flecha) y luego «Agregar a inicio». Ábrela desde el ícono nuevo.",
+ "instalar.otro": "Android: abre el menú del navegador (⋮) y toca «Instalar app» o «Agregar a la pantalla de inicio»."
 }
