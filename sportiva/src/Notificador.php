@@ -120,7 +120,7 @@ final class Notificador
         $correo = new Correo($this->ctx, $this->pdo);
         foreach ($cola as $a) {
             if ((int) $a['push_pendiente'] === 1 && $pem !== '') {
-                $msg = json_encode(['t' => $a['titulo'], 'b' => $a['cuerpo'], 'u' => $a['url']], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $msg = json_encode(['t' => $a['titulo'], 'b' => $a['cuerpo'], 'u' => $a['url'], 'n' => $this->avisos->sinLeer($a['persona_id'], $a['club_id'])], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 foreach ($this->avisos->suscripciones($a['persona_id']) as $s) {
                     $code = WebPush::enviar($s, (string) $msg, $pem, $pub, $this->contacto());
                     if ($code === 404 || $code === 410) {

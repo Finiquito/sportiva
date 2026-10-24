@@ -125,10 +125,11 @@ self.addEventListener('activate', function (e) { e.waitUntil(self.clients.claim(
 self.addEventListener('push', function (e) {
   var d = {};
   try { d = e.data ? e.data.json() : {}; } catch (x) {}
-  e.waitUntil(self.registration.showNotification(d.t || 'u330', {
+  var b = (typeof d.n === 'number' && self.navigator && self.navigator.setAppBadge) ? self.navigator.setAppBadge(d.n).catch(function () {}) : null;
+  e.waitUntil(Promise.all([b, self.registration.showNotification(d.t || 'u330', {
     body: d.b || '', data: { u: d.u || '/app/avisos' },
     icon: '/app/recurso/icon-192', badge: '/app/recurso/icon-192'
-  }));
+  })]));
 });
 self.addEventListener('notificationclick', function (e) {
   e.notification.close();
