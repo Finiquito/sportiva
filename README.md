@@ -27,6 +27,7 @@ Cuentas de ejemplo: `daniela@` (apoderada), `camila@` (encargada), `pedro@` (ent
 Con MariaDB: `SPORTIVA_DB_DSN="mysql:host=127.0.0.1;dbname=sportiva_test;charset=utf8mb4" SPORTIVA_DB_USER=root SPORTIVA_DB_PASS=root php tests/run.php`.
 
 ## Cambios
+- **0.3.1** Avatares de los niños (5 a elegir al editar; uno por defecto). Esquinas de la hoja arregladas en móvil y escritorio, barra inferior más baja, y color de la barra de estado en iPhone.
 - **0.3.0** Plantel y familias: el entrenador carga jugadores con su apoderado titular (recibe un correo para entrar); el titular ve «Mi familia» (Más) y pide agregar adultos e hijos, que el entrenador aprueba o rechaza (aviso por correo y contador en Plantel). Solo el titular o el entrenador editan la familia. Ficha del jugador, edición, quitar adultos. Arregla la flecha de «Volver».
 - **0.2.4** Logos sobre verde actualizados; favicon que cambia solo según la pestaña (claro/oscuro) y ícono de iOS; arregla las esquinas redondeadas del panel en escritorio.
 - **0.2.3** Arregla el error 500 de `/app` en el TypeDock real: usaba `renderView()`, que no existe en el núcleo (solo `view()`).

@@ -236,5 +236,6 @@
  "correo.solicitud.asunto": "{familia} pide un cambio en {club}",
  "correo.solicitud.cuerpo": "{familia} agregó una solicitud en {club}. Revísala para aprobarla o rechazarla.",
  "correo.solicitud.boton": "Ver solicitudes",
- "plantel.equipo": "Equipo"
+ "plantel.equipo": "Equipo",
+ "plantel.avatar": "Avatar"
 }

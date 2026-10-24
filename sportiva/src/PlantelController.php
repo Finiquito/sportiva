@@ -150,6 +150,7 @@ final class PlantelController extends AppBase
             return;
         }
         $svc->actualizarJugador($id, $d, true);
+        $svc->fijarAvatar($id, (int) ($_POST['avatar'] ?? 0));
         $this->ctx->redirect('/app/plantel/jugador/' . $id, $this->i18n->t('evento.guardado'));
     }
 

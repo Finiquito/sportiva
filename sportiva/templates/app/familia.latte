@@ -37,7 +37,7 @@
  <div class="ch"><h3>{$t('familia.hijos')}</h3></div>
  {foreach $hijos as $hijo}
  <div class="pers">
-  <span class="avatar">{mb_strtoupper(mb_substr($hijo['nombre'], 0, 1))}</span>
+  {$avatar($hijo)|noescape}
   <span><b>{$hijo['nombre']}</b><small>{$hijo['equipo']}{if $hijo['nacimiento']} · {$t('plantel.edad', ['n' => $edad($hijo['nacimiento'])])}{/if}</small></span>
   {if $titular}<a class="bt pill-sm" href="{$url('familia/hijo/' . $hijo['id'])}" aria-label="{$t('plantel.editar')}">{$ico('pencil-simple')|noescape}</a>{/if}
  </div>

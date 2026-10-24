@@ -17,7 +17,7 @@
  <div class="ch"><h3>{$equipo['nombre']} · {$n('plantel.jugadores', count($jugadores))}</h3></div>
  {foreach $jugadores as $j}
  <a class="pers" href="{$url('plantel/jugador/' . $j['id'])}" style="text-decoration:none;color:inherit">
-  <span class="avatar">{mb_strtoupper(mb_substr($j['nombre'], 0, 1))}</span>
+  {$avatar($j)|noescape}
   <span><b>{$j['nombre']}</b><small>{if $j['nacimiento']}{$t('plantel.edad', ['n' => $edad($j['nacimiento'])])} · {/if}{$n('plantel.adultos', (int) $j['adultos'])}</small></span>
   <span class="chev">{$ico('arrow-right')|noescape}</span>
  </a>

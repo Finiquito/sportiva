@@ -89,7 +89,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.3.0';
+        return '0.3.1';
     }
 
     public function provides(): array

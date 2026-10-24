@@ -2,8 +2,8 @@
 {block titulo}{$j['nombre']} · u330{/block}
 {block contenido}
 <a class="volver" href="{$url('plantel')}?equipo={$j['equipo_id']}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
-<h1 style="font-size:34px;margin-bottom:4px">{$j['nombre']}</h1>
-<p class="hola" style="margin-bottom:14px">{$j['equipo']}{if $j['nacimiento']} · {$t('plantel.edad', ['n' => $edad($j['nacimiento'])])}{/if}</p>
+<div class="ficha-cab">{$avatar($j, 'grande')|noescape}<div><h1 style="font-size:34px;margin:0 0 4px">{$j['nombre']}</h1>
+<p class="hola" style="margin:0">{$j['equipo']}{if $j['nacimiento']} · {$t('plantel.edad', ['n' => $edad($j['nacimiento'])])}{/if}</p></div></div>
 
 {if $editar}
 <form method="post" action="{$url('plantel/jugador/' . $j['id'])}" novalidate>
@@ -16,6 +16,14 @@
    <select class="in" name="equipo_id">{foreach $equipos as $q}<option value="{$q['id']}" {if ($d['equipo_id'] ?? $j['equipo_id']) === $q['id']}selected{/if}>{$q['nombre']}</option>{/foreach}</select>
    {if isset($errores['equipo_id'])}<small class="error" role="alert">{$t($errores['equipo_id'])}</small>{/if}
   </label>
+  <fieldset class="campo"><span>{$t('plantel.avatar')}</span>
+   <div class="av-pick">
+    {var $actual = (int) ($d['avatar'] ?? $j['avatar'] ?? 0)}
+    {foreach [1, 2, 3, 4, 5] as $k}
+    <label><input type="radio" name="avatar" value="{$k}" {if $actual === $k || ($actual === 0 && ((crc32($j['id']) % 5) + 1) === $k)}checked{/if}><img src="/plugins/sportiva/assets/avatares/av{$k}.jpg" alt="{$k}"></label>
+    {/foreach}
+   </div>
+  </fieldset>
   <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
  </section>
 </form>

@@ -39,6 +39,16 @@ final class Iconos
         return self::propio(['voley' => 'cancha-voley', 'basquet' => 'cancha-basquet'][(string) $deporte] ?? 'cancha-futbol');
     }
 
+    /** Avatar de un jugador: el elegido (1 a 5) o uno fijo según su id. */
+    public static function avatar(array $j, string $clase = ''): string
+    {
+        $n = (int) ($j['avatar'] ?? 0);
+        if ($n < 1 || $n > 5) {
+            $n = (crc32((string) ($j['id'] ?? $j['nombre'] ?? '')) % 5) + 1;
+        }
+        return '<span class="avatar foto-av ' . $clase . '"><img src="/plugins/sportiva/assets/avatares/av' . $n . '.jpg" alt=""></span>';
+    }
+
     /** Logo u330 en SVG en línea: `favicon-verde` (círculo del header), `principal-verde` (sobre fondo verde). */
     public static function logo(string $variante = 'favicon-verde'): string
     {

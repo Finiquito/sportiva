@@ -27,12 +27,13 @@
 }
 *{box-sizing:border-box}
 html,body{overflow-x:clip}
-body{margin:0;background:var(--fondo);color:var(--tinta);font:14px/1.45 var(--font-body);-webkit-font-smoothing:antialiased}
+html{background:linear-gradient(var(--club) 0,var(--club) 50vh,var(--hueso) 50vh)}
+body{margin:0;background:transparent;color:var(--tinta);font:14px/1.45 var(--font-body);-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;cursor:pointer}
 .pi{width:1em;height:1em;display:block;flex:none;fill:currentColor}
 .pw{width:auto}
 .app{width:min(390px,100%);min-height:100vh;margin:0 auto;background:var(--hueso);display:flex;flex-direction:column}
-.band{position:relative;isolation:isolate;background:var(--club);color:var(--papel);padding:12px 16px 28px}
+.band{position:relative;isolation:isolate;background:var(--club);color:var(--papel);padding:12px 16px 40px}
 .band::after{content:"";position:absolute;inset:0;background:url("grano.png");background-size:200px;mix-blend-mode:overlay;opacity:.14;pointer-events:none;z-index:-1}
 .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .chip-club{display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 16px 0 6px;border-radius:999px;background:var(--papel);color:var(--tinta);font-weight:600;font-size:14px;white-space:nowrap}
@@ -41,7 +42,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .bell{position:relative;width:44px;height:44px;border-radius:50%;background:var(--papel);color:var(--tinta);display:grid;place-items:center;border:0;font-size:22px}
 .bell b{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--naranja);color:#fff;font:700 10.5px/18px var(--font-mono);text-align:center}
 .hola{margin:0 2px 6px;font:500 12px/1 var(--font-mono);letter-spacing:.04em;color:var(--tinta-2)}
-.sheet{position:relative;z-index:1;flex:1;background:var(--hueso);border-radius:28px 28px 0 0;margin-top:-16px;padding:20px 16px 18px}
+.sheet{position:relative;z-index:1;flex:1;background:var(--hueso);border-radius:28px 28px 0 0;margin-top:-28px;padding:20px 16px 18px}
 h1{font-family:var(--font-display);font-weight:800;font-size:38px;line-height:1;letter-spacing:-.025em;margin:0 2px 16px}
 .pills{display:flex;gap:6px;margin:0}
 .pill{height:40px;padding:0 15px;border-radius:999px;border:1.5px solid var(--linea-2);background:transparent;font-weight:700;font-size:14px;white-space:nowrap}
@@ -78,7 +79,7 @@ h2{font-family:var(--font-display);font-weight:800;font-size:25px;line-height:1.
 .traslado b{display:block;text-wrap:balance;font:800 17px/1.2 var(--font-display);letter-spacing:-.01em}
 .traslado .s{display:block;font:400 12.5px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:2px}
 .btn{height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--tinta);background:transparent;font-weight:700;font-size:14px;white-space:nowrap}
-.bar{position:sticky;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:var(--papel);border-top:1px solid var(--linea)}
+.bar{position:sticky;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:6px 10px max(6px,calc(env(safe-area-inset-bottom) - 14px));background:var(--papel);border-top:1px solid var(--linea)}
 .bar button{height:58px;border-radius:16px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:12px;color:var(--tinta-2);white-space:nowrap}
 .bar .pi{font-size:25px}
 .bar button.on{background:var(--club-t);color:var(--club)}
@@ -376,7 +377,7 @@ a{color:inherit}
 .lockup svg{width:128px;height:auto;display:block}
 .lockup--m{display:none}
 .bar{order:2;grid-template-columns:repeat(var(--n,4),minmax(0,1fr))}
-.bar a{height:58px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:12px;color:var(--tinta-2);text-decoration:none;white-space:nowrap}
+.bar a{height:52px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:700;font-size:12px;color:var(--tinta-2);text-decoration:none;white-space:nowrap}
 .bar a .pi{font-size:25px}
 .bar a.on{background:var(--club-t);color:var(--club)}
 .sheet{order:1;flex:1}
@@ -412,13 +413,14 @@ a.bt.s{color:var(--papel)}
 a.volver{text-decoration:none;color:inherit}
 form{margin:0}
 @media (min-width:1000px){
- body{background:var(--verde)}
+ html{background:var(--verde)}
+ body{background:transparent}
  .app{max-width:1140px;background:transparent}
- .band{padding:14px 28px 30px}
+ .band{padding:14px 28px 46px}
  .band .top{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
  .lockup--m{display:inline-flex;font-size:28px}
  .lockup--m svg{width:136px}
- .cuerpo{position:relative;z-index:1;flex-direction:row;align-items:flex-start;background:var(--hueso);border-radius:32px 32px 0 0;margin:-16px 20px 0;min-height:70vh}
+ .cuerpo{position:relative;z-index:1;flex-direction:row;align-items:flex-start;background:var(--hueso);border-radius:32px 32px 0 0;margin:-32px 20px 0;min-height:70vh}
  .bar{order:0;position:static;display:flex;flex-direction:column;gap:8px;width:104px;flex:none;padding:28px 0;border:0;background:transparent;align-items:center}
  .bar a{width:84px;height:62px;gap:4px;font-size:11.5px}
  .bar a.on{background:var(--club);color:var(--papel)}
@@ -441,3 +443,11 @@ form{margin:0}
  .app.auth .band .top{justify-content:center}
  .app.auth .sheet{border-radius:32px;margin:0;padding:28px;flex:none}
 }
+.av-pick{display:flex;gap:10px;flex-wrap:wrap}
+.av-pick label{position:relative;cursor:pointer}
+.av-pick input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.av-pick img{width:52px;height:52px;border-radius:50%;display:block;object-fit:cover;box-shadow:0 0 0 2px transparent}
+.av-pick input:checked + img{box-shadow:0 0 0 3px var(--papel),0 0 0 5px var(--club)}
+.av-pick input:focus-visible + img{outline:2px solid var(--club);outline-offset:4px}
+.ficha-cab{display:flex;align-items:center;gap:14px;margin:0 0 14px}
+.avatar.grande{width:64px;height:64px}

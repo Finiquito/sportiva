@@ -29,6 +29,7 @@ final class Vista
             'ico'     => fn(string $n, string $p = 'bold') => Iconos::svg($n, $p),
             'propio'  => fn(string $n) => Iconos::propio($n),
             'logo'    => fn(string $v = 'favicon-verde') => Iconos::logo($v),
+            'avatar'  => fn(array $j, string $c = '') => Iconos::avatar($j, $c),
             'balon'   => fn() => Iconos::balon($this->club['deporte'] ?? null),
             'cancha'  => fn() => Iconos::cancha($this->club['deporte'] ?? null),
             'csrf'    => Sesion::csrf(),

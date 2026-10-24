@@ -329,7 +329,11 @@ check(str_contains($h, 'Nico') && !str_contains($h, 'Agregar a otro adulto'), 'u
 check($r === '/app/familia' && $pl->pendientesDe($elena['id'], $cid) === 0, 'un adulto no titular no puede pedir agregar adultos');
 // El titular edita a su hijo y quita un adulto; el entrenador de otro club no ve nada.
 $comoRol('rosa@ejemplo.fr', 'apoderado');
-llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'nacimiento' => '2014-01-11']));
+llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'nacimiento' => '2014-01-11', 'avatar' => '3']));
+check((int) $pl->jugador($nico)['avatar'] === 3, 'el titular elige el avatar de su hijo');
+llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'avatar' => '9']));
+check((int) $pl->jugador($nico)['avatar'] === 3, 'un avatar fuera de rango se ignora');
+check(str_contains(S\Iconos::avatar(['id' => 'x', 'avatar' => 2]), 'av2.jpg'), 'avatar según el elegido');
 check($pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$nico}'")->fetchColumn() === 'Nicolás', 'el titular edita a su hijo');
 llamar(fn() => (new S\FamiliaController($ctx))->quitarAdulto($elena['id']), conCsrf());
 check(count($pl->adultos($nico)) === 1 && !in_array('apoderado', array_column($S['pers']->membresias($elena['id']), 'rol'), true), 'el titular quita a un adulto y se va su acceso de apoderado');
