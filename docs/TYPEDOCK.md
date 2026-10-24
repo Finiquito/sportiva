@@ -124,7 +124,7 @@ interface PluginInterface {
 | `registerAdminRoute($método, $ruta, $handler)` | Ruta bajo `/admin/<slug>/<ruta>`. Parámetros con `@id`. |
 | `addAdminMenuItem($etiqueta, $ruta)` | Ítem en el menú del admin. |
 | `adminUrl($ruta)` | URL absoluta del admin del plugin. |
-| `latte()`, `view($tpl, $datos)`, `renderView(...)` | Plantillas Latte. El admin recibe `$plugin_ui_layout`, `$admin_url()`, `$csrf_token` y `$admin_menu`. |
+| `latte()`, `view($tpl, $datos)` | Plantillas Latte; `view()` **imprime** (no existe `renderView()` en el núcleo real: para obtener el HTML usa `ob_start()`). El admin recibe `$plugin_ui_layout`, `$admin_url()`, `$csrf_token` y `$admin_menu`. |
 | `redirect($url, $mensaje, $tipo)` / `getFlash($tipo)` | Redirección con aviso «flash». |
 | `mail()->send($para, $asunto, $html)` | Correo del núcleo. El Portal además tiene su SMTP propio. |
 

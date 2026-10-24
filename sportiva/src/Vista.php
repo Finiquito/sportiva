@@ -47,6 +47,13 @@ final class Vista
             'h'       => fn(?string $f) => Tiempo::hora($f),
             'edad'    => fn(?string $n) => Tiempo::edad($n),
         ];
-        return $this->ctx->renderView('templates/app/' . $plantilla, $d + $comunes);
+        // El PluginContext real solo tiene view() (imprime); no existe renderView().
+        ob_start();
+        try {
+            $this->ctx->view('templates/app/' . $plantilla, $d + $comunes);
+            return (string) ob_get_contents();
+        } finally {
+            ob_end_clean();
+        }
     }
 }

@@ -1,7 +1,7 @@
 {
     "slug": "sportiva",
     "name": "Sportiva",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Coordinación de clubes, equipos, entrenadores, jugadores y apoderados: agenda, asistencia, turnos de traslado, feed y consultas.",
     "main_class": "TypeDock\\Plugin\\Sportiva\\SportivaPlugin",
     "min_core_version": "0.1",

@@ -80,11 +80,11 @@ class PluginContext
     /** @param array<string, mixed> $data */
     public function view(string $template, array $data = []): void
     {
-        echo $this->renderView($template, $data);
+        echo $this->renderizar($template, $data);
     }
 
     /** @param array<string, mixed> $data */
-    public function renderView(string $template, array $data = []): string
+    private function renderizar(string $template, array $data = []): string
     {
         typedock_session_start();
         $defaults = [
