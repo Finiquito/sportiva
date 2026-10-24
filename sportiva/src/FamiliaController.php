@@ -217,7 +217,6 @@ final class FamiliaController extends AppBase
             return;
         }
         $svc->actualizarJugador($id, $d, false);
-        $svc->fijarAvatar($id, (int) ($_POST['avatar'] ?? 0));
         $this->ctx->redirect('/app/familia', $this->i18n->t('evento.guardado'));
     }
 }

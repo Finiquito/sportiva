@@ -3,7 +3,7 @@
 {block contenido}
 <a class="volver" href="{$url('plantel')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1 style="font-size:34px;margin-bottom:14px">{$t('plantel.nuevo')}</h1>
-<form method="post" action="{$url('plantel')}" novalidate>
+<form method="post" action="{$url('plantel')}" novalidate class="form-plantel">
  <input type="hidden" name="csrf" value="{$csrf}">
  <section class="card">
   <div class="ch"><h3>{$t('plantel.jugador')}</h3></div>
@@ -14,13 +14,30 @@
    {if isset($errores['equipo_id'])}<small class="error" role="alert">{$t($errores['equipo_id'])}</small>{/if}
   </label>
  </section>
+ {var $sel = $d['familia'] ?? 'nueva'}
  <section class="card">
-  <div class="ch"><h3>{$t('plantel.titular')}</h3></div>
-  <p class="texto" style="margin:0 0 12px">{$t('plantel.titular.ayuda')}</p>
-  <label class="campo"><span>{$t('plantel.nombre')}</span><input class="in" type="text" name="nombre_adulto" value="{$d['nombre_adulto'] ?? ''}" maxlength="160">{if isset($errores['adulto_nombre'])}<small class="error" role="alert">{$t($errores['adulto_nombre'])}</small>{/if}</label>
-  <label class="campo"><span>{$t('plantel.email')}</span><input class="in" type="email" name="email" value="{$d['email'] ?? ''}" maxlength="190" autocapitalize="off">{if isset($errores['adulto_email'])}<small class="error" role="alert">{$t($errores['adulto_email'])}</small>{/if}</label>
-  <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono" value="{$d['telefono'] ?? ''}" maxlength="40"></label>
+  <div class="ch"><h3>{$t('plantel.familia')}</h3></div>
+  {if $familias}
+  <p class="texto" style="margin:0 0 12px">{$t('plantel.familia.ayuda')}</p>
+  {if count($familias) > 6}<label class="campo"><span class="sr">{$t('plantel.buscar')}</span><input class="in" type="search" id="fam-buscar" placeholder="{$t('plantel.buscar')}" autocomplete="off"></label>{/if}
+  <div class="fam-lista" role="radiogroup" aria-label="{$t('plantel.familia')}">
+   <label class="fam-op"><input type="radio" name="familia" value="nueva" id="fam-nueva" {if $sel === 'nueva'}checked{/if}><span class="fam-fila"><span class="avatar">{$ico('plus')|noescape}</span><span><b>{$t('plantel.familia.nueva')}</b><small>{$t('plantel.familia.nueva.sub')}</small></span></span></label>
+   {foreach $familias as $f}
+   <label class="fam-op" data-q="{mb_strtolower($f['nombre'] . ' ' . implode(' ', $f['hijos']))}"><input type="radio" name="familia" value="{$f['id']}" {if $sel === $f['id']}checked{/if}><span class="fam-fila"><span class="avatar">{mb_strtoupper(mb_substr($f['nombre'], 0, 1))}</span><span><b>{$f['nombre']}</b><small>{implode(', ', $f['hijos'])}</small></span></span></label>
+   {/foreach}
+  </div>
+  {if isset($errores['familia'])}<small class="error" role="alert">{$t($errores['familia'])}</small>{/if}
+  {/if}
+  <div class="fam-campos">
+   {if !$familias}<p class="texto" style="margin:0 0 12px">{$t('plantel.titular.ayuda')}</p>{else}<p class="texto" style="margin:14px 0 12px">{$t('plantel.titular.ayuda')}</p>{/if}
+   <label class="campo"><span>{$t('plantel.nombre')}</span><input class="in" type="text" name="nombre_adulto" value="{$d['nombre_adulto'] ?? ''}" maxlength="160">{if isset($errores['adulto_nombre'])}<small class="error" role="alert">{$t($errores['adulto_nombre'])}</small>{/if}</label>
+   <label class="campo"><span>{$t('plantel.email')}</span><input class="in" type="email" name="email" value="{$d['email'] ?? ''}" maxlength="190" autocapitalize="off">{if isset($errores['adulto_email'])}<small class="error" role="alert">{$t($errores['adulto_email'])}</small>{/if}</label>
+   <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono" value="{$d['telefono'] ?? ''}" maxlength="40"></label>
+  </div>
  </section>
  <button class="bt s w" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
 </form>
+<script n:syntax="off">
+(function(){var q=document.getElementById('fam-buscar');if(!q)return;q.addEventListener('input',function(){var t=q.value.toLowerCase().trim();document.querySelectorAll('.fam-op[data-q]').forEach(function(l){l.hidden=t!==''&&l.getAttribute('data-q').indexOf(t)<0;});});})();
+</script>
 {/block}

@@ -31,14 +31,14 @@ final class PlantelService extends Repo
     /** @return array<string, mixed>|null */
     public function jugador(string $id): ?array
     {
-        return $this->fila('SELECT j.*, e.nombre AS equipo, (SELECT a.avatar FROM sportiva_avatares a WHERE a.jugador_id = j.id) AS avatar FROM sportiva_jugadores j JOIN sportiva_equipos e ON e.id = j.equipo_id WHERE j.id = ?', [$id]);
+        return $this->fila('SELECT j.*, e.nombre AS equipo, (SELECT f.version FROM sportiva_fotos f WHERE f.jugador_id = j.id) AS foto FROM sportiva_jugadores j JOIN sportiva_equipos e ON e.id = j.equipo_id WHERE j.id = ?', [$id]);
     }
 
     /** Jugadores de un equipo con la cantidad de adultos. @return array<int, array<string, mixed>> */
     public function delEquipo(string $equipo): array
     {
         return $this->filas(
-            'SELECT j.*, (SELECT COUNT(*) FROM sportiva_apoderados_jugadores aj WHERE aj.jugador_id = j.id) AS adultos, (SELECT a.avatar FROM sportiva_avatares a WHERE a.jugador_id = j.id) AS avatar
+            'SELECT j.*, (SELECT COUNT(*) FROM sportiva_apoderados_jugadores aj WHERE aj.jugador_id = j.id) AS adultos, (SELECT f.version FROM sportiva_fotos f WHERE f.jugador_id = j.id) AS foto
              FROM sportiva_jugadores j WHERE j.equipo_id = ? ORDER BY j.nombre',
             [$equipo]
         );
@@ -69,7 +69,7 @@ final class PlantelService extends Repo
     public function hijosDeTitular(string $titular, string $club): array
     {
         return $this->filas(
-            'SELECT j.*, e.nombre AS equipo, (SELECT a.avatar FROM sportiva_avatares a WHERE a.jugador_id = j.id) AS avatar FROM sportiva_apoderados_jugadores aj
+            'SELECT j.*, e.nombre AS equipo, (SELECT f.version FROM sportiva_fotos f WHERE f.jugador_id = j.id) AS foto FROM sportiva_apoderados_jugadores aj
              JOIN sportiva_jugadores j ON j.id = aj.jugador_id JOIN sportiva_equipos e ON e.id = j.equipo_id
              WHERE aj.persona_id = ? AND aj.titular = 1 AND j.club_id = ? ORDER BY j.nombre',
             [$titular, $club]
@@ -134,6 +134,39 @@ final class PlantelService extends Repo
         return [$d, $e];
     }
 
+    /** Familias del club (una por apoderado titular) con los nombres de sus hijos. @return array<int, array{id: string, nombre: string, email: string, hijos: array<int, string>}> */
+    public function familias(string $club): array
+    {
+        $fam = [];
+        foreach ($this->filas(
+            'SELECT DISTINCT p.id, p.nombre, p.email FROM sportiva_apoderados_jugadores aj
+             JOIN sportiva_personas p ON p.id = aj.persona_id JOIN sportiva_jugadores j ON j.id = aj.jugador_id
+             WHERE aj.titular = 1 AND j.club_id = ? ORDER BY p.nombre',
+            [$club]
+        ) as $f) {
+            $fam[$f['id']] = $f + ['hijos' => []];
+        }
+        foreach ($this->filas(
+            'SELECT aj.persona_id, j.nombre FROM sportiva_apoderados_jugadores aj JOIN sportiva_jugadores j ON j.id = aj.jugador_id
+             WHERE aj.titular = 1 AND j.club_id = ? ORDER BY j.nombre',
+            [$club]
+        ) as $h) {
+            if (isset($fam[$h['persona_id']])) {
+                $fam[$h['persona_id']]['hijos'][] = $h['nombre'];
+            }
+        }
+        return array_values($fam);
+    }
+
+    /** Agrega un jugador a una familia que ya existe (sin volver a escribir al titular). */
+    public function cargarEnFamilia(string $club, array $hijo, string $titular): ?string
+    {
+        if ($this->hijosDeTitular($titular, $club) === []) {
+            return null;
+        }
+        return $this->agregarHijo($titular, $club, $hijo);
+    }
+
     /**
      * El entrenador carga un jugador con su apoderado titular. Si el titular ya existe (otro hijo), se reutiliza.
      * @param array<string, string> $hijo @param array<string, string> $adulto
@@ -169,16 +202,6 @@ final class PlantelService extends Repo
             $this->personas()->vincularHijo($a['id'], $jid, false);
         }
         return $jid;
-    }
-
-    /** Elige el avatar (1 a 5) de un jugador. */
-    public function fijarAvatar(string $jugador, int $n): void
-    {
-        if ($n < 1 || $n > 5) {
-            return;
-        }
-        $this->ejecutar('DELETE FROM sportiva_avatares WHERE jugador_id = ?', [$jugador]);
-        $this->ejecutar('INSERT INTO sportiva_avatares (jugador_id, avatar) VALUES (?, ?)', [$jugador, $n]);
     }
 
     public function actualizarJugador(string $id, array $d, bool $cambiaEquipo): void

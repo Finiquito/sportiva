@@ -41,6 +41,7 @@ class SportivaPlugin implements PluginInterface
         $agenda = new AgendaController($ctx);
         $plantel = new PlantelController($ctx);
         $familia = new FamiliaController($ctx);
+        $foto = new FotoController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -79,6 +80,11 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/familia/hijo/@id',                    $p(fn(string $id) => $familia->actualizarHijo($id)));
         \Flight::route('POST /app/familia/solicitud/@id/cancelar',      $p(fn(string $id) => $familia->cancelar($id)));
         \Flight::route('POST /app/familia/adulto/@pid/quitar',          $p(fn(string $pid) => $familia->quitarAdulto($pid)));
+        \Flight::route('GET /app/foto/@id',                             $p(fn(string $id) => $foto->ver($id)));
+        \Flight::route('POST /app/plantel/jugador/@id/foto',            $p(fn(string $id) => $foto->subir($id, 'coach')));
+        \Flight::route('POST /app/plantel/jugador/@id/foto/quitar',     $p(fn(string $id) => $foto->quitar($id, 'coach')));
+        \Flight::route('POST /app/familia/hijo/@id/foto',               $p(fn(string $id) => $foto->subir($id, 'familia')));
+        \Flight::route('POST /app/familia/hijo/@id/foto/quitar',        $p(fn(string $id) => $foto->quitar($id, 'familia')));
         \Flight::route('GET /app/@seccion',          $p(fn(string $s) => $auth->pronto($s)));
     }
 

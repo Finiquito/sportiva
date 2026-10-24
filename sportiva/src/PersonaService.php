@@ -59,7 +59,7 @@ final class PersonaService extends Repo
     public function hijos(string $persona, string $club): array
     {
         return $this->filas(
-            'SELECT j.*, e.nombre AS equipo, (SELECT a.avatar FROM sportiva_avatares a WHERE a.jugador_id = j.id) AS avatar FROM sportiva_apoderados_jugadores aj
+            'SELECT j.*, e.nombre AS equipo, (SELECT f.version FROM sportiva_fotos f WHERE f.jugador_id = j.id) AS foto FROM sportiva_apoderados_jugadores aj
              JOIN sportiva_jugadores j ON j.id = aj.jugador_id JOIN sportiva_equipos e ON e.id = j.equipo_id
              WHERE aj.persona_id = ? AND j.club_id = ? ORDER BY j.nombre',
             [$persona, $club]

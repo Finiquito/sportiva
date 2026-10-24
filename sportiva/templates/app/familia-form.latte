@@ -18,19 +18,23 @@
    {if isset($errores['equipo_id'])}<small class="error" role="alert">{$t($errores['equipo_id'])}</small>{/if}
   </label>
   {/if}
-  {if $tipo === 'editar'}
-  <fieldset class="campo"><span>{$t('plantel.avatar')}</span>
-   <div class="av-pick">
-    {var $actual = (int) ($d['avatar'] ?? $j['avatar'] ?? 0)}
-    {foreach [1, 2, 3, 4, 5] as $k}
-    <label><input type="radio" name="avatar" value="{$k}" {if $actual === $k || ($actual === 0 && ((crc32($j['id']) % 5) + 1) === $k)}checked{/if}><img src="/plugins/sportiva/assets/avatares/av{$k}.jpg" alt="{$k}"></label>
-    {/foreach}
-   </div>
-  </fieldset>
-  {/if}
   {/if}
  </section>
  {if $tipo !== 'editar'}<p class="sis">{$ico('shield-check')|noescape}{$t('familia.aprobacion')}</p>{/if}
  <button class="bt s w" type="submit">{$ico($tipo === 'editar' ? 'check' : 'paper-plane-tilt')|noescape}{$t($tipo === 'editar' ? 'plantel.guardar' : 'familia.enviar')}</button>
 </form>
+{if $tipo === 'editar'}
+<section class="card">
+ <div class="ch"><h3>{$t('plantel.foto')}</h3></div>
+ <form method="post" action="{$url('familia/hijo/' . $j['id'] . '/foto')}" enctype="multipart/form-data" class="foto-form">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <div class="foto-sub">{$avatar($j)|noescape}<label class="campo" style="margin:0;flex:1"><span class="sr">{$t('plantel.foto')}</span><input type="file" name="foto" accept="image/jpeg,image/png,image/webp" required></label></div>
+  <p class="texto" style="margin:0 0 12px;font-size:13px">{$t('plantel.foto.ayuda')}</p>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t($j['foto'] ? 'plantel.foto.cambiar' : 'plantel.foto.subir')}</button>
+ </form>
+ {if $j['foto']}
+ <form method="post" action="{$url('familia/hijo/' . $j['id'] . '/foto/quitar')}" style="margin-top:8px"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('x')|noescape}{$t('plantel.foto.quitar')}</button></form>
+ {/if}
+</section>
+{/if}
 {/block}

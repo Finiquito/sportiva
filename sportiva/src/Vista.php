@@ -42,6 +42,7 @@ final class Vista
             'cssv'    => '3',
             'activa'  => null,
             'flash'   => $this->ctx->getFlash('success'),
+            'flashError' => $this->ctx->getFlash('error'),
             'dl'      => fn(string $f) => Tiempo::diaLargo($f, $i),
             'dc'      => fn(string $f) => Tiempo::diaCorto($f, $i),
             'ed'      => fn(string $f) => Tiempo::etiquetaDia($f, $i),

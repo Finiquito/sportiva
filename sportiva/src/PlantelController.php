@@ -57,13 +57,13 @@ final class PlantelController extends AppBase
 
     private function formularioNuevo(array $d, array $err): void
     {
-        echo $this->vista()->pagina('plantel-nuevo.latte', ['activa' => 'plantel', 'equipos' => $this->gestionables(), 'd' => $d, 'errores' => $err]);
+        echo $this->vista()->pagina('plantel-nuevo.latte', ['activa' => 'plantel', 'equipos' => $this->gestionables(), 'd' => $d, 'errores' => $err, 'familias' => $this->svc()->familias($this->club['id'])]);
     }
 
     public function nuevo(): void
     {
         if ($this->entrar()) {
-            $this->formularioNuevo(['equipo_id' => (string) ($_GET['equipo'] ?? '')], []);
+            $this->formularioNuevo(['equipo_id' => (string) ($_GET['equipo'] ?? ''), 'familia' => (string) ($_GET['familia'] ?? 'nueva')], []);
         }
     }
 
@@ -77,19 +77,35 @@ final class PlantelController extends AppBase
             return;
         }
         $svc = $this->svc();
-        [$hijo, $e1] = $svc->normalizarHijo($_POST, $this->club['id']);
-        [$adulto, $e2] = $svc->normalizarAdulto(['nombre' => $_POST['nombre_adulto'] ?? '', 'email' => $_POST['email'] ?? '', 'telefono' => $_POST['telefono'] ?? '']);
-        $err = $e1 + array_combine(array_map(fn($k) => 'adulto_' . $k, array_keys($e2)), $e2);
+        $familia = (string) ($_POST['familia'] ?? 'nueva');
+        [$hijo, $err] = $svc->normalizarHijo($_POST, $this->club['id']);
         if (!$err && !in_array($hijo['equipo_id'], $this->ids(), true)) {
             $err['equipo_id'] = 'plantel.error.equipo';
         }
+        if ($familia !== 'nueva') {
+            if ($svc->hijosDeTitular($familia, $this->club['id']) === []) {
+                $err['familia'] = 'plantel.error.familia';
+            }
+            if ($err) {
+                $this->formularioNuevo($_POST, $err);
+                return;
+            }
+            $jid = $svc->cargarEnFamilia($this->club['id'], $hijo, $familia);
+            $this->ctx->redirect('/app/plantel/jugador/' . $jid, $this->i18n->t('plantel.cargado_familia'));
+            return;
+        }
+        [$adulto, $e2] = $svc->normalizarAdulto(['nombre' => $_POST['nombre_adulto'] ?? '', 'email' => $_POST['email'] ?? '', 'telefono' => $_POST['telefono'] ?? '']);
+        $err += array_combine(array_map(fn($k) => 'adulto_' . $k, array_keys($e2)), $e2);
         if ($err) {
             $this->formularioNuevo($_POST, $err);
             return;
         }
+        $existia = $svc->hijosDeTitular((string) ((new PersonaService($this->pdo))->porCorreo($adulto['email'])['id'] ?? ''), $this->club['id']) !== [];
         $r = $svc->cargar($this->club['id'], $hijo, $adulto);
-        (new Correo($this->ctx, $this->pdo))->invitacion($adulto['email'], $adulto['nombre'], (string) $this->club['nombre'], (string) $this->persona['nombre'], $this->i18nDe($adulto['email']));
-        $this->ctx->redirect('/app/plantel/jugador/' . $r['jugador'], $this->i18n->t('plantel.cargado'));
+        if (!$existia) {
+            (new Correo($this->ctx, $this->pdo))->invitacion($adulto['email'], $adulto['nombre'], (string) $this->club['nombre'], (string) $this->persona['nombre'], $this->i18nDe($adulto['email']));
+        }
+        $this->ctx->redirect('/app/plantel/jugador/' . $r['jugador'], $this->i18n->t($existia ? 'plantel.cargado_familia' : 'plantel.cargado'));
     }
 
     private function i18nDe(string $email): I18n
@@ -150,7 +166,6 @@ final class PlantelController extends AppBase
             return;
         }
         $svc->actualizarJugador($id, $d, true);
-        $svc->fijarAvatar($id, (int) ($_POST['avatar'] ?? 0));
         $this->ctx->redirect('/app/plantel/jugador/' . $id, $this->i18n->t('evento.guardado'));
     }
 

@@ -29,9 +29,13 @@
   {/if}
   <main class="sheet">
    {if $flash}<div class="aviso flash" role="status"><span class="ia ok">{$ico('check')|noescape}</span><div><b>{$flash}</b></div></div>{/if}
+   {if $flashError}<div class="aviso flash" role="alert"><span class="ia err">{$ico('warning-circle')|noescape}</span><div><b>{$flashError}</b></div></div>{/if}
    {block contenido}{/block}
   </main>
  </div>
 </div>
+<script n:syntax="off">
+(function(){document.addEventListener('change',function(e){var i=e.target;if(!i||i.type!=='file'||!i.closest('.foto-form')||!i.files||!i.files[0])return;var f=i.files[0];if(f.size<1200000||!window.DataTransfer||!HTMLCanvasElement.prototype.toBlob)return;var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var m=1024,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);if(!b)return;try{var d=new DataTransfer();d.items.add(new File([b],'foto.jpg',{type:'image/jpeg'}));i.files=d.files;}catch(x){}},'image/jpeg',.86);};im.onerror=function(){URL.revokeObjectURL(u);};im.src=u;});})();
+</script>
 </body>
 </html>

@@ -329,14 +329,45 @@ check(str_contains($h, 'Nico') && !str_contains($h, 'Agregar a otro adulto'), 'u
 check($r === '/app/familia' && $pl->pendientesDe($elena['id'], $cid) === 0, 'un adulto no titular no puede pedir agregar adultos');
 // El titular edita a su hijo y quita un adulto; el entrenador de otro club no ve nada.
 $comoRol('rosa@ejemplo.fr', 'apoderado');
-llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'nacimiento' => '2014-01-11', 'avatar' => '3']));
-check((int) $pl->jugador($nico)['avatar'] === 3, 'el titular elige el avatar de su hijo');
-llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'avatar' => '9']));
-check((int) $pl->jugador($nico)['avatar'] === 3, 'un avatar fuera de rango se ignora');
-check(str_contains(S\Iconos::avatar(['id' => 'x', 'avatar' => 2]), 'av2.jpg'), 'avatar según el elegido');
+llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'nacimiento' => '2014-01-11']));
+// Foto del niño: la sube el titular (o el entrenador), se recorta y solo la ve gente del club.
+$png = sys_get_temp_dir() . '/sportiva-foto-' . getmypid() . '.png';
+$gd = imagecreatetruecolor(640, 480); imagefill($gd, 0, 0, imagecolorallocate($gd, 200, 90, 40)); imagepng($gd, $png);
+$_FILES = ['foto' => ['name' => 'a.png', 'type' => 'image/png', 'tmp_name' => $png, 'error' => UPLOAD_ERR_OK, 'size' => filesize($png)]];
+llamar(fn() => (new S\FotoController($ctx))->subir($nico, 'familia'), conCsrf());
+$ruta = S\FotoService::ruta($nico);
+check(is_file($ruta) && getimagesize($ruta)[0] === 320 && getimagesize($ruta)[2] === IMAGETYPE_JPEG, 'la foto se guarda recortada en JPEG de 320 px');
+check($pl->jugador($nico)['foto'] !== null && str_contains(S\Iconos::avatar($pl->jugador($nico)), '/app/foto/' . $nico), 'el avatar usa la foto');
+check(!str_contains(S\Iconos::avatar(['id' => 'x', 'nombre' => 'Zoe', 'foto' => null]), '<img') && str_contains(S\Iconos::avatar(['id' => 'x', 'nombre' => 'Zoe', 'foto' => null]), '>Z<'), 'sin foto usa la inicial');
+file_put_contents($png, 'esto no es una imagen');
+$_FILES['foto']['size'] = filesize($png);
+llamar(fn() => (new S\FotoController($ctx))->subir($nico, 'familia'), conCsrf());
+check(getimagesize($ruta)[0] === 320, 'un archivo que no es imagen no reemplaza la foto');
+$_FILES = [];
+// Otra familia no puede cambiar la foto.
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$_FILES = ['foto' => ['name' => 'a.png', 'tmp_name' => $png, 'error' => UPLOAD_ERR_OK, 'size' => 10]];
+llamar(fn() => (new S\FotoController($ctx))->quitar($nico, 'familia'), conCsrf());
+check(is_file($ruta), 'otra familia no quita la foto de un niño ajeno');
+$_FILES = [];
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+llamar(fn() => (new S\FotoController($ctx))->quitar($nico, 'familia'), conCsrf());
+check(!is_file($ruta) && $pl->jugador($nico)['foto'] === null, 'el titular quita la foto');
+@unlink($png);
 check($pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$nico}'")->fetchColumn() === 'Nicolás', 'el titular edita a su hijo');
 llamar(fn() => (new S\FamiliaController($ctx))->quitarAdulto($elena['id']), conCsrf());
 check(count($pl->adultos($nico)) === 1 && !in_array('apoderado', array_column($S['pers']->membresias($elena['id']), 'rol'), true), 'el titular quita a un adulto y se va su acceso de apoderado');
+// Elegir una familia que ya existe: sin escribir al titular otra vez.
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$antes = (int) $pdo->query('SELECT COUNT(*) FROM sportiva_personas')->fetchColumn();
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => 'Hermano', 'equipo_id' => $u12, 'familia' => $rosa['id']]));
+$hermano = $pdo->query("SELECT id FROM sportiva_jugadores WHERE nombre = 'Hermano'")->fetchColumn();
+check($hermano !== false && $pl->esTitular($rosa['id'], $hermano) && (int) $pdo->query('SELECT COUNT(*) FROM sportiva_personas')->fetchColumn() === $antes, 'un hermano se agrega a la familia existente sin crear personas');
+[$h] = llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => 'Fantasma', 'equipo_id' => $u12, 'familia' => 'no-existe']));
+check(str_contains($h, 'no existe en el club') && $pdo->query("SELECT COUNT(*) FROM sportiva_jugadores WHERE nombre = 'Fantasma'")->fetchColumn() == 0, 'una familia inexistente se rechaza');
+[$h] = llamar(fn() => (new S\PlantelController($ctx))->nuevo(), [], ['familia' => $rosa['id']]);
+check(str_contains($h, 'Rosa Soto') && str_contains($h, 'Familia nueva'), 'el formulario ofrece las familias del club');
+check(in_array('Rosa Soto', array_column($pl->familias($cid), 'nombre'), true), 'la lista de familias incluye a los titulares');
 // El entrenador no puede resolver solicitudes de equipos que no gestiona.
 $sx = $pl->solicitar($cid, 'adulto', $rosa['id'], ['nombre' => 'Zeta', 'email' => 'zeta@ejemplo.fr']);
 $S['pers']->dar($S['pers']->crear('otro.coach@ejemplo.fr', 'Otro Coach'), $cid, 'entrenador');
