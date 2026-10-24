@@ -21,23 +21,6 @@ final class AgendaController extends AppBase
         return Tiempo::ahora($this->zona())->format('Y-m-d') . ' 00:00:00';
     }
 
-    /** Equipos que esta persona puede gestionar: entrenador = los suyos; encargado = todos los del club. @return array<int, array<string, mixed>> */
-    private function gestionables(): array
-    {
-        if ($this->rol === 'encargado') {
-            return (new ClubService($this->pdo))->equipos($this->club['id']);
-        }
-        return (new PersonaService($this->pdo))->equiposDeStaff($this->persona['id'], $this->club['id']);
-    }
-
-    private function exigirCoach(): ?string
-    {
-        if (($r = $this->exigir()) !== null) {
-            return $r;
-        }
-        return self::esCoach($this->rol) ? null : '/app/agenda';
-    }
-
     public function agenda(): void
     {
         if (($r = $this->exigir()) !== null) {

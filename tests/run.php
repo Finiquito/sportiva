@@ -261,6 +261,93 @@ $html = S\Mapa::html('46.480236', '-0.599575', 16, 'Estadio');
 check(substr_count($html, '<img') === 12 && str_contains($html, '/16/') && str_contains($html, 'OpenStreetMap'), 'mapa de 12 teselas con atribución');
 check(str_contains(S\Mapa::enlaces('46.48', '-0.59')['waze'], 'll=46.48,-0.59'), 'enlace de Waze');
 
+seccion('Plantel y familias');
+$cid = $d['club'];
+$comoRol = function (string $email, string $rol) use ($pdo, $cid): void { entrarComo($pdo, $email); S\Sesion::elegir($cid, $rol); };
+$pl = new S\PlantelService($pdo);
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$u10 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U10'")->fetchColumn();
+// El entrenador carga un jugador con su titular.
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->inicio());
+check(str_contains($h, 'Plantel') && str_contains($h, 'Lucas'), 'el entrenador ve el plantel de su equipo');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => 'Nico', 'nacimiento' => '2014-01-10', 'equipo_id' => $u12, 'nombre_adulto' => 'Rosa Soto', 'email' => 'ROSA@ejemplo.fr', 'telefono' => '0600000009']));
+check($r !== null && str_contains($r, '/app/plantel/jugador/'), 'carga jugador + titular');
+$rosa = $S['pers']->porCorreo('rosa@ejemplo.fr');
+$nico = $pdo->query("SELECT id FROM sportiva_jugadores WHERE nombre = 'Nico'")->fetchColumn();
+check($rosa !== null && $pl->esTitular($rosa['id'], $nico), 'el apoderado queda como titular del jugador');
+check(count($S['pers']->membresias($rosa['id'])) === 1 && $S['pers']->membresias($rosa['id'])[0]['rol'] === 'apoderado', 'recibe rol de apoderado en el club');
+[$h] = llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => '', 'equipo_id' => $u12, 'nombre_adulto' => 'X', 'email' => 'no-es-correo']));
+check(str_contains($h, 'Escribe un nombre') && str_contains($h, 'correo válido'), 'valida nombre y correo');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->crear(), ['nombre' => 'Sin csrf', 'equipo_id' => $u12, 'nombre_adulto' => 'Y', 'email' => 'y@ejemplo.fr']);
+check($r === '/app/plantel' && $pdo->query("SELECT COUNT(*) FROM sportiva_jugadores WHERE nombre = 'Sin csrf'")->fetchColumn() == 0, 'sin CSRF no crea');
+// Otro hijo con el mismo correo: se reutiliza la persona.
+llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => 'Bea', 'equipo_id' => $u12, 'nombre_adulto' => 'Rosa Soto', 'email' => 'rosa@ejemplo.fr']));
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_personas WHERE email = 'rosa@ejemplo.fr'")->fetchColumn() === 1 && count($pl->hijosDeTitular($rosa['id'], $cid)) === 2, 'mismo titular, dos hijos, una sola persona');
+// Un entrenador no gestiona equipos de otros.
+$ajeno = $S['club']->crearEquipo($cid, 'U16', '2026-2027');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->crear(), conCsrf(['nombre' => 'Colado', 'equipo_id' => $ajeno, 'nombre_adulto' => 'Z', 'email' => 'z@ejemplo.fr']));
+check(str_contains($h, 'Elige un equipo') && $pdo->query("SELECT COUNT(*) FROM sportiva_jugadores WHERE nombre = 'Colado'")->fetchColumn() == 0, 'no carga en un equipo que no entrena');
+
+// El titular pide agregar un adulto: queda pendiente.
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\FamiliaController($ctx))->inicio());
+check(str_contains($h, 'Mi familia') && str_contains($h, 'Nico') && str_contains($h, 'Bea') && str_contains($h, 'Agregar a otro adulto'), 'el titular ve su familia con los botones de agregar');
+[$h, $r] = llamar(fn() => (new S\FamiliaController($ctx))->guardarAdulto(), conCsrf(['nombre' => 'Abuela Elena', 'email' => 'elena@ejemplo.fr']));
+check($r === '/app/familia' && $S['pers']->porCorreo('elena@ejemplo.fr') === null, 'el adulto no existe hasta que el entrenador lo apruebe');
+check($pl->pendientesDe($rosa['id'], $cid) === 1, 'queda una solicitud pendiente');
+[$h] = llamar(fn() => (new S\FamiliaController($ctx))->guardarAdulto(), conCsrf(['nombre' => 'Otra vez', 'email' => 'elena@ejemplo.fr']));
+check(str_contains($h, 'ya está en la familia'), 'no repite un correo pendiente');
+[$h] = llamar(fn() => (new S\FamiliaController($ctx))->guardarHijo(), conCsrf(['nombre' => 'Leo', 'nacimiento' => '2016-02-02', 'equipo_id' => $u10]));
+check($pl->pendientesDe($rosa['id'], $cid) === 2 && $pdo->query("SELECT COUNT(*) FROM sportiva_jugadores WHERE nombre = 'Leo'")->fetchColumn() == 0, 'el hijo también queda pendiente');
+// Otra familia no puede tocar la de Rosa ni editar sus hijos.
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => (new S\FamiliaController($ctx))->editarHijo($nico));
+check($r === '/app/familia', 'otra familia no edita hijos ajenos');
+[$h, $r] = llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Hackeado']));
+check($pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$nico}'")->fetchColumn() === 'Nico', 'no cambia el nombre de un hijo ajeno');
+// El entrenador aprueba.
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => (new S\PlantelController($ctx))->solicitudes());
+check(str_contains($h, 'Abuela Elena') && str_contains($h, 'Leo'), 'el entrenador ve las solicitudes');
+$sols = $pl->pendientes($cid, [$u12, $u10]);
+$sAdulto = array_values(array_filter($sols, fn($x) => $x['tipo'] === 'adulto'))[0]['id'];
+$sHijo = array_values(array_filter($sols, fn($x) => $x['tipo'] === 'hijo'))[0]['id'];
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->resolver($sAdulto, 'aprobar'), conCsrf());
+$elena = $S['pers']->porCorreo('elena@ejemplo.fr');
+check($elena !== null && count($pl->adultos($nico)) === 2 && count($pl->adultos($pdo->query("SELECT id FROM sportiva_jugadores WHERE nombre = 'Bea'")->fetchColumn())) === 2, 'al aprobar, el adulto queda vinculado a todos los hijos de la familia');
+check(!$pl->esTitular($elena['id'], $nico), 'el adulto agregado no es titular');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->resolver($sHijo, 'aprobar'), conCsrf());
+$leo = $pdo->query("SELECT id FROM sportiva_jugadores WHERE nombre = 'Leo'")->fetchColumn();
+check($leo !== false && $pl->esTitular($rosa['id'], $leo) && count($pl->adultos($leo)) === 2, 'al aprobar el hijo, el titular y los otros adultos lo ven');
+check($pl->pendientesDe($rosa['id'], $cid) === 0, 'ya no hay pendientes');
+// Un adulto no titular no puede agregar ni editar.
+$comoRol('elena@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\FamiliaController($ctx))->inicio());
+check(str_contains($h, 'Nico') && !str_contains($h, 'Agregar a otro adulto'), 'un adulto no titular ve la familia sin botones de agregar');
+[$h, $r] = llamar(fn() => (new S\FamiliaController($ctx))->guardarAdulto(), conCsrf(['nombre' => 'Intruso', 'email' => 'intruso@ejemplo.fr']));
+check($r === '/app/familia' && $pl->pendientesDe($elena['id'], $cid) === 0, 'un adulto no titular no puede pedir agregar adultos');
+// El titular edita a su hijo y quita un adulto; el entrenador de otro club no ve nada.
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+llamar(fn() => (new S\FamiliaController($ctx))->actualizarHijo($nico), conCsrf(['nombre' => 'Nicolás', 'nacimiento' => '2014-01-11']));
+check($pdo->query("SELECT nombre FROM sportiva_jugadores WHERE id = '{$nico}'")->fetchColumn() === 'Nicolás', 'el titular edita a su hijo');
+llamar(fn() => (new S\FamiliaController($ctx))->quitarAdulto($elena['id']), conCsrf());
+check(count($pl->adultos($nico)) === 1 && !in_array('apoderado', array_column($S['pers']->membresias($elena['id']), 'rol'), true), 'el titular quita a un adulto y se va su acceso de apoderado');
+// El entrenador no puede resolver solicitudes de equipos que no gestiona.
+$sx = $pl->solicitar($cid, 'adulto', $rosa['id'], ['nombre' => 'Zeta', 'email' => 'zeta@ejemplo.fr']);
+$S['pers']->dar($S['pers']->crear('otro.coach@ejemplo.fr', 'Otro Coach'), $cid, 'entrenador');
+$oc = $S['pers']->porCorreo('otro.coach@ejemplo.fr');
+$S['pers']->asignarStaff($ajeno, $oc['id']);
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+llamar(fn() => (new S\PlantelController($ctx))->resolver($sx, 'aprobar'), conCsrf());
+check($pl->solicitud($sx)['estado'] === 'pendiente', 'un entrenador de otro equipo no aprueba solicitudes ajenas');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->ficha($nico));
+check(str_contains($h, '404'), 'la ficha de un jugador ajeno da 404');
+// Un apoderado no entra al plantel.
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => (new S\PlantelController($ctx))->inicio());
+check($r === '/app/agenda', 'un apoderado no ve el plantel del entrenador');
+
 echo "\n\n";
 if ($GLOBALS['fallas']) {
     echo count($GLOBALS['fallas']) . " fallas:\n - " . implode("\n - ", $GLOBALS['fallas']) . "\n";

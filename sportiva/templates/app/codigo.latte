@@ -1,7 +1,7 @@
 {layout '_auth.latte'}
 {block titulo}{$t('codigo.titulo')} · u330{/block}
 {block contenido}
-<a class="volver" href="/app/entrar">{$ico('arrow-left')|noescape}{$t('volver')}</a>
+<a class="volver" href="/app/entrar">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1>{$t('codigo.titulo')}</h1>
 <p class="sub" style="margin:0 2px 16px">{$t('codigo.sub', ['correo' => $oculto])}</p>
 <form method="post" action="/app/codigo" novalidate>

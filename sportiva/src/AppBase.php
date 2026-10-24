@@ -79,6 +79,23 @@ abstract class AppBase
         $this->ctx->redirect($url);
     }
 
+    /** Equipos que esta persona puede gestionar: entrenador = los suyos; encargado = todos los del club. @return array<int, array<string, mixed>> */
+    protected function gestionables(): array
+    {
+        if ($this->rol === 'encargado') {
+            return (new ClubService($this->pdo))->equipos($this->club['id']);
+        }
+        return (new PersonaService($this->pdo))->equiposDeStaff($this->persona['id'], $this->club['id']);
+    }
+
+    protected function exigirCoach(): ?string
+    {
+        if (($r = $this->exigir()) !== null) {
+            return $r;
+        }
+        return self::esCoach($this->rol) ? null : '/app/agenda';
+    }
+
     public static function esCoach(?string $rol): bool
     {
         return $rol === 'entrenador' || $rol === 'encargado';

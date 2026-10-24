@@ -41,4 +41,38 @@ final class Correo
         $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.codigo.cuerpo') . "\n\n" . $codigo . "\n\n" . $i->t('correo.codigo.pie');
         return $this->enviar($para, $asunto, $html, $texto);
     }
+
+    /** Aviso a quien fue agregado a una familia del club (puede entrar con su correo, sin contraseña). */
+    public function invitacion(string $para, string $nombre, string $club, string $quien, I18n $i): bool
+    {
+        $nombre = htmlspecialchars($nombre, ENT_QUOTES);
+        $v = ['club' => htmlspecialchars($club, ENT_QUOTES), 'quien' => htmlspecialchars($quien, ENT_QUOTES)];
+        $asunto = $i->t('correo.invitacion.asunto', ['club' => $club]);
+        $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px">'
+            . '<p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
+            . '<p>' . $i->t('correo.invitacion.cuerpo', $v) . '</p>'
+            . '<p><a href="' . htmlspecialchars($this->base() . '/app/entrar', ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.invitacion.boton') . '</a></p>'
+            . '<p style="color:#4B5E5C;font-size:13px">' . $i->t('correo.invitacion.pie') . '</p></div>';
+        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.invitacion.cuerpo', $v) . "\n\n" . $this->base() . '/app/entrar' . "\n\n" . $i->t('correo.invitacion.pie');
+        return $this->enviar($para, $asunto, $html, $texto);
+    }
+
+    /** Aviso a quien aprueba: hay una solicitud nueva de una familia. */
+    public function solicitudNueva(string $para, string $nombre, string $familia, string $club, I18n $i): bool
+    {
+        $nombre = htmlspecialchars($nombre, ENT_QUOTES);
+        $v = ['familia' => htmlspecialchars($familia, ENT_QUOTES), 'club' => htmlspecialchars($club, ENT_QUOTES)];
+        $asunto = $i->t('correo.solicitud.asunto', $v);
+        $url = $this->base() . '/app/plantel/solicitudes';
+        $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px"><p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
+            . '<p>' . $i->t('correo.solicitud.cuerpo', $v) . '</p><p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.solicitud.boton') . '</a></p></div>';
+        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.solicitud.cuerpo', $v) . "\n\n" . $url;
+        return $this->enviar($para, $asunto, $html, $texto);
+    }
+
+    private function base(): string
+    {
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+        return $host === '' ? '' : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $host);
+    }
 }

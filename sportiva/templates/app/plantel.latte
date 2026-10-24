@@ -1,0 +1,31 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.plantel')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
+<h1>{$t('nav.plantel')}</h1>
+{if $pendientes > 0}
+<a class="aviso" href="{$url('plantel/solicitudes')}" style="margin-bottom:12px;text-decoration:none;color:inherit"><span class="ia am">{$ico('bell')|noescape}</span><div><b>{$n('plantel.pendientes', $pendientes)}</b><p>{$t('plantel.pendientes.ayuda')}</p></div></a>
+{/if}
+{if $equipos}
+<div class="grupo-pills">
+ {foreach $equipos as $q}
+ <a class="pill{if $equipo && $q['id'] === $equipo['id']} on{/if}" href="{$url('plantel')}?equipo={$q['id']}" {if $equipo && $q['id'] === $equipo['id']}aria-current="true"{/if} style="display:inline-flex;align-items:center;text-decoration:none">{$q['nombre']}</a>
+ {/foreach}
+</div>
+<a class="bt s" href="{$url('plantel/nuevo')}{if $equipo}?equipo={$equipo['id']}{/if}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('plantel.nuevo')}</a>
+<section class="card">
+ <div class="ch"><h3>{$equipo['nombre']} · {$n('plantel.jugadores', count($jugadores))}</h3></div>
+ {foreach $jugadores as $j}
+ <a class="pers" href="{$url('plantel/jugador/' . $j['id'])}" style="text-decoration:none;color:inherit">
+  <span class="avatar">{mb_strtoupper(mb_substr($j['nombre'], 0, 1))}</span>
+  <span><b>{$j['nombre']}</b><small>{if $j['nacimiento']}{$t('plantel.edad', ['n' => $edad($j['nacimiento'])])} · {/if}{$n('plantel.adultos', (int) $j['adultos'])}</small></span>
+  <span class="chev">{$ico('arrow-right')|noescape}</span>
+ </a>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('plantel.vacio.titulo')}</b><p>{$t('plantel.vacio.texto')}</p></div>
+ {/foreach}
+</section>
+{else}
+<section class="card vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('plantel.sin_equipos')}</b></section>
+{/if}
+{/block}

@@ -1,0 +1,56 @@
+{layout '_layout.latte'}
+{block titulo}{$j['nombre']} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('plantel')}?equipo={$j['equipo_id']}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:4px">{$j['nombre']}</h1>
+<p class="hola" style="margin-bottom:14px">{$j['equipo']}{if $j['nacimiento']} · {$t('plantel.edad', ['n' => $edad($j['nacimiento'])])}{/if}</p>
+
+{if $editar}
+<form method="post" action="{$url('plantel/jugador/' . $j['id'])}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <div class="ch"><h3>{$t('plantel.editar')}</h3></div>
+  <label class="campo"><span>{$t('plantel.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre'] ?? $j['nombre']}" maxlength="120">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.nacimiento')}</span><input class="in" type="date" name="nacimiento" value="{$d['nacimiento'] ?? $j['nacimiento']}">{if isset($errores['nacimiento'])}<small class="error" role="alert">{$t($errores['nacimiento'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.equipo')}</span>
+   <select class="in" name="equipo_id">{foreach $equipos as $q}<option value="{$q['id']}" {if ($d['equipo_id'] ?? $j['equipo_id']) === $q['id']}selected{/if}>{$q['nombre']}</option>{/foreach}</select>
+   {if isset($errores['equipo_id'])}<small class="error" role="alert">{$t($errores['equipo_id'])}</small>{/if}
+  </label>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+{else}
+<a class="bt w" href="?editar=1" style="margin-bottom:12px">{$ico('pencil-simple')|noescape}{$t('plantel.editar')}</a>
+{/if}
+
+<section class="card">
+ <div class="ch"><h3>{$t('plantel.contactos')}</h3></div>
+ {foreach $adultos as $a}
+ <div class="pers">
+  <span class="avatar">{mb_strtoupper(mb_substr($a['nombre'], 0, 1))}</span>
+  <span><b>{$a['nombre']}</b><small>{if $a['titular']}{$t('plantel.titular.rol')}{else}{$t('plantel.adulto')}{/if}{if $a['telefono']} · {$a['telefono']}{/if}<br>{$a['email']}</small></span>
+  {if !$a['titular']}
+  <form method="post" action="{$url('plantel/jugador/' . $j['id'] . '/adulto/' . $a['id'] . '/quitar')}" style="margin:0">
+   <input type="hidden" name="csrf" value="{$csrf}">
+   <button class="bt pill-sm" type="submit" aria-label="{$t('plantel.quitar')}">{$ico('x')|noescape}</button>
+  </form>
+  {/if}
+ </div>
+ {else}
+ <p class="texto" style="margin:0">{$t('plantel.sin_adultos')}</p>
+ {/foreach}
+ {if $titular}
+ {if $agregar}
+ <form method="post" action="{$url('plantel/jugador/' . $j['id'] . '/adulto')}" novalidate style="margin-top:14px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('plantel.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre'] ?? ''}" maxlength="160">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.email')}</span><input class="in" type="email" name="email" value="{$d['email'] ?? ''}" maxlength="190" autocapitalize="off">{if isset($errores['email'])}<small class="error" role="alert">{$t($errores['email'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono" value="{$d['telefono'] ?? ''}" maxlength="40"></label>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('plantel.agregar_adulto')}</button>
+ </form>
+ {else}
+ <a class="bt w" href="?agregar=1" style="margin-top:12px">{$ico('plus')|noescape}{$t('plantel.agregar_adulto')}</a>
+ {/if}
+ {/if}
+</section>
+{/block}

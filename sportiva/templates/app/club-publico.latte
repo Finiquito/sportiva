@@ -1,7 +1,7 @@
 {layout '_auth.latte'}
 {block titulo}{$c['nombre']} · u330{/block}
 {block contenido}
-<a class="volver" href="/app">{$ico('arrow-left')|noescape}{$t('volver')}</a>
+<a class="volver" href="/app">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <h1 style="font-size:30px">{$c['nombre']}</h1>
 {if $c['ciudad']}<p class="meta">{$ico('map-pin')|noescape}{$c['ciudad']} · {$t('deporte.' . $c['deporte'])}</p>{/if}
 {if $c['descripcion']}

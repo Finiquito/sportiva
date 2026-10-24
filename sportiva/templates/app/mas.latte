@@ -8,6 +8,13 @@
   <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('user-circle')|noescape}</span><span><b>{$persona['nombre']}</b><small>{$persona['email']} · {$t('rol.' . $rol)}</small></span></span></li>
  </ul>
 </section>
+{if $rol === 'apoderado'}
+<section class="card">
+ <ul class="lkl">
+  <li><a class="lk" href="{$url('familia')}" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('users-three')|noescape}</span><span><b>{$t('mas.familia')}</b><small>{$t('mas.familia.sub')}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+ </ul>
+</section>
+{/if}
 <section class="card">
  <div class="ch"><h3>{$t('mas.idioma')}</h3></div>
  <form method="post" action="/app/idioma" class="grupo-pills">

@@ -1,0 +1,48 @@
+{layout '_layout.latte'}
+{block titulo}{$t('familia.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:4px">{$t('familia.titulo')}</h1>
+<p class="hola" style="margin-bottom:14px">{$t($titular ? 'familia.sub.titular' : 'familia.sub.adulto')}</p>
+
+{if $pendientes}
+<section class="card">
+ <div class="ch"><h3>{$t('familia.pendientes')}</h3></div>
+ {foreach $pendientes as $s}
+ <div class="pers">
+  <span class="fi">{$ico($s['tipo'] === 'adulto' ? 'user-circle' : 'users-three')|noescape}</span>
+  <span><b>{$s['nombre']}</b><small>{$s['tipo'] === 'adulto' ? $t('plantel.adulto') : $s['equipo']} · {$t('familia.esperando')}</small></span>
+  <form method="post" action="{$url('familia/solicitud/' . $s['id'] . '/cancelar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('familia.cancelar')}">{$ico('x')|noescape}</button></form>
+ </div>
+ {/foreach}
+</section>
+{/if}
+
+<section class="card">
+ <div class="ch"><h3>{$t('familia.adultos')}</h3></div>
+ {foreach $adultos as $a}
+ <div class="pers">
+  <span class="avatar">{mb_strtoupper(mb_substr($a['nombre'], 0, 1))}</span>
+  <span><b>{$a['nombre']}</b><small>{if !empty($a['titular'])}{$t('plantel.titular.rol')}{else}{$t('plantel.adulto')}{/if} · {$a['email']}</small></span>
+  {if $a['id'] === $persona['id']}<span class="est">{$ico('check')|noescape}{$t('familia.tu')}</span>
+  {elseif $titular}
+  <form method="post" action="{$url('familia/adulto/' . $a['id'] . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('plantel.quitar')}">{$ico('x')|noescape}</button></form>
+  {/if}
+ </div>
+ {/foreach}
+ {if $titular}<a class="bt w" href="{$url('familia/adulto')}" style="margin-top:12px">{$ico('plus')|noescape}{$t('familia.agregar_adulto')}</a>{/if}
+</section>
+
+<section class="card">
+ <div class="ch"><h3>{$t('familia.hijos')}</h3></div>
+ {foreach $hijos as $hijo}
+ <div class="pers">
+  <span class="avatar">{mb_strtoupper(mb_substr($hijo['nombre'], 0, 1))}</span>
+  <span><b>{$hijo['nombre']}</b><small>{$hijo['equipo']}{if $hijo['nacimiento']} · {$t('plantel.edad', ['n' => $edad($hijo['nacimiento'])])}{/if}</small></span>
+  {if $titular}<a class="bt pill-sm" href="{$url('familia/hijo/' . $hijo['id'])}" aria-label="{$t('plantel.editar')}">{$ico('pencil-simple')|noescape}</a>{/if}
+ </div>
+ {/foreach}
+ {if $titular}<a class="bt w" href="{$url('familia/hijo')}" style="margin-top:12px">{$ico('plus')|noescape}{$t('familia.agregar_hijo')}</a>{/if}
+</section>
+{if $titular}<p class="sis">{$ico('shield-check')|noescape}{$t('familia.aprobacion')}</p>{/if}
+{/block}
