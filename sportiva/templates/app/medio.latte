@@ -1,19 +1,11 @@
 {layout '_layout.latte'}
-{block titulo}{$t($m['tipo'] === 'video' ? 'medios.video' : 'medios.foto')} · u330{/block}
+{block titulo}{$t('medios.foto')} · u330{/block}
 {block contenido}
 <a class="volver" href="{$url('evento/' . $m['evento_id'] . '/fotos')}">{$ico('arrow-right')|noescape}{$t('medios.titulo')}</a>
 <section class="card">
- {if $m['tipo'] === 'video'}
- <video class="foto visor" controls playsinline preload="metadata" {if $m['tiene_poster']}poster="{$url('medio/' . $m['id'] . '/m')}"{/if} style="width:100%;max-height:520px;border-radius:14px;background:#10201F">
-  <source src="{$url('medio/' . $m['id'] . '/v')}" type="{$m['mime']}">
-  {$t('medios.sin_video')}
- </video>
- {else}
  <img class="foto visor" src="{$url('medio/' . $m['id'] . '/f')}" alt="" style="width:100%;height:auto;max-height:520px;object-fit:contain;border-radius:14px;background:#10201F">
- {/if}
  <p class="meta" style="margin:14px 0 0">{$ico('camera')|noescape}{$t('medios.subida_por', ['nombre' => $m['autor']])} · {$h($m['created_at'])}</p>
  <p class="sub" style="margin:4px 0 0 27px">{$m['evento']} · {$dl($m['evento_inicio'])}</p>
- {if $m['tipo'] === 'video' && $m['expira_en']}<p class="sis" style="margin:10px 0 0">{$ico('clock')|noescape}{$t('medios.caduca', ['fecha' => $dl($m['expira_en'])])}</p>{/if}
  <div class="acciones" style="margin-top:14px">
   {if $anterior}<a class="bt" href="{$url('medio/' . $anterior)}">{$ico('arrow-right')|noescape}{$t('medios.anterior')}</a>{/if}
   {if $siguiente}<a class="bt" href="{$url('medio/' . $siguiente)}">{$t('medios.siguiente')}{$ico('arrow-right')|noescape}</a>{/if}

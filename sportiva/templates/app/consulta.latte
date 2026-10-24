@@ -8,12 +8,13 @@
 <section class="card">
  <div class="burbujas">
   {foreach $mensajes as $m}
-  <div class="burb"><span class="avatar{if $m['lado'] === 'staff'} lim{/if}">{mb_strtoupper(mb_substr($m['autor'], 0, 1))}</span><div class="tx"><b>{$m['autor']} · {$dc($m['created_at'])} {$h($m['created_at'])}</b><span style="white-space:pre-line">{$m['texto']}</span></div></div>
+  <div class="burb"><span class="avatar{if $m['lado'] === 'staff'} lim{/if}">{mb_strtoupper(mb_substr($m['autor'], 0, 1))}</span><div class="tx"><b>{$m['autor']} · {$dc($m['created_at'])} {$h($m['created_at'])}</b><span style="white-space:pre-line">{$m['texto']}</span>{if isset($adj[$m['id']])}<a href="{$url('adjunto/' . $adj[$m['id']] . '/f')}" target="_blank" rel="noopener"><img class="adj" src="{$url('adjunto/' . $adj[$m['id']] . '/m')}" alt="{$t('adjunto.foto')}" loading="lazy"></a>{/if}</div></div>
   {/foreach}
  </div>
- <form method="post" action="{$url('consulta/' . $c['id'])}" style="margin-top:16px" novalidate id="abajo">
+ <form method="post" action="{$url('consulta/' . $c['id'])}" style="margin-top:16px" novalidate id="abajo" enctype="multipart/form-data">
   <input type="hidden" name="csrf" value="{$csrf}">
   <label class="campo"><span>{$t('consulta.responder')}</span><textarea class="in" name="texto" rows="3" maxlength="2000">{$texto}</textarea>{if isset($errores['texto'])}<small class="error" role="alert">{$t($errores['texto'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('adjunto.foto')}</span><input type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-reducir="1600"></label>
   <button class="bt s" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('feed.enviar')}</button>
  </form>
 </section>

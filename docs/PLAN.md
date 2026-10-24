@@ -78,7 +78,9 @@ Orden propuesto: **PWA push → correo → WhatsApp solo si hace falta**.
   - Botón «Compartir por WhatsApp» (`wa.me`): gratis y sin riesgo, pero lo manda la persona.
 - **Cron de 15 minutos** necesario para recordatorios y colas.
 
-## 7. Fotos y videos sin colapsar el servidor
+## 7. Fotos (sin videos) sin colapsar el servidor
+> **Decisión final del usuario: no hay videos.** Solo fotos comprimidas (reportes del partido y mensajes de papás y profesores). Lo que sigue sobre videos queda descartado; se conserva como referencia por si algún día se retoma.
+
 El riesgo en hosting compartido es: **disco**, **límites de subida** (`upload_max_filesize`, `post_max_size`, `max_execution_time`), **CPU** al procesar y **procesos PHP** ocupados sirviendo archivos pesados. Hostinger normalmente no trae `ffmpeg` y no hay que depender de eso.
 
 **Fotos**

@@ -96,6 +96,7 @@ final class ConsultaController extends AppBase
             return;
         }
         $svc = $this->svc();
+        $this->textoDeFoto();
         [$d, $err] = $svc->normalizar($_POST);
         $ev = new EventoService($this->pdo);
         $hijo = $this->hijoPropio($d['jugador_id']);
@@ -113,8 +114,27 @@ final class ConsultaController extends AppBase
             return;
         }
         $id = $svc->crear($this->club['id'], $this->persona['id'], $d);
+        $foto = (new AdjuntoService($this->pdo))->guardar($this->club['id'], 'mensaje', $svc->mensajes($id)[0]['id'], $this->persona['id'], $_FILES['foto'] ?? null);
         $this->avisarStaff($id, $hijo['equipo_id']);
-        $this->ctx->redirect('/app/consulta/' . $id, $this->i18n->t('consulta.enviada'));
+        $this->terminar('/app/consulta/' . $id, 'consulta.enviada', $foto['error']);
+    }
+
+    /** Un mensaje solo con foto: se pone un texto breve para que no quede vacío. */
+    private function textoDeFoto(): void
+    {
+        if (trim((string) ($_POST['texto'] ?? '')) === '' && AdjuntoService::hayArchivo($_FILES['foto'] ?? null)) {
+            $_POST['texto'] = $this->i18n->t('adjunto.solo_foto');
+        }
+    }
+
+    /** Redirige; si la foto falló avisa que el mensaje sí salió. */
+    private function terminar(string $url, ?string $claveOk, ?string $errorFoto): void
+    {
+        if ($errorFoto !== null) {
+            $this->ctx->redirect($url, $this->i18n->t($errorFoto) . ' ' . $this->i18n->t('adjunto.sin_foto'), 'error');
+            return;
+        }
+        $claveOk !== null ? $this->ctx->redirect($url, $this->i18n->t($claveOk)) : $this->ir($url);
     }
 
     /** Hijo de esta persona en este club o null. */
@@ -148,7 +168,8 @@ final class ConsultaController extends AppBase
             return;
         }
         $svc->leida($id, $lado);
-        echo $this->vista()->pagina('consulta.latte', ['activa' => $lado === 'staff' ? 'consultas' : 'actividad', 'c' => $c, 'mensajes' => $svc->mensajes($id), 'lado' => $lado, 'errores' => [], 'texto' => '']);
+        $ms = $svc->mensajes($id);
+        echo $this->vista()->pagina('consulta.latte', ['activa' => $lado === 'staff' ? 'consultas' : 'actividad', 'c' => $c, 'mensajes' => $ms, 'adj' => (new AdjuntoService($this->pdo))->de('mensaje', array_column($ms, 'id')), 'lado' => $lado, 'errores' => [], 'texto' => '']);
     }
 
     public function responder(string $id): void
@@ -163,12 +184,15 @@ final class ConsultaController extends AppBase
             $this->ir('/app/agenda');
             return;
         }
+        $this->textoDeFoto();
         [$d, $err] = $svc->normalizar(['texto' => $_POST['texto'] ?? ''], false);
         if ($err) {
-            echo $this->vista()->pagina('consulta.latte', ['activa' => $lado === 'staff' ? 'consultas' : 'actividad', 'c' => $c, 'mensajes' => $svc->mensajes($id), 'lado' => $lado, 'errores' => $err, 'texto' => (string) ($_POST['texto'] ?? '')]);
+            $ms = $svc->mensajes($id);
+            echo $this->vista()->pagina('consulta.latte', ['activa' => $lado === 'staff' ? 'consultas' : 'actividad', 'c' => $c, 'mensajes' => $ms, 'adj' => (new AdjuntoService($this->pdo))->de('mensaje', array_column($ms, 'id')), 'lado' => $lado, 'errores' => $err, 'texto' => (string) ($_POST['texto'] ?? '')]);
             return;
         }
-        $svc->mensaje($id, $this->persona['id'], $lado, $d['texto']);
+        $mid = $svc->mensaje($id, $this->persona['id'], $lado, $d['texto']);
+        $foto = (new AdjuntoService($this->pdo))->guardar($this->club['id'], 'mensaje', $mid, $this->persona['id'], $_FILES['foto'] ?? null);
         if ($lado === 'staff') {
             $quien = (string) $this->persona['nombre'];
             $adultos = array_column((new PlantelService($this->pdo))->adultos($c['jugador_id']), 'id');
@@ -176,6 +200,6 @@ final class ConsultaController extends AppBase
         } else {
             $this->avisarStaff($id, $c['equipo_id']);
         }
-        $this->ir('/app/consulta/' . $id . '#abajo');
+        $this->terminar('/app/consulta/' . $id . '#abajo', null, $foto['error']);
     }
 }

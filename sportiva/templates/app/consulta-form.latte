@@ -3,7 +3,7 @@
 {block contenido}
 <a class="volver" href="{$url('actividad')}">{$ico('arrow-right')|noescape}{$t('nav.actividad')}</a>
 <h1 style="font-size:34px;margin-bottom:14px">{$t('consulta.nueva_btn')}</h1>
-<form method="post" action="{$url('consulta')}" novalidate>
+<form method="post" action="{$url('consulta')}" novalidate enctype="multipart/form-data">
  <input type="hidden" name="csrf" value="{$csrf}">
  <input type="hidden" name="evento_id" value="{$d['evento_id'] ?? ''}">
  <section class="card">
@@ -13,6 +13,7 @@
   </label>
   <label class="campo"><span>{$t('consulta.asunto')}</span><input class="in" type="text" name="asunto" value="{$d['asunto'] ?? ''}" maxlength="160">{if isset($errores['asunto'])}<small class="error" role="alert">{$t($errores['asunto'])}</small>{/if}</label>
   <label class="campo"><span>{$t('consulta.mensaje')}</span><textarea class="in" name="texto" rows="5" maxlength="2000">{$d['texto'] ?? ''}</textarea>{if isset($errores['texto'])}<small class="error" role="alert">{$t($errores['texto'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('adjunto.foto')}</span><input type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-reducir="1600"></label>
  </section>
  <p class="sis" style="margin:0 0 12px">{$ico('lock')|noescape}{$t('consulta.privada.familia')}</p>
  <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('feed.enviar')}</button>

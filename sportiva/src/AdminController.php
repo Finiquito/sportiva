@@ -64,8 +64,7 @@ final class AdminController
         if ($a === 'procesar') {
             $r = $nt->recordatorios();
             $e = $nt->entregar(100);
-            $mt = $nt->mantenimiento();
-            $this->ctx->redirect($this->ctx->adminUrl('avisos'), "Listo: {$r} recordatorios, {$e['push']} avisos push y {$e['correo']} correos enviados, {$mt['borrados']} videos vencidos borrados.");
+            $this->ctx->redirect($this->ctx->adminUrl('avisos'), "Listo: {$r} recordatorios, {$e['push']} avisos push y {$e['correo']} correos enviados.");
             return;
         }
         $this->ctx->redirect($this->ctx->adminUrl('avisos'));

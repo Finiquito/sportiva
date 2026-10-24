@@ -474,3 +474,4 @@ a.bell{text-decoration:none;flex:none}
 .med .foto{margin:0;display:block}
 .med .play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:var(--club);color:var(--amarillo);display:grid;place-items:center;font-size:15px}
 .med .foto-ph{min-height:120px}
+.adj{display:block;max-width:100%;max-height:260px;border-radius:12px;margin-top:8px}

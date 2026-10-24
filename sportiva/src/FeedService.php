@@ -104,14 +104,16 @@ final class FeedService extends Repo
         return $this->filas('SELECT c.*, p.nombre AS autor FROM sportiva_comentarios c JOIN sportiva_personas p ON p.id = c.persona_id WHERE c.post_id = ? ORDER BY c.created_at, c.id', [$post]);
     }
 
-    public function comentar(string $post, string $persona, string $texto): bool
+    /** @return string|null id del comentario, o null si el texto no sirve */
+    public function comentar(string $post, string $persona, string $texto): ?string
     {
         $texto = trim($texto);
         if ($texto === '' || mb_strlen($texto) > self::MAX_COMENTARIO) {
-            return false;
+            return null;
         }
-        $this->ejecutar('INSERT INTO sportiva_comentarios (id, post_id, persona_id, texto, created_at) VALUES (?, ?, ?, ?, ?)', [$this->id(), $post, $persona, $texto, Tiempo::sello()]);
-        return true;
+        $id = $this->id();
+        $this->ejecutar('INSERT INTO sportiva_comentarios (id, post_id, persona_id, texto, created_at) VALUES (?, ?, ?, ?, ?)', [$id, $post, $persona, $texto, Tiempo::sello()]);
+        return $id;
     }
 
     public function comentario(string $id): ?array

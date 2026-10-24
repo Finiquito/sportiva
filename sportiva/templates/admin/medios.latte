@@ -1,17 +1,14 @@
 {layout $plugin_ui_layout}
-{block page_title}u330 · Fotos y videos{/block}
+{block page_title}u330 · Fotos{/block}
 {block content}
-<div class="page-header"><h1>Fotos y videos</h1></div>
+<div class="page-header"><h1>Fotos</h1></div>
 {if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
 <div class="card">
  <h2>Límites</h2>
- <p>Las fotos se reducen a 1600 px (JPEG, sin datos EXIF) y los videos se guardan tal como los sube el teléfono, por trozos de 2 MB. Los archivos viven fuera de la carpeta pública y se sirven solo a quien está en el equipo. Procesar fotos {$gd ? 'está disponible (GD)' : 'NO está disponible: falta la extensión GD de PHP'}.</p>
+ <p>Las fotos se reducen a 1600 px (JPEG, sin datos EXIF). Los archivos viven fuera de la carpeta pública y se sirven solo a quien está en el equipo. Procesar fotos {$gd ? 'está disponible (GD)' : 'NO está disponible: falta la extensión GD de PHP'}.</p>
  <form method="post">
   <input type="hidden" name="_csrf_token" value="{$csrf_token}">
   <p><label>Cuota por equipo (MB) <input class="form-input" type="number" name="cuota_mb" value="{$lim['cuota_mb']}" min="100"></label></p>
-  <p><label>Peso máximo de un video (MB) <input class="form-input" type="number" name="video_mb" value="{$lim['video_mb']}" min="5" max="200"></label></p>
-  <p><label>Duración máxima de un video (segundos) <input class="form-input" type="number" name="video_seg" value="{$lim['video_seg']}" min="5" max="300"></label></p>
-  <p><label>Los videos se borran a los (días) <input class="form-input" type="number" name="video_dias" value="{$lim['video_dias']}" min="7"></label></p>
   <button class="btn" type="submit">Guardar</button>
  </form>
 </div>

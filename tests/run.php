@@ -656,7 +656,7 @@ $man = json_decode($h, true);
 check($man['display'] === 'standalone' && $man['start_url'] === '/app' && count($man['icons']) === 2, 'manifest de la app instalable');
 check(is_file(dirname(__DIR__) . '/sportiva/assets/marca/icon-192.png') && is_file(dirname(__DIR__) . '/sportiva/assets/marca/icon-512.png'), 'íconos de la app instalable');
 
-seccion('Fotos y videos');
+seccion('Fotos');
 $md = new S\MedioService($pdo);
 $mc = fn() => new S\MedioController($ctx);
 $cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
@@ -687,7 +687,7 @@ $subida(["$tmpd/falso.png"]);
 [$h, $r] = llamar(fn() => $mc()->subirFotos($ev0), conCsrf());
 check((int) $pdo->query('SELECT COUNT(*) FROM sportiva_medios')->fetchColumn() === $cuenta, 'un archivo que no es imagen no se guarda');
 [$h] = llamar(fn() => $mc()->galeria($ev0));
-check(str_contains($h, 'Fotos y videos') && str_contains($h, 'class="med"') && str_contains($h, 'video-bloque'), 'la galería muestra las fotos y el formulario de subida');
+check(str_contains($h, 'Fotos') && str_contains($h, 'class="med"') && str_contains($h, 'fotos-form'), 'la galería muestra las fotos y el formulario de subida');
 // Permisos de ver y subir.
 $comoRol('rosa@ejemplo.fr', 'apoderado'); // sus hijos no están convocados a este evento
 [$h] = llamar(fn() => $mc()->galeria($ev0));
@@ -698,52 +698,13 @@ check((int) $pdo->query('SELECT COUNT(*) FROM sportiva_medios')->fetchColumn() =
 check($mc()->datosServir($grande['id'], 'f') === null, 'ni se le sirve el archivo');
 $comoRol('lucas@ejemplo.fr', 'jugador');
 [$h] = llamar(fn() => $mc()->galeria($ev0));
-check(str_contains($h, 'class="med"') && !str_contains($h, 'video-bloque'), 'el jugador ve pero no sube');
+check(str_contains($h, 'class="med"') && !str_contains($h, 'fotos-form'), 'el jugador ve pero no sube');
 $comoRol('sylvie@ejemplo.fr', 'directiva');
 check($mc()->datosServir($grande['id'], 'm') !== null, 'la directiva puede ver');
 $comoRol('ines.garcia@ejemplo.fr', 'apoderado');
 $d = $mc()->datosServir($grande['id'], 'f');
-check($d !== null && $d['mime'] === 'image/jpeg' && $d['tam'] > 0 && !$d['parcial'], 'otra familia convocada recibe la foto');
-check($mc()->datosServir($grande['id'], 'v') === null && $mc()->datosServir($grande['id'], 'x') === null, 'variantes que no existen dan null');
-// Videos: un MP4 de 12 s subido en dos trozos.
-$caja = fn($t, $dd) => pack('N', 8 + strlen($dd)) . $t . $dd;
-$mp4 = fn(int $seg, int $extra = 0) => $caja('ftyp', "isom\0\0\2\0isomiso2") . $caja('mdat', str_repeat('x', 1000 + $extra)) . $caja('moov', $caja('mvhd', "\0\0\0\0" . pack('N', 0) . pack('N', 0) . pack('N', 1000) . pack('N', $seg * 1000) . str_repeat("\0", 80)));
-check(abs((S\MedioArchivos::duracionMp4((function () use ($tmpd, $mp4) { $f = "$tmpd/d.mp4"; file_put_contents($f, $mp4(12)); return $f; })())) - 12.0) < 0.01, 'se lee la duración de un MP4 (moov al final)');
-$enviarVideo = function (string $bytes, string $mime = '') use ($tmpd, $ev0, $mc): array {
-    $_SERVER['HTTP_X_CSRF'] = S\Sesion::csrf();
-    $sub = typedock_uuid7(); $mitad = intdiv(strlen($bytes), 2); $partes = [substr($bytes, 0, $mitad), substr($bytes, $mitad)];
-    foreach ($partes as $i => $p) {
-        file_put_contents("$tmpd/trozo$i", $p);
-        $_FILES = ['trozo' => ['tmp_name' => "$tmpd/trozo$i", 'error' => UPLOAD_ERR_OK, 'size' => strlen($p)]];
-        [$h] = llamar(fn() => $mc()->trozo($ev0), ['subida' => $sub, 'n' => (string) $i, 'total' => '2']);
-        if (!(json_decode($h, true)['ok'] ?? false)) { return json_decode($h, true) ?? ['ok' => false, 'error' => $h]; }
-    }
-    $_FILES = [];
-    [$h] = llamar(fn() => $mc()->fin($ev0), ['subida' => $sub, 'total' => '2', 'duracion' => '12']);
-    return json_decode($h, true) ?? ['ok' => false, 'error' => $h];
-};
-$comoRol('daniela@ejemplo.fr', 'apoderado');
-$r = $enviarVideo($mp4(12));
-$vid = $md->buscar(basename((string) ($r['url'] ?? '')));
-check(($r['ok'] ?? false) && $vid !== null && $vid['tipo'] === 'video' && (int) $vid['duracion'] === 12 && $vid['mime'] === 'video/mp4' && $vid['expira_en'] !== null, 'un video corto se sube por trozos y queda con fecha de caducidad');
-$d = $mc()->datosServir($vid['id'], 'v', 'bytes=0-99');
-check($d !== null && $d['parcial'] && $d['inicio'] === 0 && $d['fin'] === 99 && $d['mime'] === 'video/mp4', 'el video se sirve por rangos (para adelantarlo)');
-check($mc()->datosServir($vid['id'], 'f') === null && $mc()->datosServir($vid['id'], 'm') === null, 'un video sin póster no tiene miniatura');
-$r = $enviarVideo($mp4(90));
-check(!($r['ok'] ?? true) && str_contains($r['error'], 'muy largo'), 'un video de más de 60 segundos se rechaza');
-$r = $enviarVideo('esto no es un video' . str_repeat('x', 100));
-check(!($r['ok'] ?? true) && str_contains($r['error'], 'MP4'), 'un archivo que no es video se rechaza');
-$md->guardarLimites(['video_mb' => 5]);
-$r = $enviarVideo($mp4(10, 5 * 1048576 + 10));
-check(!($r['ok'] ?? true) && str_contains($r['error'], 'pesa demasiado'), 'un video más pesado que el límite se rechaza');
-$md->guardarLimites(['video_mb' => 50]);
-check(count(glob(S\Almacen::dir('medios-tmp') . '/*')) === 0, 'los trozos temporales se limpian');
-$_SERVER['HTTP_X_CSRF'] = 'mal';
-[$h] = llamar(fn() => $mc()->estado($ev0), [], ['subida' => typedock_uuid7()]);
-check(json_decode($h, true)['ok'] === false, 'los trozos exigen el token CSRF');
-$_SERVER['HTTP_X_CSRF'] = S\Sesion::csrf();
-// Rangos HTTP.
-check(S\MedioArchivos::rango('bytes=0-99', 1000) === [0, 99] && S\MedioArchivos::rango('bytes=900-', 1000) === [900, 999] && S\MedioArchivos::rango('bytes=-100', 1000) === [900, 999] && S\MedioArchivos::rango('bytes=5000-', 1000) === null && S\MedioArchivos::rango('basura', 1000) === null, 'interpreta las cabeceras Range');
+check($d !== null && $d['mime'] === 'image/jpeg' && $d['tam'] > 0, 'otra familia convocada recibe la foto');
+check($mc()->datosServir($grande['id'], 'v') === null && $mc()->datosServir($grande['id'], 'x') === null, 'ya no hay videos: esas variantes dan null');
 // Cuota del equipo.
 $md->guardarLimites(['cuota_mb' => 100]);
 $pdo->prepare("INSERT INTO sportiva_medios (id, club_id, equipo_id, evento_id, tipo, mime, bytes, subido_por, created_at) VALUES (?, ?, ?, ?, 'foto', 'image/jpeg', ?, ?, ?)")->execute(['00000000-0000-0000-0000-00000000cafe', $cid, $u12, $ev0, 100 * 1048576, $dani, '2026-01-01 00:00:00']);
@@ -752,7 +713,7 @@ $subida([$png(120, 120, 'sinespacio')]);
 [$h, $r] = llamar(fn() => $mc()->subirFotos($ev0), conCsrf());
 check((int) $pdo->query('SELECT COUNT(*) FROM sportiva_medios')->fetchColumn() === $cuenta, 'con la cuota llena no se aceptan más fotos');
 [$h] = llamar(fn() => $mc()->galeria($ev0));
-check(str_contains($h, 'llegó a su límite') && !str_contains($h, 'video-bloque'), 'la galería avisa que no queda espacio');
+check(str_contains($h, 'llegó a su límite') && !str_contains($h, 'fotos-form'), 'la galería avisa que no queda espacio');
 $pdo->exec("DELETE FROM sportiva_medios WHERE id = '00000000-0000-0000-0000-00000000cafe'");
 $md->guardarLimites(['cuota_mb' => 2048]);
 // Borrar y pedir que quiten.
@@ -765,33 +726,77 @@ check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos WHERE persona_id =
 [$h] = llamar(fn() => $mc()->ver($grande['id']));
 check(str_contains($h, 'Pedir que lo quiten') && str_contains($h, '/f'), 'el visor de la foto');
 $comoRol('daniela@ejemplo.fr', 'apoderado');
-[$h] = llamar(fn() => $mc()->ver($vid['id']));
-check(str_contains($h, '<video') && str_contains($h, 'se borrará el'), 'el visor del video avisa cuándo se borra');
 [$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($ev0));
-check(str_contains($h, 'Fotos y videos') && str_contains($h, '/fotos'), 'el evento muestra su álbum');
+check(str_contains($h, 'Fotos') && str_contains($h, '/fotos'), 'el evento muestra su álbum');
 [$h] = llamar(fn() => (new S\FeedController($ctx))->inicio());
-check(str_contains($h, 'Fotos y videos nuevos'), 'el feed muestra que hay fotos y videos nuevos');
+check(str_contains($h, 'Fotos nuevas'), 'el feed muestra que hay fotos nuevas');
 llamar(fn() => $mc()->borrar($grande['id']), conCsrf());
 check($md->buscar($grande['id']) === null && !is_file(S\MedioArchivos::ruta($grande['id'], 'f')), 'quien subió la foto puede borrarla (y se borran los archivos)');
 $comoRol('pedro@ejemplo.fr', 'entrenador');
-llamar(fn() => $mc()->borrar($vid['id']), conCsrf());
-check($md->buscar($vid['id']) === null && !is_file(S\MedioArchivos::ruta($vid['id'], 'v')), 'el entrenador puede borrar cualquier archivo de su equipo');
-// Caducidad de videos.
-$comoRol('daniela@ejemplo.fr', 'apoderado');
-$r = $enviarVideo($mp4(8));
-$v2 = basename($r['url']);
-$pdo->prepare('UPDATE sportiva_medios SET expira_en = ? WHERE id = ?')->execute([date('Y-m-d H:i:s', strtotime('+3 days')), $v2]);
-$antes = (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos WHERE persona_id = '{$dani}'")->fetchColumn();
-$m1 = $nt->mantenimiento();
-check($m1['avisos'] === 1 && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos WHERE persona_id = '{$dani}'")->fetchColumn() === $antes + 1 && $nt->mantenimiento()['avisos'] === 0, 'se avisa una sola vez que un video va a caducar');
-$pdo->prepare('UPDATE sportiva_medios SET expira_en = ? WHERE id = ?')->execute(['2020-01-01 00:00:00', $v2]);
-$m2 = $nt->mantenimiento();
-check($m2['borrados'] === 1 && $md->buscar($v2) === null && !is_file(S\MedioArchivos::ruta($v2, 'v')), 'el cron borra los videos vencidos');
+$otraId = $md->delEvento($ev0)[0]['id'];
+llamar(fn() => $mc()->borrar($otraId), conCsrf());
+check($md->buscar($otraId) === null && !is_file(S\MedioArchivos::ruta($otraId, 'f')), 'el entrenador puede borrar cualquier foto de su equipo');
 $comoRol('ines.garcia@ejemplo.fr', 'apoderado');
 [$h] = llamar(fn() => (new S\AvisosController($ctx))->lista());
-check(str_contains($h, 'Nouvelles photos') || str_contains($h, 'Nouvelle vidéo'), 'los avisos de fotos y videos aparecen en la campana');
+check(str_contains($h, 'Nouvelles photos'), 'los avisos de fotos y videos aparecen en la campana');
 foreach (glob("$tmpd/*") as $f) { @unlink($f); } @rmdir($tmpd);
 $_FILES = [];
+
+seccion('Fotos en mensajes, publicaciones y comentarios');
+$ad = new S\AdjuntoService($pdo);
+$tmpd2 = sys_get_temp_dir() . '/sportiva-adj-' . getmypid();
+$img = function (int $w, int $h, string $n) use ($tmpd2) { @mkdir($tmpd2); $g = imagecreatetruecolor($w, $h); imagefill($g, 0, 0, imagecolorallocate($g, 200, 60, 40)); $f = "$tmpd2/$n.png"; imagepng($g, $f); return [$f, $tmpd2]; };
+[$foto1, $dirA] = $img(2000, 1000, 'adj1');
+$_FILES = ['foto' => ['name' => 'a.png', 'tmp_name' => $foto1, 'error' => UPLOAD_ERR_OK, 'size' => filesize($foto1)]];
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => (new S\ConsultaController($ctx))->crear(), conCsrf(['jugador_id' => $lucas, 'asunto' => 'Mira esto', 'texto' => 'Adjunto una foto']));
+$conF = $pdo->query("SELECT id FROM sportiva_consultas WHERE asunto = 'Mira esto'")->fetchColumn();
+$m0 = $cs->mensajes($conF)[0]['id'];
+$a0 = $ad->de('mensaje', [$m0])[$m0] ?? null;
+check($a0 !== null && getimagesize(S\MedioArchivos::ruta($a0, 'f'))[0] === 1600 && getimagesize(S\MedioArchivos::ruta($a0, 'm'))[0] === 480, 'una consulta puede llevar una foto, comprimida a 1600 px y con miniatura');
+$cA = new S\AdjuntoController($ctx);
+check($cA->datosServir($a0, 'f') !== null && $cA->datosServir($a0, 'v') === null, 'la familia ve la foto de su consulta');
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+check($cA->datosServir($a0, 'f') === null, 'otra familia no ve la foto de una consulta ajena');
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+check($cA->datosServir($a0, 'm') === null, 'ni un entrenador de otro equipo');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+check($cA->datosServir($a0, 'm') !== null, 'el entrenador del equipo sí');
+[$h] = llamar(fn() => (new S\ConsultaController($ctx))->ver($conF));
+check(str_contains($h, 'class="adj"') && str_contains($h, '/adjunto/' . $a0 . '/m'), 'la foto se ve en el hilo de la consulta');
+// Respuesta solo con foto.
+[$foto2] = $img(300, 300, 'adj2');
+$_FILES = ['foto' => ['name' => 'b.png', 'tmp_name' => $foto2, 'error' => UPLOAD_ERR_OK, 'size' => filesize($foto2)]];
+llamar(fn() => (new S\ConsultaController($ctx))->responder($conF), conCsrf(['texto' => '']));
+$msgs = $cs->mensajes($conF);
+check(count($msgs) === 2 && $msgs[1]['texto'] === '(foto)' && isset($ad->de('mensaje', [$msgs[1]['id']])[$msgs[1]['id']]), 'se puede responder solo con una foto');
+// Archivo que no es imagen: el mensaje sale, la foto no.
+file_put_contents("$dirA/falso.png", 'no soy imagen');
+$_FILES = ['foto' => ['name' => 'f.png', 'tmp_name' => "$dirA/falso.png", 'error' => UPLOAD_ERR_OK, 'size' => 13]];
+[$h, $r] = llamar(fn() => (new S\ConsultaController($ctx))->responder($conF), conCsrf(['texto' => 'Con foto mala']));
+check(count($cs->mensajes($conF)) === 3 && $ad->de('mensaje', [$cs->mensajes($conF)[2]['id']]) === [], 'si la foto falla, el mensaje igual se envía');
+// Feed: publicación y comentario con foto; se borran juntos.
+$_FILES = ['foto' => ['name' => 'c.png', 'tmp_name' => $foto1, 'error' => UPLOAD_ERR_OK, 'size' => filesize($foto1)]];
+llamar(fn() => (new S\FeedController($ctx))->crear(), conCsrf(['destino' => $u12, 'titulo' => 'Con foto', 'texto' => 'Mira']));
+$pf = $pdo->query("SELECT id FROM sportiva_posts WHERE titulo = 'Con foto'")->fetchColumn();
+$ap = $ad->de('post', [$pf])[$pf] ?? null;
+check($ap !== null, 'una publicación del feed puede llevar foto');
+[$h] = llamar(fn() => (new S\FeedController($ctx))->inicio());
+check(str_contains($h, '/adjunto/' . $ap . '/m'), 'la foto se ve en el feed');
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+check($cA->datosServir($ap, 'f') !== null, 'las familias del equipo ven la foto de la publicación');
+$_FILES = ['foto' => ['name' => 'd.png', 'tmp_name' => $foto2, 'error' => UPLOAD_ERR_OK, 'size' => filesize($foto2)]];
+llamar(fn() => (new S\FeedController($ctx))->comentar($pf), conCsrf(['texto' => '']));
+$cm = $fs->comentarios($pf);
+$ac = $ad->de('comentario', [$cm[0]['id']])[$cm[0]['id']] ?? null;
+check(count($cm) === 1 && $cm[0]['texto'] === '(foto)' && $ac !== null, 'un comentario puede ser solo una foto');
+$comoRol('rosa@ejemplo.fr', 'apoderado'); // tiene hijos en U12 también: ve el equipo
+check($cA->datosServir($ac, 'm') !== null, 'quien ve la publicación ve la foto del comentario');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => (new S\FeedController($ctx))->borrar($pf), conCsrf());
+check($fs->post($pf) === null && $ad->buscar($ap) === null && $ad->buscar($ac) === null && !is_file(S\MedioArchivos::ruta($ap, 'f')), 'al borrar la publicación se borran las fotos (publicación y comentarios)');
+$_FILES = [];
+foreach (glob("$dirA/*") as $f) { @unlink($f); } @rmdir($dirA);
 
 echo "\n\n";
 if ($GLOBALS['fallas']) {

@@ -10,6 +10,7 @@
  </div>
  {if $p['titulo']}<h2 style="font-size:22px;margin:0 0 8px">{$p['titulo']}</h2>{/if}
  <p class="tx" style="white-space:pre-line">{$p['texto']}</p>
+ {if $adjPost}<a href="{$url('adjunto/' . $adjPost . '/f')}" target="_blank" rel="noopener"><img class="adj" src="{$url('adjunto/' . $adjPost . '/m')}" alt="{$t('adjunto.foto')}" loading="lazy"></a>{/if}
  {if $moderar}
  <div class="acciones" style="margin-top:0">
   <form method="post" action="{$url('feed/' . $p['id'] . '/fijar')}" style="flex:1 1 auto;display:flex"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('push-pin')|noescape}{$t($p['fijado'] ? 'feed.desfijar' : 'feed.fijar')}</button></form>
@@ -23,7 +24,7 @@
  {foreach $comentarios as $c}
  <div class="pers">
   <span class="avatar">{mb_strtoupper(mb_substr($c['autor'], 0, 1))}</span>
-  <div><b>{$c['autor']}</b><small>{$dc($c['created_at'])} · {$h($c['created_at'])}</small><p class="texto" style="margin:6px 0 0;white-space:pre-line">{$c['texto']}</p></div>
+  <div><b>{$c['autor']}</b><small>{$dc($c['created_at'])} · {$h($c['created_at'])}</small><p class="texto" style="margin:6px 0 0;white-space:pre-line">{$c['texto']}</p>{if isset($adjCom[$c['id']])}<a href="{$url('adjunto/' . $adjCom[$c['id']] . '/f')}" target="_blank" rel="noopener"><img class="adj" src="{$url('adjunto/' . $adjCom[$c['id']] . '/m')}" alt="{$t('adjunto.foto')}" loading="lazy"></a>{/if}</div>
   {if $c['persona_id'] === $persona['id'] || $moderar}
   <form method="post" action="{$url('feed/' . $p['id'] . '/comentario/' . $c['id'] . '/borrar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('feed.borrar')}">{$ico('x')|noescape}</button></form>
   {/if}
@@ -32,9 +33,10 @@
  <p class="texto" style="margin:0">{$t('feed.sin_comentarios')}</p>
  {/foreach}
  {if $puedeComentar}
- <form method="post" action="{$url('feed/' . $p['id'] . '/comentario')}" style="margin-top:14px" novalidate>
+ <form method="post" action="{$url('feed/' . $p['id'] . '/comentario')}" style="margin-top:14px" novalidate enctype="multipart/form-data">
   <input type="hidden" name="csrf" value="{$csrf}">
   <label class="campo"><span>{$t('feed.comentar')}</span><textarea class="in" name="texto" rows="3" maxlength="600">{$texto}</textarea>{if isset($errores['texto'])}<small class="error" role="alert">{$t($errores['texto'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('adjunto.foto')}</span><input type="file" name="foto" accept="image/jpeg,image/png,image/webp" data-reducir="1600"></label>
   <button class="bt s" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('feed.enviar')}</button>
  </form>
  {else}

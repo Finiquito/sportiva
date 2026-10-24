@@ -21,13 +21,14 @@
   </div>
   {if $p['titulo']}<h2 style="font-size:20px;margin:0 0 8px">{$p['titulo']}</h2>{/if}
   <p class="tx" style="white-space:pre-line">{$p['texto']}</p>
+  {if isset($adj[$p['id']])}<a href="{$url('adjunto/' . $adj[$p['id']] . '/f')}" target="_blank" rel="noopener"><img class="adj" src="{$url('adjunto/' . $adj[$p['id']] . '/m')}" alt="{$t('adjunto.foto')}" loading="lazy"></a>{/if}
   <div class="post-f"><a class="bt" href="{$url('feed/' . $p['id'])}">{$ico('chat-circle-dots')|noescape}{if $p['comentarios'] > 0}{$n('feed.comentarios', (int) $p['comentarios'])}{else}{$t('feed.comentar')}{/if}</a></div>
  </article>
  {elseif $it['k'] === 'medios'}
  {var $q = $it['p']}
  <article class="card"><div class="hilo">
   <span class="fi">{$ico('images')|noescape}</span>
-  <div><span class="ey">{$t('medios.nuevas')}</span><b>{$q['titulo']}</b><p>{if $q['fotos'] > 0}{$n('medios.fotos_n', (int) $q['fotos'])}{/if}{if $q['fotos'] > 0 && $q['videos'] > 0} · {/if}{if $q['videos'] > 0}{$n('medios.videos_n', (int) $q['videos'])}{/if} · {$q['equipo']}</p><a class="bt" href="{$url('evento/' . $q['evento_id'] . '/fotos')}">{$t('medios.ver_todo')}</a></div>
+  <div><span class="ey">{$t('medios.nuevas')}</span><b>{$q['titulo']}</b><p>{$n('medios.fotos_n', (int) $q['fotos'])} · {$q['equipo']}</p><a class="bt" href="{$url('evento/' . $q['evento_id'] . '/fotos')}">{$t('medios.ver_todo')}</a></div>
  </div></article>
  {else}
  {var $c = $it['p']}

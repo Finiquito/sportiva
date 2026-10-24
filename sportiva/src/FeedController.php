@@ -75,6 +75,7 @@ final class FeedController extends AppBase
         }
         usort($items, fn($a, $b) => [$b['f'], $b['t']] <=> [$a['f'], $a['t']]);
         echo $this->vista()->pagina('feed.latte', [
+            'adj' => (new AdjuntoService($this->pdo))->de('post', array_map(fn($i) => $i['p']['id'], array_filter($items, fn($i) => $i['k'] === 'post'))),
             'activa' => 'feed', 'items' => $items, 'vista' => $vista, 'puedePublicar' => $this->puedePublicar(), 'tieneEquipos' => $eq !== [],
         ]);
     }
@@ -122,12 +123,14 @@ final class FeedController extends AppBase
             return;
         }
         $id = $svc->crear($this->club['id'], $equipo, $this->persona['id'], $d);
+        $foto = (new AdjuntoService($this->pdo))->guardar($this->club['id'], 'post', $id, $this->persona['id'], $_FILES['foto'] ?? null);
         $av = new AvisoService($this->pdo);
         $destino = $equipo === null ? null : (string) ((new ClubService($this->pdo))->nombreEquipo($equipo));
         $autor = (string) $this->persona['nombre'];
         $resumen = $d['titulo'] !== '' ? $d['titulo'] : mb_substr($d['texto'], 0, 120);
         $this->notificar($equipo === null ? $av->miembrosDelClub($this->club['id']) : $av->adultosDelEquipo($equipo), 'feed', fn(I18n $i) => [$i->t('aviso.feed.nuevo', ['autor' => $autor, 'destino' => $destino ?? $i->t('feed.todo_club')]), $resumen], '/app/feed/' . $id);
-        $this->ctx->redirect('/app/feed?v=' . ($equipo === null ? 'club' : 'equipo'), $this->i18n->t('feed.publicado'));
+        $url = '/app/feed?v=' . ($equipo === null ? 'club' : 'equipo');
+        $foto['error'] === null ? $this->ctx->redirect($url, $this->i18n->t('feed.publicado')) : $this->ctx->redirect($url, $this->i18n->t($foto['error']) . ' ' . $this->i18n->t('adjunto.sin_foto'), 'error');
     }
 
     /** Post visible para esta persona o null. */
@@ -147,9 +150,17 @@ final class FeedController extends AppBase
             \Flight::notFound();
             return;
         }
+        $this->pantallaPost($p, [], '');
+    }
+
+    /** @param array<string, string> $errores */
+    private function pantallaPost(array $p, array $errores, string $texto): void
+    {
+        $coms = $this->svc()->comentarios($p['id']);
+        $a = new AdjuntoService($this->pdo);
         echo $this->vista()->pagina('feed-post.latte', [
-            'activa' => 'feed', 'p' => $p, 'comentarios' => $this->svc()->comentarios($id), 'puedeComentar' => $this->rol !== 'jugador',
-            'moderar' => $this->puedeModerar($p), 'errores' => [], 'texto' => '',
+            'activa' => 'feed', 'p' => $p, 'comentarios' => $coms, 'puedeComentar' => $this->rol !== 'jugador', 'moderar' => $this->puedeModerar($p),
+            'errores' => $errores, 'texto' => $texto, 'adjPost' => $a->de('post', [$p['id']])[$p['id']] ?? null, 'adjCom' => $a->de('comentario', array_column($coms, 'id')),
         ]);
     }
 
@@ -163,14 +174,17 @@ final class FeedController extends AppBase
             $this->ir('/app/feed');
             return;
         }
-        if (!$this->svc()->comentar($id, $this->persona['id'], (string) ($_POST['texto'] ?? ''))) {
-            echo $this->vista()->pagina('feed-post.latte', [
-                'activa' => 'feed', 'p' => $p, 'comentarios' => $this->svc()->comentarios($id), 'puedeComentar' => true,
-                'moderar' => $this->puedeModerar($p), 'errores' => ['texto' => 'feed.error.comentario'], 'texto' => (string) ($_POST['texto'] ?? ''),
-            ]);
+        if (trim((string) ($_POST['texto'] ?? '')) === '' && AdjuntoService::hayArchivo($_FILES['foto'] ?? null)) {
+            $_POST['texto'] = $this->i18n->t('adjunto.solo_foto');
+        }
+        $cid = $this->svc()->comentar($id, $this->persona['id'], (string) ($_POST['texto'] ?? ''));
+        if ($cid === null) {
+            $this->pantallaPost($p, ['texto' => 'feed.error.comentario'], (string) ($_POST['texto'] ?? ''));
             return;
         }
-        $this->ir('/app/feed/' . $id . '#comentarios');
+        $foto = (new AdjuntoService($this->pdo))->guardar($this->club['id'], 'comentario', $cid, $this->persona['id'], $_FILES['foto'] ?? null);
+        $url = '/app/feed/' . $id . '#comentarios';
+        $foto['error'] === null ? $this->ir($url) : $this->ctx->redirect($url, $this->i18n->t($foto['error']) . ' ' . $this->i18n->t('adjunto.sin_foto'), 'error');
     }
 
     public function fijar(string $id): void
@@ -189,6 +203,9 @@ final class FeedController extends AppBase
         if ($this->entrar()) {
             $p = $this->postVisible($id);
             if ($p !== null && $this->puedeModerar($p) && $this->csrfOk()) {
+                $a = new AdjuntoService($this->pdo);
+                $a->borrarDe('comentario', array_column($this->svc()->comentarios($id), 'id'));
+                $a->borrarDe('post', [$id]);
                 $this->svc()->borrar($id);
                 $this->ctx->redirect('/app/feed', $this->i18n->t('feed.borrado'));
                 return;
@@ -203,6 +220,7 @@ final class FeedController extends AppBase
             $p = $this->postVisible($id);
             $c = $this->svc()->comentario($cid);
             if ($p !== null && $c !== null && $c['post_id'] === $id && ($c['persona_id'] === $this->persona['id'] || $this->puedeModerar($p)) && $this->csrfOk()) {
+                (new AdjuntoService($this->pdo))->borrarDe('comentario', [$cid]);
                 $this->svc()->borrarComentario($cid);
             }
             $this->ir('/app/feed/' . $id . '#comentarios');

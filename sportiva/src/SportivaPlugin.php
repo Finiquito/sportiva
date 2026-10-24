@@ -38,7 +38,7 @@ class SportivaPlugin implements PluginInterface
         $ctx->registerAdminRoute('POST', 'diagnostico',            [$admin, 'vaciarDiagnostico']);
         $ctx->addAdminMenuItem('Clubes', '');
         $ctx->addAdminMenuItem('Correo (SMTP)', 'ajustes');
-        $ctx->addAdminMenuItem('Fotos y videos', 'medios');
+        $ctx->addAdminMenuItem('Fotos', 'medios');
         $ctx->addAdminMenuItem('Avisos y cron', 'avisos');
         $ctx->addAdminMenuItem('Diagnóstico', 'diagnostico');
 
@@ -53,6 +53,7 @@ class SportivaPlugin implements PluginInterface
         $consulta = new ConsultaController($ctx);
         $avisos = new AvisosController($ctx);
         $medios = new MedioController($ctx);
+        $adjuntos = new AdjuntoController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -74,9 +75,7 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/evento/@id/turnos/@fid/@accion',      $p(fn(string $id, string $fid, string $a) => $turno->resolver($id, $fid, $a)));
         \Flight::route('GET /app/evento/@id/fotos',                     $p(fn(string $id) => $medios->galeria($id)));
         \Flight::route('POST /app/evento/@id/fotos',                    $p(fn(string $id) => $medios->subirFotos($id)));
-        \Flight::route('GET /app/evento/@id/video/estado',              $p(fn(string $id) => $medios->estado($id)));
-        \Flight::route('POST /app/evento/@id/video/trozo',              $p(fn(string $id) => $medios->trozo($id)));
-        \Flight::route('POST /app/evento/@id/video/fin',                $p(fn(string $id) => $medios->fin($id)));
+        \Flight::route('GET /app/adjunto/@id/@variante',                $p(fn(string $id, string $v) => $adjuntos->servir($id, $v)));
         \Flight::route('GET /app/medio/@id',                            $p(fn(string $id) => $medios->ver($id)));
         \Flight::route('GET /app/medio/@id/@variante',                  $p(fn(string $id, string $v) => $medios->servir($id, $v)));
         \Flight::route('POST /app/medio/@id/borrar',                    $p(fn(string $id) => $medios->borrar($id)));
@@ -145,7 +144,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.7.1';
+        return '0.8.0';
     }
 
     public function provides(): array

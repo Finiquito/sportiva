@@ -80,13 +80,15 @@ final class ConsultaService extends Repo
     }
 
     /** Agrega un mensaje y marca la consulta como no leída para el otro lado. */
-    public function mensaje(string $consulta, string $persona, string $lado, string $texto, bool $actualizar = true): void
+    public function mensaje(string $consulta, string $persona, string $lado, string $texto, bool $actualizar = true): string
     {
         $t = Tiempo::sello();
-        $this->ejecutar('INSERT INTO sportiva_mensajes (id, consulta_id, persona_id, lado, texto, created_at) VALUES (?, ?, ?, ?, ?, ?)', [$this->id(), $consulta, $persona, $lado, trim($texto), $t]);
+        $mid = $this->id();
+        $this->ejecutar('INSERT INTO sportiva_mensajes (id, consulta_id, persona_id, lado, texto, created_at) VALUES (?, ?, ?, ?, ?, ?)', [$mid, $consulta, $persona, $lado, trim($texto), $t]);
         if ($actualizar) {
             $this->ejecutar('UPDATE sportiva_consultas SET ultimo_de = ?, nueva_staff = ?, nueva_familia = ?, updated_at = ? WHERE id = ?', [$lado, $lado === 'familia' ? 1 : 0, $lado === 'staff' ? 1 : 0, $t, $consulta]);
         }
+        return $mid;
     }
 
     public function leida(string $consulta, string $lado): void

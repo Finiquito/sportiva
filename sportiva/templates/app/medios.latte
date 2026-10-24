@@ -17,16 +17,6 @@
   <label class="campo"><span>{$t('medios.fotos')}</span><input type="file" name="fotos[]" accept="image/jpeg,image/png,image/webp" multiple required></label>
   <button class="bt s" type="submit">{$ico('camera')|noescape}{$t('medios.subir_fotos')}</button>
  </form>
- <hr style="border:0;border-top:1.5px dashed var(--linea-2);margin:16px 0">
- <div id="video-bloque" data-evento="{$e['id']}" data-csrf="{$csrf}" data-max-mb="{$lim['video_mb']}" data-max-seg="{$lim['video_seg']}"
-      data-t-grande="{$t('medios.error.video_pesado', ['mb' => $lim['video_mb'], 'seg' => $lim['video_seg']])}" data-t-largo="{$t('medios.error.video_largo', ['mb' => $lim['video_mb'], 'seg' => $lim['video_seg']])}"
-      data-t-error="{$t('medios.error.video')}" data-t-listo="{$t('medios.video_listo')}" data-t-subiendo="{$t('medios.subiendo')}">
-  <label class="campo"><span>{$t('medios.video')}</span><input type="file" id="video-archivo" accept="video/mp4,video/quicktime,video/webm"></label>
-  <p class="sub" style="margin:0 0 10px">{$t('medios.video.ayuda', ['mb' => $lim['video_mb'], 'seg' => $lim['video_seg'], 'dias' => $lim['video_dias']])}</p>
-  <button class="bt s" type="button" id="video-subir">{$ico('video-camera')|noescape}{$t('medios.subir_video')}</button>
-  <progress id="video-progreso" max="100" value="0" hidden style="width:100%;margin-top:12px"></progress>
-  <p class="sub" id="video-estado" role="status" style="margin-top:8px"></p>
- </div>
 </section>
 {/if}
 {/if}
@@ -36,9 +26,8 @@
  {if $medios}
  <div class="masonry" role="group">
   {foreach $medios as $m}
-  <a class="med" href="{$url('medio/' . $m['id'])}" aria-label="{$m['tipo'] === 'video' ? $t('medios.video') : $t('medios.foto')} · {$m['autor']}">
-   {if $m['tipo'] === 'foto' || $m['tiene_poster']}<img class="foto" src="{$url('medio/' . $m['id'] . '/m')}" alt="" loading="lazy">{else}<span class="foto-ph" style="min-height:120px">{$ico('video-camera')|noescape}</span>{/if}
-   {if $m['tipo'] === 'video'}<span class="play">{$ico('play')|noescape}</span>{/if}
+  <a class="med" href="{$url('medio/' . $m['id'])}" aria-label="{$t('medios.foto')} · {$m['autor']}">
+   <img class="foto" src="{$url('medio/' . $m['id'] . '/m')}" alt="" loading="lazy">
   </a>
   {/foreach}
  </div>
@@ -62,42 +51,6 @@
     c.toBlob(function(b){URL.revokeObjectURL(u);dt.items.add(b?new File([b],'foto'+i+'.jpg',{type:'image/jpeg'}):f);sig();},'image/jpeg',.82);};
    im.onerror=function(){URL.revokeObjectURL(u);dt.items.add(f);sig();};im.src=u;})();
  });}
- // Video por trozos de 2 MB, con reanudación si se corta.
- var b=document.getElementById('video-bloque');if(!b)return;
- var inp=document.getElementById('video-archivo'),btn=document.getElementById('video-subir'),pr=document.getElementById('video-progreso'),es=document.getElementById('video-estado');
- var D=b.dataset,TROZO=2*1024*1024;
- function uid(){return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,function(c){return(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16);});}
- function fila(m){es.textContent=m;}
- function metadatos(f){return new Promise(function(ok){var v=document.createElement('video'),u=URL.createObjectURL(f);v.preload='metadata';v.muted=true;v.playsInline=true;
-  v.onloadedmetadata=function(){var r={dur:v.duration,w:v.videoWidth,h:v.videoHeight};try{v.currentTime=Math.min(1,(v.duration||1)/2);}catch(x){}v.onseeked=function(){
-   try{var c=document.createElement('canvas'),k=Math.min(1,480/Math.max(v.videoWidth,v.videoHeight));c.width=Math.round(v.videoWidth*k);c.height=Math.round(v.videoHeight*k);c.getContext('2d').drawImage(v,0,0,c.width,c.height);
-    c.toBlob(function(p){URL.revokeObjectURL(u);r.poster=p;ok(r);},'image/jpeg',.76);}catch(x){URL.revokeObjectURL(u);ok(r);}};setTimeout(function(){ok(r);},4000);};
-  v.onerror=function(){URL.revokeObjectURL(u);ok({dur:0});};v.src=u;});}
- function api(path,fd,get){return fetch('/app/evento/'+D.evento+path,{method:get?'GET':'POST',headers:{'X-CSRF':D.csrf},body:get?undefined:fd,credentials:'same-origin'}).then(function(r){return r.json();});}
- async function subir(){
-  var f=inp.files&&inp.files[0];if(!f)return;
-  if(f.size>D.maxMb*1048576){fila(D.tGrande);return;}
-  btn.disabled=true;pr.hidden=false;pr.value=0;fila(D.tSubiendo);
-  try{
-   var meta=await metadatos(f);
-   if(meta.dur&&meta.dur>(+D.maxSeg)+1){fila(D.tLargo);btn.disabled=false;pr.hidden=true;return;}
-   var clave='v_'+f.name+'_'+f.size+'_'+f.lastModified,id=null;try{id=localStorage.getItem(clave);}catch(x){}
-   if(!id){id=uid();try{localStorage.setItem(clave,id);}catch(x){}}
-   var total=Math.ceil(f.size/TROZO),ya={};
-   var st=await api('/video/estado?subida='+id,null,true);if(st&&st.trozos){st.trozos.forEach(function(n){ya[n]=1;});}
-   for(var n=0;n<total;n++){
-    if(!ya[n]){var ok=false;for(var t=0;t<4&&!ok;t++){var fd=new FormData();fd.append('subida',id);fd.append('n',n);fd.append('total',total);fd.append('trozo',f.slice(n*TROZO,(n+1)*TROZO),'t');
-      try{var r=await api('/video/trozo',fd);ok=r&&r.ok;}catch(x){}if(!ok)await new Promise(function(s){setTimeout(s,1000*(t+1));});}
-     if(!ok)throw new Error('trozo');}
-    pr.value=Math.round((n+1)/total*95);
-   }
-   var fd2=new FormData();fd2.append('subida',id);fd2.append('total',total);fd2.append('duracion',meta.dur||0);fd2.append('ancho',meta.w||0);fd2.append('alto',meta.h||0);if(meta.poster)fd2.append('poster',meta.poster,'p.jpg');
-   var fin=await api('/video/fin',fd2);
-   try{localStorage.removeItem(clave);}catch(x){}
-   if(fin&&fin.ok){pr.value=100;fila(D.tListo);location.href=fin.url;}else{fila((fin&&fin.error)||D.tError);btn.disabled=false;}
-  }catch(x){fila(D.tError);btn.disabled=false;}
- }
- btn.addEventListener('click',subir);
 })();
 </script>
 {/if}

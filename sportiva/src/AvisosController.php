@@ -166,7 +166,6 @@ JS;
         }
         $r = $nt->recordatorios();
         $e = $nt->entregar(100);
-        $mt = $nt->mantenimiento();
-        echo 'ok recordatorios=' . $r . ' push=' . $e['push'] . ' correo=' . $e['correo'] . ' videos_borrados=' . $mt['borrados'];
+        echo 'ok recordatorios=' . $r . ' push=' . $e['push'] . ' correo=' . $e['correo'];
     }
 }
