@@ -325,3 +325,10 @@ Lámina completa: `docs/diseno/direcciones.html` (capturas en `docs/diseno/png/`
 - **Teselas en las pantallas de diseño:** tile.openstreetmap.org da 403 sin Referer (HTML abierto como archivo) y CARTO ahora pide llave. Se usan las teselas Esri Light Gray Canvas (sin llave, estilo gris claro que combina con la paleta) solo para el diseño; no son libres para producción.
 - **En producción (Hostinger), mapa realmente libre:** MapLibre GL JS + **OpenFreeMap** (teselas vectoriales gratis, sin llave ni cuenta, uso comercial permitido; estilo `positron`) o autoalojar un archivo PMTiles (Protomaps) en el propio servidor. Leaflet solo si se consigue un proveedor raster con llave. El pin arrastrable de «Nuevo lugar» guarda lat/lon. Atribución «© OpenStreetMap» siempre visible. Para no agotar los contextos WebGL, un solo mapa por pantalla.
 - Datos de ejemplo que siguen siendo inventados: categorías U8–U16, nombres de familias, rivales y otros recintos.
+
+## 29. Marca u330
+- **Nombre:** u330. Pruebas en u330.richgt.com; definitivo en u330.app.
+- **Paleta** (del PDF de identidad): verde #0F4F4E, dorado #BD984A, lila #BD8DFF, naranja #FC5603, éxito #00AB05, amarillo #F6F24A, hueso #F7F1E8. Guía de usos y contrastes: `docs/diseno/guia-colores.html`; variables en `docs/diseno/marca/tokens-u330.css`.
+- **Logos:** principal (U naranja), largo con .app (U lila) y favicon, en `docs/diseno/marca/`. Pendiente: confirmar la versión en negativo sobre verde (propuesta en la guía).
+- **Íconos:** balones por deporte (fútbol, fútbol americano, rugby, béisbol) y especiales (medalla, copa, podio) para comunicar noticias que se celebran en el Feed.
+- **Pendiente:** aplicar la paleta a las 73 pantallas y al CSS del plugin; decidir el renombre técnico (slug, tablas, rutas) de sportiva a u330; sumar los íconos de vóley y básquet si se usan esos deportes.

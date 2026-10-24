@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>u330 · guía de color</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+<style>
+/* u330 · tokens de color (paleta de marca). Se aplican a la app reemplazando los de Sportiva.
+   Regla: naranja, lila, dorado y éxito son RELLENOS (con texto tinta o verde); para texto o íconos sobre claro se usan sus versiones -txt. */
+:root{
+  /* marca */
+  --verde:#0F4F4E;      /* base: cabecera, botones, horas, color de club por defecto */
+  --hueso:#F7F1E8;      /* fondo */
+  --amarillo:#F6F24A;   /* acento único: resaltador, chip Partido, tile del auto */
+  --naranja:#FC5603;    /* ahora: en vivo, cambios, avisos urgentes */
+  --lila:#BD8DFF;       /* entrenamientos e información secundaria */
+  --dorado:#BD984A;     /* logros: medalla, copa, podio, eventos especiales */
+  --exito:#00AB05;      /* confirmado, activo, listo */
+  --papel:#FFFFFF;
+  /* apoyo */
+  --tinta:#10201F;      /* texto */
+  --tinta-2:#4B5E5C;    /* texto secundario */
+  --linea:rgba(16,32,31,.12); --linea-2:rgba(16,32,31,.22);
+  --gris:#D9D6CC;
+  /* versiones para TEXTO e íconos sobre hueso o blanco (contraste ≥ 4.5) */
+  --naranja-txt:#B93C00; --lila-txt:#6A3FC4; --dorado-txt:#7A5A1A; --exito-txt:#006B03;
+  /* fondos suaves de chips y avisos */
+  --naranja-t:color-mix(in oklab,var(--naranja) 16%,#fff);
+  --lila-t:color-mix(in oklab,var(--lila) 28%,#fff);
+  --dorado-t:color-mix(in oklab,var(--dorado) 24%,#fff);
+  --exito-t:color-mix(in oklab,var(--exito) 14%,#fff);
+  --amarillo-t:color-mix(in oklab,var(--amarillo) 40%,#fff);
+  /* color del club (cada club puede cambiarlo; debe dar ≥ 4.5:1 con texto blanco) */
+  --club:var(--verde); --club-t:color-mix(in oklab,var(--club) 10%,var(--papel));
+}
+
+*{box-sizing:border-box}html,body{overflow-x:clip}
+body{margin:0;background:var(--hueso);color:var(--tinta);font:15px/1.5 "Geist",system-ui,sans-serif}
+.w{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+h1{font:800 40px/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em;margin:0 0 6px;color:var(--verde)}
+h2{font:800 24px/1.1 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;margin:48px 0 14px;color:var(--verde)}
+.sub{font:500 12px/1.4 "Geist Mono",monospace;letter-spacing:.04em;color:var(--tinta-2);margin:0 0 4px}
+p{margin:0 0 10px;max-width:70ch}
+code{font:500 12.5px "Geist Mono",monospace}
+.sws{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(138px,100%),1fr));gap:12px}
+.sw{background:var(--papel);border-radius:20px;padding:10px 10px 14px;display:grid;gap:4px;align-content:start}
+.sw i{display:block;height:84px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--linea)}
+.sw b{font:800 16px "Bricolage Grotesque",sans-serif}.sw code{color:var(--tinta-2)}.sw span{font-size:12.5px;line-height:1.4;color:var(--tinta-2)}
+.card{background:var(--papel);border-radius:24px;padding:18px 20px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1.5px dashed var(--linea-2);vertical-align:middle}
+th{font:500 11.5px "Geist Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2)}
+td.n{font:500 12.5px "Geist Mono",monospace;white-space:nowrap}
+.mu{display:inline-grid;place-items:center;width:34px;height:26px;border-radius:8px;font:800 13px "Bricolage Grotesque",sans-serif;margin-right:8px;box-shadow:inset 0 0 0 1px var(--linea)}
+td.ok{color:var(--exito-txt);font-weight:600}td.gr{color:var(--dorado-txt);font-weight:600}td.no{color:var(--naranja-txt);font-weight:600}
+.usos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px}
+.uso{background:var(--papel);border-radius:20px;padding:14px 16px;display:grid;gap:8px;align-content:start}
+.uso h3{margin:0;display:flex;align-items:center;gap:10px;font:800 17px "Bricolage Grotesque",sans-serif}
+.uso h3 i{width:18px;height:18px;border-radius:6px;display:block;flex:none;box-shadow:inset 0 0 0 1px var(--linea)}
+.uso ul{margin:0;padding-left:18px;font-size:13.5px}.uso li{margin:2px 0}
+.uso .no{color:var(--naranja-txt)}
+.cambios td:nth-child(1),.cambios td:nth-child(3){font:500 12.5px "Geist Mono",monospace}
+.cambios i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px;box-shadow:inset 0 0 0 1px var(--linea)}
+.par{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:20px;align-items:start}
+.cap{font:500 11.5px "Geist Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);margin:0 0 8px 4px}
+/* maqueta móvil: la misma tarjeta, antes y ahora (los valores de «antes» son los de Sportiva) */
+.tel{border-radius:28px;overflow:hidden;box-shadow:0 0 0 1px var(--linea-2)}
+.tel .band{padding:12px 16px 26px;display:flex;align-items:center;justify-content:space-between}
+.tel .chipc{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 6px;border-radius:999px;background:#fff;font:600 13px "Geist",sans-serif;color:var(--t)}
+.tel .chipc b{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c)}
+.tel .chipc svg{width:14px;height:auto}
+.tel .bell{position:relative;width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.tel .bell em{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;font:600 10.5px/18px "Geist Mono",monospace;text-align:center;font-style:normal}
+.tel .hoja{border-radius:24px 24px 0 0;margin-top:-14px;padding:16px 14px 18px;position:relative}
+.tel h4{font:800 28px/1 "Bricolage Grotesque",sans-serif;margin:0 4px 12px}
+.tel .tc{background:#fff;border-radius:22px;padding:16px;margin-bottom:10px}
+.tel .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tel .tg{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font:700 12px "Geist",sans-serif}
+.tel .tg.m{font:500 11px "Geist Mono",monospace;border:1px solid var(--linea)}
+.tel h5{font:800 20px/1.1 "Bricolage Grotesque",sans-serif;margin:0 0 8px}
+.tel .hs{display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1.5px dashed var(--linea-2);padding-top:12px;margin-top:10px}
+.tel .hs small{display:block;font:500 10.5px "Geist Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:6px}
+.tel .hs b{font:800 38px/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;color:var(--h)}
+.tel .hs b span{background:linear-gradient(transparent 62%,var(--r) 62%,var(--r) 92%,transparent 92%)}
+.tel .voto{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.tel .voto span{height:36px;border-radius:999px;border:1.5px solid var(--linea-2);display:grid;place-items:center;font:700 13px "Geist",sans-serif}
+.tel .voto span.on{background:var(--c);border-color:var(--c);color:#fff}
+.tel .aviso{border-radius:14px;padding:10px 12px;font:600 12.5px "Geist",sans-serif;display:flex;gap:8px;align-items:center}
+.antes{--c:#215E5E;--t:#10201F;--h:#215E5E;--r:#F6F24A;background:#215E5E}.antes .hoja{background:#F2F0EA}
+.ahora{--c:var(--verde);--t:var(--tinta);--h:var(--verde);--r:var(--amarillo);background:var(--verde)}.ahora .hoja{background:var(--hueso)}
+.logos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px}
+.lbox{border-radius:24px;padding:24px;display:grid;place-items:center;min-height:150px;gap:10px;--u-v:var(--verde)}
+.lbox.verde{background:var(--verde);--u-v:var(--hueso)}.lbox.hueso{background:var(--hueso);box-shadow:inset 0 0 0 1px var(--linea)}.lbox.blanco{background:#fff;box-shadow:inset 0 0 0 1px var(--linea)}
+.lbox figcaption{font:500 11px "Geist Mono",monospace;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.lbox.verde figcaption{color:var(--hueso)}
+.lg{max-width:100%;height:auto;display:block}.lg .u-v{fill:var(--u-v)}.lg .u-a{fill:var(--dorado)}.lg .u-b{fill:var(--naranja)}
+.lg.l .u-b{fill:var(--lila)}
+.lg.w1{width:260px}.lg.w2{width:100%;max-width:440px}.lg.w3{width:80px}
+.iconos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.icn{background:#fff;border-radius:18px;padding:14px 8px 10px;text-align:center;display:grid;gap:8px;justify-items:center}
+.icn .ic{width:44px;height:44px;color:var(--verde)}.icn.d .ic{color:var(--dorado-txt)}
+.icn span{font:500 11px "Geist Mono",monospace;color:var(--tinta-2)}
+.nota{display:block;background:var(--amarillo-t);border-radius:16px;padding:12px 14px;font-size:14px;margin:12px 0}
+pre{background:var(--verde);color:var(--hueso);border-radius:18px;padding:16px;overflow:auto;font:500 12px/1.55 "Geist Mono",monospace;margin:0}
+</style></head><body><div class="w">
+<p class="sub">u330 · pruebas en u330.richgt.com · definitivo en u330.app</p>
+<h1>Guía de color</h1>
+<p>Siete colores de marca y reglas cortas para aplicarlos a lo que ya tenemos. Los acentos (amarillo y compañía) siguen igual; cambia la base, el verde.</p>
+
+<h2>Paleta</h2>
+<div class="sws"><div class="sw"><i style="background:var(--verde)"></i><b>Verde</b><code>#0F4F4E</code><span>Marca. Cabecera, botones, horas, color de club por defecto.</span></div><div class="sw"><i style="background:var(--hueso)"></i><b>Hueso</b><code>#F7F1E8</code><span>Fondo de pantallas y tarjetas de apoyo.</span></div><div class="sw"><i style="background:var(--amarillo)"></i><b>Amarillo</b><code>#F6F24A</code><span>Acento único: resaltador, chip Partido, tile del auto.</span></div><div class="sw"><i style="background:var(--naranja)"></i><b>Naranja</b><code>#FC5603</code><span>Lo que pasa ahora: en vivo, cambios, avisos urgentes.</span></div><div class="sw"><i style="background:var(--lila)"></i><b>Lila</b><code>#BD8DFF</code><span>Entrenamientos e información secundaria.</span></div><div class="sw"><i style="background:var(--dorado)"></i><b>Dorado</b><code>#BD984A</code><span>Logros: medalla, copa, podio y eventos especiales.</span></div><div class="sw"><i style="background:var(--exito)"></i><b>Éxito</b><code>#00AB05</code><span>Confirmado, activo, listo.</span></div></div>
+<div class="nota"><b>Ojo:</b> naranja, lila, dorado y éxito son <b>rellenos</b> (chips, fondos, ícono grande con texto al lado). Como texto o ícono chico sobre claro no llegan al contraste mínimo: para eso hay una versión oscura de cada uno (abajo, <code>-txt</code>).</div>
+
+<h2>Qué hace cada color</h2>
+<div class="usos">
+<div class="uso"><h3><i style="background:var(--verde)"></i>Verde · marca</h3><ul><li>Cabecera, botón principal, píldora activa, horas grandes, títulos con énfasis.</li><li>Es el <code>--club</code> por defecto; cada club puede elegir otro oscuro (≥ 4.5:1 con blanco).</li></ul><ul class="no"><li>No como fondo de texto largo.</li></ul></div>
+<div class="uso"><h3><i style="background:var(--hueso)"></i>Hueso · fondo</h3><ul><li>Fondo de pantalla y zonas de apoyo; las tarjetas siguen blancas.</li></ul></div>
+<div class="uso"><h3><i style="background:var(--amarillo)"></i>Amarillo · acento único</h3><ul><li>Resaltador bajo la hora, chip «Partido», tile del auto, ícono sobre verde (check del «Voy»).</li><li>Un solo uso por tarjeta; nunca pegado a otro amarillo.</li></ul></div>
+<div class="uso"><h3><i style="background:var(--naranja)"></i>Naranja · ahora</h3><ul><li>«En vivo», «Modificada hoy», cambio de lugar u hora, contador de notificaciones, avisos urgentes.</li><li>Relleno con texto tinta, o texto <code>--naranja-txt</code> sobre fondo suave.</li></ul><ul class="no"><li>Blanco sobre naranja solo en texto grande.</li></ul></div>
+<div class="uso"><h3><i style="background:var(--lila)"></i>Lila · entrenamiento e info</h3><ul><li>Chip «Entrenamiento», avisos informativos, estados neutros (reemplaza el azul grisáceo).</li></ul></div>
+<div class="uso"><h3><i style="background:var(--dorado)"></i>Dorado · logros</h3><ul><li>Medalla, copa y podio; resultados destacados, campeones, «Evento especial».</li><li>Solo noticias que se celebran: si todo es dorado, nada lo es.</li></ul></div>
+<div class="uso"><h3><i style="background:var(--exito)"></i>Éxito · confirmado</h3><ul><li>Aviso «guardado», «Activo», «Listo», invitación aceptada. Fondo <code>--exito-t</code>, texto <code>--exito-txt</code>.</li><li>Ojo: el <b>Voy</b> de asistencia sigue en verde de marca, no en este.</li></ul></div>
+</div>
+<div class="nota"><b>Regla de oro:</b> el estado nunca va solo en color. Siempre ícono y texto (✓ Voy · ? Duda · ✕ No voy · reloj Sin respuesta); el color solo refuerza.</div>
+
+<h2>Contraste</h2>
+<div class="card"><table><thead><tr><th>Combinación</th><th>Razón</th><th>Uso</th></tr></thead><tbody><tr><td><span class="mu" style="background:#F7F1E8;color:#10201F">Aa</span> Texto tinta sobre hueso</td><td class="n">14.98:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#4B5E5C">Aa</span> Texto secundario sobre hueso</td><td class="n">6.12:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#0F4F4E">Aa</span> Verde sobre hueso (horas, títulos)</td><td class="n">8.32:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#0F4F4E;color:#FFFFFF">Aa</span> Blanco sobre verde (botones)</td><td class="n">9.34:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F6F24A;color:#0F4F4E">Aa</span> Verde sobre amarillo (resaltador)</td><td class="n">7.88:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#FC5603;color:#10201F">Aa</span> Tinta sobre naranja</td><td class="n">5.18:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#FC5603;color:#FFFFFF">Aa</span> Blanco sobre naranja</td><td class="n">3.24:1</td><td class="gr">solo texto grande o relleno</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#B93C00">Aa</span> Naranja-txt sobre hueso</td><td class="n">5.04:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#BD8DFF;color:#10201F">Aa</span> Tinta sobre lila</td><td class="n">6.74:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#6A3FC4">Aa</span> Lila-txt sobre hueso</td><td class="n">5.99:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#BD984A;color:#10201F">Aa</span> Tinta sobre dorado</td><td class="n">6.21:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#7A5A1A">Aa</span> Dorado-txt sobre hueso</td><td class="n">5.66:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#00AB05;color:#10201F">Aa</span> Tinta sobre éxito</td><td class="n">5.47:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#00AB05;color:#FFFFFF">Aa</span> Blanco sobre éxito</td><td class="n">3.08:1</td><td class="gr">solo texto grande o relleno</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#006B03">Aa</span> Éxito-txt sobre hueso</td><td class="n">6.02:1</td><td class="ok">AA texto</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#FC5603">Aa</span> Naranja puro sobre hueso (texto o ícono)</td><td class="n">2.89:1</td><td class="no">no usar</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#BD984A">Aa</span> Dorado puro sobre hueso (texto o ícono)</td><td class="n">2.41:1</td><td class="no">no usar</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#BD8DFF">Aa</span> Lila puro sobre hueso (texto o ícono)</td><td class="n">2.22:1</td><td class="no">no usar</td></tr><tr><td><span class="mu" style="background:#F7F1E8;color:#00AB05">Aa</span> Éxito puro sobre hueso (texto o ícono)</td><td class="n">2.74:1</td><td class="no">no usar</td></tr></tbody></table></div>
+<p style="margin-top:10px;color:var(--tinta-2);font-size:13px">Mínimo AA: 4.5:1 para texto normal, 3:1 para texto grande (24 px, o 19 px en negrita) e íconos.</p>
+
+<h2>Qué cambia respecto a lo que ya tenemos</h2>
+<div class="card"><table class="cambios"><thead><tr><th>Antes (Sportiva)</th><th></th><th>Ahora (u330)</th><th>Dónde</th></tr></thead><tbody>
+<tr><td><i style="background:#215E5E"></i>#215E5E teal</td><td>→</td><td><i style="background:var(--verde)"></i>#0F4F4E verde</td><td>marca, cabecera, botones, horas, club por defecto</td></tr>
+<tr><td><i style="background:#F2F0EA"></i>#F2F0EA hueso</td><td>→</td><td><i style="background:var(--hueso)"></i>#F7F1E8</td><td>fondo</td></tr>
+<tr><td><i style="background:#F6F24A"></i>#F6F24A limón</td><td>=</td><td><i style="background:var(--amarillo)"></i>#F6F24A amarillo</td><td>igual (solo cambia el nombre)</td></tr>
+<tr><td><i style="background:#D9E2EA"></i>#D9E2EA azul grisáceo</td><td>→</td><td><i style="background:var(--lila-t)"></i>lila suave</td><td>chip Entrenamiento</td></tr>
+<tr><td><i style="background:#B9341A"></i>#B9341A rojo</td><td>→</td><td><i style="background:var(--naranja)"></i>#FC5603 naranja</td><td>contador de la campana, «Sin leer», avisos de cambio</td></tr>
+<tr><td>—</td><td>+</td><td><i style="background:var(--dorado)"></i>dorado · <i style="background:var(--exito)"></i>éxito</td><td>logros y confirmaciones (nuevos)</td></tr>
+<tr><td><i style="background:#10201F"></i>#10201F tinta</td><td>=</td><td><i style="background:var(--tinta)"></i>#10201F</td><td>texto (sigue)</td></tr>
+</tbody></table></div>
+
+<h2>Maqueta: la tarjeta de partido, antes y ahora</h2>
+<p>Solo cambia la paleta; layout, tamaños y tipografía quedan como están. Aquí se ve la agenda móvil con los cambios.</p>
+<div class="par">
+ <div><p class="cap">Antes</p><div class="tel antes"><div class="band"><span class="chipc"><b><svg viewBox="205 453 326 404" style="fill:#F6F24A"><path d="M305 458 L322 459 C328 459 330 465 331 476 C340 560 400 620 480 684 C508 702 527 722 527 745 C527 800 480 850 430 850 C421 850 417 844 415 832 C405 760 385 700 325 652 C285 626 212 590 210 548 C215 500 260 458 305 458 Z"/><path d="M385 458 L415 457 C490 458 527 510 527 560 L527 636 C527 644 520 647 510 646 C440 622 372 555 369 488 C369 465 375 458 385 458 Z"/></svg></b>FCJ Orée de l’Autize</span><span class="bell">&#128276;<em style="background:#B9341A;color:#fff">3</em></span></div>
+ <div class="hoja"><h4>Agenda</h4>
+  <div class="tc"><div class="tags"><span class="tg" style="background:var(--r);color:#10201F">Partido</span><span class="tg m">U12 · Lucas</span></div>
+   <h5>U12 vs Niort</h5>
+   <div class="aviso" style="background:#E6ECE9;color:#10201F">&#9888; Cambió el lugar del partido · hoy 10:12</div>
+   <div class="hs"><div><small>Encuentro</small><b><span>12:30</span></b></div><div><small>En cancha</small><b>13:15</b></div></div>
+   <div class="voto"><span class="on">&#10003; Voy</span><span>? Duda</span><span>&#10005; No voy</span></div></div>
+  <div class="tc"><div class="tags"><span class="tg" style="background:#D9E2EA;color:#215E5E">Entrenamiento</span><span class="tg m">U12 · Lucas</span></div><h5>Entrenamiento U12</h5>
+   <div class="aviso" style="background:#E6ECE9;color:#10201F">&#10003; Asistencia guardada</div></div>
+ </div></div></div>
+ <div><p class="cap">Ahora</p><div class="tel ahora"><div class="band"><span class="chipc"><b><svg viewBox="205 453 326 404" style="fill:#F6F24A"><path d="M305 458 L322 459 C328 459 330 465 331 476 C340 560 400 620 480 684 C508 702 527 722 527 745 C527 800 480 850 430 850 C421 850 417 844 415 832 C405 760 385 700 325 652 C285 626 212 590 210 548 C215 500 260 458 305 458 Z"/><path d="M385 458 L415 457 C490 458 527 510 527 560 L527 636 C527 644 520 647 510 646 C440 622 372 555 369 488 C369 465 375 458 385 458 Z"/></svg></b>FCJ Orée de l’Autize</span><span class="bell">&#128276;<em style="background:var(--naranja);color:var(--tinta)">3</em></span></div>
+ <div class="hoja"><h4>Agenda</h4>
+  <div class="tc"><div class="tags"><span class="tg" style="background:var(--r);color:#10201F">Partido</span><span class="tg m">U12 · Lucas</span></div>
+   <h5>U12 vs Niort</h5>
+   <div class="aviso" style="background:var(--naranja-t);color:var(--naranja-txt)">&#9888; Cambió el lugar del partido · hoy 10:12</div>
+   <div class="hs"><div><small>Encuentro</small><b><span>12:30</span></b></div><div><small>En cancha</small><b>13:15</b></div></div>
+   <div class="voto"><span class="on">&#10003; Voy</span><span>? Duda</span><span>&#10005; No voy</span></div></div>
+  <div class="tc"><div class="tags"><span class="tg" style="background:var(--lila-t);color:var(--tinta)">Entrenamiento</span><span class="tg m">U12 · Lucas</span></div><h5>Entrenamiento U12</h5>
+   <div class="aviso" style="background:var(--exito-t);color:var(--exito-txt)">&#10003; Asistencia guardada</div></div>
+ </div></div></div>
+</div>
+<p style="margin-top:10px;color:var(--tinta-2);font-size:13px">En la maqueta el escudo del club sigue siendo la S de Sportiva; en la app pasará a ser la U (ver logos).</p>
+
+<h2>Logos</h2>
+<div class="logos">
+ <figure class="lbox hueso" style="margin:0"><svg class="lg w2" viewBox="0 0 500 160.94421" role="img" aria-label="u330">
+  
+  <g>
+    <path class="u-v" d="M258.01986,102.31329c0,7.00386-1.44159,14.00585-4.32476,21.00783-3.70693,9.06139-9.81776,16.23749-18.32873,21.52081-8.51472,5.28706-18.39987,7.92872-29.65641,7.92872-10.986,0-20.76819-2.67723-29.34656-8.03169-8.58211-5.35446-14.86424-12.62979-18.84452-21.82972-2.33556-5.07925-3.70693-11.1208-4.11882-18.12466,0-2.05941,1.0297-3.08911,3.08911-3.08911h32.95146c1.92087,0,3.01797.96231,3.29505,2.88317.54668,3.98402,1.44159,7.07313,2.67723,9.26921,2.19421,3.84548,5.5604,5.76634,10.0911,5.76634s7.96148-1.92087,10.29798-5.76634c2.05941-3.57026,3.08911-7.82762,3.08911-12.7702,0-5.07738-.96231-9.40213-2.88317-12.97427-2.47223-4.11882-6.04343-6.17822-10.70986-6.17822-1.64753,0-3.39802.55042-5.25149,1.64753-1.85347,1.10085-4.42773,2.88317-7.72278,5.35446-.55042.55042-1.23564.82376-2.05941.82376-.96231,0-1.71867-.47928-2.26535-1.44159l-16.26932-23.06537c-.41282-.68522-.61876-1.37044-.61876-2.05941,0-.95856.48022-1.71493,1.44252-2.26535l30.06735-19.56437c.41188-.1348.54762-.37631.41188-.72079-.13854-.34074-.41188-.51485-.82376-.51485h-41.60097c-.96231,0-1.71773-.27334-2.26535-.82376-.55042-.54668-.82376-1.30304-.82376-2.26535V10.04994c0-.95856.27334-1.71493.82376-2.26535.54762-.54668,1.30304-.82376,2.26535-.82376h91.85146c.9595,0,1.71586.27708,2.26535.82376.54762.55042.82376,1.30679.82376,2.26535v30.27517c0,1.78607-.61782,3.08911-1.85347,3.91287l-22.2416,15.44556c-.68897.55042-.55042,1.0297.41188,1.44159,10.1585,3.16025,17.50497,10.0237,22.03566,20.59408,2.74557,6.31677,4.11882,13.18021,4.11882,20.59408Z"/>
+    <path class="u-v" d="M372.52575,102.31329c0,7.00386-1.44159,14.00585-4.32476,21.00783-3.70693,9.06139-9.81776,16.23749-18.32873,21.52081-8.51472,5.28706-18.39987,7.92872-29.65641,7.92872-10.986,0-20.76819-2.67723-29.34656-8.03169-8.58211-5.35446-14.86424-12.62979-18.84452-21.82972-2.33556-5.07925-3.70693-11.1208-4.11882-18.12466,0-2.05941,1.0297-3.08911,3.08911-3.08911h32.95146c1.92087,0,3.01797.96231,3.29505,2.88317.54668,3.98402,1.44159,7.07313,2.67723,9.26921,2.19421,3.84548,5.5604,5.76634,10.0911,5.76634s7.96148-1.92087,10.29798-5.76634c2.05941-3.57026,3.08911-7.82762,3.08911-12.7702,0-5.07738-.96231-9.40213-2.88317-12.97427-2.47223-4.11882-6.04343-6.17822-10.70986-6.17822-1.64753,0-3.39802.55042-5.25149,1.64753-1.85347,1.10085-4.42773,2.88317-7.72278,5.35446-.55042.55042-1.23564.82376-2.05941.82376-.96231,0-1.71867-.47928-2.26535-1.44159l-16.26932-23.06537c-.41282-.68522-.61876-1.37044-.61876-2.05941,0-.95856.48022-1.71493,1.44252-2.26535l30.06735-19.56437c.41188-.1348.54762-.37631.41188-.72079-.13854-.34074-.41188-.51485-.82376-.51485h-41.60097c-.96231,0-1.71773-.27334-2.26535-.82376-.55042-.54668-.82376-1.30304-.82376-2.26535V10.04994c0-.95856.27334-1.71493.82376-2.26535.54762-.54668,1.30304-.82376,2.26535-.82376h91.85146c.9595,0,1.71586.27708,2.26535.82376.54762.55042.82376,1.30679.82376,2.26535v30.27517c0,1.78607-.61782,3.08911-1.85347,3.91287l-22.2416,15.44556c-.68897.55042-.55042,1.0297.41188,1.44159,10.1585,3.16025,17.50497,10.0237,22.03566,20.59408,2.74557,6.31677,4.11882,13.18021,4.11882,20.59408Z"/>
+    <path class="u-v" d="M398.37131,140.00232c-9.40588-9.06139-14.10694-21.55451-14.10694-37.4831v-46.9545c0-15.51296,4.70107-27.76643,14.10694-36.76043,9.40307-8.99212,22.27437-13.49099,38.61483-13.49099,16.33766,0,29.24453,4.49887,38.7178,13.49099,9.47328,8.994,14.21085,21.24747,14.21085,36.76043v46.9545c0,15.79191-4.73757,28.25133-14.21085,37.38012-9.47328,9.13254-22.38015,13.69506-38.7178,13.69506-16.34047,0-29.21176-4.5307-38.61483-13.59209ZM447.38709,116.21616c2.53869-2.8139,3.8099-6.69308,3.8099-11.63753v-50.24955c0-4.94258-1.27122-8.81988-3.8099-11.63565-2.54243-2.81203-6.00785-4.22179-10.40095-4.22179-4.39496,0-7.82575,1.40976-10.29704,4.22179-2.47129,2.81577-3.70693,6.69308-3.70693,11.63565v50.24955c0,4.94445,1.23564,8.82363,3.70693,11.63753,2.47129,2.81577,5.90208,4.22179,10.29704,4.22179,4.39309,0,7.85851-1.40601,10.40095-4.22179Z"/>
+  </g>
+  <g>
+    <path class="u-b" d="M95.8221,21.29262v81.01094c0,.48437-.02315.96285-.05667,1.43848v26.92161c0,11.84931-8.90562,21.61034-20.38445,22.97566.90683.10908,1.82797.17143,2.76439.17023l17.54548-.02162c30.95371,0,44.8438-19.06182,44.8438-72.22543V21.29262h-44.71255Z"/>
+    <path class="u-a" d="M55.43822,131.13023v-28.2972c-.00459-.17645-.01343-.35192-.01343-.52947V21.29262H10.66889v60.26988c0,53.16361,13.84587,72.22543,44.79968,72.22543l17.12313.02107c.94461.00109,1.87416-.06093,2.78929-.16968-11.2326-1.352-19.94277-10.90928-19.94277-22.50909Z"/>
+    <path class="u-v" d="M95.76543,130.66366l.08411-31.43714c-.73846,10.48322-9.55501,18.7862-20.22604,18.7862h-.00011c-10.97774,0-19.92923-8.75856-20.21072-19.66849l.02555,32.78601c0,11.59981,8.71017,21.15708,19.94277,22.50909,11.47882-1.36533,20.38445-11.12635,20.38445-22.97566Z"/>
+    <polygon class="u-v" points="53.18409 7.36281 12.93129 7.36281 10.68776 21.30365 55.42762 21.30365 53.18409 7.36281"/>
+    <polygon class="u-v" points="138.32027 7.35115 98.06747 7.35115 95.82394 21.29199 140.56379 21.29199 138.32027 7.35115"/>
+  </g>
+</svg><figcaption>Principal · sobre hueso</figcaption></figure>
+ <figure class="lbox blanco" style="margin:0"><svg class="lg w2 l" viewBox="0 0 1085.34846 232.54619" role="img" aria-label="u330">
+  
+  <g>
+    <g>
+      <path class="u-v" d="M761.16266,92.38817h43.95983l42.20132,121.32842h-41.85l-4.7471-17.0557h-35.16825l-4.7471,17.0557h-41.85l42.20132-121.32842ZM793.34134,166.41686l-10.19877-33.76105-10.19877,33.76105h20.39755Z"/>
+      <path class="u-v" d="M854.35297,92.38817h52.92755c29.18912,0,47.47685,14.7707,47.47685,42.7278,0,28.31133-18.81518,42.55458-47.47685,42.55458h-13.18736v36.04605h-39.74018v-121.32842ZM914.66587,135.11597c0-8.79158-5.27456-11.95631-14.06711-11.95631h-7.20921v23.73745h7.20921c8.96772,0,14.06711-3.16473,14.06711-11.78114Z"/>
+      <path class="u-v" d="M965.47873,92.38817h52.92755c29.18912,0,47.47685,14.7707,47.47685,42.7278,0,28.31133-18.81518,42.55458-47.47685,42.55458h-13.18736v36.04605h-39.74018v-121.32842ZM1025.79163,135.11597c0-8.79158-5.27456-11.95631-14.06711-11.95631h-7.20921v23.73745h7.20921c8.96772,0,14.06711-3.16473,14.06711-11.78114Z"/>
+    </g>
+    <rect class="u-v" x="672.24475" y="178.85984" width="39.69796" height="34.85675"/>
+  </g>
+  <g>
+    <path class="u-v" d="M352.9238,146.94529c0,9.44203-1.94343,18.88154-5.83028,28.32105-4.99739,12.21583-13.2355,21.89007-24.7093,29.01261-11.47885,7.12759-24.80521,10.68886-39.98036,10.68886-14.81044,0-27.99799-3.60922-39.56265-10.82767-11.56971-7.21845-20.03876-17.02645-25.40465-29.42906-3.14861-6.84743-4.99739-14.99216-5.55265-24.43419,0-2.77633,1.38816-4.16449,4.16449-4.16449h44.42248c2.58956,0,4.06858,1.2973,4.44212,3.88686.73699,5.37093,1.94343,9.53542,3.60922,12.49599,2.95805,5.18416,7.49608,7.77371,13.604,7.77371s10.73302-2.58956,13.88289-7.77371c2.77633-4.81314,4.16449-10.55256,4.16449-17.21575,0-6.84491-1.2973-12.67519-3.88686-17.49085-3.33285-5.55265-8.14726-8.32898-14.43816-8.32898-2.22106,0-4.58094.74204-7.07963,2.22106-2.49869,1.48407-5.9691,3.88686-10.41122,7.21845-.74204.74204-1.6658,1.11053-2.77633,1.11053-1.2973,0-2.31697-.64613-3.05396-1.94343l-21.93298-31.09485c-.55653-.92376-.83416-1.84752-.83416-2.77633,0-1.29225.64739-2.31192,1.94469-3.05396l40.53436-26.3751c.55527-.18172.73825-.50731.55527-.97171-.18677-.45936-.55527-.69408-1.11053-.69408h-56.08305c-1.2973,0-2.31571-.36849-3.05396-1.11053-.74204-.73699-1.11053-1.75666-1.11053-3.05396V22.56336c0-1.29225.36849-2.31192,1.11053-3.05396.73825-.73699,1.75666-1.11053,3.05396-1.11053h123.82667c1.29352,0,2.31318.37354,3.05396,1.11053.73825.74204,1.11053,1.76171,1.11053,3.05396v40.81452c0,2.40783-.8329,4.16449-2.49869,5.27502l-29.98432,20.82245c-.92881.74204-.74204,1.38816.55527,1.94343,13.69486,4.2604,23.59877,13.51314,29.70669,27.76326,3.70135,8.51575,5.55265,17.76849,5.55265,27.76326Z"/>
+    <path class="u-v" d="M507.29132,146.94529c0,9.44203-1.94343,18.88154-5.83028,28.32105-4.99739,12.21583-13.2355,21.89007-24.7093,29.01261-11.47885,7.12759-24.80521,10.68886-39.98036,10.68886-14.81044,0-27.99799-3.60922-39.56265-10.82767-11.56971-7.21845-20.03876-17.02645-25.40465-29.42906-3.14861-6.84743-4.99739-14.99216-5.55265-24.43419,0-2.77633,1.38816-4.16449,4.16449-4.16449h44.42248c2.58956,0,4.06858,1.2973,4.44212,3.88686.73699,5.37093,1.94343,9.53542,3.60922,12.49599,2.95805,5.18416,7.49608,7.77371,13.604,7.77371s10.73302-2.58956,13.88289-7.77371c2.77633-4.81314,4.16449-10.55256,4.16449-17.21575,0-6.84491-1.2973-12.67519-3.88686-17.49085-3.33285-5.55265-8.14726-8.32898-14.43816-8.32898-2.22106,0-4.58094.74204-7.07963,2.22106-2.49869,1.48407-5.9691,3.88686-10.41122,7.21845-.74204.74204-1.6658,1.11053-2.77633,1.11053-1.2973,0-2.31697-.64613-3.05396-1.94343l-21.93298-31.09485c-.55653-.92376-.83416-1.84752-.83416-2.77633,0-1.29225.64739-2.31192,1.94469-3.05396l40.53436-26.3751c.55527-.18172.73825-.50731.55527-.97171-.18677-.45936-.55527-.69408-1.11053-.69408h-56.08305c-1.2973,0-2.31571-.36849-3.05396-1.11053-.74204-.73699-1.11053-1.75666-1.11053-3.05396V22.56336c0-1.29225.36849-2.31192,1.11053-3.05396.73825-.73699,1.75666-1.11053,3.05396-1.11053h123.82667c1.29352,0,2.31318.37354,3.05396,1.11053.73825.74204,1.11053,1.76171,1.11053,3.05396v40.81452c0,2.40783-.8329,4.16449-2.49869,5.27502l-29.98432,20.82245c-.92881.74204-.74204,1.38816.55527,1.94343,13.69486,4.2604,23.59877,13.51314,29.70669,27.76326,3.70135,8.51575,5.55265,17.76849,5.55265,27.76326Z"/>
+    <path class="u-v" d="M542.13421,197.75459c-12.68024-12.21583-19.01783-29.05804-19.01783-50.53166v-63.30024c0-20.91331,6.3376-37.43245,19.01783-49.55742,12.67645-12.12245,30.02849-18.18746,52.05738-18.18746,22.0251,0,39.42509,6.06501,52.19619,18.18746,12.7711,12.12497,19.15791,28.64411,19.15791,49.55742v63.30024c0,21.28937-6.38681,38.08615-19.15791,50.39284-12.7711,12.31174-30.17109,18.46257-52.19619,18.46257-22.02889,0-39.38092-6.10792-52.05738-18.32375ZM608.2133,165.68802c3.42245-3.79347,5.1362-9.02306,5.1362-15.68877v-67.74236c0-6.66318-1.71375-11.89025-5.1362-15.68624-3.4275-3.79095-8.0993-5.69147-14.02171-5.69147-5.92493,0-10.55004,1.90052-13.88163,5.69147-3.33159,3.796-4.99739,9.02306-4.99739,15.68624v67.74236c0,6.66571,1.6658,11.8953,4.99739,15.68877,3.33159,3.796,7.9567,5.69147,13.88163,5.69147,5.92241,0,10.59421-1.89547,14.02171-5.69147Z"/>
+  </g>
+  <g>
+    <path class="u-b" d="M134.26197,37.71983v109.21236c0,.65299-.03121,1.29803-.0764,1.93925v36.29352c0,15.97427-12.00584,29.1333-27.48065,30.97392,1.22252.14706,2.46432.23111,3.72673.22949l23.65339-.02915c41.72927,0,60.45476-25.69759,60.45476-97.36844V37.71983h-60.27782Z"/>
+    <path class="u-a" d="M79.81971,185.79395v-38.14798c-.00618-.23788-.01811-.47443-.01811-.71379V37.71983H19.46534v81.25094c0,71.67085,18.66587,97.36844,60.39529,97.36844l23.08401.02841c1.27345.00147,2.52658-.08214,3.76029-.22875-15.14287-1.82266-26.88522-14.70701-26.88522-30.34492Z"/>
+    <path class="u-v" d="M134.18558,185.16496l.11339-42.381c-.99553,14.13262-12.88129,25.32603-27.2671,25.32603h-.00015c-14.7993,0-26.86697-11.80757-27.24645-26.51546l.03445,44.19943c0,15.63791,11.74235,28.52226,26.88522,30.34492,15.47481-1.84062,27.48065-14.99964,27.48065-30.97392Z"/>
+    <polygon class="u-v" points="76.78087 18.94079 22.51532 18.94079 19.49078 37.73469 79.80542 37.73469 76.78087 18.94079"/>
+    <polygon class="u-v" points="191.55454 18.92507 137.28899 18.92507 134.26445 37.71897 194.57908 37.71897 191.55454 18.92507"/>
+  </g>
+</svg><figcaption>Largo con .app · sobre blanco</figcaption></figure>
+ <figure class="lbox verde" style="margin:0"><svg class="lg w2" viewBox="0 0 500 160.94421" role="img" aria-label="u330">
+  
+  <g>
+    <path class="u-v" d="M258.01986,102.31329c0,7.00386-1.44159,14.00585-4.32476,21.00783-3.70693,9.06139-9.81776,16.23749-18.32873,21.52081-8.51472,5.28706-18.39987,7.92872-29.65641,7.92872-10.986,0-20.76819-2.67723-29.34656-8.03169-8.58211-5.35446-14.86424-12.62979-18.84452-21.82972-2.33556-5.07925-3.70693-11.1208-4.11882-18.12466,0-2.05941,1.0297-3.08911,3.08911-3.08911h32.95146c1.92087,0,3.01797.96231,3.29505,2.88317.54668,3.98402,1.44159,7.07313,2.67723,9.26921,2.19421,3.84548,5.5604,5.76634,10.0911,5.76634s7.96148-1.92087,10.29798-5.76634c2.05941-3.57026,3.08911-7.82762,3.08911-12.7702,0-5.07738-.96231-9.40213-2.88317-12.97427-2.47223-4.11882-6.04343-6.17822-10.70986-6.17822-1.64753,0-3.39802.55042-5.25149,1.64753-1.85347,1.10085-4.42773,2.88317-7.72278,5.35446-.55042.55042-1.23564.82376-2.05941.82376-.96231,0-1.71867-.47928-2.26535-1.44159l-16.26932-23.06537c-.41282-.68522-.61876-1.37044-.61876-2.05941,0-.95856.48022-1.71493,1.44252-2.26535l30.06735-19.56437c.41188-.1348.54762-.37631.41188-.72079-.13854-.34074-.41188-.51485-.82376-.51485h-41.60097c-.96231,0-1.71773-.27334-2.26535-.82376-.55042-.54668-.82376-1.30304-.82376-2.26535V10.04994c0-.95856.27334-1.71493.82376-2.26535.54762-.54668,1.30304-.82376,2.26535-.82376h91.85146c.9595,0,1.71586.27708,2.26535.82376.54762.55042.82376,1.30679.82376,2.26535v30.27517c0,1.78607-.61782,3.08911-1.85347,3.91287l-22.2416,15.44556c-.68897.55042-.55042,1.0297.41188,1.44159,10.1585,3.16025,17.50497,10.0237,22.03566,20.59408,2.74557,6.31677,4.11882,13.18021,4.11882,20.59408Z"/>
+    <path class="u-v" d="M372.52575,102.31329c0,7.00386-1.44159,14.00585-4.32476,21.00783-3.70693,9.06139-9.81776,16.23749-18.32873,21.52081-8.51472,5.28706-18.39987,7.92872-29.65641,7.92872-10.986,0-20.76819-2.67723-29.34656-8.03169-8.58211-5.35446-14.86424-12.62979-18.84452-21.82972-2.33556-5.07925-3.70693-11.1208-4.11882-18.12466,0-2.05941,1.0297-3.08911,3.08911-3.08911h32.95146c1.92087,0,3.01797.96231,3.29505,2.88317.54668,3.98402,1.44159,7.07313,2.67723,9.26921,2.19421,3.84548,5.5604,5.76634,10.0911,5.76634s7.96148-1.92087,10.29798-5.76634c2.05941-3.57026,3.08911-7.82762,3.08911-12.7702,0-5.07738-.96231-9.40213-2.88317-12.97427-2.47223-4.11882-6.04343-6.17822-10.70986-6.17822-1.64753,0-3.39802.55042-5.25149,1.64753-1.85347,1.10085-4.42773,2.88317-7.72278,5.35446-.55042.55042-1.23564.82376-2.05941.82376-.96231,0-1.71867-.47928-2.26535-1.44159l-16.26932-23.06537c-.41282-.68522-.61876-1.37044-.61876-2.05941,0-.95856.48022-1.71493,1.44252-2.26535l30.06735-19.56437c.41188-.1348.54762-.37631.41188-.72079-.13854-.34074-.41188-.51485-.82376-.51485h-41.60097c-.96231,0-1.71773-.27334-2.26535-.82376-.55042-.54668-.82376-1.30304-.82376-2.26535V10.04994c0-.95856.27334-1.71493.82376-2.26535.54762-.54668,1.30304-.82376,2.26535-.82376h91.85146c.9595,0,1.71586.27708,2.26535.82376.54762.55042.82376,1.30679.82376,2.26535v30.27517c0,1.78607-.61782,3.08911-1.85347,3.91287l-22.2416,15.44556c-.68897.55042-.55042,1.0297.41188,1.44159,10.1585,3.16025,17.50497,10.0237,22.03566,20.59408,2.74557,6.31677,4.11882,13.18021,4.11882,20.59408Z"/>
+    <path class="u-v" d="M398.37131,140.00232c-9.40588-9.06139-14.10694-21.55451-14.10694-37.4831v-46.9545c0-15.51296,4.70107-27.76643,14.10694-36.76043,9.40307-8.99212,22.27437-13.49099,38.61483-13.49099,16.33766,0,29.24453,4.49887,38.7178,13.49099,9.47328,8.994,14.21085,21.24747,14.21085,36.76043v46.9545c0,15.79191-4.73757,28.25133-14.21085,37.38012-9.47328,9.13254-22.38015,13.69506-38.7178,13.69506-16.34047,0-29.21176-4.5307-38.61483-13.59209ZM447.38709,116.21616c2.53869-2.8139,3.8099-6.69308,3.8099-11.63753v-50.24955c0-4.94258-1.27122-8.81988-3.8099-11.63565-2.54243-2.81203-6.00785-4.22179-10.40095-4.22179-4.39496,0-7.82575,1.40976-10.29704,4.22179-2.47129,2.81577-3.70693,6.69308-3.70693,11.63565v50.24955c0,4.94445,1.23564,8.82363,3.70693,11.63753,2.47129,2.81577,5.90208,4.22179,10.29704,4.22179,4.39309,0,7.85851-1.40601,10.40095-4.22179Z"/>
+  </g>
+  <g>
+    <path class="u-b" d="M95.8221,21.29262v81.01094c0,.48437-.02315.96285-.05667,1.43848v26.92161c0,11.84931-8.90562,21.61034-20.38445,22.97566.90683.10908,1.82797.17143,2.76439.17023l17.54548-.02162c30.95371,0,44.8438-19.06182,44.8438-72.22543V21.29262h-44.71255Z"/>
+    <path class="u-a" d="M55.43822,131.13023v-28.2972c-.00459-.17645-.01343-.35192-.01343-.52947V21.29262H10.66889v60.26988c0,53.16361,13.84587,72.22543,44.79968,72.22543l17.12313.02107c.94461.00109,1.87416-.06093,2.78929-.16968-11.2326-1.352-19.94277-10.90928-19.94277-22.50909Z"/>
+    <path class="u-v" d="M95.76543,130.66366l.08411-31.43714c-.73846,10.48322-9.55501,18.7862-20.22604,18.7862h-.00011c-10.97774,0-19.92923-8.75856-20.21072-19.66849l.02555,32.78601c0,11.59981,8.71017,21.15708,19.94277,22.50909,11.47882-1.36533,20.38445-11.12635,20.38445-22.97566Z"/>
+    <polygon class="u-v" points="53.18409 7.36281 12.93129 7.36281 10.68776 21.30365 55.42762 21.30365 53.18409 7.36281"/>
+    <polygon class="u-v" points="138.32027 7.35115 98.06747 7.35115 95.82394 21.29199 140.56379 21.29199 138.32027 7.35115"/>
+  </g>
+</svg><figcaption>Sobre verde · negativo (propuesta)</figcaption></figure>
+ <figure class="lbox hueso" style="margin:0"><svg class="lg w3" viewBox="0 0 145.49356 165.23605" role="img" aria-label="u330">
+  
+  <path class="u-b" d="M94.09753,23.80877v81.76233c0,.48886-.02336.97178-.0572,1.45183v27.17131c0,11.95921-8.98823,21.81077-20.57352,23.18876.91524.11009,1.84492.17302,2.79003.17181l17.70822-.02182c31.24081,0,45.25973-19.23862,45.25973-72.89533V23.80877h-45.12726Z"/>
+  <path class="u-a" d="M53.33908,134.66513v-28.55966c-.00463-.17809-.01356-.35519-.01356-.53438V23.80877H8.15451v60.82889c0,53.65671,13.97429,72.89533,45.21521,72.89533l17.28195.02127c.95337.0011,1.89154-.06149,2.81516-.17126-11.33678-1.36454-20.12774-11.01047-20.12774-22.71786Z"/>
+  <path class="u-v" d="M94.04033,134.19423l.08489-31.72873c-.74531,10.58045-9.64364,18.96045-20.41364,18.96045h-.00011c-11.07956,0-20.11408-8.83979-20.39818-19.85092l.02579,33.0901c0,11.7074,8.79096,21.35332,20.12774,22.71786,11.58529-1.37799,20.57352-11.22955,20.57352-23.18876Z"/>
+  <polygon class="u-v" points="51.06404 9.74975 10.43789 9.74975 8.17355 23.81989 53.32838 23.81989 51.06404 9.74975"/>
+  <polygon class="u-v" points="136.98987 9.73798 96.36372 9.73798 94.09938 23.80812 139.25421 23.80812 136.98987 9.73798"/>
+</svg><figcaption>Favicon · ícono de app</figcaption></figure>
+</div>
+<div class="nota"><b>Sobre verde</b> las partes verdes del logo (palabra, tapas y fondo de la U) se vuelven hueso; la U dorada y naranja se queda. Es una propuesta mía: confírmala o mándame tu versión.<br>La versión larga usa lila en la U; la principal y el favicon, naranja.</div>
+
+<h2>Íconos de deporte y de logros</h2>
+<p>Mismo trazo que el resto de la interfaz. Los de deporte van en verde; los de logros, en dorado sobre fondo claro (<code>--dorado-txt</code>) o dorado puro sobre verde.</p>
+<div class="iconos"><div class="icn"><svg class="ic " viewBox="11 11 78 78" fill="currentColor" aria-hidden="true">
+  <path d="M50,11c-21.5391,0-39,17.4609-39,39s17.4609,39,39,39,39-17.46089,39-39c-.02755-21.52769-17.47231-38.97245-39-39ZM79.36,69l-1.8-10,7.44-7.14c-.33423,6.11099-2.28014,12.02461-5.64,17.14ZM65,52.77l-4.5-13.77,6.11-8.42,13.63,1.88c2.50701,4.28691,4.06857,9.06025,4.58,14l-9.94,9.54-9.88-3.23ZM50,61.62l-11.06-8,4.23-13h13.66l4.23,13-11.06,8ZM35,52.77l-9.88,3.23-9.94-9.54c.51143-4.93975,2.07299-9.71309,4.58-14l13.63-1.88,6.11,8.42-4.5,13.77ZM15,51.86l7.44,7.14-1.8,10c-3.3422-5.12042-5.27074-11.03368-5.59-17.14h-.05ZM77.16,28l-10.16-1.45-4.46-9.21c5.71781,2.22078,10.75716,5.89516,14.62,10.66ZM57.37,15.79l6,12.39-6.1,8.42h-14.54l-6.11-8.42,6-12.39c4.85687-1.05342,9.88313-1.05342,14.74,0h.01ZM37.43,17.34l-4.43,9.21-10.16,1.45c3.85452-4.76064,8.88307-8.43468,14.59-10.66ZM23.93,73.34l2.42-13.53,9.89-3.22,11.76,8.53001v10.39l-12.14,6.49c-4.54396-2.02022-8.60951-4.97822-11.93-8.68v.02ZM41,83.81l9-4.81,9,4.83c-5.91548,1.58647-12.14452,1.58647-18.06,0l.06-.02ZM64.14,82l-12.14-6.49v-10.39l11.76-8.55,9.89,3.22,2.42,13.53c-3.32049,3.70178-7.38604,6.65977-11.93,8.67999Z"/>
+</svg><span>Fútbol</span></div><div class="icn"><svg class="ic " viewBox="10 22.71 80 54.58" fill="currentColor" aria-hidden="true">
+  <path d="M50,22.71c-26.67,0-40,22.08-40,27.29s13.33,27.29,40,27.29,40-22.08,40-27.29-13.33-27.29-40-27.29ZM14,50c0-1.25,2.24-6,6.9-10.91.74289,3.58885,1.11153,7.24508,1.1,10.91.01153,3.66492-.35711,7.32115-1.1,10.91-4.66-4.91-6.9-9.66-6.9-10.91ZM24.26,64.07c1.18029-4.5961,1.76508-9.32483,1.74-14.07.02442-4.74513-.56036-9.47377-1.74-14.07,7.20081-6.05351,16.33332-9.32475,25.74-9.22,9.31882-.10703,18.37183,3.10441,25.54,9.06-1.1926,4.62818-1.78413,9.39069-1.76,14.17-.0242,4.81414.57751,9.611,1.79,14.27-7.17326,5.96951-16.23839,9.18857-25.57,9.07999-9.40638.10297-18.53829-3.16805-25.74-9.22ZM78.93,61.07c-1.51998-7.32195-1.51998-14.87805,0-22.2,4.77,4.99,7.07,9.86,7.07,11.13s-2.3,6.13-7.07,11.09v-.02Z"/>
+  <path d="M68.46,40c-1.08-.25-2.18-.48-3.28-.68l.24-1.46c.18225-1.10457-.56543-2.14775-1.67-2.33-1.10457-.18225-2.14774.56543-2.33,1.67l-.24,1.49c-1.57-.21-3.17-.37-4.78-.49l.08-1.5c.05799-1.10457-.79043-2.04701-1.895-2.105s-2.04701.79043-2.105,1.895l-.03,1.51h-4.87l-.1-1.53c-.06903-1.10457-1.02043-1.94403-2.125-1.875s-1.94403,1.02043-1.875,2.125l.09,1.49c-1.61.13-3.21.29-4.78.5l-.25-1.51c-.18225-1.09076-1.21424-1.82726-2.305-1.645s-1.82726,1.21424-1.645,2.305h0l.26,1.49c-1.12.21-2.23.44-3.32.7-1.07705.24504-1.75152,1.3168-1.50649,2.39384.2093.91998,1.03308,1.56857,1.97648,1.55615.15298.01473.30702.01473.46,0,1-.24,2-.45,3.06-.64l.24,1.46c.16287.97413,1.01244,1.68352,2,1.67h.33c1.08719-.18354,1.82077-1.21234,1.64-2.3l-.24-1.44c1.43-.19,2.89-.34,4.37-.45l.1,1.5c.06862,1.0535.94427,1.87223,2,1.87h.13c1.10239-.06932,1.93987-1.01918,1.87055-2.12157-.00018-.00281-.00036-.00562-.00055-.00843l-.13-1.54h4.42l-.08,1.48c-.05673,1.10136.78877,2.0408,1.89,2.1h.11c1.063.00161,1.94154-.82861,2-1.89l.07-1.49c1.46.11,2.91.25,4.33.44l-.25,1.46c-.18846,1.08837.54106,2.12345,1.62944,2.31191.01682.00291.03368.00561.05056.00809h.33c.98756.01352,1.83713-.69587,2-1.67l.25-1.5c1,.2,2,.4,3,.63,1.04616.35443,2.18156-.20633,2.536-1.25249s-.20633-2.18156-1.25249-2.536c-.13098-.04438-.2662-.07505-.40351-.09152Z"/>
+</svg><span>Fútbol americano</span></div><div class="icn"><svg class="ic " viewBox="8.61 22 82.78 56" fill="currentColor" aria-hidden="true">
+  <path d="M50,22c-22.44,0-41.39,12.82-41.39,28s18.95,28,41.39,28,41.39-12.82,41.39-28-18.95-28-41.39-28ZM50,26c17.65,0,32.9,8.33,36.56,19.07-8.7-6.71-22.14999-10.75-36.56-10.75s-27.87,4-36.56,10.76c3.64-10.74,18.91-19.08,36.56-19.08ZM50,74c-19.67,0-36.38-10.35-37.35-22.86,7.5-7.91,21.76-12.82,37.35-12.82s29.85,4.91,37.35,12.81c-.96,12.51-17.67,22.87-37.35,22.87Z"/>
+</svg><span>Rugby</span></div><div class="icn"><svg class="ic " viewBox="15 15 70 70" fill="currentColor" aria-hidden="true">
+  <path d="M50,15c-19.32997,0-35,15.67003-35,35s15.67003,35,35,35,35-15.67004,35-35S69.32996,15,50,15ZM19,50c-.00175-8.42663,3.43691-16.4887,9.52-22.32,1.09922,1.57707,2.05313,3.25059,2.85,5l-2.27.89c-1.02725.40599-1.53089,1.56786-1.12491,2.59511.30101.76164,1.03595,1.2628,1.85491,1.26489.25027.00293.49856-.04469.73-.14l2.28-.89c.6494,1.95966,1.15081,3.96529,1.5,6l-2.42.3c-1.10457.06627-1.94627,1.01543-1.88,2.12.06627,1.10457,1.01543,1.94627,2.12,1.88h.25l2.44-.3c.15,1.14.15,2.36.15,3.6,0,1.57-.09,3.11-.24,4.63l-2.43-.35c-1.08085-.22769-2.14163.46392-2.36932,1.54477-.22769,1.08084.46392,2.14162,1.54477,2.36932.0807.017.16237.02899.24455.03591l2.42.36c-.39108,2.04034-.94279,4.04659-1.65,6l-2.24-1c-.98549-.49887-2.18881-.10439-2.68769.8811-.49887.9855-.10439,2.18881.88111,2.68768.07661.03878.15563.07259.23658.10121l2.24,1c-.70045,1.42551-1.51301,2.79314-2.43,4.09-6.09062-5.83852-9.52993-13.91296-9.52-22.35001ZM31.58,74.92c1.15989-1.61366,2.18025-3.32317,3.05-5.11l2.35,1c.98549.49887,2.18881.10439,2.68769-.8811s.10439-2.18881-.8811-2.68768c-.07661-.03878-.15563-.07259-.23658-.10121l-2.35-1c.83855-2.27507,1.48416-4.61666,1.93-7l2.53.37c.09639.01033.19361.01033.29,0,1.10457.08008,2.06492-.75043,2.145-1.855s-.75043-2.06492-1.855-2.145l-2.52-.37c.18133-1.70741.27479-3.423.28-5.14,0-1.4-.06-2.79-.18-4.16l2.53-.32c1.10457-.13807,1.88807-1.14543,1.75-2.25s-1.14543-1.88807-2.25-1.75l-2.54.32c-.39956-2.37547-.98468-4.71597-1.75-7l2.38-.94c1.02456-.41273,1.52055-1.57789,1.10781-2.60245-.40887-1.01498-1.55751-1.51295-2.57782-1.11755l-2.39.94c-.9587-2.13948-2.13134-4.17652-3.5-6.08,10.94181-8.10754,25.89819-8.10754,36.84,0-1.36829,1.90554-2.54406,3.94219-3.51,6.08l-2.38-.94c-1.02994-.39913-2.18842.11225-2.58755,1.14218-.39539,1.02031.10257,2.16895,1.11755,2.57782l2.38.94c-.77315,2.28244-1.36171,4.62331-1.76,7l-2.53-.32c-1.10457-.13807-2.11193.64543-2.25,1.75s.64543,2.11193,1.75,2.25l2.53.32c-.12,1.37-.18,2.76-.18,4.16.00245,1.74369.09591,3.48606.28,5.22l-2.52.37c-1.10457.08008-1.93508,1.04043-1.855,2.145s1.04043,1.93508,2.145,1.855c.09639.01033.19361.01033.29,0l2.53-.37c.44584,2.38334,1.09145,4.72493,1.93,7l-2.35,1c-1.08355.21449-1.78806,1.26675-1.57357,2.35029.21449,1.08355,1.26675,1.78806,2.35029,1.57358.27854-.05514.54214-.16895.77328-.33387l2.35-1c.85375,1.78507,1.85735,3.49453,3,5.11-10.94181,8.10754-25.89819,8.10754-36.84,0h.07ZM71.48,72.32c-.91699-1.29686-1.72955-2.66449-2.43-4.09l2.24-1c1.04139-.36821,1.5871-1.51093,1.21889-2.55231-.36821-1.04139-1.51093-1.5871-2.55231-1.21889-.08095.02862-.15997.06243-.23658.10121l-2.24,1c-.70721-1.95341-1.25893-3.95966-1.65-6l2.42-.36c1.10068-.09263,1.91786-1.06001,1.82523-2.16068s-1.06001-1.91786-2.16068-1.82523c-.08218.00692-.16385.01891-.24454.03591l-2.43.35c-.15-1.48999-.24-3.02999-.24-4.59999,0-1.24,0-2.46.15-3.67l2.44.3h.25c1.10457.06627,2.05373-.77543,2.12-1.88.06627-1.10457-.77544-2.05373-1.88-2.12l-2.43-.3c.34657-2.03622.85143-4.0423,1.51-6l2.28.89c.23144.09531.47973.14293.73.14,1.10457-.00282,1.99771-.90052,1.9949-2.00509-.00209-.81896-.50325-1.5539-1.26489-1.85491l-2.27-.89c.79687-1.74941,1.75078-3.42293,2.85-5,12.327,11.82563,12.73343,31.40521.90779,43.73221-.29628.30885-.59895.6115-.90779.90779v.07Z"/>
+</svg><span>Béisbol</span></div><div class="icn d"><svg class="ic " viewBox="16.03 11.99 65.93 75.91" fill="currentColor" aria-hidden="true">
+  <path d="M81.73,26.84c.07103-.12676.12803-.26089.17-.4v-.11c.03535-.15771.05544-.31845.06-.48h0v-.08c-.00761-.14545-.03107-.28964-.07-.43.0043-.03988.0043-.08012,0-.12-.05505-.16459-.12886-.3223-.22-.47l-8-11.85c-.36992-.56172-.99741-.89989-1.67-.9H25.92c-.11313-.00965-.22687-.00965-.34,0h-.14c-.09711.0262-.19102.06309-.28.11l-.14.07h-.07c-.07469.04688-.14498.10043-.21.16l-.09.07c-.11257.10159-.21321.21566-.3.34h0l-8,11.85c-.42652.66046-.42652,1.50954,0,2.17l21,34.18c-6.0511,6.43964-5.73612,16.56538.70352,22.61648s16.56538,5.73611,22.61648-.70352c5.78666-6.15823,5.78666-15.75472,0-21.91296l21-34.18.06001.07ZM54.88,57.13l-3.53-5.73,14.44-23.4v-.1h10.63l-18.87,30.6c-.84403-.54119-1.73814-.99997-2.67-1.37ZM36.88,27.85h24.27l-12.15,19.73-12.12-19.73ZM76.25,23.85h-41.84l-4.83-7.85h41.36l5.31,7.85ZM25.92,17.69l21.44,34.86h0l2.14,3.45h-.5c-3.02983.00275-5.99596.87004-8.55,2.5L20.38,25.9l5.54-8.21ZM49,84c-6.62742,0-12-5.37258-12-12s5.37258-12,12-12,12,5.37258,12,12-5.37258,12-12,12Z"/>
+</svg><span>Medalla</span></div><div class="icn d"><svg class="ic " viewBox="10 17 79 66" fill="currentColor" aria-hidden="true">
+  <path d="M82,25c-3.86599,0-7,3.13401-7,7v2c0,1.10457.89543,2,2,2s2-.89543,2-2v-2c0-1.65685,1.34315-3,3-3s3,1.34315,3,3v.35c-.00551,4.77498-3.87502,8.64449-8.65,8.65h-4.35v-22c0-1.10457-.89543-2-2-2H30c-1.10457,0-2,.89543-2,2v22h-5.35c-4.77498-.00551-8.64449-3.87502-8.65-8.65v-.35c0-1.65685,1.34315-3,3-3s3,1.34315,3,3v2c0,1.10457.89543,2,2,2s2-.89543,2-2v-2c0-3.86599-3.13401-7-7-7s-7,3.13401-7,7v.35c.00551,6.98412,5.66588,12.64449,12.65,12.65h5.35c.43607,9.46414,6.88213,17.58618,16,20.16v6.84h-4.62c-.68745.00206-1.32565.35705-1.69.94l-4.39,7c-.35727.6188-.35727,1.3812,0,2,.3361.63213.98446,1.0364,1.7,1.06h30c.72093.00645,1.38955-.37561,1.75-1,.35727-.6188.35727-1.3812,0-2l-4.39-7c-.35868-.62127-1.02263-1.00285-1.74-1h-4.62v-6.84c9.11787-2.57383,15.56393-10.69587,16-20.16h4.38c6.9724-.02203,12.61453-5.67757,12.62-12.65v-.35c0-3.86599-3.13401-7-7-7ZM61.39,79h-22.78l1.88-3h19l1.9,3ZM52,72h-4v-6.09c.66,0,1.33.09,2,.09s1.34,0,2-.09v6.09ZM68,44c0,9.94112-8.05888,18-18,18s-18-8.05888-18-18v-23h36v23Z"/>
+  <path d="M60,34.87l-5.65-.82-2.53-5.12c-.49271-.98859-1.69354-1.39058-2.68213-.89787-.38887.19382-.70406.509-.89787.89787l-2.53,5.12-5.71.82c-1.09381.1538-1.85583,1.16519-1.70203,2.259.06218.44225.2706.85096.59203,1.161l4.09,4-.98,5.61c-.19419,1.08736.52988,2.12627,1.61724,2.32046.45315.08092.92035.00306,1.32275-.22046l5.06-2.65,5.06,2.65c.6718.35229,1.48509.2942,2.1-.15.63356-.45385.94579-1.23441.8-2l-1-5.63,4.09-4c.76675-.79509.74377-2.06121-.05132-2.82796-.27598-.26614-.62263-.44735-.99868-.52204ZM53.48,40.14c-.47304.45847-.68997,1.12049-.58,1.77l.46,2.67-2.4-1.26c-.58228-.30584-1.27772-.30584-1.86,0l-2.4,1.26.46-2.67c.10997-.64951-.10696-1.31153-.58-1.77l-1.94-1.89,2.68-.39c.65211-.09253,1.21685-.50019,1.51-1.09l1.17001-2.44,1.2,2.44c.29315.58981.85789.99747,1.51,1.09l2.68.39-1.91,1.89Z"/>
+</svg><span>Copa</span></div><div class="icn d"><svg class="ic " viewBox="12 13 76 71" fill="currentColor" aria-hidden="true">
+  <path d="M86,63h-22v-21c0-1.10457-.89543-2-2-2h-24c-1.10457,0-2,.89543-2,2v12H14c-1.10457,0-2,.89543-2,2v26c0,1.10457.89543,2,2,2h72c1.10457,0,2-.89543,2-2v-17c0-1.10457-.89543-2-2-2ZM16,58h20v22h-20v-22ZM40,56v-12h20v36h-20v-24ZM84,80h-20v-13h20v13Z"/>
+  <path d="M43.6,26l-.83,4.82c-.23017,1.08032.45902,2.14268,1.53934,2.37285.46209.09845.94412.03013,1.36066-.19285l4.33-2.32,4.33,2.32c.9782.51302,2.18708.13592,2.7001-.84229.20408-.38914.27433-.83466.1999-1.26772l-.83-4.89,3.51-3.41c.7806-.7815.77987-2.04783-.00163-2.82843-.30046-.30012-.68866-.4968-1.10837-.56157l-4.8-.7-2.17-4.39c-.49271-.98859-1.69354-1.39058-2.68213-.89787-.38887.19381-.70406.509-.89787.89787l-2.25,4.39-4.84.7c-1.09381.1538-1.85583,1.16519-1.70203,2.259.06219.44225.2706.85095.59203,1.161l3.55,3.38ZM47.66,22.28c.65046-.0977,1.2113-.50898,1.5-1.1l.84-1.66.84,1.69c.2887.59102.84954,1.0023,1.5,1.1l1.87.27-1.35,1.32c-.47304.45848-.68997,1.12049-.58,1.77l.32,1.86-1.67-.88c-.58228-.30584-1.27772-.30584-1.86,0l-1.67.88.32-1.86c.10997-.64952-.10696-1.31153-.58-1.77l-1.35-1.32,1.87-.3Z"/>
+</svg><span>Podio</span></div></div>
+<div class="nota"><b>Para qué sirven medalla, copa y podio:</b> noticias que se celebran en el Feed (campeón, mejor equipo, hito del club, resultado destacado). Medalla = reconocimiento a una persona · Copa = título o torneo ganado · Podio = ranking o posición.</div>
+
+<h2>Reglas cortas</h2>
+<div class="card"><ol style="margin:0;padding-left:20px">
+<li>Fondo hueso, tarjetas blancas, verde como protagonista. El resto de los colores son detalles.</li>
+<li>Un solo acento llamativo por tarjeta (el resaltador amarillo); no mezclar dos rellenos fuertes juntos.</li>
+<li>Naranja, lila, dorado y éxito: relleno + texto tinta, o fondo suave + texto <code>-txt</code>. Nunca texto puro de esos colores sobre claro.</li>
+<li>Texto sobre verde o sobre fotos: hueso o blanco; sobre amarillo: verde o tinta.</li>
+<li>El grano sigue siendo muy suave y solo en la cabecera.</li>
+<li>Cada club puede cambiar <code>--club</code>, pero entre colores oscuros (≥ 4.5:1 con blanco). Amarillo, naranja, lila, dorado y éxito no cambian por club.</li>
+<li>Estados siempre con ícono y texto; el color nunca va solo.</li>
+</ol></div>
+
+<h2>Variables CSS</h2>
+<pre>/* u330 · tokens de color (paleta de marca). Se aplican a la app reemplazando los de Sportiva.
+   Regla: naranja, lila, dorado y éxito son RELLENOS (con texto tinta o verde); para texto o íconos sobre claro se usan sus versiones -txt. */
+:root{
+  /* marca */
+  --verde:#0F4F4E;      /* base: cabecera, botones, horas, color de club por defecto */
+  --hueso:#F7F1E8;      /* fondo */
+  --amarillo:#F6F24A;   /* acento único: resaltador, chip Partido, tile del auto */
+  --naranja:#FC5603;    /* ahora: en vivo, cambios, avisos urgentes */
+  --lila:#BD8DFF;       /* entrenamientos e información secundaria */
+  --dorado:#BD984A;     /* logros: medalla, copa, podio, eventos especiales */
+  --exito:#00AB05;      /* confirmado, activo, listo */
+  --papel:#FFFFFF;
+  /* apoyo */
+  --tinta:#10201F;      /* texto */
+  --tinta-2:#4B5E5C;    /* texto secundario */
+  --linea:rgba(16,32,31,.12); --linea-2:rgba(16,32,31,.22);
+  --gris:#D9D6CC;
+  /* versiones para TEXTO e íconos sobre hueso o blanco (contraste ≥ 4.5) */
+  --naranja-txt:#B93C00; --lila-txt:#6A3FC4; --dorado-txt:#7A5A1A; --exito-txt:#006B03;
+  /* fondos suaves de chips y avisos */
+  --naranja-t:color-mix(in oklab,var(--naranja) 16%,#fff);
+  --lila-t:color-mix(in oklab,var(--lila) 28%,#fff);
+  --dorado-t:color-mix(in oklab,var(--dorado) 24%,#fff);
+  --exito-t:color-mix(in oklab,var(--exito) 14%,#fff);
+  --amarillo-t:color-mix(in oklab,var(--amarillo) 40%,#fff);
+  /* color del club (cada club puede cambiarlo; debe dar ≥ 4.5:1 con texto blanco) */
+  --club:var(--verde); --club-t:color-mix(in oklab,var(--club) 10%,var(--papel));
+}
+</pre>
+</div></body></html>
