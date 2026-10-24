@@ -274,3 +274,11 @@ html,body{background:var(--club)}
 .cit-f.falta .cit-m{border:1.5px dashed var(--tinta-2);color:var(--tinta-2)}
 .cit-f.falta.no{border-color:var(--tinta-2);background:transparent}
 .cit-f.falta.no b{color:var(--tinta-2);text-decoration:line-through;text-decoration-thickness:1px}
+/* Textos largos (sobre todo en francés): los botones de ancho completo pueden partirse en dos líneas en vez de desbordar */
+.bt.w{white-space:normal;height:auto;min-height:44px;padding-top:9px;padding-bottom:9px;line-height:1.2;text-align:center}
+.av-filtros{flex-wrap:wrap;overflow:visible}
+.ev-horas>div{padding:0 10px}
+.ev-horas small{letter-spacing:.04em;white-space:nowrap}
+.voto button{min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:359px){.ev-horas small{letter-spacing:0;font-size:10px}.ev-horas b{font-size:19px}}
+@media (max-width:340px){.voto button{font-size:12.5px;gap:4px;padding:0 3px}.voto .pi{font-size:15px}}
