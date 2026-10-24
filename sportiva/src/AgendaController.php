@@ -94,6 +94,7 @@ final class AgendaController extends AppBase
             }
         }
         echo $this->vista()->pagina('evento.latte', [
+            'medios' => (new MedioService($this->pdo))->delEvento($id, 6), 'mediosTotal' => (new MedioService($this->pdo))->cuantos($id), 'puedeMedios' => in_array($this->rol, ['apoderado', 'jugador', 'directiva'], true) || $puede,
             'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
             'elegibles' => $puede ? $tu->elegibles($id) : [],
             'activa' => 'agenda', 'e' => $e, 'conv' => $conv, 'mios' => $mios, 'resumen' => $ev->resumen($id), 'puede' => $puede,

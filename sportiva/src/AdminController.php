@@ -29,6 +29,18 @@ final class AdminController
         return $host === '' ? '' : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $host);
     }
 
+    public function medios(): void
+    {
+        $m = new MedioService($this->pdo());
+        $this->ver('medios.latte', ['lim' => $m->limites(), 'uso' => $m->usoPorEquipo(), 'csrf' => Sesion::csrf(), 'gd' => FotoService::disponible()]);
+    }
+
+    public function guardarMedios(): void
+    {
+        (new MedioService($this->pdo()))->guardarLimites($_POST);
+        $this->ctx->redirect($this->ctx->adminUrl('medios'), 'Límites guardados.');
+    }
+
     public function avisos(): void
     {
         $nt = new Notificador($this->ctx, $this->pdo());
@@ -52,7 +64,8 @@ final class AdminController
         if ($a === 'procesar') {
             $r = $nt->recordatorios();
             $e = $nt->entregar(100);
-            $this->ctx->redirect($this->ctx->adminUrl('avisos'), "Listo: {$r} recordatorios, {$e['push']} avisos push y {$e['correo']} correos enviados.");
+            $mt = $nt->mantenimiento();
+            $this->ctx->redirect($this->ctx->adminUrl('avisos'), "Listo: {$r} recordatorios, {$e['push']} avisos push y {$e['correo']} correos enviados, {$mt['borrados']} videos vencidos borrados.");
             return;
         }
         $this->ctx->redirect($this->ctx->adminUrl('avisos'));

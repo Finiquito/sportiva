@@ -67,6 +67,12 @@ final class FeedController extends AppBase
                 $c['inicio'] >= $hoy && $items[] = ['k' => 'evento', 'f' => 0, 't' => $c['created_at'], 'p' => $c];
             }
         }
+        if ($vista === 'equipo') {
+            $desdeM = Tiempo::ahora((string) $this->club['zona'])->modify('-7 days')->format('Y-m-d H:i:s');
+            foreach ((new MedioService($this->pdo))->novedades($this->club['id'], $eq, $desdeM) as $n) {
+                $items[] = ['k' => 'medios', 'f' => 0, 't' => $n['ultimo'], 'p' => $n];
+            }
+        }
         usort($items, fn($a, $b) => [$b['f'], $b['t']] <=> [$a['f'], $a['t']]);
         echo $this->vista()->pagina('feed.latte', [
             'activa' => 'feed', 'items' => $items, 'vista' => $vista, 'puedePublicar' => $this->puedePublicar(), 'tieneEquipos' => $eq !== [],

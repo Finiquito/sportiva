@@ -111,3 +111,8 @@ input[type=file]::file-selector-button{height:36px;padding:0 14px;margin-right:1
 a.bell{text-decoration:none;flex:none}
 .pill-radio .pill{display:inline-flex;align-items:center;gap:6px}
 .pill-radio .pill .pi{font-size:16px}
+
+.med{position:relative;display:block;margin:0 0 8px;break-inside:avoid;text-decoration:none;color:inherit}
+.med .foto{margin:0;display:block}
+.med .play{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border-radius:50%;background:var(--club);color:var(--amarillo);display:grid;place-items:center;font-size:15px}
+.med .foto-ph{min-height:120px}

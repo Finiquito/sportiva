@@ -94,6 +94,20 @@
  </section>
 
 
+ {if $puedeMedios}
+ <section class="card">
+  <div class="ch"><h3>{$t('medios.titulo')}</h3><span class="est">{$ico('images')|noescape}{$mediosTotal}</span></div>
+  {if $medios}
+  <div class="masonry">
+   {foreach $medios as $m}<a class="med" href="{$url('medio/' . $m['id'])}">{if $m['tipo'] === 'foto' || $m['tiene_poster']}<img class="foto" src="{$url('medio/' . $m['id'] . '/m')}" alt="" loading="lazy">{else}<span class="foto-ph" style="min-height:90px">{$ico('video-camera')|noescape}</span>{/if}{if $m['tipo'] === 'video'}<span class="play">{$ico('play')|noescape}</span>{/if}</a>{/foreach}
+  </div>
+  {else}
+  <p class="texto" style="margin:0 0 12px">{$t('medios.vacio.texto')}</p>
+  {/if}
+  <a class="bt w" href="{$url('evento/' . $e['id'] . '/fotos')}">{$ico('camera')|noescape}{$t($mediosTotal > 0 ? 'medios.ver_todo' : 'medios.agregar')}</a>
+ </section>
+ {/if}
+
  {if $turnos || $elegibles || $puedePedir || $turnoMio}
  <section class="card" id="turnos">
   {if $turnoMio}

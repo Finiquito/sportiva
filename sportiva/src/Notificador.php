@@ -141,6 +141,20 @@ final class Notificador
         return $res;
     }
 
+    /** Borra videos vencidos y avisa de los que caducan pronto. @return array{borrados: int, avisos: int} */
+    public function mantenimiento(): array
+    {
+        $m = new MedioService($this->pdo);
+        $avisos = 0;
+        foreach ($m->porCaducar(7) as $v) {
+            $fecha = (string) $v['expira_en'];
+            $titulo = (string) $v['evento'];
+            $avisos += $this->avisar([(string) $v['subido_por']], (string) $v['club_id'], 'feed', fn(I18n $i) => [$i->t('aviso.video.caduca', ['titulo' => $titulo]), Tiempo::diaCorto($fecha, $i)], '/app/medio/' . $v['id']);
+            $m->caducidadAvisada($v['id']);
+        }
+        return ['borrados' => $m->purgar(), 'avisos' => $avisos];
+    }
+
     /** Recordatorio de asistencia para lo que empieza en las próximas 24 horas. @return int avisos creados */
     public function recordatorios(): int
     {
