@@ -124,6 +124,14 @@ final class AgendaController extends AppBase
         $this->ir(str_starts_with($volver, '/app/') ? $volver : '/app/evento/' . $id);
     }
 
+    /** Avisa a las familias de los convocados. */
+    private function avisarEvento(string $id, array $d, string $clave): void
+    {
+        $titulo = (string) $d['titulo'];
+        $inicio = (string) $d['inicio'];
+        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($id), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id);
+    }
+
     // ---- entrenadores: crear / editar / cancelar ------------------------------------------------
 
     private function formulario(?array $e, array $datos, array $errores): void
@@ -194,6 +202,7 @@ final class AgendaController extends AppBase
         }
         $extra = array_values(array_intersect($in['extra'], array_column((new ClubService($this->pdo))->equipos($this->club['id']), 'id')));
         $id = $svc->crear($this->club['id'], $equipo, $d, $this->persona['id'], $extra);
+        $this->avisarEvento($id, $d, 'aviso.evento.nuevo');
         $this->ctx->redirect('/app/evento/' . $id, $this->i18n->t('evento.publicado'));
     }
 
@@ -237,6 +246,11 @@ final class AgendaController extends AppBase
             return;
         }
         $svc->actualizar($id, $d);
+        if ($d['lugar_id'] !== $e['lugar_id']) {
+            $this->avisarEvento($id, $d, 'aviso.evento.lugar');
+        } elseif ($d['inicio'] !== $e['inicio'] || $d['hora_cancha'] !== $e['hora_cancha'] || $d['hora_encuentro'] !== $e['hora_encuentro']) {
+            $this->avisarEvento($id, $d, 'aviso.evento.hora');
+        }
         $this->ctx->redirect('/app/evento/' . $id, $this->i18n->t('evento.guardado'));
     }
 
@@ -250,6 +264,7 @@ final class AgendaController extends AppBase
         $e = $svc->buscar($id);
         if ($e !== null && $e['club_id'] === $this->club['id'] && in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true) && $this->csrfOk()) {
             $svc->cancelar($id);
+            $this->avisarEvento($id, ['titulo' => $e['titulo'], 'inicio' => $e['inicio']], 'aviso.evento.cancelado');
         }
         $this->ctx->redirect('/app/agenda', $this->i18n->t('evento.cancelado'));
     }

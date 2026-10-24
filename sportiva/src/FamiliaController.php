@@ -87,15 +87,12 @@ final class FamiliaController extends AppBase
         return false;
     }
 
-    /** Avisa por correo a quienes aprueban. */
+    /** Avisa a quienes aprueban. */
     private function avisarAprobadores(?string $equipo = null): void
     {
-        $correo = new Correo($this->ctx, $this->pdo);
         $eq = $equipo ?? ($this->svc()->hijosDeTitular($this->persona['id'], $this->club['id'])[0]['equipo_id'] ?? null);
-        foreach ($this->svc()->aprobadores($this->club['id'], $eq) as $a) {
-            $idioma = $a['idioma'] && I18n::esValido((string) $a['idioma']) ? (string) $a['idioma'] : (string) ($this->club['idioma'] ?? 'fr');
-            $correo->solicitudNueva((string) $a['email'], (string) $a['nombre'], (string) $this->persona['nombre'], (string) $this->club['nombre'], new I18n($idioma));
-        }
+        $quien = (string) $this->persona['nombre'];
+        $this->notificar((new AvisoService($this->pdo))->staffDelEquipo($this->club['id'], $eq), 'plantel', fn(I18n $i) => [$i->t('aviso.solicitud.nueva', ['quien' => $quien]), ''], '/app/plantel/solicitudes');
     }
 
     private function cupo(): bool

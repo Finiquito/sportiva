@@ -77,4 +77,10 @@ final class ClubService extends Repo
         $this->ejecutar('INSERT INTO sportiva_equipos (id, club_id, nombre, temporada, created_at) VALUES (?, ?, ?, ?, ?)', [$id, $club, trim($nombre), $temporada ?: null, Tiempo::sello()]);
         return $id;
     }
+
+    public function nombreEquipo(string $id): ?string
+    {
+        $r = $this->fila('SELECT nombre FROM sportiva_equipos WHERE id = ?', [$id]);
+        return $r['nombre'] ?? null;
+    }
 }

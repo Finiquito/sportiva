@@ -553,6 +553,109 @@ check(str_contains($h, 'Escribe el mensaje') && count($cs->mensajes($con)) === 2
 [$h] = llamar(fn() => (new S\AgendaController($ctx))->evento($evT));
 check(str_contains($h, 'Preguntar al entrenador'), 'el evento ofrece preguntar al entrenador');
 
+seccion('Avisos, notificaciones y cron');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id']; // (arriba se reutilizó $cid para un comentario)
+use TypeDock\Plugin\Sportiva\WebPush as W;
+// Cifrado Web Push: lo que cifra el servidor lo descifra el navegador (RFC 8291).
+$navegador = openssl_pkey_new(['curve_name' => 'prime256v1', 'private_key_type' => OPENSSL_KEYTYPE_EC]);
+$uaPub = W::puntoPublico($navegador);
+$authSec = random_bytes(16);
+$cuerpo = W::cifrar('{"t":"Hola ñ"}', $uaPub, $authSec);
+$sal = substr($cuerpo, 0, 16); $idl = ord($cuerpo[20]); $asPub = substr($cuerpo, 21, $idl); $cif = substr($cuerpo, 21 + $idl);
+$pemAs = "-----BEGIN PUBLIC KEY-----\n" . chunk_split(base64_encode(hex2bin('3059301306072a8648ce3d020106082a8648ce3d030107034200') . $asPub), 64, "\n") . "-----END PUBLIC KEY-----\n";
+$comp = openssl_pkey_derive($pemAs, $navegador, 32);
+$ikm = hash_hkdf('sha256', $comp, 32, "WebPush: info\0" . $uaPub . $asPub, $authSec);
+$cek = hash_hkdf('sha256', $ikm, 16, "Content-Encoding: aes128gcm\0", $sal);
+$non = hash_hkdf('sha256', $ikm, 12, "Content-Encoding: nonce\0", $sal);
+$plano = openssl_decrypt(substr($cif, 0, -16), 'aes-128-gcm', $cek, OPENSSL_RAW_DATA, $non, substr($cif, -16));
+check($plano === '{"t":"Hola ñ"}' . "\x02" && unpack('N', substr($cuerpo, 16, 4))[1] === 4096 && $idl === 65, 'el mensaje push se cifra (aes128gcm) y el navegador lo descifra');
+[$pemV, $pubV] = W::generarClaves();
+$jwt = W::jwt('https://push.example.org/xyz', 'mailto:a@b.cl', $pemV);
+[$jh, $jc, $jf] = explode('.', $jwt);
+$raw = W::deb64($jf); $rr = ltrim(substr($raw, 0, 32), "\0"); $ss = ltrim(substr($raw, 32), "\0");
+$rr = (ord($rr[0]) > 127 ? "\0" : '') . $rr; $ss = (ord($ss[0]) > 127 ? "\0" : '') . $ss;
+$seq = "\x02" . chr(strlen($rr)) . $rr . "\x02" . chr(strlen($ss)) . $ss;
+check(openssl_verify("$jh.$jc", "\x30" . chr(strlen($seq)) . $seq, openssl_pkey_get_details(openssl_pkey_get_private($pemV))['key'], OPENSSL_ALGO_SHA256) === 1 && json_decode(W::deb64($jc), true)['aud'] === 'https://push.example.org', 'la firma VAPID (ES256) es válida y apunta al servicio push');
+
+$av = new S\AvisoService($pdo);
+$nt = new S\Notificador($ctx, $pdo);
+$estadio = $pdo->query("SELECT id FROM sportiva_lugares WHERE club_id = '{$cid}' LIMIT 1")->fetchColumn();
+$ines = $S['pers']->porCorreo('ines.garcia@ejemplo.fr')['id'];
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+$pdo->prepare("UPDATE sportiva_personas SET idioma = 'es' WHERE id = ?")->execute([$dani]);
+$antes = $av->sinLeer($dani, $cid);
+$pedroId = $S['pers']->porCorreo('pedro@ejemplo.fr')['id'];
+$antesPedro = $av->sinLeer($pedroId, $cid);
+llamar(fn() => (new S\AgendaController($ctx))->crear(), conCsrf(['tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'Partido de aviso', 'fecha' => date('Y-m-d', strtotime('+50 days')), 'hora_partido' => '15:00', 'cancha_antes' => '45', 'lugar_id' => $estadio]));
+$evN = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Partido de aviso'")->fetchColumn();
+check($av->sinLeer($dani, $cid) === $antes + 1, 'una convocatoria nueva avisa a las familias de los convocados');
+check($av->sinLeer($pedroId, $cid) === $antesPedro, 'quien la crea no recibe su propio aviso');
+$tit = fn($p) => implode(' | ', $pdo->query("SELECT titulo FROM sportiva_avisos WHERE persona_id = '{$p}' ORDER BY created_at DESC, id DESC")->fetchAll(PDO::FETCH_COLUMN));
+check(str_contains($tit($dani), 'Nueva convocatoria: Partido de aviso') && str_contains($tit($ines), 'Nouvelle convocation : Partido de aviso'), 'cada persona recibe el aviso en su idioma (es / fr)');
+// Cambios y cancelación.
+$ev0 = $S['ev']->buscar($evN);
+llamar(fn() => (new S\AgendaController($ctx))->actualizar($evN), conCsrf(['tipo' => 'partido', 'equipo_id' => $u12, 'titulo' => 'Partido de aviso', 'fecha' => date('Y-m-d', strtotime('+50 days')), 'hora_partido' => '16:30', 'cancha_antes' => '45', 'lugar_id' => $estadio]));
+check(str_contains($tit($dani), 'Cambió la hora: Partido de aviso'), 'un cambio de hora avisa');
+llamar(fn() => (new S\AgendaController($ctx))->cancelar($evN), conCsrf());
+check(str_contains($tit($dani), 'Se canceló: Partido de aviso'), 'cancelar un evento avisa');
+// Preferencias y cola de envío.
+check($av->pref($dani, 'consultas')['correo'] === true && $av->pref($dani, 'agenda')['correo'] === false && $av->pref($dani, 'agenda')['push'] === true, 'preferencias por defecto: correo solo en consultas y plantel');
+$av->guardarPrefs($dani, ['push' => ['agenda' => '1'], 'correo' => ['agenda' => '1']]);
+check($av->pref($dani, 'agenda')['correo'] === true && $av->pref($dani, 'feed')['push'] === false, 'se guardan las preferencias');
+$b64 = fn($x) => W::b64($x);
+check(!$av->suscribir($dani, 'http://inseguro.example/x', $b64($uaPub), $b64($authSec)), 'solo acepta suscripciones https');
+check($av->suscribir($dani, 'https://127.0.0.1:9/push/abc', $b64($uaPub), $b64($authSec)) && $av->tieneSuscripcion($dani), 'guarda la suscripción push del dispositivo');
+$nt->avisar([$dani], $cid, 'agenda', fn(S\I18n $i) => [$i->t('aviso.recordatorio', ['titulo' => 'X']), 'cuerpo'], '/app/agenda');
+$enCola = $av->enCola();
+check(count($enCola) >= 1 && (int) $enCola[count($enCola) - 1]['push_pendiente'] === 1 && (int) $enCola[count($enCola) - 1]['correo_pendiente'] === 1, 'con push y correo activos el aviso queda en cola para los dos');
+$r = $nt->entregar(100);
+check($av->cantidadEnCola() === 0 && $r['correo'] >= 1, 'entregar vacía la cola (sin red el push no llega pero no rompe) y manda los correos');
+// Campana y lectura.
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
+check(str_contains($h, 'class="bell"') && preg_match('/class="bell"[^>]*>.*?<b>\d+\+?<\/b>/s', $h) === 1, 'la campana muestra el contador de avisos sin leer');
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->lista());
+check(str_contains($h, 'Nueva convocatoria') && str_contains($h, 'Se canceló'), 'la lista de avisos');
+$id1 = $pdo->query("SELECT id FROM sportiva_avisos WHERE persona_id = '{$dani}' AND leido_en IS NULL LIMIT 1")->fetchColumn();
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => (new S\AvisosController($ctx))->abrir($id1));
+check($r === '/app/avisos' && $pdo->query("SELECT leido_en FROM sportiva_avisos WHERE id = '{$id1}'")->fetchColumn() === null, 'no se puede abrir (ni marcar leído) el aviso de otra persona');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => (new S\AvisosController($ctx))->abrir($id1));
+check($r !== null && str_starts_with($r, '/app') && $pdo->query("SELECT leido_en FROM sportiva_avisos WHERE id = '{$id1}'")->fetchColumn() !== null, 'abrir un aviso lo marca leído y lleva a su pantalla');
+llamar(fn() => (new S\AvisosController($ctx))->leerTodo(), conCsrf());
+check($av->sinLeer($dani, $cid) === 0, 'marcar todo como leído');
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->ajustes());
+check(str_contains($h, 'Qué quieres recibir') && str_contains($h, 'push-boton'), 'pantalla de ajustes de avisos con el botón de notificaciones');
+// Otros disparadores.
+$antes = $av->sinLeer($dani, $cid);
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => (new S\FeedController($ctx))->crear(), conCsrf(['destino' => $u12, 'titulo' => 'Aviso feed', 'texto' => 'Hola equipo']));
+check($av->sinLeer($dani, $cid) === $antes + 1, 'una publicación en el feed avisa al equipo');
+llamar(fn() => (new S\ConsultaController($ctx))->responder($con), conCsrf(['texto' => 'Otra respuesta']));
+check(str_contains($tit($dani), 'Pedro respondió tu consulta'), 'responder una consulta avisa a la familia');
+// Recordatorios de asistencia (24 h antes), una sola vez.
+$clubFila = $S['club']->buscar($cid);
+$manana = S\Tiempo::ahora((string) $clubFila['zona'])->modify('+6 hours');
+[$dr] = $S['ev']->normalizar(['tipo' => 'entreno', 'titulo' => 'Entreno pronto', 'fecha' => $manana->format('Y-m-d'), 'hora_partido' => $manana->format('H:i')]);
+$evR = $S['ev']->crear($cid, $u12, $dr, null);
+$n1 = $nt->recordatorios();
+$n2 = $nt->recordatorios();
+check($n1 >= 1 && $n2 === 0, 'el recordatorio de asistencia se manda una sola vez');
+check(str_contains($tit($dani), 'Falta tu asistencia'), 'el recordatorio dice qué falta');
+// Cron, service worker y manifest.
+$tok = $nt->tokenCron();
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->cron('mal'));
+check(trim($h) === 'no', 'el cron rechaza un token incorrecto');
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->cron($tok));
+check(str_starts_with($h, 'ok recordatorios='), 'el cron con el token correcto procesa avisos');
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->sw());
+check(str_contains($h, "addEventListener('push'") && str_contains($h, 'notificationclick'), 'service worker con push y clic');
+[$h] = llamar(fn() => (new S\AvisosController($ctx))->manifest());
+$man = json_decode($h, true);
+check($man['display'] === 'standalone' && $man['start_url'] === '/app' && count($man['icons']) === 2, 'manifest de la app instalable');
+check(is_file(dirname(__DIR__) . '/sportiva/assets/marca/icon-192.png') && is_file(dirname(__DIR__) . '/sportiva/assets/marca/icon-512.png'), 'íconos de la app instalable');
+
 echo "\n\n";
 if ($GLOBALS['fallas']) {
     echo count($GLOBALS['fallas']) . " fallas:\n - " . implode("\n - ", $GLOBALS['fallas']) . "\n";

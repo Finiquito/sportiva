@@ -1,0 +1,21 @@
+{layout $plugin_ui_layout}
+{block page_title}u330 · Avisos y cron{/block}
+{block content}
+<div class="page-header"><h1>Avisos y cron</h1></div>
+{if $flash_success}<div class="alert alert-success">{$flash_success}</div>{/if}
+<div class="card">
+ <h2>Estado</h2>
+ <p>Notificaciones push: <b>{$push ? 'disponibles' : 'no disponibles en este servidor (falta OpenSSL)'}</b> · Claves: <b>{$claves ? 'creadas' : 'se crean solas la primera vez'}</b> · Dispositivos suscritos: <b>{$subs}</b> · Avisos en cola: <b>{$cola}</b> · cURL: <b>{$curl ? 'sí' : 'no'}</b></p>
+ <p>Los avisos se envían al terminar la acción que los provoca. El cron sirve para los <b>recordatorios de asistencia</b> (24 horas antes) y para reintentar lo que quedó en cola.</p>
+</div>
+<div class="card">
+ <h2>Cron (cada 15 minutos)</h2>
+ <p>En hPanel → Avanzado → <b>Tareas Cron</b> crea una tarea cada 15 minutos con este comando (la dirección es secreta, no la compartas):</p>
+ <pre style="white-space:pre-wrap;word-break:break-all;background:#10201F;color:#F7F1E8;padding:12px;border-radius:10px;font-size:12px">*/15 * * * * curl -s "{$cron}" > /dev/null</pre>
+</div>
+<div class="card">
+ <h2>Acciones</h2>
+ <form method="post" style="display:inline"><input type="hidden" name="_csrf_token" value="{$csrf_token}"><input type="hidden" name="accion" value="procesar"><button class="btn" type="submit">Procesar ahora</button></form>
+ <form method="post" style="display:inline" onsubmit="return confirm('Las personas tendrán que volver a activar los avisos en su dispositivo. ¿Seguir?')"><input type="hidden" name="_csrf_token" value="{$csrf_token}"><input type="hidden" name="accion" value="claves"><button class="btn" type="submit">Crear claves nuevas</button></form>
+</div>
+{/block}

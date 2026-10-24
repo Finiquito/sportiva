@@ -99,7 +99,7 @@ final class TurnoService extends Repo
      * Completa el turno de un evento hasta `$hasta` familias, tomando entre las que tienen hijos convocados
      * las que menos han llevado en ese equipo. @return int familias agregadas
      */
-    public function asignar(string $evento, int $hasta, ?string $por): int
+    public function asignar(string $evento, int $hasta, ?string $por, ?callable $alAsignar = null): int
     {
         $hasta = max(1, min(6, $hasta));
         $faltan = $hasta - count($this->delEvento($evento));
@@ -119,6 +119,7 @@ final class TurnoService extends Repo
         $n = 0;
         foreach (array_slice($cand, 0, $faltan) as $f) {
             $this->agregar($evento, $f['id'], $por);
+            $alAsignar && $alAsignar($evento, $f['id']);
             $n++;
         }
         return $n;
@@ -128,7 +129,7 @@ final class TurnoService extends Repo
      * Reparte turnos entre los próximos partidos de un equipo que aún no tienen ninguno: a cada partido van las
      * `$porPartido` familias con menos turnos hasta ese momento. @return int partidos completados
      */
-    public function repartir(string $club, string $equipo, int $porPartido, string $desde, ?string $por): int
+    public function repartir(string $club, string $equipo, int $porPartido, string $desde, ?string $por, ?callable $alAsignar = null): int
     {
         $porPartido = max(1, min(6, $porPartido));
         $familias = $this->filas(
@@ -157,6 +158,7 @@ final class TurnoService extends Repo
             usort($orden, fn($a, $b) => [$cuenta[$a['id']], $a['nombre']] <=> [$cuenta[$b['id']], $b['nombre']]);
             foreach (array_slice($orden, 0, $porPartido) as $f) {
                 $this->agregar($ev['id'], $f['id'], $por);
+                $alAsignar && $alAsignar($ev['id'], $f['id']);
                 $cuenta[$f['id']]++;
             }
             $hechos++;

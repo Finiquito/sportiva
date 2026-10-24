@@ -30,10 +30,13 @@ class SportivaPlugin implements PluginInterface
         $ctx->registerAdminRoute('POST', 'clubes/@id/personas',    fn(string $id) => $admin->persona($id));
         $ctx->registerAdminRoute('GET',  'ajustes',                [$admin, 'ajustes']);
         $ctx->registerAdminRoute('POST', 'ajustes',                [$admin, 'guardarAjustes']);
+        $ctx->registerAdminRoute('GET',  'avisos',                 [$admin, 'avisos']);
+        $ctx->registerAdminRoute('POST', 'avisos',                 [$admin, 'accionAvisos']);
         $ctx->registerAdminRoute('GET',  'diagnostico',            [$admin, 'diagnostico']);
         $ctx->registerAdminRoute('POST', 'diagnostico',            [$admin, 'vaciarDiagnostico']);
         $ctx->addAdminMenuItem('Clubes', '');
         $ctx->addAdminMenuItem('Correo (SMTP)', 'ajustes');
+        $ctx->addAdminMenuItem('Avisos y cron', 'avisos');
         $ctx->addAdminMenuItem('Diagnóstico', 'diagnostico');
 
         // Front: /app
@@ -45,6 +48,7 @@ class SportivaPlugin implements PluginInterface
         $turno = new TurnoController($ctx);
         $feed = new FeedController($ctx);
         $consulta = new ConsultaController($ctx);
+        $avisos = new AvisosController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
@@ -108,6 +112,16 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/consulta',                            $p([$consulta, 'crear']));
         \Flight::route('GET /app/consulta/@id',                         $p(fn(string $id) => $consulta->ver($id)));
         \Flight::route('POST /app/consulta/@id',                        $p(fn(string $id) => $consulta->responder($id)));
+        \Flight::route('GET /app/sw.js',                                $p([$avisos, 'sw']));
+        \Flight::route('GET /app/manifest.webmanifest',                 $p([$avisos, 'manifest']));
+        \Flight::route('GET /app/cron/@token',                          $p(fn(string $t) => $avisos->cron($t)));
+        \Flight::route('GET /app/avisos',                               $p([$avisos, 'lista']));
+        \Flight::route('POST /app/avisos/leer',                         $p([$avisos, 'leerTodo']));
+        \Flight::route('GET /app/avisos/ajustes',                       $p([$avisos, 'ajustes']));
+        \Flight::route('POST /app/avisos/ajustes',                      $p([$avisos, 'guardarAjustes']));
+        \Flight::route('POST /app/avisos/suscribir',                    $p([$avisos, 'suscribir']));
+        \Flight::route('POST /app/avisos/baja',                         $p([$avisos, 'baja']));
+        \Flight::route('GET /app/avisos/@id',                           $p(fn(string $id) => $avisos->abrir($id)));
         \Flight::route('GET /app/@seccion',          $p(fn(string $s) => $auth->pronto($s)));
     }
 
@@ -118,7 +132,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.5.0';
+        return '0.6.0';
     }
 
     public function provides(): array

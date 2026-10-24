@@ -116,6 +116,11 @@ final class FeedController extends AppBase
             return;
         }
         $id = $svc->crear($this->club['id'], $equipo, $this->persona['id'], $d);
+        $av = new AvisoService($this->pdo);
+        $destino = $equipo === null ? null : (string) ((new ClubService($this->pdo))->nombreEquipo($equipo));
+        $autor = (string) $this->persona['nombre'];
+        $resumen = $d['titulo'] !== '' ? $d['titulo'] : mb_substr($d['texto'], 0, 120);
+        $this->notificar($equipo === null ? $av->miembrosDelClub($this->club['id']) : $av->adultosDelEquipo($equipo), 'feed', fn(I18n $i) => [$i->t('aviso.feed.nuevo', ['autor' => $autor, 'destino' => $destino ?? $i->t('feed.todo_club')]), $resumen], '/app/feed/' . $id);
         $this->ctx->redirect('/app/feed?v=' . ($equipo === null ? 'club' : 'equipo'), $this->i18n->t('feed.publicado'));
     }
 

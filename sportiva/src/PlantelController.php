@@ -251,10 +251,12 @@ final class PlantelController extends AppBase
             if ($r !== null && $r['persona'] !== null && $s['email']) {
                 (new Correo($this->ctx, $this->pdo))->invitacion((string) $s['email'], (string) $s['nombre'], (string) $this->club['nombre'], (string) $this->persona['nombre'], $this->i18nDe((string) $s['email']));
             }
+            $this->notificar([(string) $s['solicitante_id']], 'plantel', fn(I18n $i) => [$i->t('aviso.solicitud.aprobada'), (string) $s['nombre']], '/app/familia');
             $this->ctx->redirect('/app/plantel/solicitudes', $this->i18n->t('plantel.aprobada'));
             return;
         }
         $svc->rechazar($id, $this->persona['id']);
+        $this->notificar([(string) $s['solicitante_id']], 'plantel', fn(I18n $i) => [$i->t('aviso.solicitud.rechazada'), (string) $s['nombre']], '/app/familia');
         $this->ctx->redirect('/app/plantel/solicitudes', $this->i18n->t('plantel.rechazada'));
     }
 }

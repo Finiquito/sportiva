@@ -96,6 +96,12 @@ abstract class AppBase
         return self::esCoach($this->rol) ? null : '/app/agenda';
     }
 
+    /** Deja un aviso (campana, push, correo) a estas personas, sin avisarle a quien lo provocó. @param array<int, string> $personas @param callable(I18n): array{0: string, 1: string} $texto */
+    protected function notificar(array $personas, string $cat, callable $texto, string $url): void
+    {
+        (new Notificador($this->ctx, $this->pdo))->avisar($personas, (string) $this->club['id'], $cat, $texto, $url, $this->persona['id'] ?? null);
+    }
+
     public static function esCoach(?string $rol): bool
     {
         return $rol === 'entrenador' || $rol === 'encargado';

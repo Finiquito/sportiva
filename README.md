@@ -27,6 +27,8 @@ Cuentas de ejemplo: `daniela@` (apoderada), `camila@` (encargada), `pedro@` (ent
 Con MariaDB: `SPORTIVA_DB_DSN="mysql:host=127.0.0.1;dbname=sportiva_test;charset=utf8mb4" SPORTIVA_DB_USER=root SPORTIVA_DB_PASS=root php tests/run.php`.
 
 ## Cambios
+- **0.6.0** Avisos: campana con contador, página de avisos y preferencias por categoría (agenda, feed, consultas, turnos, familia) con notificación push y correo; app instalable (manifest + service worker) y Web Push propio (VAPID + cifrado aes128gcm, sin librerías); recordatorio de asistencia 24 horas antes; página de admin «Avisos y cron» con el comando del cron.
+- **0.5.1** Botón «Asignar» en cada partido ya creado (panel Turnos y página del evento): completa el turno con las familias que menos han llevado.
 - **0.5.0** Feed del equipo (avisos del entrenador, encargado y directiva por equipo o para todo el club, fijados, convocatorias publicadas, comentarios de las familias) y consultas privadas entre la familia y el cuerpo técnico (Mi actividad / Consultas, con no leídas y aviso por correo sin el texto del mensaje).
 - **0.4.0** Turnos de traslado sin cupos: el entrenador anota las familias que llevan en cada partido (o los reparte entre los próximos partidos, parejo), la familia ve «Te toca llevar» y puede pedir «Yo también llevo» para que el entrenador la acepte.
 - **0.3.1** Foto de cada niño (la sube el entrenador o el apoderado titular; se recorta, se le quitan los datos EXIF y solo la ve gente del club). Al agregar un jugador se puede elegir una familia que ya existe (hermanos) sin volver a escribir al apoderado. Esquinas de la hoja arregladas en móvil y escritorio, barra inferior más baja y color de la barra de estado en iPhone.

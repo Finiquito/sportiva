@@ -23,6 +23,41 @@ final class AdminController
         ]);
     }
 
+    private function base(): string
+    {
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+        return $host === '' ? '' : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $host);
+    }
+
+    public function avisos(): void
+    {
+        $nt = new Notificador($this->ctx, $this->pdo());
+        $av = new AvisoService($this->pdo());
+        $this->ver('avisos.latte', [
+            'push' => WebPush::disponible(), 'claves' => WebPush::disponible() && (new Ajustes($this->pdo()))->get('vapid_publica') !== '',
+            'subs' => (int) $this->pdo()->query('SELECT COUNT(*) FROM sportiva_push_subs')->fetchColumn(), 'cola' => $av->cantidadEnCola(),
+            'cron' => $this->base() . '/app/cron/' . $nt->tokenCron(), 'csrf' => Sesion::csrf(), 'curl' => function_exists('curl_init'),
+        ]);
+    }
+
+    public function accionAvisos(): void
+    {
+        $nt = new Notificador($this->ctx, $this->pdo());
+        $a = (string) ($_POST['accion'] ?? '');
+        if ($a === 'claves') {
+            $nt->claves(true);
+            $this->ctx->redirect($this->ctx->adminUrl('avisos'), 'Claves nuevas creadas. Cada persona debe volver a activar los avisos en su dispositivo.');
+            return;
+        }
+        if ($a === 'procesar') {
+            $r = $nt->recordatorios();
+            $e = $nt->entregar(100);
+            $this->ctx->redirect($this->ctx->adminUrl('avisos'), "Listo: {$r} recordatorios, {$e['push']} avisos push y {$e['correo']} correos enviados.");
+            return;
+        }
+        $this->ctx->redirect($this->ctx->adminUrl('avisos'));
+    }
+
     public function diagnostico(): void
     {
         $this->ver('diagnostico.latte', ['log' => Diagnostico::leer(), 'version' => (json_decode((string) @file_get_contents(dirname(__DIR__) . '/plugin.json'), true)['version'] ?? '?'), 'php' => PHP_VERSION]);

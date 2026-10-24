@@ -1,0 +1,21 @@
+{layout '_layout.latte'}
+{block titulo}{$t('avisos.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('nav.mas')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('avisos.titulo')}</h1>
+<div class="acciones" style="margin:0 0 12px">
+ <a class="bt" href="{$url('avisos/ajustes')}">{$ico('gear')|noescape}{$t('avisos.ajustes')}</a>
+ {if $sinLeer() > 0}<form method="post" action="{$url('avisos/leer')}" style="flex:1 1 auto;display:flex"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('check')|noescape}{$t('avisos.leer_todo')}</button></form>{/if}
+</div>
+<section class="card">
+ {foreach $avisos as $a}
+ <a class="pers" href="{$url('avisos/' . $a['id'])}" style="text-decoration:none;color:inherit">
+  <span class="fi{if !$a['leido_en']} lim{/if}">{$ico($a['categoria'] === 'consultas' ? 'chat-circle-dots' : ($a['categoria'] === 'feed' ? 'newspaper' : ($a['categoria'] === 'turnos' ? 'car' : ($a['categoria'] === 'plantel' ? 'users-three' : 'calendar-blank'))))|noescape}</span>
+  <div><b>{$a['titulo']}</b><small>{$a['cuerpo']}{if $a['cuerpo']} · {/if}{$dc($a['created_at'])} {$h($a['created_at'])}</small></div>
+  {if !$a['leido_en']}<span class="tag lim">{$t('consulta.nueva')}</span>{/if}
+ </a>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('bell')|noescape}</span><b>{$t('avisos.vacio')}</b><p>{$t('avisos.vacio.texto')}</p></div>
+ {/foreach}
+</section>
+{/block}

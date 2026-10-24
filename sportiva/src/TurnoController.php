@@ -22,6 +22,16 @@ final class TurnoController extends AppBase
         return self::esCoach($this->rol) && in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true);
     }
 
+    /** Le avisa a la familia que le toca llevar. */
+    private function avisarTurno(string $evento, string $familia): void
+    {
+        $e = (new EventoService($this->pdo))->buscar($evento);
+        if ($e === null) {
+            return;
+        }
+        $this->notificar((new AvisoService($this->pdo))->familia($familia, $this->club['id']), 'turnos', fn(I18n $i) => [$i->t('aviso.turno.asignado', ['titulo' => $e['titulo']]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($e['inicio'], $i), 'hora' => Tiempo::hora($e['hora_encuentro'] ?: ($e['hora_cancha'] ?: $e['inicio']))])], '/app/evento/' . $evento . '#turnos');
+    }
+
     private function volver(string $id): void
     {
         $this->ir('/app/evento/' . $id . '#turnos');
@@ -37,6 +47,7 @@ final class TurnoController extends AppBase
         $fam = (string) ($_POST['familia'] ?? '');
         if ($e !== null && $this->puedeGestionar($e) && $this->csrfOk() && $this->svc()->esElegible($id, $fam)) {
             $this->svc()->agregar($id, $fam, $this->persona['id']);
+            $this->avisarTurno($id, $fam);
         }
         $this->volver($id);
     }
@@ -51,7 +62,7 @@ final class TurnoController extends AppBase
         $e = $this->evento($id);
         $volver = ($_POST['volver'] ?? '') === 'panel' ? '/app/turnos' : '/app/evento/' . $id . '#turnos';
         if ($e !== null && $this->puedeGestionar($e) && $this->csrfOk()) {
-            $n = $this->svc()->asignar($id, (int) ($_POST['por_partido'] ?? 2), $this->persona['id']);
+            $n = $this->svc()->asignar($id, (int) ($_POST['por_partido'] ?? 2), $this->persona['id'], fn(string $ev, string $f) => $this->avisarTurno($ev, $f));
             $this->ctx->redirect($volver, $n > 0 ? $this->i18n->n('turno.asignados', $n) : $this->i18n->t('turno.nada_que_asignar'));
             return;
         }
@@ -67,7 +78,7 @@ final class TurnoController extends AppBase
         $e = $this->evento($id);
         if ($e !== null && $this->puedeGestionar($e) && $this->csrfOk()) {
             match ($accion) {
-                'aceptar' => $this->svc()->aceptar($id, $familia),
+                'aceptar' => (function () use ($id, $familia) { $this->svc()->aceptar($id, $familia); $this->avisarTurno($id, $familia); })(),
                 'quitar', 'rechazar' => $this->svc()->quitar($id, $familia),
                 default => null,
             };
@@ -114,7 +125,7 @@ final class TurnoController extends AppBase
         $equipo = (string) ($_POST['equipo_id'] ?? '');
         if ($this->csrfOk() && in_array($equipo, array_column($this->gestionables(), 'id'), true)) {
             $desde = Tiempo::ahora((string) $this->club['zona'])->format('Y-m-d H:i:s');
-            $n = $this->svc()->repartir($this->club['id'], $equipo, (int) ($_POST['por_partido'] ?? 2), $desde, $this->persona['id']);
+            $n = $this->svc()->repartir($this->club['id'], $equipo, (int) ($_POST['por_partido'] ?? 2), $desde, $this->persona['id'], fn(string $ev, string $f) => $this->avisarTurno($ev, $f));
             $this->ctx->redirect('/app/turnos', $this->i18n->n('turno.repartidos', $n));
             return;
         }

@@ -8,6 +8,11 @@
   <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('user-circle')|noescape}</span><span><b>{$persona['nombre']}</b><small>{$persona['email']} · {$t('rol.' . $rol)}</small></span></span></li>
  </ul>
 </section>
+<section class="card">
+ <ul class="lkl">
+  <li><a class="lk" href="{$url('avisos/ajustes')}" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('bell')|noescape}</span><span><b>{$t('avisos.titulo')}</b><small>{$t('avisos.mas.sub')}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+ </ul>
+</section>
 {if $rol === 'apoderado'}
 <section class="card">
  <ul class="lkl">

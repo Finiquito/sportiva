@@ -57,29 +57,18 @@ final class Correo
         return $this->enviar($para, $asunto, $html, $texto);
     }
 
-    /** Aviso a quien aprueba: hay una solicitud nueva de una familia. */
-    public function solicitudNueva(string $para, string $nombre, string $familia, string $club, I18n $i): bool
+    /** Aviso genérico de la campana, enviado por correo según las preferencias de cada persona. */
+    public function aviso(string $para, string $nombre, string $titulo, string $cuerpo, string $ruta, I18n $i): bool
     {
         $nombre = htmlspecialchars($nombre, ENT_QUOTES);
-        $v = ['familia' => htmlspecialchars($familia, ENT_QUOTES), 'club' => htmlspecialchars($club, ENT_QUOTES)];
-        $asunto = $i->t('correo.solicitud.asunto', $v);
-        $url = $this->base() . '/app/plantel/solicitudes';
+        $url = $this->base() . ($ruta !== '' ? $ruta : '/app/avisos');
         $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px"><p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
-            . '<p>' . $i->t('correo.solicitud.cuerpo', $v) . '</p><p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.solicitud.boton') . '</a></p></div>';
-        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.solicitud.cuerpo', $v) . "\n\n" . $url;
-        return $this->enviar($para, $asunto, $html, $texto);
-    }
-
-    /** Aviso de consulta nueva o respuesta (sin el texto: el contenido es privado y se lee dentro de la app). */
-    public function consulta(string $para, string $nombre, string $asunto, string $quien, string $ruta, I18n $i): bool
-    {
-        $nombre = htmlspecialchars($nombre, ENT_QUOTES);
-        $v = ['quien' => htmlspecialchars($quien, ENT_QUOTES), 'asunto' => htmlspecialchars($asunto, ENT_QUOTES)];
-        $url = $this->base() . $ruta;
-        $html = '<div style="font-family:Arial,sans-serif;color:#10201F;max-width:480px"><p>' . $i->t('correo.hola', ['nombre' => $nombre]) . '</p>'
-            . '<p>' . $i->t('correo.consulta.cuerpo', $v) . '</p><p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.consulta.boton') . '</a></p></div>';
-        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $i->t('correo.consulta.cuerpo', $v) . "\n\n" . $url;
-        return $this->enviar($para, $i->t('correo.consulta.asunto', $v), $html, $texto);
+            . '<p style="font-size:17px;font-weight:700;margin:0 0 4px">' . htmlspecialchars($titulo, ENT_QUOTES) . '</p>'
+            . ($cuerpo !== '' ? '<p style="margin:0 0 14px">' . htmlspecialchars($cuerpo, ENT_QUOTES) . '</p>' : '')
+            . '<p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="color:#0F4F4E;font-weight:700">' . $i->t('correo.aviso.boton') . '</a></p>'
+            . '<p style="color:#4B5E5C;font-size:13px">' . $i->t('correo.aviso.pie') . '</p></div>';
+        $texto = $i->t('correo.hola', ['nombre' => $nombre]) . "\n\n" . $titulo . "\n" . $cuerpo . "\n\n" . $url . "\n\n" . $i->t('correo.aviso.pie');
+        return $this->enviar($para, $titulo, $html, $texto);
     }
 
     private function base(): string

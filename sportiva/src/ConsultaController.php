@@ -131,11 +131,8 @@ final class ConsultaController extends AppBase
     private function avisarStaff(string $consulta, string $equipo): void
     {
         $c = $this->svc()->buscar($consulta);
-        $correo = new Correo($this->ctx, $this->pdo);
-        foreach ((new PlantelService($this->pdo))->aprobadores($this->club['id'], $equipo) as $a) {
-            $idioma = $a['idioma'] && I18n::esValido((string) $a['idioma']) ? (string) $a['idioma'] : (string) ($this->club['idioma'] ?? 'fr');
-            $correo->consulta((string) $a['email'], (string) $a['nombre'], (string) $c['asunto'], (string) $this->persona['nombre'], '/app/consulta/' . $consulta, new I18n($idioma));
-        }
+        $quien = (string) $this->persona['nombre'];
+        $this->notificar((new AvisoService($this->pdo))->staffDelEquipo($this->club['id'], $equipo), 'consultas', fn(I18n $i) => [$i->t('aviso.consulta.nueva', ['quien' => $quien]), (string) $c['asunto']], '/app/consulta/' . $consulta);
     }
 
     public function ver(string $id): void
@@ -172,13 +169,10 @@ final class ConsultaController extends AppBase
             return;
         }
         $svc->mensaje($id, $this->persona['id'], $lado, $d['texto']);
-        $correo = new Correo($this->ctx, $this->pdo);
         if ($lado === 'staff') {
-            $creador = (new PersonaService($this->pdo))->buscar($c['creada_por']);
-            if ($creador !== null) {
-                $idioma = $creador['idioma'] && I18n::esValido((string) $creador['idioma']) ? (string) $creador['idioma'] : (string) ($this->club['idioma'] ?? 'fr');
-                $correo->consulta((string) $creador['email'], (string) $creador['nombre'], (string) $c['asunto'], (string) $this->persona['nombre'], '/app/consulta/' . $id, new I18n($idioma));
-            }
+            $quien = (string) $this->persona['nombre'];
+            $adultos = array_column((new PlantelService($this->pdo))->adultos($c['jugador_id']), 'id');
+            $this->notificar(array_merge($adultos, [(string) $c['creada_por']]), 'consultas', fn(I18n $i) => [$i->t('aviso.consulta.respuesta', ['quien' => $quien]), (string) $c['asunto']], '/app/consulta/' . $id);
         } else {
             $this->avisarStaff($id, $c['equipo_id']);
         }

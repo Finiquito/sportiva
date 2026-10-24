@@ -42,6 +42,7 @@ final class Vista
             'cssv'    => '3',
             'activa'  => null,
             'flash'   => $this->ctx->getFlash('success'),
+            'sinLeer' => fn() => $this->persona && $this->club ? (new AvisoService($this->ctx->db()->pdo()))->sinLeer($this->persona['id'], $this->club['id']) : 0,
             'flashError' => $this->ctx->getFlash('error'),
             'dl'      => fn(string $f) => Tiempo::diaLargo($f, $i),
             'dc'      => fn(string $f) => Tiempo::diaCorto($f, $i),
