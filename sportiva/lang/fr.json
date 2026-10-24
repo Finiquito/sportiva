@@ -656,5 +656,11 @@
  "agenda.n_eventos.otros": "{n} événements",
  "agenda.otros_eventos": "Autres",
  "agenda.dia_vacio": "Aucun événement ce jour",
- "agenda.volver_proximos": "Retour aux prochains"
+ "agenda.volver_proximos": "Retour aux prochains",
+ "evento.hora_inicio": "Heure de début",
+ "evento.lugar_de.partido": "Lieu du match",
+ "evento.lugar_de.entreno": "Lieu de l'entraînement",
+ "evento.lugar_de.otro": "Lieu de l'événement",
+ "evento.lugar_nuevo_op": "+ Nouveau lieu",
+ "evento.lugar_coordenadas": "Ajuster les coordonnées (facultatif)"
 }

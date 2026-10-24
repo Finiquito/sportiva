@@ -19,14 +19,14 @@
    </select>
    {if $e}<input type="hidden" name="equipo_id" value="{$e['equipo_id']}">{/if}
   </label>
-  <label class="campo"><span>{$t('evento.titulo')}</span><input class="in" type="text" name="titulo" value="{$d['titulo'] ?? ''}" maxlength="200">{if isset($errores['titulo'])}<small class="error" role="alert">{$t($errores['titulo'])}</small>{/if}</label>
+  <label class="campo"><span data-lbl-partido="{$t('evento.titulo')}" data-lbl-entreno="{$t('evento.titulo')}" data-lbl-otro="{$t('evento.titulo')}">{$t('evento.titulo')}</span><input class="in" type="text" name="titulo" value="{$d['titulo'] ?? ''}" maxlength="200">{if isset($errores['titulo'])}<small class="error" role="alert">{$t($errores['titulo'])}</small>{/if}</label>
   <label class="campo" data-tipos="partido" n:attr="hidden => $tp !== 'partido'"><span>{$t('evento.rival')}</span><input class="in" type="text" name="rival" value="{$d['rival'] ?? ''}" maxlength="120"></label>
  </section>
 
  <section class="card">
   <div class="ch"><h3>{$t('evento.cuando')}</h3></div>
   <label class="campo"><span>{$t('evento.fecha')}</span><input class="in" type="date" name="fecha" value="{$d['fecha'] ?? ''}">{if isset($errores['fecha'])}<small class="error" role="alert">{$t($errores['fecha'])}</small>{/if}</label>
-  <label class="campo"><span>{$t('evento.hora_partido')}</span><input class="in" type="time" name="hora_partido" value="{$d['hora_partido'] ?? ''}"></label>
+  <label class="campo"><span data-lbl-partido="{$t('evento.hora_partido')}" data-lbl-entreno="{$t('evento.hora_inicio')}" data-lbl-otro="{$t('evento.hora_inicio')}">{$t($tp === 'partido' ? 'evento.hora_partido' : 'evento.hora_inicio')}</span><input class="in" type="time" name="hora_partido" value="{$d['hora_partido'] ?? ''}"></label>
   <label class="campo" data-tipos="entreno especial stage" n:attr="hidden => $tp !== 'entreno' && $tp !== 'especial' && $tp !== 'stage'"><span>{$t('evento.hora_fin')}</span><input class="in" type="time" name="hora_fin" value="{$d['hora_fin'] ?? ''}"></label>
   <label class="campo" data-tipos="partido" n:attr="hidden => $tp !== 'partido'"><span>{$t('evento.hora_cancha')}</span>
    <input class="in" type="time" name="hora_cancha" value="{$d['hora_cancha'] ?? ''}">
@@ -72,6 +72,29 @@
  {/if}
 {/if}
 
+<section class="card" id="lugar">
+  <div class="ch"><h3 data-lbl-partido="{$t('evento.lugar_de.partido')}" data-lbl-entreno="{$t('evento.lugar_de.entreno')}" data-lbl-otro="{$t('evento.lugar_de.otro')}">{$t('evento.lugar_de.' . ($tp === 'partido' || $tp === 'entreno' ? $tp : 'otro'))} *</h3></div>
+  <label class="campo"><span>{$t('evento.lugar_elegir')}</span>
+   <select class="in" name="lugar_id" id="lugar-sel">
+    <option value="">{$t('evento.lugar_nuevo_op')}</option>
+    <optgroup label="{$t('evento.lugares_local')}">{foreach $lugares as $l}{if in_array($l['id'], $locales, true)}<option value="{$l['id']}" data-dir="{$l['direccion']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
+    <optgroup label="{$t('evento.lugares_visita')}">{foreach $lugares as $l}{if !in_array($l['id'], $locales, true)}<option value="{$l['id']}" data-dir="{$l['direccion']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
+   </select>
+   {if isset($errores['lugar_id'])}<small class="error" role="alert">{$t($errores['lugar_id'])}</small>{/if}
+   <small id="lugar-dir" class="lugar-dir"></small>
+  </label>
+  <div id="lugar-nuevo" n:attr="hidden => !empty($d['lugar_id'])">
+   <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="lugar_nombre" value="{$d['lugar_nombre'] ?? ''}"></label>
+   <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="lugar_direccion" value="{$d['lugar_direccion'] ?? ''}"></label>
+   <label class="campo"><span>{$t('evento.lugar_enlace')}</span><input class="in" type="url" name="lugar_enlace" value="{$d['lugar_enlace'] ?? ''}" placeholder="https://www.google.com/maps/…"><small>{$t('evento.lugar_enlace_ayuda')}</small></label>
+   <details class="avanzado"><summary>{$t('evento.lugar_coordenadas')}</summary>
+    <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" name="lugar_lat" value="{$d['lugar_lat'] ?? ''}" inputmode="decimal" placeholder="46.480236"></label>
+    <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" name="lugar_lon" value="{$d['lugar_lon'] ?? ''}" inputmode="decimal" placeholder="-0.599575"></label>
+   </details>
+   <label class="tog"><span><b>{$t('evento.lugar_local')}</b></span><input type="checkbox" name="lugar_local" value="1" {if !empty($d['lugar_local'])}checked{/if}></label>
+  </div>
+ </section>
+
  <section class="card">
   <div class="ch"><h3>{$t('evento.citados')}</h3><span class="est" id="cuenta-citados" data-uno="{$t('evento.citados_n.uno')}" data-otros="{$t('evento.citados_n.otros')}">{$n('evento.citados_n', count($d['jugadores_sel']))}</span></div>
   <p class="texto" style="margin:0 0 10px;font-size:13px">{$t('evento.citados_ayuda')}</p>
@@ -92,37 +115,21 @@
  </section>
 
  <section class="card">
-  <div class="ch"><h3>{$t('evento.lugar')} *</h3></div>
-  <label class="campo"><span>{$t('evento.lugar_elegir')}</span>
-   <select class="in" name="lugar_id">
-    <option value="">—</option>
-    <optgroup label="{$t('evento.lugares_local')}">{foreach $lugares as $l}{if in_array($l['id'], $locales, true)}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
-    <optgroup label="{$t('evento.lugares_visita')}">{foreach $lugares as $l}{if !in_array($l['id'], $locales, true)}<option value="{$l['id']}" {if ($d['lugar_id'] ?? '') === $l['id']}selected{/if}>{$l['nombre']}</option>{/if}{/foreach}</optgroup>
-   </select>
-   {if isset($errores['lugar_id'])}<small class="error" role="alert">{$t($errores['lugar_id'])}</small>{/if}
-  </label>
-  <p class="mini-t">{$t('evento.lugar_nuevo')}</p>
-  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="lugar_nombre" value="{$d['lugar_nombre'] ?? ''}"></label>
-  <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="lugar_direccion" value="{$d['lugar_direccion'] ?? ''}"></label>
-  <label class="tog"><span><b>{$t('evento.lugar_local')}</b></span><input type="checkbox" name="lugar_local" value="1" {if !empty($d['lugar_local'])}checked{/if}></label>
-  <label class="campo"><span>{$t('evento.lugar_enlace')}</span><input class="in" type="url" name="lugar_enlace" value="{$d['lugar_enlace'] ?? ''}" placeholder="https://www.google.com/maps/…"><small>{$t('evento.lugar_enlace_ayuda')}</small></label>
-  <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" name="lugar_lat" value="{$d['lugar_lat'] ?? ''}" inputmode="decimal" placeholder="46.480236"></label>
-  <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" name="lugar_lon" value="{$d['lugar_lon'] ?? ''}" inputmode="decimal" placeholder="-0.599575"></label>
- </section>
-
- <section class="card">
   <label class="campo"><span>{$t('evento.nota')}</span><textarea class="in ta" name="nota" rows="3">{$d['nota'] ?? ''}</textarea></label>
   <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t($e ? 'guardar' : 'evento.publicar')}</button>
  </section>
 </form>
 <script n:syntax="off">(function(){var f=document.querySelector('form');if(!f)return;
 function tipo(){var r=f.querySelector('input[name=tipo]:checked');return r?r.value:'partido';}
-function ver(){var t=tipo();f.querySelectorAll('[data-tipos]').forEach(function(e){e.hidden=e.dataset.tipos.split(' ').indexOf(t)===-1;});}
+function ver(){var t=tipo();var k=(t==='partido'||t==='entreno')?t:'otro';f.querySelectorAll('[data-lbl-partido]').forEach(function(e){e.firstChild&&e.firstChild.nodeType===3?e.firstChild.nodeValue=e.dataset['lbl'+k.charAt(0).toUpperCase()+k.slice(1)]+(e.tagName==='H3'?' *':''):e.textContent=e.dataset['lbl'+k.charAt(0).toUpperCase()+k.slice(1)]+(e.tagName==='H3'?' *':'');});f.querySelectorAll('[data-tipos]').forEach(function(e){e.hidden=e.dataset.tipos.split(' ').indexOf(t)===-1;});}
 f.querySelectorAll('input[name=tipo]').forEach(function(r){r.addEventListener('change',ver);});ver();
 var cu=document.getElementById('cuenta-citados');
 function cuenta(){var n=f.querySelectorAll('input[name="jugadores[]"]:checked').length;if(cu)cu.textContent=(n===1?cu.dataset.uno:cu.dataset.otros).replace('{n}',n);f.querySelectorAll('details.citar').forEach(function(d){var cs=d.querySelectorAll('input[type=checkbox]'),on=d.querySelectorAll('input[type=checkbox]:checked').length,c=d.querySelector('.cn');if(c)c.textContent=on+'/'+cs.length;});}
 f.addEventListener('change',function(e){if(e.target.name==='jugadores[]')cuenta();});
 f.querySelectorAll('details.citar').forEach(function(d){d.querySelectorAll('[data-todos],[data-ninguno]').forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var on=b.hasAttribute('data-todos');d.open=true;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=on;});cuenta();});});});
 var sel=f.querySelector('select[name=equipo_id]');if(sel&&!sel.disabled){sel.addEventListener('change',function(){f.querySelectorAll('details.citar').forEach(function(d){var m=d.dataset.equipo===sel.value;d.open=m||d.open;d.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=m;});});cuenta();});}
+var ls=document.getElementById('lugar-sel'),ln=document.getElementById('lugar-nuevo'),ld=document.getElementById('lugar-dir');
+function lugar(){var o=ls.options[ls.selectedIndex];var nuevo=!ls.value;ln.hidden=!nuevo;ld.textContent=nuevo?'':(o.dataset.dir||'');}
+if(ls){ls.addEventListener('change',lugar);lugar();}
 })();</script>
 {/block}

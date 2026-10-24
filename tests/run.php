@@ -1254,6 +1254,9 @@ check(str_contains($h, 'cal-g'), 'parámetros inválidos no rompen el calendario
 $comoRol('otro.coach@ejemplo.fr', 'entrenador');
 [$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
 check(!str_contains($h, 'Partido del calendario'), 'un entrenador de otro equipo no ve en el calendario los eventos del U12');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $ag->nuevo());
+check(str_contains($h, 'Lugar del partido') && str_contains($h, 'id="lugar-nuevo"') && str_contains($h, 'id="lugar-sel"') && strpos($h, 'id="lugar"') < strpos($h, 'id="cuenta-citados"'), 'el formulario titula el lugar según el tipo, oculta el lugar nuevo si hay uno guardado y pone el lugar antes de los citados');
 $comoRol('ines.garcia@ejemplo.fr', 'apoderado');
 [$h] = llamar(fn() => $ag->agenda(), [], ['vista' => 'mes', 'mes' => $mesQ, 'dia' => $diaQ]);
 check(str_contains($h, 'Partido del calendario') || str_contains($h, 'No hay eventos') || str_contains($h, 'Aucun'), 'cada familia ve en el calendario solo lo de sus hijos');
