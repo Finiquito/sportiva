@@ -49,6 +49,7 @@ final class Vista
             'dc'      => fn(string $f) => Tiempo::diaCorto($f, $i),
             'ed'      => fn(string $f) => Tiempo::etiquetaDia($f, $i),
             'h'       => fn(?string $f) => Tiempo::hora($f),
+            'tel'     => fn(?string $t) => PersonaService::telLimpio($t),
             'edad'    => fn(?string $n) => Tiempo::edad($n),
         ];
         // El PluginContext real solo tiene view() (imprime); no existe renderView().

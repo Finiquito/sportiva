@@ -1,0 +1,16 @@
+{layout '_layout.latte'}
+{block titulo}{$t('perfil.datos')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('perfil')}">{$ico('arrow-right')|noescape}{$t('perfil.titulo')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('perfil.datos')}</h1>
+<form method="post" action="{$url('perfil/datos')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre']}" maxlength="160">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono" value="{$d['telefono']}" maxlength="40"></label>
+  <label class="campo"><span>{$t('campo.correo')}</span><input class="in" type="email" value="{$persona['email']}" disabled></label>
+  <p class="sis">{$ico('lock')|noescape}{$t('perfil.correo_fijo')}</p>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+{/block}

@@ -101,4 +101,106 @@ final class PersonaService extends Repo
             $this->ejecutar('INSERT INTO sportiva_equipo_staff (id, equipo_id, persona_id, rol) VALUES (?, ?, ?, ?)', [$this->id(), $equipo, $persona, $rol]);
         }
     }
+
+    // ---- panel de la directiva ----------------------------------------------------------------
+
+    /**
+     * Personas con algún rol en el club, con sus roles, sus hijos y si ya entraron alguna vez.
+     * @param string $grupo todos | entrenadores | familias | directiva @return array<int, array<string, mixed>>
+     */
+    public function delClub(string $club, string $grupo = 'todos', string $q = ''): array
+    {
+        $roles = ['entrenadores' => ['entrenador', 'encargado'], 'familias' => ['apoderado'], 'directiva' => ['directiva']][$grupo] ?? self::ROLES;
+        $in = implode(',', array_fill(0, count($roles), '?'));
+        $sql = "SELECT p.id, p.nombre, p.email, p.telefono, m.rol FROM sportiva_membresias m JOIN sportiva_personas p ON p.id = m.persona_id
+                WHERE m.club_id = ? AND m.estado = 'activo' AND m.rol IN ({$in})";
+        $par = array_merge([$club], $roles);
+        if (trim($q) !== '') {
+            $sql .= ' AND (LOWER(p.nombre) LIKE ? OR LOWER(p.email) LIKE ?)';
+            $like = '%' . mb_strtolower(trim($q)) . '%';
+            $par[] = $like;
+            $par[] = $like;
+        }
+        $por = [];
+        foreach ($this->filas($sql . ' ORDER BY p.nombre', $par) as $f) {
+            $por[$f['id']] ??= ['id' => $f['id'], 'nombre' => $f['nombre'], 'email' => $f['email'], 'telefono' => $f['telefono'], 'roles' => []];
+            $por[$f['id']]['roles'][] = $f['rol'];
+        }
+        foreach ($por as &$p) {
+            $p['hijos'] = in_array('apoderado', $p['roles'], true) ? array_column($this->hijos($p['id'], $club), 'nombre') : [];
+            $p['activo'] = $this->haEntrado($p['id']);
+        }
+        return array_values($por);
+    }
+
+    /** ¿Alguna vez usó un código para entrar? */
+    public function haEntrado(string $persona): bool
+    {
+        return $this->fila('SELECT id FROM sportiva_codigos WHERE persona_id = ? AND usado_en IS NOT NULL', [$persona]) !== null;
+    }
+
+    /** @return array<int, string> */
+    public function rolesEn(string $persona, string $club): array
+    {
+        return array_column($this->filas("SELECT rol FROM sportiva_membresias WHERE persona_id = ? AND club_id = ? AND estado = 'activo' ORDER BY rol", [$persona, $club]), 'rol');
+    }
+
+    public function quitarRol(string $persona, string $club, string $rol): void
+    {
+        $this->ejecutar('DELETE FROM sportiva_membresias WHERE persona_id = ? AND club_id = ? AND rol = ?', [$persona, $club, $rol]);
+        if (in_array($rol, ['entrenador', 'encargado'], true) && !array_intersect(['entrenador', 'encargado'], $this->rolesEn($persona, $club))) {
+            $this->ejecutar('DELETE FROM sportiva_equipo_staff WHERE persona_id = ? AND equipo_id IN (SELECT id FROM sportiva_equipos WHERE club_id = ?)', [$persona, $club]);
+        }
+    }
+
+    /** Equipos que entrena (o apoya) una persona en el club. @return array<int, array<string, mixed>> */
+    public function equiposStaff(string $persona, string $club): array
+    {
+        return $this->filas('SELECT e.id, e.nombre, s.rol FROM sportiva_equipo_staff s JOIN sportiva_equipos e ON e.id = s.equipo_id WHERE s.persona_id = ? AND e.club_id = ? ORDER BY e.nombre', [$persona, $club]);
+    }
+
+    public function quitarStaff(string $equipo, string $persona): void
+    {
+        $this->ejecutar('DELETE FROM sportiva_equipo_staff WHERE equipo_id = ? AND persona_id = ?', [$equipo, $persona]);
+    }
+
+    public function actualizarDatos(string $persona, string $nombre, ?string $telefono): void
+    {
+        $this->ejecutar('UPDATE sportiva_personas SET nombre = ?, telefono = ? WHERE id = ?', [trim($nombre), $telefono !== null && trim($telefono) !== '' ? trim($telefono) : null, $persona]);
+    }
+
+    /**
+     * Contactos para el directorio: familias (por hijo) y cuerpo técnico de los equipos pedidos.
+     * @param array<int, string> $equipos @return array{familias: array<int, array<string, mixed>>, staff: array<int, array<string, mixed>>}
+     */
+    public function directorio(string $club, array $equipos, string $q = ''): array
+    {
+        if ($equipos === []) {
+            return ['familias' => [], 'staff' => []];
+        }
+        $in = implode(',', array_fill(0, count($equipos), '?'));
+        $like = '%' . mb_strtolower(trim($q)) . '%';
+        $filtro = trim($q) !== '' ? ' AND (LOWER(p.nombre) LIKE ? OR LOWER(p.email) LIKE ? OR LOWER(j.nombre) LIKE ?)' : '';
+        $par = array_merge([$club], $equipos, trim($q) !== '' ? [$like, $like, $like] : []);
+        $fam = [];
+        foreach ($this->filas("SELECT p.id, p.nombre, p.email, p.telefono, j.nombre AS hijo, e.nombre AS equipo FROM sportiva_apoderados_jugadores aj JOIN sportiva_jugadores j ON j.id = aj.jugador_id JOIN sportiva_personas p ON p.id = aj.persona_id JOIN sportiva_equipos e ON e.id = j.equipo_id WHERE j.club_id = ? AND j.equipo_id IN ({$in}){$filtro} ORDER BY p.nombre, j.nombre", $par) as $f) {
+            $fam[$f['id']] ??= ['id' => $f['id'], 'nombre' => $f['nombre'], 'email' => $f['email'], 'telefono' => $f['telefono'], 'hijos' => [], 'equipos' => []];
+            $fam[$f['id']]['hijos'][] = $f['hijo'];
+            $fam[$f['id']]['equipos'][$f['equipo']] = $f['equipo'];
+        }
+        $filtroS = trim($q) !== '' ? ' AND (LOWER(p.nombre) LIKE ? OR LOWER(p.email) LIKE ?)' : '';
+        $parS = array_merge($equipos, trim($q) !== '' ? [$like, $like] : []);
+        $staff = [];
+        foreach ($this->filas("SELECT p.id, p.nombre, p.email, p.telefono, s.rol, e.nombre AS equipo FROM sportiva_equipo_staff s JOIN sportiva_personas p ON p.id = s.persona_id JOIN sportiva_equipos e ON e.id = s.equipo_id WHERE s.equipo_id IN ({$in}){$filtroS} ORDER BY p.nombre", $parS) as $f) {
+            $staff[$f['id']] ??= ['id' => $f['id'], 'nombre' => $f['nombre'], 'email' => $f['email'], 'telefono' => $f['telefono'], 'rol' => $f['rol'], 'equipos' => []];
+            $staff[$f['id']]['equipos'][$f['equipo']] = $f['equipo'];
+        }
+        return ['familias' => array_values($fam), 'staff' => array_values($staff)];
+    }
+
+    /** Solo dígitos y «+», para tel: y WhatsApp. */
+    public static function telLimpio(?string $t): string
+    {
+        return preg_replace('/[^0-9+]/', '', (string) $t) ?? '';
+    }
 }

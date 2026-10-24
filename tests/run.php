@@ -798,6 +798,224 @@ check($fs->post($pf) === null && $ad->buscar($ap) === null && $ad->buscar($ac) =
 $_FILES = [];
 foreach (glob("$dirA/*") as $f) { @unlink($f); } @rmdir($dirA);
 
+
+seccion('Panel de la directiva');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$cc = new S\ClubController($ctx);
+$pc = new S\PersonasController($ctx);
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h, $r] = llamar(fn() => $cc->inicio());
+check($r === '/app/mas', 'un entrenador no entra al panel del club');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => $cc->crearEquipo(), conCsrf(['nombre' => 'U99']));
+check($r === '/app/mas' && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_equipos WHERE nombre = 'U99'")->fetchColumn() === 0, 'una familia no crea equipos');
+$comoRol('sylvie@ejemplo.fr', 'directiva');
+[$h] = llamar(fn() => $cc->inicio());
+check(str_contains($h, '/app/club/equipos') && str_contains($h, '/app/club/personas') && str_contains($h, '/app/club/ajustes'), 'el panel muestra los accesos del club');
+[$h] = llamar(fn() => $cc->equipos());
+check(str_contains($h, 'U12'), 'lista de equipos');
+[$h, $r] = llamar(fn() => $cc->crearEquipo(), conCsrf(['nombre' => 'U15']));
+$u15 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U15'")->fetchColumn();
+check($u15 && $r === '/app/club/equipos/' . $u15, 'la directiva crea un equipo');
+[$h] = llamar(fn() => $cc->crearEquipo(), conCsrf(['nombre' => 'u15']));
+check(str_contains($h, 'Ya existe un equipo') || str_contains($h, 'Une équipe porte déjà'), 'no se repite el nombre de un equipo');
+[$h, $r] = llamar(fn() => $cc->crearEquipo(), ['nombre' => 'U17']);
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_equipos WHERE nombre = 'U17'")->fetchColumn() === 0, 'crear un equipo exige CSRF');
+llamar(fn() => $cc->actualizarEquipo($u15), conCsrf(['nombre' => 'U15 A', 'temporada' => '2026 – 2027']));
+check($S['club']->equipo($u15)['nombre'] === 'U15 A', 'se renombra un equipo');
+$pedro = $S['pers']->porCorreo('pedro@ejemplo.fr')['id'];
+llamar(fn() => $cc->agregarStaff($u15), conCsrf(['persona' => $pedro]));
+check(in_array($pedro, array_column($S['club']->staffDe($u15), 'id'), true), 'se asigna un entrenador a un equipo');
+$danielaId = $S['pers']->porCorreo('daniela@ejemplo.fr')['id'];
+llamar(fn() => $cc->agregarStaff($u15), conCsrf(['persona' => $danielaId]));
+check(!in_array($danielaId, array_column($S['club']->staffDe($u15), 'id'), true), 'una familia no puede quedar como cuerpo técnico');
+llamar(fn() => $cc->quitarStaff($u15, $pedro), conCsrf());
+check($S['club']->staffDe($u15) === [], 'se quita al entrenador del equipo');
+[$h, $r] = llamar(fn() => $cc->archivarEquipo($u12), conCsrf());
+check($S['club']->equipo($u12)['archivado'] == 0 && $r === '/app/club/equipos/' . $u12, 'no se archiva un equipo con jugadores');
+llamar(fn() => $cc->archivarEquipo($u15), conCsrf());
+check($S['club']->equipo($u15)['archivado'] == 1 && !in_array($u15, array_column($S['club']->equipos($cid), 'id'), true), 'se archiva un equipo vacío');
+// Aislamiento: no se toca un equipo de otro club.
+$otroClub = $pdo->query("SELECT id FROM sportiva_clubes WHERE id <> '{$cid}' LIMIT 1")->fetchColumn();
+$eAjeno = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$otroClub}' LIMIT 1")->fetchColumn();
+if ($eAjeno) {
+    [$h] = llamar(fn() => $cc->equipo($eAjeno));
+    check(str_contains($h, '404') || $h === '', 'no se abre un equipo de otro club');
+    llamar(fn() => $cc->actualizarEquipo($eAjeno), conCsrf(['nombre' => 'Hackeado']));
+    check($S['club']->equipo($eAjeno)['nombre'] !== 'Hackeado', 'no se renombra un equipo de otro club');
+}
+// Lugares
+[$h, $r] = llamar(fn() => $cc->guardarLugar(), conCsrf(['nombre' => 'Stade Nord', 'direccion' => 'Rue 1', 'lat' => '46.6', 'lon' => '-0.3', 'predeterminado' => '1']));
+$lg = $pdo->query("SELECT id FROM sportiva_lugares WHERE club_id = '{$cid}' AND nombre = 'Stade Nord'")->fetchColumn();
+check($lg && $r === '/app/club/lugares', 'se crea un lugar');
+check((int) $pdo->query("SELECT predeterminado FROM sportiva_lugares WHERE id = '{$lg}'")->fetchColumn() === 1 && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_lugares WHERE club_id = '{$cid}' AND predeterminado = 1")->fetchColumn() === 1, 'solo un lugar habitual por club');
+[$h] = llamar(fn() => $cc->guardarLugar(), conCsrf(['nombre' => 'Malo', 'lat' => '999', 'lon' => '0']));
+check(str_contains($h, 'class="error"') && !$pdo->query("SELECT id FROM sportiva_lugares WHERE nombre = 'Malo'")->fetchColumn(), 'coordenadas inválidas se rechazan');
+[$h] = llamar(fn() => $cc->lugarEditar($lg));
+check(str_contains($h, 'Google Maps') && str_contains($h, 'Waze'), 'el lugar con coordenadas muestra mapa y enlaces');
+llamar(fn() => $cc->guardarLugar($lg), conCsrf(['nombre' => 'Stade Nord 2', 'lat' => '46.6', 'lon' => '-0.3']));
+check($pdo->query("SELECT nombre FROM sportiva_lugares WHERE id = '{$lg}'")->fetchColumn() === 'Stade Nord 2', 'se edita un lugar');
+$lgUso = $pdo->query("SELECT lugar_id FROM sportiva_eventos WHERE club_id = '{$cid}' AND lugar_id IS NOT NULL LIMIT 1")->fetchColumn();
+if ($lgUso) {
+    llamar(fn() => $cc->eliminarLugar($lgUso), conCsrf());
+    check($pdo->query("SELECT id FROM sportiva_lugares WHERE id = '{$lgUso}'")->fetchColumn() !== false, 'un lugar con eventos no se elimina');
+}
+llamar(fn() => $cc->eliminarLugar($lg), conCsrf());
+check($pdo->query("SELECT id FROM sportiva_lugares WHERE id = '{$lg}'")->fetchColumn() === false, 'un lugar sin eventos se elimina');
+// Temporada y ajustes
+llamar(fn() => $cc->guardarTemporada(), conCsrf(['temporada' => '2027 – 2028']));
+check($S['club']->temporada($cid) === '2027 – 2028', 'se guarda la temporada del club');
+llamar(fn() => $cc->guardarAjustes(), conCsrf(['nombre' => 'FCJ Renombrado', 'ciudad' => 'Niort', 'deporte' => 'voley', 'idioma' => 'es', 'zona' => 'America/Santiago', 'publico' => '1']));
+$cl = $S['club']->buscar($cid);
+check($cl['nombre'] === 'FCJ Renombrado' && $cl['deporte'] === 'voley' && $cl['zona'] === 'America/Santiago' && $cl['idioma'] === 'es' && (int) $cl['exigir_app'] === 0, 'se guardan los ajustes del club');
+[$h] = llamar(fn() => $cc->guardarAjustes(), conCsrf(['nombre' => '', 'deporte' => 'futbol', 'idioma' => 'xx', 'zona' => 'Mars/Base']));
+check(str_contains($h, 'class="error"') && $S['club']->buscar($cid)['nombre'] === 'FCJ Renombrado', 'un nombre vacío no se guarda');
+check($S['club']->buscar($cid)['zona'] === 'America/Santiago', 'una zona inválida no se guarda');
+llamar(fn() => $cc->guardarAjustes(), conCsrf(['nombre' => 'FC Jeunesse Orée de l’Autize', 'ciudad' => 'Niort', 'deporte' => 'futbol', 'idioma' => 'fr', 'zona' => 'Europe/Paris', 'publico' => '1', 'exigir_app' => '1']));
+check($S['club']->crear(['nombre' => 'Invitar', 'ciudad' => 'X']) !== '' && $S['club']->porSlug('invitar') === null && $S['club']->porSlug('invitar-club') !== null, 'un slug reservado recibe el sufijo -club');
+
+seccion('Personas, invitaciones y directorio');
+$comoRol('sylvie@ejemplo.fr', 'directiva');
+[$h] = llamar(fn() => $pc->lista());
+check(str_contains($h, 'Pedro') && str_contains($h, 'Daniela'), 'lista de personas del club');
+[$h] = llamar(fn() => $pc->lista(), [], ['g' => 'entrenadores']);
+check(str_contains($h, 'Pedro') && !str_contains($h, 'Daniela'), 'se filtran las personas por grupo');
+[$h] = llamar(fn() => $pc->lista(), [], ['q' => 'daniela']);
+check(str_contains($h, 'Daniela') && !str_contains($h, 'Pedro'), 'se busca por nombre');
+[$h, $r] = llamar(fn() => $pc->invitar(), conCsrf(['nombre' => 'Nuevo Coach', 'email' => 'nuevo.coach@ejemplo.fr', 'rol' => 'entrenador', 'equipos' => [$u12]]));
+$nc = $S['pers']->porCorreo('nuevo.coach@ejemplo.fr');
+check($nc && $r === '/app/club/personas/' . $nc['id'] && $S['pers']->rolesEn($nc['id'], $cid) === ['entrenador'] && in_array($u12, array_column($S['pers']->equiposStaff($nc['id'], $cid), 'id'), true), 'se invita a un entrenador con su equipo');
+[$h] = llamar(fn() => $pc->invitar(), conCsrf(['nombre' => 'Mal', 'email' => 'no-es-correo', 'rol' => 'entrenador']));
+check(str_contains($h, 'class="error"') && $S['pers']->porCorreo('no-es-correo') === null, 'un correo inválido no invita');
+llamar(fn() => $pc->invitar(), conCsrf(['nombre' => 'Hacker', 'email' => 'hacker@ejemplo.fr', 'rol' => 'superadmin']));
+check($S['pers']->porCorreo('hacker@ejemplo.fr') === null, 'no se puede invitar con un rol que no existe');
+llamar(fn() => $pc->invitar(), ['nombre' => 'Sin csrf', 'email' => 'sin.csrf@ejemplo.fr', 'rol' => 'entrenador']);
+check($S['pers']->porCorreo('sin.csrf@ejemplo.fr') === null, 'invitar exige CSRF');
+[$h] = llamar(fn() => $pc->invitaciones());
+check(str_contains($h, 'Nuevo Coach') && str_contains($h, '/reenviar'), 'las invitaciones muestran a quien no ha entrado');
+[$h, $r] = llamar(fn() => $pc->reenviar($nc['id']), conCsrf());
+check($r === '/app/club/invitaciones', 'se reenvía una invitación');
+[$h, $r] = llamar(fn() => $pc->cargarLista(), conCsrf(['lista' => "ana.lista@ejemplo.fr;Ana Lista;entrenador;U12\nmalo;Sin correo;entrenador;U12\ndir.lista@ejemplo.fr;Dir Lista;directiva;"]));
+$al = $S['pers']->porCorreo('ana.lista@ejemplo.fr');
+check($al && $S['pers']->rolesEn($al['id'], $cid) === ['entrenador'] && $S['pers']->equiposStaff($al['id'], $cid)[0]['nombre'] === 'U12' && $S['pers']->porCorreo('malo') === null && $S['pers']->rolesEn($S['pers']->porCorreo('dir.lista@ejemplo.fr')['id'], $cid) === ['directiva'], 'se carga una lista de correos con rol y equipo');
+// ficha: roles y equipos
+[$h] = llamar(fn() => $pc->ficha($nc['id']));
+check(str_contains($h, 'Nuevo Coach') && str_contains($h, 'U12'), 'ficha de una persona');
+llamar(fn() => $pc->actualizar($nc['id'], 'rol'), conCsrf(['rol' => 'encargado']));
+check(in_array('encargado', $S['pers']->rolesEn($nc['id'], $cid), true), 'se agrega un rol');
+llamar(fn() => $pc->actualizar($nc['id'], 'quitar-rol', 'encargado'), conCsrf());
+check(!in_array('encargado', $S['pers']->rolesEn($nc['id'], $cid), true), 'se quita un rol');
+llamar(fn() => $pc->actualizar($nc['id'], 'quitar-rol', 'entrenador'), conCsrf());
+check($S['pers']->equiposStaff($nc['id'], $cid) === [], 'al quitar el rol de entrenador se sueltan sus equipos');
+$sylvie = $S['pers']->porCorreo('sylvie@ejemplo.fr')['id'];
+$dirLista = $S['pers']->porCorreo('dir.lista@ejemplo.fr')['id'];
+llamar(fn() => $pc->actualizar($dirLista, 'quitar-rol', 'directiva'), conCsrf());
+llamar(fn() => $pc->actualizar($sylvie, 'quitar-rol', 'directiva'), conCsrf());
+check(in_array('directiva', $S['pers']->rolesEn($sylvie, $cid), true), 'no se quita a la última persona de la directiva');
+// Aislamiento: persona de otro club
+$ajena = $pdo->query("SELECT persona_id FROM sportiva_membresias WHERE club_id = '{$otroClub}' AND persona_id NOT IN (SELECT persona_id FROM sportiva_membresias WHERE club_id = '{$cid}') LIMIT 1")->fetchColumn();
+if ($ajena) {
+    [$h] = llamar(fn() => $pc->ficha($ajena));
+    check(str_contains($h, '404') || $h === '', 'no se abre la ficha de alguien de otro club');
+    llamar(fn() => $pc->actualizar($ajena, 'rol'), conCsrf(['rol' => 'directiva']));
+    check(!in_array('directiva', $S['pers']->rolesEn($ajena, $cid), true), 'no se da rol en este club a alguien que no es del club');
+}
+// Directorio
+$S['pers']->actualizarDatos($danielaId, 'Daniela', '+56 9 1111 2222');
+[$h] = llamar(fn() => $pc->directorio());
+check(str_contains($h, 'tel:') && str_contains($h, 'wa.me/') && str_contains($h, 'mailto:') && (str_contains($h, 'exportar') || str_contains($h, 'export')), 'la directiva ve el directorio con llamar, WhatsApp y correo');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $pc->directorio());
+check(str_contains($h, 'tel:') || str_contains($h, 'mailto:'), 'el entrenador ve el directorio de sus equipos');
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+[$h2] = llamar(fn() => $pc->directorio(), [], ['equipo' => $u12]);
+check(!str_contains($h2, 'daniela@ejemplo.fr'), 'el entrenador de otro equipo no ve los contactos de U12 aunque lo pida');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => $pc->directorio());
+check($r === '/app/mas', 'una familia no ve el directorio completo');
+
+seccion('Perfil, compartir datos y privacidad');
+$pf = new S\PerfilController($ctx);
+$pv = new S\PrivacidadService($pdo);
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => (new S\AuthController($ctx))->mas());
+check(str_contains($h, '/app/perfil') && str_contains($h, '/app/ayuda') && str_contains($h, '/app/familias') && str_contains($h, '/app/familia"'), 'Más lleva a perfil, familia, familias del equipo y ayuda');
+[$h] = llamar(fn() => $pf->inicio());
+check(str_contains($h, '/app/perfil/datos') && str_contains($h, '/app/perfil/compartir') && str_contains($h, '/app/perfil/privacidad') && str_contains($h, '/app/avisos/ajustes'), 'menú de Mi perfil');
+llamar(fn() => $pf->guardarDatos(), conCsrf(['nombre' => 'Daniela Pérez', 'telefono' => '+56 9 1111 2222']));
+$dp = $S['pers']->buscar($danielaId);
+check($dp['nombre'] === 'Daniela Pérez' && $dp['telefono'] === '+56 9 1111 2222', 'se editan nombre y teléfono');
+[$h] = llamar(fn() => $pf->guardarDatos(), conCsrf(['nombre' => '  ', 'telefono' => '1']));
+check(str_contains($h, 'class="error"') && $S['pers']->buscar($danielaId)['nombre'] === 'Daniela Pérez', 'el nombre no puede quedar vacío');
+llamar(fn() => $pf->guardarDatos(), conCsrf(['nombre' => 'Daniela Pérez', 'telefono' => '+56 9 1111 2222', 'email' => 'otro@x.cl']));
+check($S['pers']->buscar($danielaId)['email'] === 'daniela@ejemplo.fr', 'el correo no se cambia desde el perfil');
+check($pv->get($danielaId) === ['telefono' => 0, 'correo' => 0, 'directorio' => 0], 'por defecto no se comparte nada');
+$ines = $S['pers']->porCorreo('ines.garcia@ejemplo.fr')['id'];
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $pf->familias());
+check(!str_contains($h, 'Daniela') && str_contains($h, 'compartir'), 'quien no compartió no aparece en Familias del equipo');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => $pf->guardarCompartir(), conCsrf(['directorio' => '1', 'telefono' => '1']));
+check($pv->get($danielaId) === ['telefono' => 1, 'correo' => 0, 'directorio' => 1], 'se guarda qué datos se comparten');
+$comparteHijo = $pdo->query("SELECT 1 FROM sportiva_apoderados_jugadores aj JOIN sportiva_jugadores j ON j.id = aj.jugador_id JOIN sportiva_apoderados_jugadores b ON b.jugador_id <> aj.jugador_id JOIN sportiva_jugadores j2 ON j2.id = b.jugador_id AND j2.equipo_id = j.equipo_id WHERE aj.persona_id = '{$danielaId}' AND b.persona_id = '{$ines}' LIMIT 1")->fetchColumn();
+$comoRol('ines.garcia@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $pf->familias());
+if ($comparteHijo) {
+    check(str_contains($h, 'Daniela') && str_contains($h, '+56911112222') && !str_contains($h, 'daniela@ejemplo.fr'), 'Familias del equipo muestra solo lo que cada familia compartió');
+} else {
+    check(!str_contains($h, 'daniela@ejemplo.fr'), 'Familias del equipo no filtra el correo no compartido');
+}
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => $pf->guardarCompartir(), conCsrf(['telefono' => '1', 'correo' => '1']));
+check($pv->get($danielaId) === ['telefono' => 0, 'correo' => 0, 'directorio' => 0], 'sin «aparecer», teléfono y correo quedan apagados');
+// Exportar
+[$h] = llamar(fn() => $pf->exportar(), conCsrf());
+$j = json_decode($h, true);
+check(is_array($j) && $j['persona']['correo'] === 'daniela@ejemplo.fr' && isset($j['hijos'], $j['clubes']), 'se descargan los datos propios en JSON');
+[$h] = llamar(fn() => $pf->exportar(), []);
+check(json_decode($h, true) === null, 'exportar exige CSRF');
+// Pedir quitar fotos
+$antes = (int) $pdo->query('SELECT COUNT(*) FROM sportiva_avisos')->fetchColumn();
+[$h, $r] = llamar(fn() => $pf->pedirQuitarFotos(), conCsrf());
+check($r === '/app/perfil/privacidad', 'la familia pide que quiten fotos de sus hijos');
+// Eliminar cuenta: titular no puede
+[$h, $r] = llamar(fn() => $pf->eliminar(), conCsrf(['confirmar' => 'eliminar']));
+check($S['pers']->buscar($danielaId)['email'] === 'daniela@ejemplo.fr', 'una familia titular no puede eliminar su cuenta todavía');
+[$h] = llamar(fn() => $pf->privacidad());
+check(str_contains($h, 'titular') || str_contains($h, 'Eres titular'), 'la pantalla explica por qué no se puede eliminar');
+// Una persona sin vínculos sí
+$lib = $S['pers']->crear('adios@ejemplo.fr', 'Adiós Persona', 'es');
+$S['pers']->dar($lib, $cid, 'entrenador');
+$pdo->prepare("INSERT INTO sportiva_posts (id, club_id, equipo_id, autor_id, titulo, texto, created_at) VALUES ('p-adios', ?, NULL, ?, 'x', 'hola', ?)")->execute([$cid, $lib, S\Tiempo::sello()]);
+$comoRol('adios@ejemplo.fr', 'entrenador');
+[$h, $r] = llamar(fn() => $pf->eliminar(), conCsrf(['confirmar' => 'otra cosa']));
+check($S['pers']->buscar($lib)['email'] === 'adios@ejemplo.fr', 'eliminar pide escribir la palabra de confirmación');
+$S['pers']->dar($lib, $cid, 'entrenador');
+[$h, $r] = llamar(fn() => $pf->eliminar(), conCsrf(['confirmar' => 'ELIMINAR']));
+$ap = $S['pers']->buscar($lib);
+check($r === '/app/entrar?eliminada=1' && $ap['email'] !== 'adios@ejemplo.fr' && $ap['nombre'] === '—' && $S['pers']->membresias($lib) === [], 'se elimina la cuenta: sin acceso, sin datos y sin roles');
+check((int) $pdo->query("SELECT COUNT(*) FROM sportiva_posts WHERE id = 'p-adios'")->fetchColumn() === 1, 'lo que escribió se conserva sin su nombre');
+check($S['pers']->porCorreo('adios@ejemplo.fr') === null && S\Sesion::persona() === null, 'el correo queda libre y la sesión se cierra');
+// Única persona de la directiva
+$unica = $S['pers']->crear('unica@ejemplo.fr', 'Única', 'es');
+$cNuevo = $S['club']->crear(['nombre' => 'Club Solo', 'ciudad' => 'X']);
+$S['pers']->dar($unica, $cNuevo, 'directiva');
+check($pv->impedimento($unica) === 'perfil.error.unica_directiva', 'la única persona de la directiva no puede eliminarse');
+// Ayuda
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $pf->ayuda());
+check(str_contains($h, 'Ayuda') || str_contains($h, 'Aide'), 'pantalla de ayuda');
+[$h, $r] = llamar(fn() => $pf->familias());
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h, $r] = llamar(fn() => $pf->familias());
+check($r === '/app/mas', 'Familias del equipo es solo para apoderados');
+// idioma vuelve al perfil
+[$h, $r] = llamar(fn() => (new S\AuthController($ctx))->cambiarIdioma(), conCsrf(['idioma' => 'es', 'volver' => '/app/perfil']));
+check($r === '/app/perfil', 'cambiar idioma vuelve a Mi perfil');
+[$h, $r] = llamar(fn() => (new S\AuthController($ctx))->cambiarIdioma(), conCsrf(['idioma' => 'es', 'volver' => 'https://malo.com']));
+check($r === '/app/mas', 'el idioma no redirige a sitios externos');
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');

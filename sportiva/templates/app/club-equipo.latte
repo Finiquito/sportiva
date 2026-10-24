@@ -1,0 +1,44 @@
+{layout '_layout.latte'}
+{block titulo}{$e['nombre']} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club/equipos')}">{$ico('arrow-right')|noescape}{$t('club.equipos')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$e['nombre']}</h1>
+<form method="post" action="{$url('club/equipos/' . $e['id'])}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('club.equipo.nombre')}</span><input class="in" type="text" name="nombre" value="{$e['nombre']}" maxlength="80"></label>
+  <label class="campo"><span>{$t('club.temporada')}</span><input class="in" type="text" name="temporada" value="{$e['temporada']}" maxlength="16"></label>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+<section class="card">
+ <div class="ch"><h3>{$t('club.staff')}</h3></div>
+ {foreach $staff as $s}
+ <div class="pers">
+  <span class="avatar">{mb_strtoupper(mb_substr($s['nombre'], 0, 1))}</span>
+  <span><b>{$s['nombre']}</b><small>{$t('rol.' . $s['rol'])} · {$s['email']}</small></span>
+  <form method="post" action="{$url('club/equipos/' . $e['id'] . '/staff/' . $s['id'] . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('plantel.quitar')}">{$ico('x')|noescape}</button></form>
+ </div>
+ {else}
+ <p class="texto" style="margin:0 0 8px">{$t('club.sin_staff')}</p>
+ {/foreach}
+ {if $posibles}
+ <form method="post" action="{$url('club/equipos/' . $e['id'] . '/staff')}" style="margin-top:12px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('club.staff.agregar')}</span><select class="in" name="persona">{foreach $posibles as $q}<option value="{$q['id']}">{$q['nombre']}</option>{/foreach}</select></label>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('club.staff.asignar')}</button>
+ </form>
+ {else}
+ <a class="bt w" href="{$url('club/invitar')}" style="margin-top:8px">{$ico('paper-plane-tilt')|noescape}{$t('club.invitar')}</a>
+ {/if}
+</section>
+<section class="card">
+ <div class="ch"><h3>{$n('plantel.jugadores', (int) $e['jugadores'])}</h3></div>
+ <a class="bt w" href="{$url('plantel')}?equipo={$e['id']}">{$ico('users-three')|noescape}{$t('nav.plantel')}</a>
+</section>
+<form method="post" action="{$url('club/equipos/' . $e['id'] . '/archivar')}">
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <button class="bt w danger" type="submit">{$t('club.equipo.archivar')}</button>
+ {if $e['jugadores'] > 0}<p class="texto" style="font-size:13px">{$t('club.error.equipo_con_jugadores')}</p>{/if}
+</form>
+{/block}

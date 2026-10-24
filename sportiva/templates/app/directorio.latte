@@ -1,0 +1,41 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.directorio')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('directorio.sub')}</p>
+<h1>{$t('nav.directorio')}</h1>
+<div class="grupo-pills">
+ <a class="pill{if $sel === ''} on{/if}" href="{$url('directorio')}{if $q !== ''}?q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none">{$t('club.grupo.todos')}</a>
+ {foreach $equipos as $e}
+ <a class="pill{if $sel === $e['id']} on{/if}" href="{$url('directorio')}?equipo={$e['id']}{if $q !== ''}&amp;q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none">{$e['nombre']}</a>
+ {/foreach}
+</div>
+<form method="get" action="{$url('directorio')}" style="margin-bottom:12px">
+ {if $sel !== ''}<input type="hidden" name="equipo" value="{$sel}">{/if}
+ <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
+</form>
+{define contacto $c, $sub}
+ <div class="pers" style="display:block">
+  <b>{$c['nombre']}</b><small>{$sub}</small>
+  <div class="grupo-pills" style="margin:8px 0 0">
+   {if $c['telefono']}<a class="pill" href="tel:{$tel($c['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>
+   <a class="pill" href="https://wa.me/{ltrim($tel($c['telefono']), '+')}" target="_blank" rel="noopener" style="text-decoration:none">{$ico('chats-circle')|noescape} WhatsApp</a>{/if}
+   <a class="pill" href="mailto:{$c['email']}" style="text-decoration:none">{$ico('paper-plane-tilt')|noescape} {$t('directorio.correo')}</a>
+  </div>
+ </div>
+{/define}
+{if $staff}
+<section class="card"><div class="ch"><h3>{$t('club.staff')}</h3></div>
+ {foreach $staff as $c}{include contacto $c, $t('rol.' . $c['rol']) . ' · ' . implode(', ', $c['equipos'])}{/foreach}
+</section>
+{/if}
+{if $directiva}
+<section class="card"><div class="ch"><h3>{$t('club.grupo.directiva')}</h3></div>
+ {foreach $directiva as $c}{include contacto $c, $t('rol.directiva')}{/foreach}
+</section>
+{/if}
+<section class="card"><div class="ch"><h3>{$t('club.grupo.familias')}</h3></div>
+ {foreach $familias as $c}{include contacto $c, implode(', ', $c['hijos']) . ' · ' . implode(', ', $c['equipos'])}
+ {else}<div class="vacio"><span class="fi">{$ico('user-circle')|noescape}</span><b>{$t('club.personas.vacio')}</b></div>{/foreach}
+</section>
+<p class="sis">{$ico('lock')|noescape}{$t('directorio.solo_contactos')}</p>
+{/block}

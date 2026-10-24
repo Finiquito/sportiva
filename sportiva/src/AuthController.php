@@ -160,7 +160,8 @@ final class AuthController extends AppBase
             (new PersonaService($this->pdo))->cambiarIdioma($this->persona['id'], $l);
             Sesion::idioma($l);
         }
-        $this->ir('/app/mas');
+        $v = (string) ($_POST['volver'] ?? '');
+        $this->ir(preg_match('#^/app/[a-z/]*$#', $v) ? $v : '/app/mas');
     }
 
     /** Secciones que llegan en versiones siguientes. */

@@ -1,0 +1,53 @@
+{layout '_layout.latte'}
+{block titulo}{$p['nombre']} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club/personas')}">{$ico('arrow-right')|noescape}{$t('club.personas')}</a>
+<h1 style="font-size:34px;margin:0 0 4px">{$p['nombre']}</h1>
+<p class="hola">{$p['email']}{if $p['telefono']} · {$p['telefono']}{/if} · {$t($activo ? 'club.ya_entro' : 'club.sin_entrar_aun')}</p>
+<form method="post" action="{$url('club/personas/' . $p['id'])}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="nombre" value="{$p['nombre']}" maxlength="160"></label>
+  <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono" value="{$p['telefono']}" maxlength="40"></label>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+<section class="card">
+ <div class="ch"><h3>{$t('club.roles')}</h3></div>
+ {foreach $roles as $r}
+ <div class="pers"><span class="fi">{$ico($r === 'directiva' ? 'crown' : ($r === 'apoderado' ? 'users-three' : 'flag-pennant'))|noescape}</span><span><b>{$t('rol.' . $r)}</b></span>
+  {if $r !== 'apoderado' && $r !== 'jugador' && !($yo && $r === 'directiva')}<form method="post" action="{$url('club/personas/' . $p['id'] . '/rol/' . $r . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('plantel.quitar')}">{$ico('x')|noescape}</button></form>{/if}
+ </div>
+ {/foreach}
+ {if $faltan}
+ <form method="post" action="{$url('club/personas/' . $p['id'] . '/rol')}" style="margin-top:12px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('club.rol.agregar')}</span><select class="in" name="rol">{foreach $faltan as $r}<option value="{$r}">{$t('rol.' . $r)}</option>{/foreach}</select></label>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('club.rol.dar')}</button>
+ </form>
+ {/if}
+</section>
+{if $esStaff}
+<section class="card">
+ <div class="ch"><h3>{$t('club.equipos_a_cargo')}</h3></div>
+ {foreach $staff as $s}
+ <div class="pers"><span class="fi">{$ico('users-three')|noescape}</span><span><b>{$s['nombre']}</b></span>
+  <form method="post" action="{$url('club/personas/' . $p['id'] . '/equipo/' . $s['id'] . '/quitar')}" style="margin:0"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt pill-sm" type="submit" aria-label="{$t('plantel.quitar')}">{$ico('x')|noescape}</button></form>
+ </div>
+ {else}<p class="texto" style="margin:0 0 8px">{$t('club.sin_equipos_a_cargo')}</p>{/foreach}
+ {if $equipos}
+ <form method="post" action="{$url('club/personas/' . $p['id'] . '/equipo')}" style="margin-top:12px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('club.staff.agregar')}</span><select class="in" name="equipo">{foreach $equipos as $e}<option value="{$e['id']}">{$e['nombre']}</option>{/foreach}</select></label>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('club.staff.asignar')}</button>
+ </form>
+ {/if}
+</section>
+{/if}
+{if $hijos}
+<section class="card">
+ <div class="ch"><h3>{$t('mas.familia')}</h3></div>
+ {foreach $hijos as $h2}<a class="pers" href="{$url('plantel/jugador/' . $h2['id'])}" style="text-decoration:none;color:inherit">{$avatar($h2)|noescape}<span><b>{$h2['nombre']}</b><small>{$h2['equipo']}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a>{/foreach}
+</section>
+{/if}
+{/block}

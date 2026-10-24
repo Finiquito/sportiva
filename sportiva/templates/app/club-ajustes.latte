@@ -1,0 +1,31 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.ajustes')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.ajustes')}</h1>
+<form method="post" action="{$url('club/ajustes')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre']}" maxlength="160">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('club.ciudad')}</span><input class="in" type="text" name="ciudad" value="{$d['ciudad']}" maxlength="120"></label>
+  <label class="campo"><span>{$t('club.contacto')}</span><input class="in" type="tel" name="telefono" value="{$d['telefono']}" maxlength="40"></label>
+  <label class="campo"><span>{$t('campo.direccion')}</span><input class="in" type="text" name="direccion" value="{$d['direccion']}" maxlength="255"></label>
+  <label class="campo"><span>{$t('club.presentacion')}</span><textarea class="in" name="descripcion" rows="4" maxlength="1000">{$d['descripcion']}</textarea></label>
+  <label class="campo"><span>{$t('campo.lat')}</span><input class="in" type="text" inputmode="decimal" name="lat" value="{$d['lat']}" maxlength="24">{if isset($errores['lat'])}<small class="error" role="alert">{$t($errores['lat'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('campo.lon')}</span><input class="in" type="text" inputmode="decimal" name="lon" value="{$d['lon']}" maxlength="24"></label>
+ </section>
+ <section class="card">
+  <div class="ch"><h3>{$t('club.deporte')}</h3></div>
+  <div class="grupo-pills">
+   {foreach $deportes as $dep}<label class="pill-radio"><input type="radio" name="deporte" value="{$dep}" {if $d['deporte'] === $dep}checked{/if}><span class="pill">{$t('deporte.' . $dep)}</span></label>{/foreach}
+  </div>
+  <label class="campo"><span>{$t('mas.idioma')}</span><select class="in" name="idioma">{foreach $idiomas as $c => $nom}<option value="{$c}" {if $d['idioma'] === $c}selected{/if}>{$nom}</option>{/foreach}</select></label>
+  <label class="campo"><span>{$t('club.zona')}</span><select class="in" name="zona">{foreach $zonas as $z}<option value="{$z}" {if $d['zona'] === $z}selected{/if}>{$z}</option>{/foreach}</select></label>
+ </section>
+ <section class="card">
+  <label class="tog" style="display:flex;gap:10px;align-items:center;margin:0 0 6px"><input type="checkbox" name="publico" value="1" {if $d['publico']}checked{/if}><span><b>{$t('club.publico')}</b><br><small>{$t('club.publico.ayuda')}</small></span></label>
+  <label class="tog" style="display:flex;gap:10px;align-items:center;margin:12px 0 0"><input type="checkbox" name="exigir_app" value="1" {if $d['exigir_app']}checked{/if}><span><b>{$t('club.exigir_app')}</b><br><small>{$t('club.exigir_app.ayuda')}</small></span></label>
+ </section>
+ <button class="bt s w" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+</form>
+{/block}

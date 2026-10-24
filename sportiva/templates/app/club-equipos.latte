@@ -1,0 +1,26 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.equipos')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.equipos')}</h1>
+<section class="card">
+ {foreach $equipos as $e}
+ <a class="pers" href="{$url('club/equipos/' . $e['id'])}" style="text-decoration:none;color:inherit">
+  <span class="avatar">{mb_strtoupper(mb_substr($e['nombre'], 0, 1))}</span>
+  <span><b>{$e['nombre']}</b><small>{$n('plantel.jugadores', (int) $e['jugadores'])}{if $e['staff']} · {implode(', ', $e['staff'])}{else} · {$t('club.sin_staff')}{/if}</small></span>
+  <span class="chev">{$ico('arrow-right')|noescape}</span>
+ </a>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('plantel.sin_equipos')}</b></div>
+ {/foreach}
+</section>
+<form method="post" action="{$url('club/equipos')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <div class="ch"><h3>{$t('club.equipo.nuevo')}</h3></div>
+  <label class="campo"><span>{$t('club.equipo.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre'] ?? ''}" maxlength="80" placeholder="U13">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <p class="texto" style="margin:0 0 12px;font-size:13px">{$t('club.equipo.temporada_ayuda', ['t' => $temporada])}</p>
+  <button class="bt s" type="submit">{$ico('plus')|noescape}{$t('club.equipo.crear')}</button>
+ </section>
+</form>
+{/block}

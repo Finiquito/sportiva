@@ -1,0 +1,12 @@
+{layout '_layout.latte'}
+{block titulo}{$t('ayuda.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('nav.mas')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('ayuda.titulo')}</h1>
+{foreach ['entrar', 'instalar', 'avisos', 'privacidad', 'contacto'] as $k}
+<section class="card">
+ <div class="ch"><h3>{$t('ayuda.' . $k . '.q')}</h3></div>
+ <p class="texto" style="margin:0">{$t('ayuda.' . $k . '.a')}</p>
+</section>
+{/foreach}
+{/block}

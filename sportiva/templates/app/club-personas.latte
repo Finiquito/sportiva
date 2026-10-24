@@ -1,0 +1,27 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.personas')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.personas')}</h1>
+<div class="grupo-pills">
+ {foreach ['todos', 'entrenadores', 'familias', 'directiva'] as $k}
+ <a class="pill{if $g === $k} on{/if}" href="{$url('club/personas')}?g={$k}{if $q !== ''}&amp;q={$q}{/if}" style="display:inline-flex;align-items:center;text-decoration:none" {if $g === $k}aria-current="true"{/if}>{$t('club.grupo.' . $k)}</a>
+ {/foreach}
+</div>
+<form method="get" action="{$url('club/personas')}" style="margin-bottom:12px">
+ <input type="hidden" name="g" value="{$g}">
+ <label class="campo" style="margin:0"><span class="sr">{$t('club.buscar')}</span><input class="in" type="search" name="q" value="{$q}" placeholder="{$t('club.buscar')}" maxlength="60"></label>
+</form>
+<a class="bt s" href="{$url('club/invitar')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('club.invitar')}</a>
+<section class="card">
+ {foreach $personas as $p}
+ <a class="pers" href="{$url('club/personas/' . $p['id'])}" style="text-decoration:none;color:inherit">
+  <span class="avatar">{mb_strtoupper(mb_substr($p['nombre'], 0, 1))}</span>
+  <span><b>{$p['nombre']}</b><small>{foreach $p['roles'] as $r}{$t('rol.' . $r)}{sep}, {/sep}{/foreach}{if $p['hijos']} · {implode(', ', $p['hijos'])}{/if}{if !$p['activo']} · {$t('club.sin_entrar_aun')}{/if}</small></span>
+  <span class="chev">{$ico('arrow-right')|noescape}</span>
+ </a>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('user-circle')|noescape}</span><b>{$t('club.personas.vacio')}</b></div>
+ {/foreach}
+</section>
+{/block}

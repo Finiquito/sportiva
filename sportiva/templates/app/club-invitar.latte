@@ -1,0 +1,25 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.invitar')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club/personas')}">{$ico('arrow-right')|noescape}{$t('club.personas')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.invitar')}</h1>
+<form method="post" action="{$url('club/invitar')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('campo.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre'] ?? ''}" maxlength="160">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('campo.correo')}</span><input class="in" type="email" name="email" value="{$d['email'] ?? ''}" maxlength="190" autocapitalize="off">{if isset($errores['email'])}<small class="error" role="alert">{$t($errores['email'])}</small>{/if}</label>
+  <div class="ch"><h3>{$t('club.rol')}</h3></div>
+  <div class="grupo-pills">
+   {foreach $roles as $r}<label class="pill-radio"><input type="radio" name="rol" value="{$r}" {if ($d['rol'] ?? 'entrenador') === $r}checked{/if}><span class="pill">{$t('rol.' . $r)}</span></label>{/foreach}
+  </div>
+  {if $equipos}
+  <div class="ch"><h3>{$t('club.equipos_a_cargo')}</h3></div>
+  <div class="grupo-pills">
+   {foreach $equipos as $e}<label class="pill-radio"><input type="checkbox" name="equipos[]" value="{$e['id']}" {if in_array($e['id'], (array) ($d['equipos'] ?? []), true)}checked{/if}><span class="pill">{$e['nombre']}</span></label>{/foreach}
+  </div>
+  {/if}
+  <p class="sis">{$ico('paper-plane-tilt')|noescape}{$t('club.invitar.ayuda')}</p>
+  <button class="bt s" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('club.invitar.enviar')}</button>
+ </section>
+</form>
+{/block}

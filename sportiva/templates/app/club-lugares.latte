@@ -1,0 +1,16 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.lugares')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.lugares')}</h1>
+<a class="bt s" href="{$url('club/lugares/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('club.lugar.nuevo')}</a>
+<section class="card">
+ <ul class="lkl">
+ {foreach $lugares as $l}
+  <li><a class="lk" href="{$url('club/lugares/' . $l['id'])}"><span class="fi">{$ico('map-pin')|noescape}</span><span><b>{$l['nombre']}</b><small>{$l['direccion'] ?: $l['club_local']}{if $l['predeterminado']} · {$t('club.lugar.predeterminado')}{/if}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+ {else}
+  <li><div class="vacio"><span class="fi">{$ico('map-pin')|noescape}</span><b>{$t('club.lugar.vacio')}</b></div></li>
+ {/foreach}
+ </ul>
+</section>
+{/block}

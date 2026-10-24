@@ -1,0 +1,15 @@
+{layout '_layout.latte'}
+{block titulo}{$t('club.temporada')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('club')}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('club.temporada')}</h1>
+<form method="post" action="{$url('club/temporada')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <label class="campo"><span>{$t('club.temporada.actual')}</span><input class="in" type="text" name="temporada" value="{$temporada}" maxlength="16"></label>
+  <p class="texto" style="margin:0 0 12px;font-size:13px">{$t('club.temporada.ayuda')}</p>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+<section class="card"><div class="resumen" style="margin:0"><span class="pill">{$n('club.n.equipos', $r['equipos'])}</span><span class="pill">{$n('club.n.jugadores', $r['jugadores'])}</span></div></section>
+{/block}

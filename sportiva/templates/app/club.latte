@@ -1,0 +1,19 @@
+{layout '_layout.latte'}
+{block titulo}{$t('nav.club')} · u330{/block}
+{block contenido}
+<p class="hola">{$t('club.panel')}</p>
+<h1>{$club['nombre']}</h1>
+<div class="resumen">
+ <span class="pill">{$n('club.n.equipos', $r['equipos'])}</span>
+ <span class="pill">{$n('club.n.jugadores', $r['jugadores'])}</span>
+ <span class="pill">{$n('club.n.familias', $r['familias'])}</span>
+ <span class="pill">{$n('club.n.entrenadores', $r['entrenadores'])}</span>
+</div>
+<section class="card">
+ <ul class="lkl">
+  {foreach [['equipos','users-three','club.equipos','club.equipos.sub'],['personas','user-circle','club.personas','club.personas.sub'],['invitaciones','paper-plane-tilt','club.invitaciones','club.invitaciones.sub'],['lugares','map-pin','club.lugares','club.lugares.sub'],['temporada','calendar-blank','club.temporada','club.temporada.sub'],['ajustes','gear','club.ajustes','club.ajustes.sub']] as $it}
+  <li><a class="lk" href="{$url('club/' . $it[0])}"><span class="fi">{$ico($it[1])|noescape}</span><span><b>{$t($it[2])}</b><small>{if $it[0] === 'equipos'}{$n('club.n.equipos', $r['equipos'])}{elseif $it[0] === 'personas'}{$autorizados}{elseif $it[0] === 'invitaciones'}{$n('club.sin_entrar', $sinEntrar)}{elseif $it[0] === 'lugares'}{$lugares}{elseif $it[0] === 'temporada'}{$temporada}{else}{$t($it[3])}{/if}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+  {/foreach}
+ </ul>
+</section>
+{/block}

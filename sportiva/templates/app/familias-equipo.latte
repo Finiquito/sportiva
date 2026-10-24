@@ -1,0 +1,22 @@
+{layout '_layout.latte'}
+{block titulo}{$t('familias.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('nav.mas')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('familias.titulo')}</h1>
+<section class="card">
+ {foreach $familias as $f}
+ <div class="pers" style="display:block">
+  <b>{$f['nombre']}</b><small>{implode(', ', $f['hijos'])} · {implode(', ', $f['equipos'])}</small>
+  {if $f['telefono'] || $f['email']}
+  <div class="grupo-pills" style="margin:8px 0 0">
+   {if $f['telefono']}<a class="pill" href="tel:{$tel($f['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>{/if}
+   {if $f['email']}<a class="pill" href="mailto:{$f['email']}" style="text-decoration:none">{$ico('paper-plane-tilt')|noescape} {$t('directorio.correo')}</a>{/if}
+  </div>
+  {/if}
+ </div>
+ {else}
+ <div class="vacio"><span class="fi">{$ico('users-three')|noescape}</span><b>{$t('familias.vacio')}</b><p>{$t('familias.vacio.txt')}</p></div>
+ {/foreach}
+</section>
+{if !$yo['directorio']}<a class="bt w" href="{$url('perfil/compartir')}">{$ico('share-network')|noescape}{$t('perfil.compartir')}</a>{/if}
+{/block}

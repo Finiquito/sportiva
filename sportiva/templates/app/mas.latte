@@ -16,24 +16,12 @@
 <script n:syntax="off">(function(){var c=document.getElementById('instalar');if(!c)return;var sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone;if(sa)return;var ios=/iPhone|iPad|iPod/.test(navigator.userAgent);var p=document.getElementById('instalar-pasos');p.textContent=ios?p.dataset.ios:p.dataset.otro;c.hidden=false;})();</script>
 <section class="card">
  <ul class="lkl">
-  <li><a class="lk" href="{$url('avisos/ajustes')}" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('bell')|noescape}</span><span><b>{$t('avisos.titulo')}</b><small>{$t('avisos.mas.sub')}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
- </ul>
-</section>
-{if $rol === 'apoderado'}
-<section class="card">
- <ul class="lkl">
-  <li><a class="lk" href="{$url('familia')}" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('users-three')|noescape}</span><span><b>{$t('mas.familia')}</b><small>{$t('mas.familia.sub')}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
- </ul>
-</section>
-{/if}
-<section class="card">
- <div class="ch"><h3>{$t('mas.idioma')}</h3></div>
- <form method="post" action="/app/idioma" class="grupo-pills">
-  <input type="hidden" name="csrf" value="{$csrf}">
-  {foreach $idiomas as $c => $nombre}
-  <button class="pill{if $c === $lang} on{/if}" type="submit" name="idioma" value="{$c}" {if $c === $lang}aria-pressed="true"{/if}>{$nombre}</button>
+  {foreach [['perfil','user-circle','mas.perfil','mas.perfil.sub'],['familia','users-three','mas.familia','mas.familia.sub'],['familias','share-network','familias.titulo','familias.sub'],['ayuda','question','ayuda.titulo','ayuda.sub']] as $it}
+  {if ($it[0] !== 'familia' && $it[0] !== 'familias') || $rol === 'apoderado'}
+  <li><a class="lk" href="{$url($it[0])}"><span class="fi">{$ico($it[1])|noescape}</span><span><b>{$t($it[2])}</b><small>{$t($it[3])}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+  {/if}
   {/foreach}
- </form>
+ </ul>
 </section>
 {if count($mem) > 1}
 <section class="card">

@@ -1,0 +1,42 @@
+{layout '_layout.latte'}
+{block titulo}{$t('perfil.privacidad')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('perfil')}">{$ico('arrow-right')|noescape}{$t('perfil.titulo')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('perfil.privacidad')}</h1>
+<section class="card">
+ <div class="ch"><h3>{$t('perfil.quien_ve')}</h3></div>
+ <ul class="lkl">
+  {foreach ['familia', 'staff', 'fotos', 'consultas'] as $k}
+  <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('shield-check')|noescape}</span><span><b>{$t('perfil.ve.' . $k)}</b><small>{$t('perfil.ve.' . $k . '.txt')}</small></span></span></li>
+  {/foreach}
+ </ul>
+</section>
+<section class="card">
+ <div class="ch"><h3>{$t('perfil.derechos')}</h3></div>
+ <form method="post" action="{$url('perfil/exportar')}" style="margin-bottom:10px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <p class="texto" style="margin:0 0 8px">{$t('perfil.exportar.txt')}</p>
+  <button class="bt w" type="submit">{$ico('download-simple')|noescape}{$t('perfil.exportar')}</button>
+ </form>
+ {if $hijos}
+ <form method="post" action="{$url('perfil/fotos')}" style="margin-bottom:10px">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <p class="texto" style="margin:0 0 8px">{$t('perfil.fotos.txt')}</p>
+  <button class="bt w" type="submit">{$ico('camera')|noescape}{$t('perfil.fotos.pedir')}</button>
+ </form>
+ {/if}
+</section>
+<section class="card">
+ <div class="ch"><h3>{$t('perfil.eliminar')}</h3></div>
+ <p class="texto" style="margin:0 0 10px">{$t('perfil.eliminar.txt')}</p>
+ {if $impedimento}
+ <p class="sis">{$ico('warning-circle')|noescape}{$t($impedimento)}</p>
+ {else}
+ <form method="post" action="{$url('perfil/eliminar')}">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <label class="campo"><span>{$t('perfil.eliminar.escribe', ['palabra' => $t('perfil.eliminar.palabra')])}</span><input class="in" type="text" name="confirmar" autocomplete="off" autocapitalize="off"></label>
+  <button class="bt w danger" type="submit">{$t('perfil.eliminar')}</button>
+ </form>
+ {/if}
+</section>
+{/block}

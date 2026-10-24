@@ -55,8 +55,53 @@ class SportivaPlugin implements PluginInterface
         $medios = new MedioController($ctx);
         $adjuntos = new AdjuntoController($ctx);
         $recursos = new RecursosController();
+        $club = new ClubController($ctx);
+        $personas = new PersonasController($ctx);
+        $perfil = new PerfilController($ctx);
         $p = static fn(callable $h): \Closure => static fn(mixed ...$a): mixed => Diagnostico::correr($h, $a);
         \Flight::route('GET /app',                   $p([$auth, 'landing']));
+        \Flight::route('GET /app/club',                                 $p([$club, 'inicio']));
+        \Flight::route('GET /app/club/equipos',                         $p([$club, 'equipos']));
+        \Flight::route('POST /app/club/equipos',                        $p([$club, 'crearEquipo']));
+        \Flight::route('GET /app/club/equipos/@id',                     $p(fn(string $id) => $club->equipo($id)));
+        \Flight::route('POST /app/club/equipos/@id',                    $p(fn(string $id) => $club->actualizarEquipo($id)));
+        \Flight::route('POST /app/club/equipos/@id/archivar',           $p(fn(string $id) => $club->archivarEquipo($id)));
+        \Flight::route('POST /app/club/equipos/@id/staff',              $p(fn(string $id) => $club->agregarStaff($id)));
+        \Flight::route('POST /app/club/equipos/@id/staff/@pid/quitar',  $p(fn(string $id, string $pid) => $club->quitarStaff($id, $pid)));
+        \Flight::route('GET /app/club/lugares',                         $p([$club, 'lugares']));
+        \Flight::route('GET /app/club/lugares/nuevo',                   $p([$club, 'lugarNuevo']));
+        \Flight::route('POST /app/club/lugares',                        $p(fn() => $club->guardarLugar()));
+        \Flight::route('GET /app/club/lugares/@id',                     $p(fn(string $id) => $club->lugarEditar($id)));
+        \Flight::route('POST /app/club/lugares/@id',                    $p(fn(string $id) => $club->guardarLugar($id)));
+        \Flight::route('POST /app/club/lugares/@id/eliminar',           $p(fn(string $id) => $club->eliminarLugar($id)));
+        \Flight::route('GET /app/club/temporada',                       $p([$club, 'temporada']));
+        \Flight::route('POST /app/club/temporada',                      $p([$club, 'guardarTemporada']));
+        \Flight::route('GET /app/club/ajustes',                         $p([$club, 'ajustes']));
+        \Flight::route('POST /app/club/ajustes',                        $p([$club, 'guardarAjustes']));
+        \Flight::route('GET /app/club/personas',                        $p([$personas, 'lista']));
+        \Flight::route('GET /app/club/personas/@id',                    $p(fn(string $id) => $personas->ficha($id)));
+        \Flight::route('POST /app/club/personas/@id',                   $p(fn(string $id) => $personas->actualizar($id, 'datos')));
+        \Flight::route('POST /app/club/personas/@id/rol',               $p(fn(string $id) => $personas->actualizar($id, 'rol')));
+        \Flight::route('POST /app/club/personas/@id/rol/@rol/quitar',   $p(fn(string $id, string $r) => $personas->actualizar($id, 'quitar-rol', $r)));
+        \Flight::route('POST /app/club/personas/@id/equipo',            $p(fn(string $id) => $personas->actualizar($id, 'equipo')));
+        \Flight::route('POST /app/club/personas/@id/equipo/@eid/quitar', $p(fn(string $id, string $e) => $personas->actualizar($id, 'quitar-equipo', $e)));
+        \Flight::route('GET /app/club/invitar',                         $p(fn() => $personas->formInvitar()));
+        \Flight::route('POST /app/club/invitar',                        $p([$personas, 'invitar']));
+        \Flight::route('GET /app/club/invitaciones',                    $p([$personas, 'invitaciones']));
+        \Flight::route('POST /app/club/invitaciones/lista',             $p([$personas, 'cargarLista']));
+        \Flight::route('POST /app/club/invitaciones/@id/reenviar',      $p(fn(string $id) => $personas->reenviar($id)));
+        \Flight::route('GET /app/directorio',                           $p([$personas, 'directorio']));
+        \Flight::route('GET /app/perfil',                               $p([$perfil, 'inicio']));
+        \Flight::route('GET /app/perfil/datos',                         $p(fn() => $perfil->datos()));
+        \Flight::route('POST /app/perfil/datos',                        $p([$perfil, 'guardarDatos']));
+        \Flight::route('GET /app/perfil/compartir',                     $p([$perfil, 'compartir']));
+        \Flight::route('POST /app/perfil/compartir',                    $p([$perfil, 'guardarCompartir']));
+        \Flight::route('GET /app/perfil/privacidad',                    $p([$perfil, 'privacidad']));
+        \Flight::route('POST /app/perfil/exportar',                     $p([$perfil, 'exportar']));
+        \Flight::route('POST /app/perfil/fotos',                        $p([$perfil, 'pedirQuitarFotos']));
+        \Flight::route('POST /app/perfil/eliminar',                     $p([$perfil, 'eliminar']));
+        \Flight::route('GET /app/ayuda',                                $p([$perfil, 'ayuda']));
+        \Flight::route('GET /app/familias',                             $p([$perfil, 'familias']));
         \Flight::route('GET /app/club/@slug',        $p(fn(string $s) => $auth->clubPublico($s)));
         \Flight::route('GET /app/entrar',            $p([$auth, 'entrar']));
         \Flight::route('POST /app/entrar',           $p([$auth, 'pedirCodigo']));
@@ -147,7 +192,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.8.1';
+        return '0.9.0';
     }
 
     public function provides(): array

@@ -1,0 +1,25 @@
+{layout '_layout.latte'}
+{block titulo}{$t('perfil.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('mas')}">{$ico('arrow-right')|noescape}{$t('nav.mas')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('perfil.titulo')}</h1>
+<section class="card">
+ <ul class="lkl">
+  {foreach [['perfil/datos','user-circle','perfil.datos','perfil.datos.sub'],['avisos/ajustes','bell','avisos.titulo','avisos.mas.sub'],['perfil/compartir','share-network','perfil.compartir','perfil.compartir.sub'],['perfil/privacidad','lock','perfil.privacidad','perfil.privacidad.sub']] as $it}
+  {if $it[0] !== 'perfil/compartir' || $rol === 'apoderado'}
+  <li><a class="lk" href="{$url($it[0])}"><span class="fi">{$ico($it[1])|noescape}</span><span><b>{$t($it[2])}</b><small>{$t($it[3])}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
+  {/if}
+  {/foreach}
+ </ul>
+</section>
+<section class="card">
+ <div class="ch"><h3>{$t('mas.idioma')}</h3></div>
+ <form method="post" action="/app/idioma" class="grupo-pills">
+  <input type="hidden" name="csrf" value="{$csrf}">
+  <input type="hidden" name="volver" value="/app/perfil">
+  {foreach $idiomas as $c => $nombre}
+  <button class="pill{if $c === $lang} on{/if}" type="submit" name="idioma" value="{$c}" {if $c === $lang}aria-pressed="true"{/if}>{$nombre}</button>
+  {/foreach}
+ </form>
+</section>
+{/block}
