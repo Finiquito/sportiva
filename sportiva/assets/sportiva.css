@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.13.3";
+  --css-v:"0.14.0";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -485,7 +485,6 @@ a.bell{text-decoration:none;flex:none}
 .ficha-evento h1{font-size:34px;line-height:1.05;margin:12px 0 8px}
 .ficha-evento .cuando{display:flex;align-items:center;gap:9px;margin:0;font:600 15px/1.35 var(--font-body)}
 .ficha-evento .cuando .pi{font-size:20px;color:var(--club)}
-.ficha-evento .hora-grande{font:600 38px/1 var(--font-mono);letter-spacing:-.03em;margin:12px 0 0;color:var(--club)}
 .ficha-evento .lugar-linea{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;padding-top:14px;border-top:1.5px dashed var(--linea-2)}
 .ficha-evento .lugar-linea .pi{font-size:22px;color:var(--club);flex:none;margin-top:1px}
 .ficha-evento .lugar-linea b{display:block;font:700 15px/1.3 var(--font-body)}
@@ -525,12 +524,6 @@ details.citar summary::-webkit-details-marker{display:none}
 .ev-quien b{color:var(--tinta);font-weight:700}
 .ev-t{font:700 21px/1.2 var(--font-body);letter-spacing:-.01em;margin:0 0 12px}
 .ev-t a{color:var(--tinta);text-decoration:none}
-.ev-horas{display:flex;gap:0;background:var(--hueso);border-radius:14px;padding:10px 4px}
-.ev-horas>div{flex:1 1 0;min-width:0;padding:0 12px}
-.ev-horas>div+div{border-left:1.5px dashed var(--linea-2)}
-.ev-horas small{display:block;font:600 10.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:6px}
-.ev-horas b{display:block;font:600 21px/1.1 var(--font-mono);letter-spacing:-.02em;color:var(--tinta)}
-.ev-horas .clave b{color:var(--club)}
 .ev-lugar{display:flex;align-items:center;gap:8px;margin:12px 0 0;font:500 14px/1.35 var(--font-body);color:var(--tinta)}
 .ev-lugar .pi{font-size:18px;color:var(--club);flex:none}
 .ev .traslado{margin:12px 0 0}
@@ -626,24 +619,39 @@ html,body{background:var(--club)}
 .cit-f.falta.no b{color:var(--tinta-2);text-decoration:line-through;text-decoration-thickness:1px}
 .bt.w{white-space:normal;height:auto;min-height:44px;padding-top:9px;padding-bottom:9px;line-height:1.2;text-align:center}
 .av-filtros{flex-wrap:wrap;overflow:visible}
-.ev-horas>div{padding:0 10px}
-.ev-horas small{letter-spacing:.04em;white-space:nowrap}
 .voto button{min-width:0;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:359px){.ev-horas small{letter-spacing:0;font-size:10px}.ev-horas b{font-size:19px}}
 @media (max-width:340px){.voto button{font-size:12.5px;gap:4px;padding:0 3px}.voto .pi{font-size:15px}}
-.ev .horas{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:0;align-items:end;margin:14px 0 0;padding:14px 0 0;border-top:1.5px dashed var(--linea-2)}
-.ev .horas>div{min-width:0;padding:0 12px}
-.ev .horas>div:first-child{padding-left:0}
-.ev .horas>div+div{border-left:1.5px dashed var(--linea-2)}
-.ev .horas small{margin-bottom:8px}
-.ev .horas .hora{display:block;font-size:38px;white-space:nowrap}
-.ev .horas.n3 .hora{font-size:30px}
-.ev .horas.n1 .hora{font-size:34px}
-@media (max-width:340px){.ev .horas .hora{font-size:30px}.ev .horas.n3 .hora{font-size:24px}.ev .horas small{letter-spacing:0;font-size:10px}}
 .ev-lugar{margin:0 0 0}
-.ev .horas small{white-space:nowrap;gap:5px;letter-spacing:.03em;overflow:hidden}
-.ev .horas small .pi{font-size:15px;flex:none}
-.ev .horas small .pw{width:auto;height:11px}
-.ev .horas.n3>div{padding:0 9px}
-.ev .horas.n3>div:first-child{padding-left:0}
-@media (max-width:340px){.ev .horas.n3 small .pi{display:none}.ev .horas.n3>div{padding:0 6px}}
+.horas{display:grid;grid-template-columns:repeat(var(--n,2),minmax(0,1fr));gap:0;align-items:end;margin:14px 0 0;padding:14px 0 0;border-top:1.5px dashed var(--linea-2)}
+.horas>div{min-width:0;padding:0 12px}
+.horas>div:first-child{padding-left:0}
+.horas>div+div{border-left:1.5px dashed var(--linea-2)}
+.horas small{display:flex;align-items:center;gap:5px;font:500 11px/1 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--tinta-2);margin-bottom:8px;white-space:nowrap;overflow:hidden}
+.horas small .pi{font-size:15px;flex:none;color:var(--club)}
+.horas small .pw{width:auto;height:11px}
+.horas .hora{display:block;font:800 38px/1 var(--font-display);letter-spacing:-.03em;color:var(--club);white-space:nowrap}
+.horas.n3 .hora{font-size:30px}.horas.n3>div{padding:0 9px}.horas.n3>div:first-child{padding-left:0}
+.horas.h-xl .hora{font-size:46px}.horas.h-xl.n3 .hora{font-size:34px}
+.horas.h-m{margin-top:10px;padding-top:10px}
+.horas.h-m .hora{font-size:28px}.horas.h-m.n3 .hora{font-size:23px}
+.horas.h-m small{font-size:10px;margin-bottom:6px}
+.horas.h-s{margin-top:6px;padding-top:6px;border-top:0}
+.horas.h-s>div{padding:0 9px}.horas.h-s>div:first-child{padding-left:0}
+.horas.h-s .hora{font-size:19px}.horas.h-s.n3 .hora{font-size:17px}
+.horas.h-s small{font-size:9px;margin-bottom:4px;letter-spacing:.03em}
+.horas.h-s small .pi{display:none}
+@media (max-width:340px){.horas .hora{font-size:30px}.horas.n3 .hora{font-size:24px}.horas small{letter-spacing:0;font-size:10px}.horas.n3 small .pi{display:none}.horas.n3>div{padding:0 6px}.horas.h-m .hora{font-size:24px}.horas.h-m.n3 .hora{font-size:20px}}
+.compo{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;padding:12px 14px}
+.compo-ph{flex:1;min-width:0;font:500 14px/1.3 var(--font-body);color:var(--tinta-2);background:var(--hueso);border-radius:999px;padding:11px 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.compo-acc{display:flex;align-items:center;gap:8px;flex:none}
+.compo-i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--hueso);color:var(--club);font-size:20px}
+@media (max-width:420px){.compo-acc .bt{display:none}}
+.av-n-g{background:var(--hueso);color:var(--tinta)}
+.pill.on .av-n-g{background:rgba(247,241,232,.22);color:#F7F1E8}
+.ev-m .ev-t{font-size:18px;margin-bottom:8px}
+.ev-m .ev-lugar{margin:0}
+.ev-m .ev-pie{margin-top:12px;padding-top:10px}
+.fil-tipo{gap:6px;margin-top:-4px}
+.fil-tipo .pill{height:34px;padding:0 12px;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.fil-tipo .av-n{margin-left:0;padding:2px 6px;font-size:10.5px}

@@ -4,8 +4,15 @@
 {block contenido}
 <p class="hola">{$t('hola', ['nombre' => $persona['nombre']])}</p>
 <h1>{$t('nav.feed')}</h1>
-{if $puedePublicar}<a class="bt s" href="{$url('feed/nuevo')}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('feed.publicar')}</a>{/if}
-{var $sig = null}{foreach $items as $it}{if $it['k'] !== 'post' && $it['k'] !== 'medios' && !$sig}{var $sig = $it['p']}{/if}{/foreach}
+{if $puedePublicar}
+<a class="card compo" href="{$url('feed/nuevo')}">
+ <span class="avatar">{mb_strtoupper(mb_substr($persona['nombre'], 0, 1))}</span>
+ <span class="compo-ph">{$t('feed.compo_ph')}</span>
+ <span class="compo-acc"><span class="compo-i" aria-hidden="true">{$ico('camera')|noescape}</span><span class="bt s pill-sm">{$ico('plus')|noescape}{$t('feed.publicar')}</span></span>
+</a>
+{else}
+<p class="sis">{$ico('megaphone')|noescape}{$t('feed.solo_staff')}</p>
+{/if}
 <div class="dos">
 <div class="dos-main">
 {if $tieneEquipos || $vista === 'club'}
@@ -14,6 +21,11 @@
  <a class="pill{if $vista === 'club'} on{/if}" href="{$url('feed')}?v=club" style="display:inline-flex;align-items:center;text-decoration:none" {if $vista === 'club'}aria-current="true"{/if}>{$t('feed.club')}</a>
 </div>
 {/if}
+<div class="grupo-pills solo-movil fil-tipo">
+ {foreach ['todo', 'posts', 'citaciones', 'fotos'] as $k}
+ <a class="pill{if $filtro === $k} on{/if}" href="{$url('feed')}?v={$vista}{if $k !== 'todo'}&amp;t={$k}{/if}" style="display:inline-flex;align-items:center;text-decoration:none" {if $filtro === $k}aria-current="true"{/if}>{$t('feed.filtro.' . $k)}<i class="av-n av-n-g">{$conteo[$k]}</i></a>
+ {/foreach}
+</div>
 {foreach $items as $it}
  {if $it['k'] === 'post'}
  {var $p = $it['p']}
@@ -36,23 +48,43 @@
  </div></article>
  {else}
  {var $c = $it['p']}
- <article class="card"><div class="hilo">
-  <span class="fi lim">{$ico('calendar-blank')|noescape}</span>
-  <div><span class="ey">{$t('feed.convocatoria')}</span><b>{$c['titulo']}</b><p>{$dc($c['inicio'])} · {$h($c['inicio'])} · {$c['equipo']}</p><a class="bt" href="{$url('evento/' . $c['id'])}">{$t('abrir')}</a></div>
- </div></article>
+ <article class="card ev ev-m">
+  <div class="ev-cab">
+   {if $c['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
+   {elseif $c['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
+   {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $c['tipo'])}</span>{/if}
+   <span class="ev-quien">{$c['equipo']} · {$t('feed.convocatoria')}</span>
+  </div>
+  <h2 class="ev-t"><a href="{$url('evento/' . $c['id'])}">{$c['titulo']}</a></h2>
+  {if $c['lugar']}<p class="ev-lugar">{$ico('map-pin')|noescape}<span>{$c['lugar']}</span></p>{/if}
+  {include '_horas.latte', e: $c, tam: 'm'}
+  <div class="ev-pie"><span class="ev-acc"><span class="sub">{$dc($c['inicio'])}</span></span><a class="ev-abrir" href="{$url('evento/' . $c['id'])}">{$t('abrir')} {$ico('arrow-right')|noescape}</a></div>
+ </article>
  {/if}
 {else}
 <section class="card vacio"><span class="fi">{$ico('newspaper')|noescape}</span><b>{$t('feed.vacio.titulo')}</b><p>{$t($puedePublicar ? 'feed.vacio.coach' : 'feed.vacio.familia')}</p></section>
 {/foreach}
 </div>
 <aside class="dos-lat solo-escritorio">
- {if $sig}
  <section class="card">
+  <div class="ch"><h3>{$t('feed.filtrar')}</h3></div>
+  <ul class="lkl">
+   {foreach ['todo', 'posts', 'citaciones', 'fotos'] as $k}
+   <li><a class="lk" href="{$url('feed')}?v={$vista}{if $k !== 'todo'}&amp;t={$k}{/if}" style="grid-template-columns:minmax(0,1fr) auto"><span><b>{$t('feed.filtro.' . $k)}</b></span><span class="est">{if $filtro === $k}{$ico('check')|noescape}{/if}{$conteo[$k]}</span></a></li>
+   {/foreach}
+  </ul>
+ </section>
+ {if $sig}
+ <section class="card ev ev-m">
   <div class="ch"><h3>{$t('agenda.proximo')}</h3></div>
-  <div class="av" style="padding:0;grid-template-columns:auto minmax(0,1fr)">
-   <span class="av-fecha" aria-hidden="true"><small>{$lista('fmt.meses_cortos')[(int) substr($sig['inicio'], 5, 2) - 1]}</small><b>{(int) substr($sig['inicio'], 8, 2)}</b></span>
-   <div class="av-txt"><b>{$sig['titulo']}</b><p class="av-cita"><span class="av-dia">{$dc($sig['inicio'])}</span><span class="av-h clave">{$h($sig['inicio'])}</span></p><small>{$sig['equipo']}</small></div>
+  <div class="ev-cab">
+   {if $sig['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
+   {elseif $sig['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
+   {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $sig['tipo'])}</span>{/if}
+   <span class="ev-quien">{$sig['equipo']}</span>
   </div>
+  <h2 class="ev-t" style="font-size:17px"><a href="{$url('evento/' . $sig['id'])}">{$sig['titulo']}</a></h2>
+  {include '_horas.latte', e: $sig, tam: 'm'}
   <a class="bt w" href="{$url('evento/' . $sig['id'])}" style="margin-top:12px">{$t('abrir')}</a>
  </section>
  {/if}

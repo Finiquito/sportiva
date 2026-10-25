@@ -32,16 +32,9 @@
    <p class="av-cita{if $ev['estado'] === 'cancelado'} canc{/if}">
     <span class="av-dia">{$dc($ev['inicio'])}</span>
     {if $ev['estado'] === 'cancelado'}<span class="av-tag">{$t('avisos.cancelada')}</span>
-    {else}
-    {if $ev['tipo'] === 'partido'}
-     {if $ev['hora_encuentro']}<span class="av-h"><small>{$t('hora.encuentro')}</small>{$h($ev['hora_encuentro'])}</span>{/if}
-     <span class="av-h clave"><small>{$t('hora.partido')}</small>{$h($ev['inicio'])}</span>
-    {else}
-     <span class="av-h clave">{$h($ev['inicio'])}{if $ev['fin']} – {$h($ev['fin'])}{/if}</span>
-    {/if}
-    {if $a['motivo'] === 'hora' || $a['motivo'] === 'lugar'}<span class="av-tag">{$t($a['motivo'] === 'hora' ? 'avisos.cambio_hora' : 'avisos.cambio_lugar')}</span>{/if}
-    {/if}
+    {elseif $a['motivo'] === 'hora' || $a['motivo'] === 'lugar'}<span class="av-tag">{$t($a['motivo'] === 'hora' ? 'avisos.cambio_hora' : 'avisos.cambio_lugar')}</span>{/if}
    </p>
+   {if $ev['estado'] !== 'cancelado'}{include '_horas.latte', e: $ev, tam: 's'}{/if}
    {if $ev['lugar']}<small>{$ev['lugar']}</small>{/if}
    {elseif $a['cuerpo']}<small>{$a['cuerpo']}</small>{/if}
   </div>

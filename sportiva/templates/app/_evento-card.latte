@@ -13,20 +13,7 @@
  </div>
  <h2 class="ev-t"><a href="{$url('evento/' . $e['id'])}">{$e['titulo']}</a></h2>
  {if $e['lugar']}<p class="ev-lugar">{$ico('map-pin')|noescape}<span>{$e['lugar']}</span></p>{/if}
-{var $hs = []}
- {if $e['tipo'] === 'partido'}
-  {if $e['hora_encuentro']}{do $hs[] = ['k' => 'hora.encuentro', 'i' => $ico('users-three'), 'v' => $h($e['hora_encuentro'])]}{/if}
-  {if $e['hora_cancha'] && $e['hora_cancha'] !== $e['inicio']}{do $hs[] = ['k' => 'hora.cancha', 'i' => $cancha(), 'v' => $h($e['hora_cancha'])]}{/if}
-  {do $hs[] = ['k' => 'hora.partido', 'i' => $ico('timer'), 'v' => $h($e['inicio'])]}
- {else}
-  {if $e['hora_encuentro']}{do $hs[] = ['k' => 'hora.encuentro', 'i' => $ico('users-three'), 'v' => $h($e['hora_encuentro'])]}{/if}
-  {do $hs[] = ['k' => $e['fin'] ? 'hora.horario' : 'hora.inicio', 'i' => $ico('clock'), 'v' => $h($e['inicio']) . ($e['fin'] ? ' – ' . $h($e['fin']) : '')]}
- {/if}
- <div class="horas ev-h n{count($hs)}" style="--n:{count($hs)}">
-  {foreach $hs as $i => $x}
-  <div><small>{$x['i']|noescape}{$t($x['k'])}</small><span class="hora">{if $i === 0 || $i === count($hs) - 1 && count($hs) === 1}<span class="hl">{$x['v']}</span>{else}{$x['v']}{/if}</span></div>
-  {/foreach}
- </div>
+ {include '_horas.latte', e: $e, tam: 'g'}
  {if !empty($e['toca_llevar'])}<a class="traslado" href="{$url('evento/' . $e['id'])}#turnos" style="text-decoration:none;color:inherit"><span class="ico">{$ico('car')|noescape}</span><div><span class="ey">{$t('turno.te_toca')}</span><b>{$dc($e['inicio'])} · {$h($e['hora_encuentro'] ?: ($e['hora_cancha'] ?: $e['inicio']))}</b></div></a>{/if}
  {if $coach}
   {var $r = $e['resumen']}

@@ -668,5 +668,12 @@
  "cit.duda": "Doute",
  "cit.sin": "Sans réponse",
  "cit.no": "Ne viennent pas",
- "cit.faltan": "À confirmer"
+ "cit.faltan": "À confirmer",
+ "feed.compo_ph": "Que veux-tu partager avec ton équipe ?",
+ "feed.solo_staff": "Ici, publient l'encadrement et le bureau. Tu peux commenter et, pour quelque chose de privé, écrire à l'entraîneur.",
+ "feed.filtrar": "Filtrer",
+ "feed.filtro.todo": "Tout",
+ "feed.filtro.posts": "Publications",
+ "feed.filtro.citaciones": "Convocations",
+ "feed.filtro.fotos": "Photos"
 }

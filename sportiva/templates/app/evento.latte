@@ -16,19 +16,7 @@
   </div>
   <h1>{$e['titulo']}</h1>
   <p class="cuando">{$ico('calendar-blank')|noescape}<b>{$dl($e['inicio'])}</b></p>
-  {if $e['tipo'] === 'partido'}
-  <div class="horas" style="margin-top:12px">
-   {if $e['hora_encuentro']}
-   <div><small>{$ico('users-three')|noescape}{$t('hora.encuentro')}</small><span class="hora"><span class="hl">{$h($e['hora_encuentro'])}</span></span></div><span class="sep"></span>
-   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora">{$h($e['hora_cancha'])}</span></div>
-   {else}
-   <div><small>{$cancha()|noescape}{$t('hora.cancha')}</small><span class="hora"><span class="hl">{$h($e['hora_cancha'] ?: $e['inicio'])}</span></span></div><span class="sep"></span>
-   <div><small>{$ico('timer')|noescape}{$t('hora.partido')}</small><span class="hora">{$h($e['inicio'])}</span></div>
-   {/if}
-  </div>
-  {else}
-  <p class="hora-grande">{$h($e['inicio'])}{if $e['fin']} – {$h($e['fin'])}{/if}</p>
-  {/if}
+  {include '_horas.latte', e: $e, tam: 'xl'}
   {if $e['hora_encuentro']}
   <div class="punto"><span class="fi">{$ico('users-three')|noescape}</span><div><span class="ey">{$t('evento.punto')}</span><b>{$e['encuentro_texto'] ?: $t('evento.punto_club')}</b></div></div>
   {/if}
@@ -39,10 +27,9 @@
   {if $verCamino}{$mapa|noescape}{/if}
   {if $verCamino || $verComp}<div class="nav">
    {if $enlaces && $verCamino}
-   <a class="bt" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Google Maps</a>
-   <a class="bt" href="{$enlaces['waze']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Waze</a>
+   <a class="bt pill-sm" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Google Maps</a>
    {/if}
-   {if $verComp}<a class="bt s" href="https://wa.me/?text={rawurlencode($compartir)}" target="_blank" rel="noopener" data-compartir="{$compartir}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>{/if}
+   {if $verComp}<a class="bt s pill-sm" href="https://wa.me/?text={rawurlencode($compartir)}" target="_blank" rel="noopener" data-compartir="{$compartir}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>{/if}
   </div>{/if}
  </section>
 

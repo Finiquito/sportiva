@@ -853,7 +853,7 @@ check((int) $pdo->query("SELECT predeterminado FROM sportiva_lugares WHERE id = 
 [$h] = llamar(fn() => $cc->guardarLugar(), conCsrf(['nombre' => 'Malo', 'lat' => '999', 'lon' => '0']));
 check(str_contains($h, 'class="error"') && !$pdo->query("SELECT id FROM sportiva_lugares WHERE nombre = 'Malo'")->fetchColumn(), 'coordenadas inválidas se rechazan');
 [$h] = llamar(fn() => $cc->lugarEditar($lg));
-check(str_contains($h, 'Google Maps') && str_contains($h, 'Waze'), 'el lugar con coordenadas muestra mapa y enlaces');
+check(str_contains($h, 'Google Maps') && !str_contains($h, 'Waze'), 'el lugar con coordenadas muestra mapa y Google Maps (sin Waze)');
 llamar(fn() => $cc->guardarLugar($lg), conCsrf(['nombre' => 'Stade Nord 2', 'lat' => '46.6', 'lon' => '-0.3']));
 check($pdo->query("SELECT nombre FROM sportiva_lugares WHERE id = '{$lg}'")->fetchColumn() === 'Stade Nord 2', 'se edita un lugar');
 $lgUso = $pdo->query("SELECT lugar_id FROM sportiva_eventos WHERE club_id = '{$cid}' AND lugar_id IS NOT NULL LIMIT 1")->fetchColumn();
@@ -1134,7 +1134,7 @@ $con = S\Mapa::enlacesLugar(['lugar' => 'X', 'lugar_lat' => '46.1', 'lugar_lon' 
 check(str_contains($con['google'], 'query=46.1,-0.3') && str_contains($con['waze'], 'll='), 'con coordenadas usa el punto exacto');
 $comoRol($apEmail, 'apoderado');
 [$h] = llamar(fn() => $ag->evento($pid));
-check(str_contains($h, 'https://wa.me/?text=') && str_contains($h, 'Google Maps') && str_contains($h, 'Waze') && str_contains($h, 'data-compartir'), 'la convocatoria tiene mapa, Google Maps, Waze y compartir por WhatsApp');
+check(str_contains($h, 'https://wa.me/?text=') && str_contains($h, 'Google Maps') && !str_contains($h, 'Waze') && str_contains($h, 'data-compartir'), 'la convocatoria tiene mapa, Google Maps, Waze y compartir por WhatsApp');
 check(str_contains(urldecode($h), 'Estadio del club') || str_contains($h, 'Estadio'), 'el texto para compartir lleva el lugar');
 [$h] = llamar(fn() => $ag->agenda());
 check(str_contains($h, 'wa.me/?text=') && str_contains($h, 'Cómo llegar'), 'la tarjeta de la agenda tiene compartir y cómo llegar');
@@ -1175,13 +1175,13 @@ $comoRol('pedro@ejemplo.fr', 'entrenador');
 $ls->marcarLocal($cid, $lugarX, true);
 $entr = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Entreno largo' ORDER BY inicio LIMIT 1")->fetchColumn();
 [$h] = llamar(fn() => $ag->evento($entr));
-check(!str_contains($h, 'Waze') && !str_contains($h, 'wa.me/?text=') && !str_contains($h, 'class="mapa"'), 'un entrenamiento en lugar local no muestra mapa, cómo llegar ni compartir');
+check(!str_contains($h, 'Google Maps') && !str_contains($h, 'wa.me/?text=') && !str_contains($h, 'class="mapa"'), 'un entrenamiento en lugar local no muestra mapa, cómo llegar ni compartir');
 $partL = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido en casa', 'rival' => 'X', 'inicio' => '2030-06-01 15:00:00', 'fin' => null, 'hora_cancha' => '2030-06-01 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $lugarX, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
 [$h] = llamar(fn() => $ag->evento($partL));
-check(str_contains($h, 'wa.me/?text=') && !str_contains($h, 'Waze'), 'un partido en casa se puede compartir pero no pide cómo llegar');
+check(str_contains($h, 'wa.me/?text=') && !str_contains($h, 'Google Maps'), 'un partido en casa se puede compartir pero no pide cómo llegar');
 $ls->marcarLocal($cid, $lugarX, false);
 [$h] = llamar(fn() => $ag->evento($entr));
-check(str_contains($h, 'Waze') && str_contains($h, 'wa.me/?text='), 'de visita (lugar no local) sí hay mapa, cómo llegar y compartir');
+check(str_contains($h, 'Google Maps') && str_contains($h, 'wa.me/?text='), 'de visita (lugar no local) sí hay mapa, cómo llegar y compartir');
 $ls->marcarLocal($cid, $lugarX, true);
 // formulario: campos según el tipo
 [$h] = llamar(fn() => $ag->nuevo());
@@ -1211,7 +1211,7 @@ $comoRol('daniela@ejemplo.fr', 'apoderado');
 $av = new S\AvisosController($ctx);
 [$h] = llamar(fn() => $av->lista());
 check(str_contains($h, 'class="av av-fecha') || str_contains($h, 'av-fecha'), 'el aviso de una citación muestra la fecha de la cita en el ícono');
-check(str_contains($h, 'av-h clave') && str_contains($h, '16:00'), 'el aviso de una citación destaca la hora de la cita');
+check(str_contains($h, 'class="horas h-s') && str_contains($h, '16:00') && str_contains($h, 'class="hl"'), 'el aviso de una citación usa el mismo diseño de horarios, con la hora clave resaltada');
 check(str_contains($h, 'Citaciones') && str_contains($h, 'Turnos') && str_contains($h, 'Otros'), 'los avisos tienen filtros Citaciones, Turnos y Otros');
 [$h] = llamar(fn() => $av->lista(), [], ['f' => 'turnos']);
 check(!str_contains($h, 'Partido avisos'), 'el filtro Turnos oculta las citaciones');
@@ -1280,6 +1280,27 @@ check(str_contains($h, 'class="dos tres"') && preg_match('/<aside class="dos-lat
 $comoRol('sylvie@ejemplo.fr', 'directiva');
 [$h] = llamar(fn() => (new S\ClubController($ctx))->inicio());
 check(str_contains($h, 'dos-lat solo-escritorio'), 'el panel del club lleva su resumen en el lateral');
+
+
+seccion('Feed: compositor, filtros y citaciones iguales a la agenda');
+$fc = new S\FeedController($ctx);
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $fc->inicio());
+check(str_contains($h, 'class="card compo"') && str_contains($h, 'href="/app/feed/nuevo"'), 'quien puede publicar ve el compositor «¿Qué quieres compartir…?» arriba del feed');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $fc->inicio());
+check(!str_contains($h, 'class="card compo"') && str_contains($h, 'Aquí publican') || !str_contains($h, 'class="card compo"') && str_contains($h, 'publient'), 'las familias no ven el compositor y se les explica quién publica');
+check(str_contains($h, '<article class="card ev ev-m">') && str_contains($h, 'class="horas h-m'), 'la citación del feed usa la misma tarjeta y los mismos horarios que la agenda');
+[$h] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
+check(str_contains($h, 'class="horas h-g'), 'la agenda usa los horarios en tamaño de agenda');
+[$h] = llamar(fn() => $fc->inicio(), [], ['t' => 'posts']);
+check(!str_contains($h, '<article class="card ev ev-m">'), 'el filtro Publicaciones oculta las citaciones');
+[$h] = llamar(fn() => $fc->inicio(), [], ['t' => 'citaciones']);
+check(str_contains($h, '<article class="card ev ev-m">') && !str_contains($h, '<article class="card post">'), 'el filtro Citaciones muestra solo citaciones');
+check(str_contains($h, 'Todo') && str_contains($h, 'Publicaciones') && str_contains($h, 'Citaciones') && str_contains($h, 'Fotos'), 'el feed tiene filtros Todo / Publicaciones / Citaciones / Fotos');
+[$h] = llamar(fn() => $fc->inicio(), [], ['t' => 'cualquiera']);
+check(str_contains($h, '<article class="card ev ev-m">'), 'un filtro inválido muestra todo');
 
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();

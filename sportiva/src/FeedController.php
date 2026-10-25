@@ -73,8 +73,25 @@ final class FeedController extends AppBase
                 $items[] = ['k' => 'medios', 'f' => 0, 't' => $n['ultimo'], 'p' => $n];
             }
         }
+        // Filtro por tipo: todo | publicaciones | convocatorias | fotos (con su cantidad)
+        $tipos = ['post' => 'posts', 'evento' => 'citaciones', 'medios' => 'fotos'];
+        $conteo = ['todo' => count($items), 'posts' => 0, 'citaciones' => 0, 'fotos' => 0];
+        foreach ($items as $i) {
+            $conteo[$tipos[$i['k']] ?? 'posts']++;
+        }
+        $sig = null;
+        foreach ($items as $i) {
+            if ($i['k'] === 'evento' && ($sig === null || $i['p']['inicio'] < $sig['inicio'])) {
+                $sig = $i['p'];
+            }
+        }
+        $filtro = in_array($_GET['t'] ?? '', ['posts', 'citaciones', 'fotos'], true) ? (string) $_GET['t'] : 'todo';
+        if ($filtro !== 'todo') {
+            $items = array_values(array_filter($items, fn($i) => ($tipos[$i['k']] ?? 'posts') === $filtro));
+        }
         usort($items, fn($a, $b) => [$b['f'], $b['t']] <=> [$a['f'], $a['t']]);
         echo $this->vista()->pagina('feed.latte', [
+            'conteo' => $conteo, 'filtro' => $filtro, 'sig' => $sig,
             'adj' => (new AdjuntoService($this->pdo))->de('post', array_map(fn($i) => $i['p']['id'], array_filter($items, fn($i) => $i['k'] === 'post'))),
             'activa' => 'feed', 'items' => $items, 'vista' => $vista, 'puedePublicar' => $this->puedePublicar(), 'tieneEquipos' => $eq !== [],
         ]);

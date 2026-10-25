@@ -42,7 +42,7 @@ final class FeedService extends Repo
     /** Convocatorias publicadas hace poco (aparecen en el feed del equipo). @return array<int, array<string, mixed>> */
     public function convocatorias(string $club, ?array $equipos, string $desde): array
     {
-        $sql = "SELECT ev.id, ev.titulo, ev.tipo, ev.inicio, ev.created_at, eq.nombre AS equipo FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id
+        $sql = "SELECT ev.id, ev.titulo, ev.tipo, ev.inicio, ev.fin, ev.hora_cancha, ev.hora_encuentro, ev.created_at, eq.nombre AS equipo, l.nombre AS lugar FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id LEFT JOIN sportiva_lugares l ON l.id = ev.lugar_id
                 WHERE ev.club_id = ? AND ev.estado = 'publicado' AND ev.created_at >= ? AND ev.inicio >= ?";
         $par = [$club, $desde, $desde];
         if ($equipos !== null) {

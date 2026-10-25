@@ -668,5 +668,12 @@
  "cit.duda": "En duda",
  "cit.sin": "Sin responder",
  "cit.no": "No van",
- "cit.faltan": "Faltan por confirmar"
+ "cit.faltan": "Faltan por confirmar",
+ "feed.compo_ph": "¿Qué quieres compartir con tu equipo?",
+ "feed.solo_staff": "Aquí publican el cuerpo técnico y la directiva. Tú puedes comentar y, si es algo privado, preguntarle al entrenador.",
+ "feed.filtrar": "Filtrar",
+ "feed.filtro.todo": "Todo",
+ "feed.filtro.posts": "Publicaciones",
+ "feed.filtro.citaciones": "Citaciones",
+ "feed.filtro.fotos": "Fotos"
 }
