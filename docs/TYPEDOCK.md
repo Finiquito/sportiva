@@ -268,6 +268,7 @@ typedock/themes/<tema>/
 | El tema no aparece en la lista | Quedó en `public_html/themes/` | Moverlo a `typedock/themes/` |
 | Cambié el CSS del tema y no se ve | Copia vieja en `public_html/themes/<tema>/assets` | Apariencia → Temas → **Vista previa** |
 | El micrófono (dictado) está bloqueado | Cabecera `Permissions-Policy: microphone=()` | En el `.htaccess` de `public_html`, cambiar a `microphone=(self)` |
+| La ubicación (GPS) del mapa falla y el navegador no pregunta | Cabecera `Permissions-Policy: geolocation=()` | En el `.htaccess` de `public_html`, cambiar a `geolocation=(self)` (Admin → Diagnóstico de u330 lo detecta) |
 | Todo el sitio muestra error 500 tras actualizar | Plugin a medias | Renombrar la carpeta del plugin a `-off` y subirlo de nuevo |
 | Una página se queda colgada después de guardar | Correos enviados en la misma visita, sin cron | Configurar el cron |
 | «MySQL server has gone away» con la IA | Conexión inactiva cortada | Ya está cubierto en el plugin; si se repite, usar un modelo más rápido |

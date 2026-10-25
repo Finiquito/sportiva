@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.16.3";
+  --css-v:"0.16.4";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -717,3 +717,4 @@ html.mf-abierto,html.mf-abierto body{overflow:hidden}
  .mapa-full .leaflet-top.leaflet-left{left:412px}
  .mapa-full .mf-res b{font-size:28px}.mapa-full .mf-res .mf-dur{font-size:38px}
 }
+.mapa-full.mf-caja{border-radius:28px;box-shadow:0 10px 40px rgba(16,32,31,.4)}

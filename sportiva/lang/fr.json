@@ -697,5 +697,9 @@
  "mapa.ir_maps": "Y aller (Maps)",
  "mapa.ir_maps_pc": "Y aller avec Google Maps",
  "mapa.ir_waze": "Waze",
- "mapa.ir_waze_pc": "Y aller avec Waze"
+ "mapa.ir_waze_pc": "Y aller avec Waze",
+ "mapa.err_politica": "Le serveur u330 bloque la localisation (en-tête Permissions-Policy), c'est pourquoi le navigateur ne demande rien. Il faut l'autoriser dans le .htaccess de public_html : geolocation=(self).",
+ "mapa.err_bloqueado": "Le navigateur bloque la localisation pour ce site. Touche le cadenas (ou l'icône de localisation) dans la barre d'adresse, autorise « Localisation » et réessaie.",
+ "mapa.err_no_disp": "L'appareil n'a pas pu déterminer ta position. Vérifie que la localisation du système est activée et réessaie.",
+ "mapa.err_tiempo": "La position a mis trop de temps à arriver. Réessaie."
 }

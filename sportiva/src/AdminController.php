@@ -72,7 +72,7 @@ final class AdminController
 
     public function diagnostico(): void
     {
-        $this->ver('diagnostico.latte', ['log' => Diagnostico::leer(), 'version' => (json_decode((string) @file_get_contents(dirname(__DIR__) . '/plugin.json'), true)['version'] ?? '?'), 'php' => PHP_VERSION]);
+        $this->ver('diagnostico.latte', ['log' => Diagnostico::leer(), 'version' => (json_decode((string) @file_get_contents(dirname(__DIR__) . '/plugin.json'), true)['version'] ?? '?'), 'php' => PHP_VERSION, 'politica' => Diagnostico::politicaPermisos()]);
     }
 
     public function vaciarDiagnostico(): void

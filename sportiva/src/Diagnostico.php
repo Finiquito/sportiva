@@ -48,4 +48,35 @@ final class Diagnostico
     {
         @unlink(self::archivo());
     }
+
+    /** ¿La cabecera Permissions-Policy deja usar la ubicación (GPS) en este sitio? true = permitida o sin restricción, false = bloqueada. */
+    public static function ubicacionPermitida(string $cabecera): bool
+    {
+        if (preg_match('/(?:^|[\s,;])geolocation\s*=\s*(?:\(([^)]*)\)|(\*))/i', $cabecera, $m)) {
+            $v = strtolower(trim(($m[1] ?? '') . ($m[2] ?? '')));
+            return str_contains($v, 'self') || str_contains($v, '*') || str_contains($v, 'http');
+        }
+        return true;
+    }
+
+    /** Lee la cabecera Permissions-Policy que el servidor envía en /app (pide la página a sí mismo). @return array{cabecera: ?string, permitida: ?bool} */
+    public static function politicaPermisos(): array
+    {
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+        if ($host === '' || !function_exists('get_headers')) {
+            return ['cabecera' => null, 'permitida' => null];
+        }
+        $url = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . $host . '/app/entrar';
+        $h = @get_headers($url, true, stream_context_create(['http' => ['timeout' => 4, 'ignore_errors' => true]]));
+        if (!is_array($h)) {
+            return ['cabecera' => null, 'permitida' => null];
+        }
+        foreach ($h as $k => $v) {
+            if (is_string($k) && strtolower($k) === 'permissions-policy') {
+                $c = is_array($v) ? implode(', ', $v) : (string) $v;
+                return ['cabecera' => $c, 'permitida' => self::ubicacionPermitida($c)];
+            }
+        }
+        return ['cabecera' => '', 'permitida' => true];
+    }
 }

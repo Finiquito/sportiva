@@ -46,7 +46,7 @@ final class Mapa
         $t = fn(string $k, string $d) => $i ? $i->t($k) : $d;
         $txt = json_encode([
             'ampliar' => $t('mapa.ampliar', 'Ampliar'), 'cerrar' => $t('mapa.cerrar', 'Cerrar'), 'encuadrar' => $t('mapa.encuadrar', 'Encuadrar'), 'mi' => $t('mapa.mi_ubicacion', 'Mi ubicación'),
-            'cta' => $t('mapa.cuanto_demoro', '¿Cuánto demoro?'), 'ctaSub' => $t('mapa.cuanto_demoro_sub', 'Activa tu ubicación y calculo el tiempo en auto'), 'error' => $t('mapa.sin_ubicacion', 'No pude obtener tu ubicación'),
+            'cta' => $t('mapa.cuanto_demoro', '¿Cuánto demoro?'), 'ctaSub' => $t('mapa.cuanto_demoro_sub', 'Activa tu ubicación y calculo el tiempo en auto'), 'error' => $t('mapa.sin_ubicacion', 'No pude obtener tu ubicación'), 'errPolitica' => $t('mapa.err_politica', 'El sitio tiene bloqueada la ubicación'), 'errBloqueado' => $t('mapa.err_bloqueado', 'Ubicación bloqueada en el navegador'), 'errNoDisp' => $t('mapa.err_no_disp', 'No se pudo calcular tu ubicación'), 'errTiempo' => $t('mapa.err_tiempo', 'Tardó demasiado'),
             'irMv' => $t('mapa.ir_maps', 'Ir con Maps'), 'irPc' => $t('mapa.ir_maps_pc', 'Ir con Google Maps'), 'wazeMv' => $t('mapa.ir_waze', 'Waze'), 'wazePc' => $t('mapa.ir_waze_pc', 'Ir con Waze'), 'enAuto' => $t('mapa.en_auto', 'En auto'), 'aprox' => $t('mapa.aprox', 'aprox.'),
             'dur' => $t('mapa.duracion', 'Duración'), 'dist' => $t('mapa.distancia', 'Distancia'), 'llegada' => $t('mapa.llegada', 'Llegada'),
         ], JSON_UNESCAPED_UNICODE) ?: '{}';

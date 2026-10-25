@@ -71,6 +71,7 @@
   q('.mf-ir .lbl-mv').textContent=T.irMv;q('.mf-ir .lbl-pc').textContent=T.irPc;q('.mf-ir').href=d.ruta||d.google;q('.mf-waze .lbl-mv').textContent=T.wazeMv;q('.mf-waze .lbl-pc').textContent=T.wazePc;q('.mf-waze').href=d.waze;
   if(!navigator.geolocation){q('.mf-yo').hidden=true;q('.mf-cta').hidden=true;}
   document.body.appendChild(ov);document.documentElement.classList.add('mf-abierto');
+  if(window.innerWidth>=1000){var sh=document.querySelector('main.sheet');if(sh){var rc=sh.getBoundingClientRect(),tp=Math.max(rc.top,12);ov.classList.add('mf-caja');ov.style.inset='auto';ov.style.left=rc.left+'px';ov.style.width=rc.width+'px';ov.style.top=tp+'px';ov.style.bottom='12px';}}
   var watch=null,miCapa=null,rutaCapas=[],ultima=null,pedido=0,primera=true,yoPos=null;
   function tecla(e){if(e.key==='Escape')cerrar();}
   function cerrar(){if(watch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(watch);if(map){map.remove();map=null;}ov.remove();document.documentElement.classList.remove('mf-abierto');document.removeEventListener('keydown',tecla);b.focus();}
@@ -85,7 +86,8 @@
     +'<div><small>'+ic('path')+T.dist+'</small><b>'+num(dist)+' km</b></div>'
     +'<div><small>'+ic('flag')+T.llegada+'</small><b>'+hora(min)+'</b></div></div>';
   }
-  function errorMsg(){var i=q('.mf-info');i.innerHTML='<p class="mf-err">'+T.error+'</p><button type="button" class="mf-cta"><span class="mf-ci">'+ic('yo')+'</span><span><b>'+T.cta+'</b><small>'+T.ctaSub+'</small></span></button>';i.querySelector('.mf-cta').addEventListener('click',iniciar);}
+  function motivo(e){var pol=document.permissionsPolicy||document.featurePolicy;if(e&&e.code===1){return(pol&&pol.allowsFeature&&!pol.allowsFeature('geolocation'))?T.errPolitica:T.errBloqueado;}if(e&&e.code===2)return T.errNoDisp;if(e&&e.code===3)return T.errTiempo;return T.error;}
+  function errorMsg(e){var i=q('.mf-info');i.innerHTML='<p class="mf-err">'+motivo(e)+'</p><button type="button" class="mf-cta"><span class="mf-ci">'+ic('yo')+'</span><span><b>'+T.cta+'</b><small>'+T.ctaSub+'</small></span></button>';i.querySelector('.mf-cta').addEventListener('click',iniciar);}
   function dibujar(geo){
    rutaCapas.forEach(function(c){map.removeLayer(c);});rutaCapas=[];
    rutaCapas.push(L.geoJSON(geo,{style:{color:'#0F4F4E',weight:11,opacity:.95,lineCap:'round',lineJoin:'round'},interactive:false}).addTo(map));
@@ -107,7 +109,7 @@
    estimar(p);
    if(primera){primera=false;setTimeout(encuadrar,60);}
   }
-  function iniciar(){if(watch!==null){if(yoPos&&map)map.setView(yoPos,Math.max(map.getZoom(),15));return;}watch=navigator.geolocation.watchPosition(ver,function(){errorMsg();},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});}
+  function iniciar(){if(watch!==null){if(yoPos&&map)map.setView(yoPos,Math.max(map.getZoom(),15));return;}watch=navigator.geolocation.watchPosition(ver,function(e){if(watch!==null){navigator.geolocation.clearWatch(watch);watch=null;}errorMsg(e);},{enableHighAccuracy:true,maximumAge:5000,timeout:15000});}
   q('.mf-cta').addEventListener('click',iniciar);q('.mf-yo').addEventListener('click',iniciar);q('.mf-enc').addEventListener('click',encuadrar);
   cargar().then(function(){
    map=L.map(q('.mf-mapa'),{zoomControl:false,attributionControl:true}).setView([lat,lon],16);

@@ -378,3 +378,5 @@ html.mf-abierto,html.mf-abierto body{overflow:hidden}
  .mapa-full .leaflet-top.leaflet-left{left:412px}
  .mapa-full .mf-res b{font-size:28px}.mapa-full .mf-res .mf-dur{font-size:38px}
 }
+/* En PC el mapa ampliado ocupa solo el contenedor de la app, no toda la ventana */
+.mapa-full.mf-caja{border-radius:28px;box-shadow:0 10px 40px rgba(16,32,31,.4)}

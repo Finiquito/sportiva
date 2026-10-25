@@ -1334,6 +1334,15 @@ $comoRol('otro.coach@ejemplo.fr', 'entrenador');
 llamar(fn() => $ag->guardarUbicacion($evSC), conCsrf(['enlace' => 'https://www.google.com/maps/@10.1,-0.9,15z']));
 check($ls->buscar($sinC)['lat'] === '46.3', 'un entrenador de otro equipo no cambia la ubicación');
 
+
+seccion('Ubicación: política de permisos del servidor');
+check(S\Diagnostico::ubicacionPermitida('camera=(), microphone=(), geolocation=()') === false, 'una cabecera con geolocation=() bloquea la ubicación');
+check(S\Diagnostico::ubicacionPermitida('microphone=(), geolocation=(self)') === true && S\Diagnostico::ubicacionPermitida('geolocation=*') === true, 'geolocation=(self) y geolocation=* la permiten');
+check(S\Diagnostico::ubicacionPermitida('microphone=()') === true && S\Diagnostico::ubicacionPermitida('') === true, 'si la cabecera no menciona la ubicación, está permitida');
+$comoRol('sylvie@ejemplo.fr', 'directiva');
+[$h] = llamar(fn() => $ag->evento($evSC));
+check(str_contains($h, '&quot;errPolitica&quot;') && str_contains($h, '&quot;errBloqueado&quot;') && str_contains($h, '&quot;errNoDisp&quot;') && str_contains($h, '&quot;errTiempo&quot;'), 'el mapa ampliado distingue el motivo cuando falla la ubicación');
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');
