@@ -685,5 +685,13 @@
  "mapa.mi_ubicacion": "Mi ubicación",
  "mapa.sin_ubicacion": "No pude obtener tu ubicación. Revisa el permiso de ubicación del navegador. No se guarda ni se envía a ningún lado.",
  "mapa.estimado": "En auto ≈ {min} min · {km} km · llegas ~{hora}",
- "mapa.estimado_aprox": "En auto ≈ {min} min (aprox.) · {km} km"
+ "mapa.estimado_aprox": "En auto ≈ {min} min (aprox.) · {km} km",
+ "mapa.encuadrar": "Encuadrar",
+ "mapa.cuanto_demoro": "¿Cuánto demoro?",
+ "mapa.cuanto_demoro_sub": "Activa tu ubicación y calculo el tiempo en auto",
+ "mapa.en_auto": "En auto",
+ "mapa.aprox": "aprox.",
+ "mapa.duracion": "Duración",
+ "mapa.distancia": "Distancia",
+ "mapa.llegada": "Llegada"
 }

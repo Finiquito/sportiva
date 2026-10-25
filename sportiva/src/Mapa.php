@@ -20,7 +20,7 @@ final class Mapa
         return $lat !== null && $lon !== null && is_numeric($lat) && is_numeric($lon) && abs((float) $lat) <= 90 && abs((float) $lon) <= 180;
     }
 
-    public static function html(string $lat, string $lon, int $zoom = 16, string $etiqueta = '', ?I18n $i = null): string
+    public static function html(string $lat, string $lon, int $zoom = 16, string $etiqueta = '', ?I18n $i = null, string $direccion = ''): string
     {
         $la = (float) $lat;
         $lo = (float) $lon;
@@ -43,17 +43,20 @@ final class Mapa
         $ox = $px - $tx0 * 256;
         $oy = $py - $ty0 * 256;
         $en = self::enlaces($lat, $lon);
+        $t = fn(string $k, string $d) => $i ? $i->t($k) : $d;
+        $txt = json_encode([
+            'ampliar' => $t('mapa.ampliar', 'Ampliar'), 'cerrar' => $t('mapa.cerrar', 'Cerrar'), 'encuadrar' => $t('mapa.encuadrar', 'Encuadrar'), 'mi' => $t('mapa.mi_ubicacion', 'Mi ubicación'),
+            'cta' => $t('mapa.cuanto_demoro', '¿Cuánto demoro?'), 'ctaSub' => $t('mapa.cuanto_demoro_sub', 'Activa tu ubicación y calculo el tiempo en auto'), 'error' => $t('mapa.sin_ubicacion', 'No pude obtener tu ubicación'),
+            'ir' => $t('mapa.como_llegar', 'Cómo llegar'), 'enAuto' => $t('mapa.en_auto', 'En auto'), 'aprox' => $t('mapa.aprox', 'aprox.'),
+            'dur' => $t('mapa.duracion', 'Duración'), 'dist' => $t('mapa.distancia', 'Distancia'), 'llegada' => $t('mapa.llegada', 'Llegada'),
+        ], JSON_UNESCAPED_UNICODE) ?: '{}';
         $boton = '<button type="button" class="mapa-amp" data-mapa-full data-lat="' . htmlspecialchars($lat, ENT_QUOTES) . '" data-lon="' . htmlspecialchars($lon, ENT_QUOTES) . '" data-nombre="' . htmlspecialchars($etiqueta, ENT_QUOTES)
-            . '" data-google="' . htmlspecialchars($en['google'], ENT_QUOTES) . '" data-waze="' . htmlspecialchars($en['waze'], ENT_QUOTES)
+            . '" data-dir="' . htmlspecialchars($direccion, ENT_QUOTES) . '" data-google="' . htmlspecialchars($en['google'], ENT_QUOTES) . '" data-waze="' . htmlspecialchars($en['waze'], ENT_QUOTES)
+            . '" data-ruta="' . htmlspecialchars('https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=' . rawurlencode($lat) . ',' . rawurlencode($lon), ENT_QUOTES)
             . '" data-t1="' . htmlspecialchars(self::TESELAS, ENT_QUOTES) . '" data-t2="' . htmlspecialchars(self::RESPALDO, ENT_QUOTES)
-            . '" data-pin="' . htmlspecialchars(Iconos::svg('map-pin', 'fill'), ENT_QUOTES)
-            . '" data-mi="' . htmlspecialchars($i ? $i->t('mapa.mi_ubicacion') : 'Mi ubicación', ENT_QUOTES) . '" data-mi-error="' . htmlspecialchars($i ? $i->t('mapa.sin_ubicacion') : 'No pude obtener tu ubicación', ENT_QUOTES)
-            . '" data-yo-ico="' . htmlspecialchars(Iconos::svg('users-three', 'fill'), ENT_QUOTES)
-            . '" data-est="' . htmlspecialchars($i ? $i->t('mapa.estimado') : 'En auto ≈ {min} min · {km} km · llegas ~{hora}', ENT_QUOTES)
-            . '" data-est-aprox="' . htmlspecialchars($i ? $i->t('mapa.estimado_aprox') : 'En auto ≈ {min} min (aprox.) · {km} km', ENT_QUOTES)
-            . '" data-cerrar="' . htmlspecialchars($i ? $i->t('mapa.cerrar') : 'Cerrar', ENT_QUOTES) . '" aria-label="' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '">'
+            . '" data-txt="' . htmlspecialchars($txt, ENT_QUOTES) . '" aria-label="' . htmlspecialchars($t('mapa.ampliar', 'Ampliar'), ENT_QUOTES) . '">'
             . '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-            . '<span>' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '</span></button>';
+            . '<span>' . htmlspecialchars($t('mapa.ampliar', 'Ampliar'), ENT_QUOTES) . '</span></button>';
         return sprintf(
             '<div class="mapa" role="img" aria-label="%s"><div class="tiles" style="width:%dpx;height:%dpx;transform:translate(-%.1fpx,-%.1fpx)">%s</div><span class="pin">%s</span><span class="osm">%s</span>%s</div>',
             htmlspecialchars($etiqueta, ENT_QUOTES), $cols * 256, $rows * 256, $ox, $oy, $imgs, Iconos::svg('map-pin', 'fill'), self::ATRIBUCION, $boton

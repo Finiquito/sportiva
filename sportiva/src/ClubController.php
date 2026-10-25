@@ -169,7 +169,7 @@ final class ClubController extends AppBase
         $svc = new LugarService($this->pdo);
         echo $this->vista()->pagina('club-lugar.latte', [
             'activa' => 'club', 'l' => $l, 'd' => $d + ['local' => $l ? (int) $svc->esLocal($l['id']) : ($d['local'] ?? 0)], 'errores' => $err, 'enUso' => $l ? $svc->enUso($l['id']) : 0,
-            'mapa' => Mapa::valido($lat, $lon) ? Mapa::html($lat, $lon, 16, (string) ($d['nombre'] ?? ''), $this->i18n) : '', 'enlaces' => Mapa::valido($lat, $lon) ? Mapa::enlaces($lat, $lon) : null,
+            'mapa' => Mapa::valido($lat, $lon) ? Mapa::html($lat, $lon, 16, (string) ($d['nombre'] ?? ''), $this->i18n, (string) ($d['direccion'] ?? '')) : '', 'enlaces' => Mapa::valido($lat, $lon) ? Mapa::enlaces($lat, $lon) : null,
         ]);
     }
 

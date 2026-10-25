@@ -181,7 +181,7 @@ final class AgendaController extends AppBase
             'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
             'elegibles' => $puede ? $tu->elegibles($id) : [],
             'activa' => 'agenda', 'e' => $e, 'conv' => $conv, 'mios' => $mios, 'resumen' => $ev->resumen($id), 'puede' => $puede,
-            'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar'], $this->i18n) : '',
+            'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar'], $this->i18n, (string) ($e['lugar_direccion'] ?? '')) : '',
             'enlaces' => $enlaces, 'zona' => $this->zona(),
             'compartir' => Mapa::textoCompartir($e, $this->i18n, $this->urlAbsoluta('/app/evento/' . $id)), 'serie' => $puede ? (new SerieService($this->pdo))->deEvento($id) : null,
         ]);
