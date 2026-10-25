@@ -1,4 +1,4 @@
-{* Reporte en vivo en la ficha del partido. Recibe $e, $env (EnVivoService::vista), $dep, $puede (staff del equipo), $puedeRep, $soyPresente. Tres estados: envivo, sin, fin. *}
+{* Reporte en vivo en la ficha del partido. Recibe $e, $env (EnVivoService::vista), $dep, $puede (staff del equipo), $puedeRep, $reportero (papá que reporta ahora), $soyReportero, $enForm (sin botones, dentro de la pantalla de publicar). Tres estados: envivo, sin, fin. *}
 {var $act = $env['act']}
 {var $notas = $env['notas']}
 {var $hm = null}{foreach $notas as $x}{if $x['nuestro'] !== null && !$hm}{do $hm = $x}{/if}{/foreach}
@@ -38,15 +38,22 @@
   {/foreach}
  </div>
  {/if}
- {if $env['abierto'] && $puedeRep || ($puede && $env['estado'] === 'fin' && $act && !$act['confirmado'])}
+ {if !$enForm}
+ {if ($env['abierto'] && $puedeRep) || ($puede && $env['estado'] === 'fin' && $act && !$act['confirmado'])}
  <div class="vivo-acc">
   {if $env['abierto'] && $puedeRep}
-   {if $soyPresente || $puede}<a class="bt s w" href="{$url('evento/' . $e['id'] . '/envivo')}">{$ico('megaphone')|noescape}{$t('envivo.publicar')}</a>
+   {if $puede}<a class="bt s w" href="{$url('evento/' . $e['id'] . '/envivo')}">{$ico('megaphone')|noescape}{$t('envivo.publicar')}</a>
+   {elseif $soyReportero}<a class="bt s w" href="{$url('evento/' . $e['id'] . '/envivo')}">{$ico('megaphone')|noescape}{$t('envivo.publicar')}</a>
+   {elseif $reportero}
+   <p class="sis" style="margin:0;flex:1 1 100%">{$ico('users-three')|noescape}{$t('envivo.ocupado', ['quien' => $reportero['nombre']])}</p>
+   <a class="bt w" href="{$url('evento/' . $e['id'] . '/fotos')}">{$ico('camera')|noescape}{$t('envivo.subir_fotos')}</a>
    {else}<form method="post" action="{$url('evento/' . $e['id'] . '/envivo/presente')}"><input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="ir" value="1"><button class="bt s w" type="submit">{$ico('map-pin')|noescape}{$t('envivo.estoy')}</button></form>{/if}
   {/if}
   {if $puede && $env['estado'] === 'fin' && $act && !$act['confirmado']}
   <form method="post" action="{$url('evento/' . $e['id'] . '/envivo/confirmar')}" data-ok="{$t('envivo.confirmado_ok')}"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('check')|noescape}{$t('envivo.confirmar')}</button></form>
   {/if}
  </div>
+ {/if}
+ {if $puede && $reportero}<p class="sis" style="margin:12px 0 0">{$ico('users-three')|noescape}{$t('envivo.reporta', ['quien' => $reportero['nombre']])}</p>{/if}
  {/if}
 </section>

@@ -11,6 +11,17 @@ final class EventoService extends Repo
 {
     public const TIPOS = ['partido', 'entreno', 'especial', 'stage'];
     public const RESPUESTAS = ['voy', 'duda', 'no'];
+    /** Minutos antes del partido en que las familias ya no pueden cambiar su asistencia (después solo queda consultar y el en vivo). */
+    public const CIERRE_VOTO_MIN = 15;
+
+    /** ¿Las familias aún pueden responder voy / duda / no voy? Solo los partidos se cierran, poco antes de empezar. */
+    public static function votoAbierto(array $e, \DateTimeImmutable $ahora): bool
+    {
+        if (($e['tipo'] ?? '') !== 'partido' || Tiempo::sinFecha((string) $e['inicio']) || Tiempo::sinHora((string) $e['inicio'])) {
+            return true;
+        }
+        return $ahora < (new \DateTimeImmutable((string) $e['inicio'], $ahora->getTimezone()))->modify('-' . self::CIERRE_VOTO_MIN . ' minutes');
+    }
 
     public function buscar(string $id): ?array
     {

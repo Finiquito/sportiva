@@ -796,5 +796,15 @@
  "avisos.marcador": "Score",
  "avisos.regreso": "Retour",
  "avisos.final": "Final",
- "aviso.envivo.pedir": "Peux-tu mettre à jour le score ?"
+ "aviso.envivo.pedir": "Peux-tu mettre à jour le score ?",
+ "asist.cerrada": "Les présences sont closes : le match va commencer.",
+ "asist.tu_resp": "Ta réponse : {r}",
+ "envivo.ocupado": "{quien} suit déjà ce match. Toi, tu peux ajouter des photos.",
+ "envivo.reporta": "{quien} suit le match",
+ "envivo.subir_fotos": "Ajouter des photos",
+ "envivo.error.ocupado": "Quelqu’un suit déjà ce match. Toi, tu peux ajouter des photos.",
+ "aviso.envivo.inicio": "Match suivi en direct : {titulo}",
+ "aviso.envivo.inicio_cuerpo": "{quien} est au terrain. Tu verras le score et l’heure de retour sur la fiche.",
+ "avisos.envivo": "En direct",
+ "envivo.ya_no_reporto": "Arrêter de suivre"
 }

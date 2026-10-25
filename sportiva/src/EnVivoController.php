@@ -64,7 +64,15 @@ final class EnVivoController extends AppBase
             return;
         }
         $quedar = !$svc->esPresente($id, $this->persona['id']);
+        $rep = $svc->reportero($e);
+        if ($quedar && !$this->esStaffDe($e) && $rep !== null && $rep['persona_id'] !== $this->persona['id']) {
+            $this->volver($id, $this->i18n->t('envivo.ocupado', ['quien' => $rep['nombre']]), 'error');
+            return;
+        }
         $svc->marcarPresente($id, $this->persona['id'], $quedar);
+        if ($quedar) {
+            $this->avisarInicio($e);
+        }
         if ($quedar && !empty($_POST['ir'])) {
             $this->ir('/app/evento/' . $id . '/envivo');
             return;
@@ -91,9 +99,14 @@ final class EnVivoController extends AppBase
         $svc = $this->svc();
         $act = $svc->actual($e['id']);
         $dep = EnVivoService::deporte($this->club['deporte'] ?? null);
+        $staff = $this->esStaffDe($e);
+        $rep = $svc->reportero($e);
+        $presente = $svc->esPresente($e['id'], $this->persona['id']);
         echo $this->vista()->pagina('evento-envivo.latte', [
             'activa' => 'agenda', 'e' => $e, 'act' => $act, 'd' => $d, 'errores' => $err, 'dep' => $dep, 'botones' => EnVivoService::BOTONES[$dep],
-            'presente' => $svc->esPresente($e['id'], $this->persona['id']), 'abierto' => EnVivoService::abierto((string) $e['inicio'], Tiempo::ahora($this->zona())),
+            'presente' => $presente, 'abierto' => EnVivoService::abierto((string) $e['inicio'], Tiempo::ahora($this->zona())),
+            'env' => $svc->vista($e, Tiempo::ahora($this->zona())), 'puede' => $staff, 'puedeRep' => true, 'reportero' => $rep,
+            'soyReportero' => !$staff && $presente && ($rep === null || $rep['persona_id'] === $this->persona['id']),
         ]);
     }
 
@@ -118,6 +131,11 @@ final class EnVivoController extends AppBase
             $this->volver($id, $this->i18n->t('envivo.error.no_presente'), 'error');
             return;
         }
+        $rep = $svc->reportero($e);
+        if (!$staff && $rep !== null && $rep['persona_id'] !== $this->persona['id']) {
+            $this->volver($id, $this->i18n->t('envivo.error.ocupado'), 'error');
+            return;
+        }
         $dep = EnVivoService::deporte($this->club['deporte'] ?? null);
         $act = $svc->actual($id);
         [$d, $err] = $svc->normalizar($_POST, (string) $e['inicio'], $act, $dep);
@@ -127,8 +145,29 @@ final class EnVivoController extends AppBase
         }
         $svc->marcarPresente($id, $this->persona['id'], true);
         $nuevo = $svc->publicar($id, $this->persona['id'], $d);
+        $this->avisarInicio($e);
         $this->avisarFamilias($e, $d, $nuevo);
-        $this->volver($id, $this->i18n->t('envivo.publicado'));
+        // se queda en la misma pantalla (el envío es por ajax): quien reporta no pierde el foco
+        $this->ctx->redirect('/app/evento/' . $id . '/envivo', $this->i18n->t('envivo.publicado'));
+    }
+
+    /** Una sola vez por partido: avisa a las familias que ya hay alguien reportando. */
+    private function avisarInicio(array $e): void
+    {
+        $svc = $this->svc();
+        if ($svc->inicioAvisado($e['id'])) {
+            return;
+        }
+        $svc->marcarInicioAvisado($e['id']);
+        $titulo = (string) $e['titulo'];
+        $quien = (string) $this->persona['nombre'];
+        $this->notificar(
+            (new AvisoService($this->pdo))->adultosDelEvento($e['id']),
+            'agenda',
+            fn(I18n $i) => [$i->t('aviso.envivo.inicio', ['titulo' => $titulo]), $i->t('aviso.envivo.inicio_cuerpo', ['quien' => $quien])],
+            '/app/evento/' . $e['id'],
+            ['id' => $e['id'], 'motivo' => 'envivo']
+        );
     }
 
     /** Solo se avisa a las familias si cambia el marcador, la hora de regreso o termina el partido. */

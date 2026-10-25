@@ -48,6 +48,9 @@
   {if $rol === 'apoderado' && $e['estado'] === 'publicado'}
    {foreach $mios as $j}
    <span class="mini-t" style="margin-top:14px">{$t('asist.tuya')} · {$j['nombre']}</span>
+   {if !$votoAbierto($e)}
+   <p class="sis" style="margin:6px 0 0">{$ico('lock')|noescape}{$t('asist.cerrada')}{if $j['respuesta']} · {$t('asist.tu_resp', ['r' => $t('asist.' . $j['respuesta'] . '_largo')])}{/if}</p>
+   {else}
    <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}" data-ok="{$t('asist.guardada')}">
     <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="jugador" value="{$j['id']}">
     <div class="voto">
@@ -56,6 +59,7 @@
      {/foreach}
     </div>
    </form>
+   {/if}
    {/foreach}
    {if $mios}<a class="bt w" href="{$url('consulta/nueva')}?evento={$e['id']}&amp;jugador={$mios[0]['id']}" style="margin-top:12px">{$ico('chat-circle-dots')|noescape}{$t('consulta.preguntar')}</a>{/if}
   {elseif $rol === 'jugador'}
@@ -72,7 +76,7 @@
 </aside>
 
 <div class="dos-b">
- {if $env}{include '_envivo.latte', e: $e, env: $env, dep: $dep, puede: $puede, puedeRep: $puedeRep, soyPresente: $soyPresente}{/if}
+ {if $env}{include '_envivo.latte', e: $e, env: $env, dep: $dep, puede: $puede, puedeRep: $puedeRep, reportero: $reportero, soyReportero: $soyReportero, enForm: false}{/if}
 
  {if $puedeMedios}
  <section class="card">

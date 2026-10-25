@@ -7,6 +7,7 @@
 {if !$abierto}
 <section class="card"><p class="texto" style="margin:0">{$t('envivo.f.cerrado')}</p></section>
 {else}
+{if $env}{include '_envivo.latte', e: $e, env: $env, dep: $dep, puede: $puede, puedeRep: true, reportero: $reportero, soyReportero: $soyReportero, enForm: true}{/if}
 <form method="post" action="{$url('evento/' . $e['id'] . '/envivo')}" novalidate>
  <input type="hidden" name="csrf" value="{$csrf}">
  {if isset($errores['general'])}<div class="aviso" role="alert" style="margin-bottom:12px"><span class="ia am">{$ico('warning')|noescape}</span><div><b>{$t($errores['general'])}</b></div></div>{/if}
@@ -35,7 +36,19 @@
 {/if}
 {/if}
 <script n:syntax="off">(function(){
-document.querySelectorAll('.vivo-step button').forEach(function(b){b.addEventListener('click',function(){var i=document.querySelector('input[name='+b.dataset.a+']');i.value=Math.max(0,Math.min(99,(parseInt(i.value,10)||0)+parseInt(b.dataset.paso,10)));});});
-var r=document.querySelectorAll('#vivo-tipos input');r.forEach(function(i){i.addEventListener('click',function(){if(i.dataset.on){i.checked=false;i.dataset.on='';}else{r.forEach(function(o){o.dataset.on='';});i.dataset.on='1';}});if(i.checked)i.dataset.on='1';});
+if(window.__vivoForm)return;window.__vivoForm=1;
+document.addEventListener('click',function(e){
+ var b=e.target.closest&&e.target.closest('.vivo-step button');
+ if(b){var i=document.querySelector('.vivo-step input[name='+b.dataset.a+']');if(i)i.value=Math.max(0,Math.min(99,(parseInt(i.value,10)||0)+parseInt(b.dataset.paso,10)));return;}
+ var r=e.target.closest&&e.target.closest('#vivo-tipos input');
+ if(r){if(r.dataset.on){r.checked=false;r.dataset.on='';}else{document.querySelectorAll('#vivo-tipos input').forEach(function(o){o.dataset.on='';});r.dataset.on='1';}}
+});
+/* después de publicar por ajax: se limpia la nota y la novedad elegida, y la pantalla queda donde estaba */
+document.addEventListener('ajax-listo',function(e){
+ if(e.detail&&e.detail.err)return;
+ var f=document.querySelector('form[action$="/envivo"]');if(!f)return;
+ var n=f.querySelector('input[name=texto]');if(n)n.value='';
+ f.querySelectorAll('#vivo-tipos input').forEach(function(o){o.checked=false;o.dataset.on='';});
+});
 })();</script>
 {/block}

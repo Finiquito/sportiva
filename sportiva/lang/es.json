@@ -796,5 +796,15 @@
  "avisos.marcador": "Marcador",
  "avisos.regreso": "Regreso",
  "avisos.final": "Final",
- "aviso.envivo.pedir": "¿Puedes actualizar el marcador?"
+ "aviso.envivo.pedir": "¿Puedes actualizar el marcador?",
+ "asist.cerrada": "La asistencia se cerró: el partido está por empezar.",
+ "asist.tu_resp": "Tu respuesta: {r}",
+ "envivo.ocupado": "{quien} ya está reportando este partido. Tú puedes subir fotos.",
+ "envivo.reporta": "{quien} está reportando",
+ "envivo.subir_fotos": "Subir fotos",
+ "envivo.error.ocupado": "Ya hay alguien reportando este partido. Tú puedes subir fotos.",
+ "aviso.envivo.inicio": "Se está reportando en vivo: {titulo}",
+ "aviso.envivo.inicio_cuerpo": "{quien} está en la cancha. Verás el marcador y la hora de regreso en la ficha.",
+ "avisos.envivo": "En vivo",
+ "envivo.ya_no_reporto": "Dejar de reportar"
 }

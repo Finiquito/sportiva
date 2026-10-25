@@ -9,6 +9,7 @@
   {if $e['tipo'] === 'partido'}<span class="tag lim">{$balon()|noescape}{$t('tipo.partido')}</span>
   {elseif $e['tipo'] === 'entreno'}<span class="tag pol">{$propio('silbato')|noescape}{$t('tipo.entreno')}</span>
   {else}<span class="tag">{$ico('sparkle')|noescape}{$t('tipo.' . $e['tipo'])}</span>{/if}
+  {if !empty($e['en_vivo'])}<span class="tag vivo">● {$t('envivo.titulo')}</span>{/if}
   <span class="ev-quien">{$e['equipo']}{if isset($e['jugador'])} · <b>{$e['jugador']}</b>{/if}</span>
  </div>
  <h2 class="ev-t"><a href="{$url('evento/' . $e['id'])}">{$e['titulo']}</a></h2>
@@ -23,6 +24,9 @@
    <span class="est">{$ico('x')|noescape}{$t('asist.no')} {$r['no']}</span>
    <span class="est">{$ico('clock')|noescape}{$t('asist.sin')} {$r['sin']}</span>
   </p>
+ {elseif isset($e['jugador_id']) && $rol === 'apoderado' && $e['tipo'] !== 'especial' && !$votoAbierto($e)}
+  <p class="sis" style="margin:12px 0 0">{$ico('lock')|noescape}{$t('asist.cerrada')}{if $e['respuesta']} · {$t('asist.tu_resp', ['r' => $t('asist.' . $e['respuesta'] . '_largo')])}{/if}</p>
+  <a class="bt w" href="{$url('consulta/nueva')}?evento={$e['id']}&amp;jugador={$e['jugador_id']}" style="margin-top:10px">{$ico('chat-circle-dots')|noescape}{$t('consulta.preguntar')}</a>
  {elseif isset($e['jugador_id']) && $rol === 'apoderado' && $e['tipo'] !== 'especial'}
   <form method="post" action="{$url('evento/' . $e['id'] . '/asistencia')}" class="ev-voto" data-ok="{$t('asist.guardada')}">
    <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="jugador" value="{$e['jugador_id']}"><input type="hidden" name="volver" value="/app/agenda">

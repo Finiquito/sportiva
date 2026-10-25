@@ -50,6 +50,7 @@ final class Vista
             'ed'      => fn(string $f) => Tiempo::etiquetaDia($f, $i),
             'h'       => fn(?string $f) => Tiempo::hora($f),
             'hace'    => fn(string $f) => Tiempo::hace($f, $i),
+            'votoAbierto' => fn(array $e) => EventoService::votoAbierto($e, Tiempo::ahora((string) ($this->club['zona'] ?? 'Europe/Paris'))),
             'tel'     => fn(?string $t) => PersonaService::telLimpio($t),
             'edad'    => fn(?string $n) => Tiempo::edad($n),
         ];

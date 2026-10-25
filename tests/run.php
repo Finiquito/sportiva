@@ -1494,6 +1494,70 @@ S\Tiempo::$ahora = null;
 $comoRol('pedro@ejemplo.fr', 'entrenador');
 check($sv2->actual($evSC) !== null && $evSC !== '', 'el reporte pertenece a su partido');
 
+seccion('En vivo: un solo reportero, avisos y cierre de la asistencia');
+$evR = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido de prueba en vivo', 'rival' => 'Q', 'inicio' => '2030-08-10 15:00:00', 'fin' => null, 'hora_cancha' => '2030-08-10 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $sinC, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
+$notasR = fn() => (int) $pdo->query("SELECT COUNT(*) FROM sportiva_envivo_notas WHERE evento_id = '{$evR}'")->fetchColumn();
+$avisosEnvivo = fn() => (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos_evento WHERE evento_id = '{$evR}' AND motivo = 'envivo'")->fetchColumn();
+$reloj('2030-08-10 15:05:00');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$pidD = S\Sesion::persona();
+llamar(fn() => $ev2->presente($evR), conCsrf());
+$av0 = $avisosEnvivo();
+check($sv2->esPresente($evR, $pidD) && $av0 > 0, 'la primera familia que reporta avisa a las demás que ya hay alguien en vivo');
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+$pidR = S\Sesion::persona();
+[$h, $r] = llamar(fn() => $ev2->presente($evR), conCsrf());
+check(!$sv2->esPresente($evR, $pidR), 'si otra familia ya está reportando, no se puede marcar «Estoy en la cancha»');
+[$h] = llamar(fn() => $ag->evento($evR));
+check(str_contains($h, 'ya está reportando') && str_contains($h, 'Subir fotos') && !str_contains($h, '/envivo/presente'), 'a las demás les dice quién reporta y solo ofrece subir fotos');
+llamar(fn() => $ev2->publicar($evR), conCsrf(['nuestro' => '1', 'rival' => '0']));
+check($notasR() === 0, 'otra familia no puede publicar mientras alguien reporta');
+check($sv2->reportero($S['ev']->buscar($evR))['persona_id'] === $pidD, 'el reportero activo es el primero');
+// el reportero publica y la pantalla se queda en el mismo lugar
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h, $r] = llamar(fn() => $ev2->publicar($evR), conCsrf(['tipo' => 'comenzo', 'nuestro' => '0', 'rival' => '0', 'texto' => 'Arrancamos']));
+check($notasR() === 1 && str_ends_with((string) $r, '/evento/' . $evR . '/envivo'), 'al publicar se vuelve a la misma pantalla de novedades (para el envío por ajax)');
+check($avisosEnvivo() === $av0, 'el aviso «se está reportando» sale una sola vez por partido');
+[$h] = llamar(fn() => $ev2->formulario($evR));
+check(str_contains($h, 'id="envivo"') && str_contains($h, 'Arrancamos') && !str_contains($h, 'class="vivo-acc"'), 'la pantalla de publicar muestra el marcador y las novedades sin repetir los botones');
+// el entrenador siempre puede publicar
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $ev2->publicar($evR), conCsrf(['nuestro' => '1', 'rival' => '0']));
+check($notasR() === 2, 'el entrenador puede publicar aunque una familia esté reportando');
+[$h] = llamar(fn() => $ag->evento($evR));
+check(str_contains($h, 'Daniela Pérez está reportando'), 'el entrenador ve quién está reportando');
+// una familia inactiva deja el puesto
+$reloj('2030-08-10 16:20:00');
+check($sv2->reportero($S['ev']->buscar($evR)) === null, 'después de una hora sin actividad el puesto de reportero queda libre');
+$comoRol('rosa@ejemplo.fr', 'apoderado');
+llamar(fn() => $ev2->presente($evR), conCsrf());
+check($sv2->esPresente($evR, $pidR) && $sv2->reportero($S['ev']->buscar($evR))['persona_id'] === $pidR && $avisosEnvivo() === $av0, 'otra familia toma el relevo sin repetir el aviso');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+llamar(fn() => $ev2->publicar($evR), conCsrf(['nuestro' => '5', 'rival' => '5']));
+check((int) $sv2->actual($evR)['nuestro'] === 1, 'quien dejó de ser el reportero ya no publica');
+// ---- cierre de la asistencia
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+$hijoD = array_values(array_filter($S['pers']->hijos($pidD, $cid), fn($x) => $x['equipo_id'] === $u12))[0]['id'];
+$resp = fn() => $pdo->query("SELECT respuesta FROM sportiva_asistencias WHERE evento_id = '{$evR}' AND jugador_id = '{$hijoD}'")->fetchColumn();
+$reloj('2030-08-10 14:30:00');
+llamar(fn() => $ag->responder($evR), conCsrf(['jugador' => $hijoD, 'respuesta' => 'voy']));
+check($resp() === 'voy', 'faltando más de 15 minutos todavía se puede responder');
+[$h] = llamar(fn() => $ag->evento($evR));
+check(str_contains($h, 'name="respuesta"'), 'la ficha muestra los botones de asistencia antes del cierre');
+$reloj('2030-08-10 14:50:00');
+llamar(fn() => $ag->responder($evR), conCsrf(['jugador' => $hijoD, 'respuesta' => 'no']));
+check($resp() === 'voy', 'a menos de 15 minutos del partido ya no se puede cambiar la asistencia');
+[$h] = llamar(fn() => $ag->evento($evR));
+check(str_contains($h, 'La asistencia se cerró') && !str_contains($h, 'name="respuesta"') && str_contains($h, 'consulta/nueva'), 'la ficha cierra la asistencia y deja las consultas');
+[$h] = llamar(fn() => $ag->agenda());
+$h = (string) strstr($h, 'Final sin fecha', true) ?: $h; // solo la tarjeta del partido de prueba
+check(str_contains($h, 'La asistencia se cerró') && !str_contains($h, 'class="voto"'), 'la agenda también cierra los botones de asistencia');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $ag->responder($evR), conCsrf(['jugador' => $hijoD, 'respuesta' => 'no']));
+check($resp() === 'no', 'el entrenador sí puede corregir la asistencia');
+check(S\EventoService::votoAbierto(['tipo' => 'entreno', 'inicio' => '2030-08-10 15:00:00'], S\Tiempo::ahora()), 'los entrenamientos no se cierran');
+S\Tiempo::$ahora = null;
+
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();
 check($css !== null && str_contains($css, '--css-v:"' . S\RecursosController::versionPlugin() . '"'), 'la hoja de estilos lleva la versión del plugin dentro');

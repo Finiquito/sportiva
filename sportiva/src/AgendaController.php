@@ -39,7 +39,9 @@ final class AgendaController extends AppBase
             return null;
         }
         $mios = $this->rol === 'apoderado' ? (new TurnoService($this->pdo))->eventosDeTurno($this->persona['id'], $this->club['id'], $desde) : [];
+        $vivos = (new EnVivoService($this->pdo))->enCurso(array_values(array_unique(array_column(array_filter($filas, fn($f) => $f['tipo'] === 'partido'), 'id'))));
         foreach ($filas as &$f) {
+            $f['en_vivo'] = isset($vivos[$f['id']]);
             $f['toca_llevar'] = isset($mios[$f['id']]);
             $f['compartir'] = Mapa::textoCompartir($f, $this->i18n, $this->urlAbsoluta('/app/evento/' . $f['id']));
         }
@@ -185,7 +187,8 @@ final class AgendaController extends AppBase
         }
         echo $this->vista()->pagina('evento.latte', [
             'env' => $env, 'dep' => EnVivoService::deporte($this->club['deporte'] ?? null), 'puedeRep' => $puede || ($this->rol === 'apoderado' && $mios !== []),
-            'soyPresente' => $env !== null && $sv->esPresente($id, $this->persona['id']),
+            'reportero' => $env !== null ? $sv->reportero($e) : null,
+            'soyReportero' => $env !== null && !$puede && $sv->esPresente($id, $this->persona['id']) && (($rp = $sv->reportero($e)) === null || $rp['persona_id'] === $this->persona['id']),
             'medios' => (new MedioService($this->pdo))->delEvento($id, 6), 'mediosTotal' => (new MedioService($this->pdo))->cuantos($id), 'puedeMedios' => in_array($this->rol, ['apoderado', 'jugador', 'directiva'], true) || $puede,
             'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
             'elegibles' => $puede ? $tu->elegibles($id) : [],
@@ -228,7 +231,7 @@ final class AgendaController extends AppBase
         $jugador = (string) ($_POST['jugador'] ?? '');
         $resp = (string) ($_POST['respuesta'] ?? '');
         if ($e !== null && $e['club_id'] === $this->club['id'] && $this->csrfOk()) {
-            $permitido = ($this->rol === 'apoderado' && $ev->esApoderadoDe($this->persona['id'], $jugador))
+            $permitido = ($this->rol === 'apoderado' && $ev->esApoderadoDe($this->persona['id'], $jugador) && EventoService::votoAbierto($e, Tiempo::ahora($this->zona())))
                 || (self::esCoach($this->rol) && in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true));
             if ($permitido) {
                 $ev->responder($id, $jugador, $resp, $this->persona['id']);

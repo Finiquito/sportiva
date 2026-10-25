@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.17.0";
+  --css-v:"0.17.1";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -292,6 +292,12 @@ a.bt{text-decoration:none;color:inherit}
 .tog .sw-c:checked{background:var(--club);border-color:var(--club)}
 .tog .sw-c:checked::after{left:21px;background:var(--amarillo)}
 .tog .sw-c:focus-visible{outline:2px solid var(--club);outline-offset:3px}
+.clubrow.actual{background:var(--club);color:var(--hueso);border-radius:18px;padding:12px 14px;margin:2px -4px 8px}
+.clubrow.actual b{color:#fff}
+.clubrow.actual small{color:color-mix(in oklab,var(--hueso) 78%,transparent)}
+.clubrow.actual .escudo{background:var(--amarillo);color:var(--verde)}
+.clubrow.actual .chev{color:var(--amarillo)}
+.clubrow.actual+.clubrow,.clubrow+.clubrow.actual{border-top-color:transparent}
 .fotos.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fotos.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .fotos.g4 span,.fotos.g3 span{min-height:90px}

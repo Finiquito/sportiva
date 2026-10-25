@@ -18,7 +18,7 @@
   <button class="clubrow{if $actual} actual{/if}" type="submit" name="membresia" value="{$m['id']}" {if $actual}aria-current="true"{/if}>
    <span class="escudo">{mb_strtoupper(mb_substr(preg_replace('/[^\p{L}]/u', '', $m['club']) ?: 'C', 0, 2))}</span>
    <span><b>{$m['club']}</b><small>{$t('rol.' . $m['rol'])}{if $actual} · {$t('mas.club_actual')}{/if}</small></span>
-   {if $actual}<span class="chev">{$ico('check')|noescape}</span>{else}<span class="chev">{$ico('arrow-right')|noescape}</span>{/if}
+   {if $actual}<span class="chev">{$ico('check')|noescape}</span>{else}<span class="chev">{$ico('arrows-left-right')|noescape}</span>{/if}
   </button>
   {/foreach}
  </section>

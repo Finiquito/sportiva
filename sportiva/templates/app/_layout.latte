@@ -166,6 +166,7 @@
    if(mismo){sync(main,nm,0);document.title=d.title;var er=main.querySelector('.error[role=alert]');var fe=main.querySelector('#fechas');if(er&&er.getBoundingClientRect().top<0)er.scrollIntoView({block:'center'});else if(fe&&bt&&bt.value==='ver')fe.scrollIntoView({block:'start'});else window.scrollTo(0,y);}
    else{window.history.pushState({},'',r.url);main.innerHTML=nm.innerHTML;vivos(main);document.title=d.title;window.scrollTo(0,0);}
    aviso(msg,err||!!main.querySelector('.error[role=alert]'));
+   document.dispatchEvent(new CustomEvent('ajax-listo',{detail:{err:err||!!main.querySelector('.error[role=alert]')}}));
   }).catch(function(){f.submit();});
  });
 })();

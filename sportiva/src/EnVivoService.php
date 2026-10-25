@@ -63,6 +63,55 @@ final class EnVivoService extends Repo
         }
     }
 
+    /** Inactividad (minutos) después de la cual un papá deja de ser «el reportero» y otro puede tomar su lugar. */
+    public const REPORTERO_MIN = 60;
+
+    /**
+     * El papá o la mamá que está reportando ahora, o null. Solo uno a la vez: el último que marcó «Estoy en la cancha» y sigue activo
+     * (marcó o publicó hace menos de REPORTERO_MIN minutos). El staff nunca cuenta: puede publicar siempre.
+     * @param array<string, mixed> $e evento @return array{persona_id: string, nombre: string}|null
+     */
+    public function reportero(array $e): ?array
+    {
+        $staff = (new AvisoService($this->pdo))->staffDelEquipo((string) $e['club_id'], (string) $e['equipo_id']);
+        $limite = (new \DateTimeImmutable(Tiempo::sello()))->modify('-' . self::REPORTERO_MIN . ' minutes')->format('Y-m-d H:i:s');
+        foreach ($this->filas('SELECT pr.persona_id, pr.created_at, p.nombre FROM sportiva_envivo_presentes pr JOIN sportiva_personas p ON p.id = pr.persona_id WHERE pr.evento_id = ? ORDER BY pr.created_at DESC, pr.id DESC', [$e['id']]) as $r) {
+            if (in_array($r['persona_id'], $staff, true)) {
+                continue;
+            }
+            $ult = $this->fila('SELECT MAX(created_at) AS t FROM sportiva_envivo_notas WHERE evento_id = ? AND persona_id = ?', [$e['id'], $r['persona_id']])['t'] ?? null;
+            if (max((string) $r['created_at'], (string) $ult) >= $limite) {
+                return ['persona_id' => $r['persona_id'], 'nombre' => $r['nombre']];
+            }
+        }
+        return null;
+    }
+
+    /** ¿Ya se avisó a las familias que alguien está reportando? (una sola vez por partido). */
+    public function inicioAvisado(string $evento): bool
+    {
+        return $this->fila("SELECT evento_id FROM sportiva_envivo_avisados WHERE evento_id = ? AND persona_id = 'inicio'", [$evento]) !== null;
+    }
+
+    public function marcarInicioAvisado(string $evento): void
+    {
+        $this->pedido($evento, 'inicio');
+    }
+
+    /** De estos partidos, cuáles se están reportando ahora (no terminados y con novedades recientes). @param array<int, string> $ids @return array<string, true> */
+    public function enCurso(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+        $limite = (new \DateTimeImmutable(Tiempo::sello()))->modify('-' . self::SIN_NOVEDAD_HORAS . ' hours')->format('Y-m-d H:i:s');
+        $r = [];
+        foreach ($this->filas("SELECT evento_id FROM sportiva_envivo WHERE estado <> 'terminado' AND updated_at >= ? AND evento_id IN (" . implode(',', array_fill(0, count($ids), '?')) . ')', array_merge([$limite], array_values($ids))) as $f) {
+            $r[$f['evento_id']] = true;
+        }
+        return $r;
+    }
+
     public function cuantosPresentes(string $evento): int
     {
         return (int) ($this->fila('SELECT COUNT(*) AS n FROM sportiva_envivo_presentes WHERE evento_id = ?', [$evento])['n'] ?? 0);
