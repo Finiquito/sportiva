@@ -681,5 +681,7 @@
  "mapa.falta": "La position sur la carte manque",
  "mapa.guardar_ubicacion": "Enregistrer la position",
  "mapa.enlace_invalido": "Impossible d'extraire la position de ce lien. Colle le lien long de Google Maps.",
- "mapa.ubicacion_guardada": "Position enregistrée."
+ "mapa.ubicacion_guardada": "Position enregistrée.",
+ "mapa.mi_ubicacion": "Ma position",
+ "mapa.sin_ubicacion": "Impossible d'obtenir ta position. Vérifie l'autorisation de localisation du navigateur. Elle n'est ni enregistrée ni envoyée."
 }

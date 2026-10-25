@@ -327,3 +327,6 @@ html.mf-abierto,html.mf-abierto body{overflow:hidden}
 .lpin .pi{width:22px;height:22px}
 .leaflet-container{font-family:var(--font-body)}
 .ubic{margin:12px 0 0;padding:12px;border:1.5px dashed var(--linea-2);border-radius:16px}
+.mapa-full .mf-msg{padding:8px 14px;background:var(--aviso,#E3F1EC);font:500 12.5px/1.4 var(--font-body);color:var(--tinta)}
+.mapa-full .mf-pie{flex-wrap:nowrap}
+.mapa-full .mf-pie .bt{white-space:nowrap}

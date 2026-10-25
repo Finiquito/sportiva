@@ -681,5 +681,7 @@
  "mapa.falta": "Falta la ubicación en el mapa",
  "mapa.guardar_ubicacion": "Guardar ubicación",
  "mapa.enlace_invalido": "No pude sacar la ubicación de ese enlace. Pega el enlace largo de Google Maps.",
- "mapa.ubicacion_guardada": "Ubicación guardada."
+ "mapa.ubicacion_guardada": "Ubicación guardada.",
+ "mapa.mi_ubicacion": "Mi ubicación",
+ "mapa.sin_ubicacion": "No pude obtener tu ubicación. Revisa el permiso de ubicación del navegador. No se guarda ni se envía a ningún lado."
 }
