@@ -198,7 +198,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.16.2';
+        return '0.16.3';
     }
 
     public function provides(): array

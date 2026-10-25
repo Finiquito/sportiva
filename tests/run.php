@@ -853,7 +853,7 @@ check((int) $pdo->query("SELECT predeterminado FROM sportiva_lugares WHERE id = 
 [$h] = llamar(fn() => $cc->guardarLugar(), conCsrf(['nombre' => 'Malo', 'lat' => '999', 'lon' => '0']));
 check(str_contains($h, 'class="error"') && !$pdo->query("SELECT id FROM sportiva_lugares WHERE nombre = 'Malo'")->fetchColumn(), 'coordenadas inválidas se rechazan');
 [$h] = llamar(fn() => $cc->lugarEditar($lg));
-check(str_contains($h, 'GMaps') && str_contains($h, 'Waze'), 'el lugar con coordenadas muestra mapa, GMaps y Waze');
+check(str_contains($h, 'Google Maps') && str_contains($h, 'Waze'), 'el lugar con coordenadas muestra mapa, Google Maps y Waze');
 llamar(fn() => $cc->guardarLugar($lg), conCsrf(['nombre' => 'Stade Nord 2', 'lat' => '46.6', 'lon' => '-0.3']));
 check($pdo->query("SELECT nombre FROM sportiva_lugares WHERE id = '{$lg}'")->fetchColumn() === 'Stade Nord 2', 'se edita un lugar');
 $lgUso = $pdo->query("SELECT lugar_id FROM sportiva_eventos WHERE club_id = '{$cid}' AND lugar_id IS NOT NULL LIMIT 1")->fetchColumn();
@@ -1136,7 +1136,7 @@ $con = S\Mapa::enlacesLugar(['lugar' => 'X', 'lugar_lat' => '46.1', 'lugar_lon' 
 check(str_contains($con['google'], 'query=46.1,-0.3') && str_contains($con['waze'], 'll='), 'con coordenadas usa el punto exacto');
 $comoRol($apEmail, 'apoderado');
 [$h] = llamar(fn() => $ag->evento($pid));
-check(str_contains($h, 'https://wa.me/?text=') && str_contains($h, 'GMaps') && str_contains($h, 'Waze') && str_contains($h, 'data-compartir'), 'la convocatoria tiene mapa, Google Maps, Waze y compartir por WhatsApp');
+check(str_contains($h, 'https://wa.me/?text=') && str_contains($h, 'class="lbl-mv">Maps') && str_contains($h, 'class="lbl-pc">Google Maps') && str_contains($h, 'Waze') && str_contains($h, 'data-compartir'), 'la convocatoria tiene mapa, Google Maps, Waze y compartir por WhatsApp');
 check(str_contains(urldecode($h), 'Estadio del club') || str_contains($h, 'Estadio'), 'el texto para compartir lleva el lugar');
 [$h] = llamar(fn() => $ag->agenda());
 check(str_contains($h, 'wa.me/?text=') && str_contains($h, 'Cómo llegar'), 'la tarjeta de la agenda tiene compartir y cómo llegar');

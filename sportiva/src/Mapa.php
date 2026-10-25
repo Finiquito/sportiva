@@ -47,7 +47,7 @@ final class Mapa
         $txt = json_encode([
             'ampliar' => $t('mapa.ampliar', 'Ampliar'), 'cerrar' => $t('mapa.cerrar', 'Cerrar'), 'encuadrar' => $t('mapa.encuadrar', 'Encuadrar'), 'mi' => $t('mapa.mi_ubicacion', 'Mi ubicación'),
             'cta' => $t('mapa.cuanto_demoro', '¿Cuánto demoro?'), 'ctaSub' => $t('mapa.cuanto_demoro_sub', 'Activa tu ubicación y calculo el tiempo en auto'), 'error' => $t('mapa.sin_ubicacion', 'No pude obtener tu ubicación'),
-            'ir' => $t('mapa.como_llegar', 'Cómo llegar'), 'enAuto' => $t('mapa.en_auto', 'En auto'), 'aprox' => $t('mapa.aprox', 'aprox.'),
+            'irMv' => $t('mapa.ir_maps', 'Ir con Maps'), 'irPc' => $t('mapa.ir_maps_pc', 'Ir con Google Maps'), 'wazeMv' => $t('mapa.ir_waze', 'Waze'), 'wazePc' => $t('mapa.ir_waze_pc', 'Ir con Waze'), 'enAuto' => $t('mapa.en_auto', 'En auto'), 'aprox' => $t('mapa.aprox', 'aprox.'),
             'dur' => $t('mapa.duracion', 'Duración'), 'dist' => $t('mapa.distancia', 'Distancia'), 'llegada' => $t('mapa.llegada', 'Llegada'),
         ], JSON_UNESCAPED_UNICODE) ?: '{}';
         $boton = '<button type="button" class="mapa-amp" data-mapa-full data-lat="' . htmlspecialchars($lat, ENT_QUOTES) . '" data-lon="' . htmlspecialchars($lon, ENT_QUOTES) . '" data-nombre="' . htmlspecialchars($etiqueta, ENT_QUOTES)

@@ -18,7 +18,7 @@
  <div class="pers" style="display:block">
   <b>{$c['nombre']}</b><small>{$sub}</small>
   <div class="grupo-pills" style="margin:8px 0 0">
-   {if $c['telefono']}<a class="pill" href="tel:{$tel($c['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>
+   {if $c['telefono']}<a class="pill solo-movil" href="tel:{$tel($c['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>
    <a class="pill" href="https://wa.me/{ltrim($tel($c['telefono']), '+')}" target="_blank" rel="noopener" style="text-decoration:none">{$ico('chats-circle')|noescape} WhatsApp</a>{/if}
    <a class="pill" href="mailto:{$c['email']}" style="text-decoration:none">{$ico('paper-plane-tilt')|noescape} {$t('directorio.correo')}</a>
   </div>

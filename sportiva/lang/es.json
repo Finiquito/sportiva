@@ -693,5 +693,9 @@
  "mapa.aprox": "aprox.",
  "mapa.duracion": "Duración",
  "mapa.distancia": "Distancia",
- "mapa.llegada": "Llegada"
+ "mapa.llegada": "Llegada",
+ "mapa.ir_maps": "Ir con Maps",
+ "mapa.ir_maps_pc": "Ir con Google Maps",
+ "mapa.ir_waze": "Waze",
+ "mapa.ir_waze_pc": "Ir con Waze"
 }

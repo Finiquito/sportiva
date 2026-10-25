@@ -4,7 +4,7 @@
 <a class="volver" href="{$url('club/lugares')}">{$ico('arrow-right')|noescape}{$t('club.lugares')}</a>
 <h1 style="font-size:34px;margin-bottom:12px">{$t($l ? 'club.lugar' : 'club.lugar.nuevo')}</h1>
 {if $mapa}{$mapa|noescape}{/if}
-{if $enlaces}<div class="grupo-pills" style="margin-top:8px"><a class="pill" href="{$enlaces['google']}" target="_blank" rel="noopener" style="text-decoration:none">GMaps</a><a class="pill" href="{$enlaces['waze']}" target="_blank" rel="noopener" style="text-decoration:none">Waze</a></div>{/if}
+{if $enlaces}<div class="grupo-pills" style="margin-top:8px"><a class="pill" href="{$enlaces['google']}" target="_blank" rel="noopener" style="text-decoration:none"><span class="lbl-mv">Maps</span><span class="lbl-pc">Google Maps</span></a><a class="pill" href="{$enlaces['waze']}" target="_blank" rel="noopener" style="text-decoration:none">Waze</a></div>{/if}
 <form method="post" action="{$l ? $url('club/lugares/' . $l['id']) : $url('club/lugares')}" novalidate>
  <input type="hidden" name="csrf" value="{$csrf}">
  <section class="card">

@@ -9,7 +9,7 @@
   <b>{$f['nombre']}</b><small>{implode(', ', $f['hijos'])} · {implode(', ', $f['equipos'])}</small>
   {if $f['telefono'] || $f['email']}
   <div class="grupo-pills" style="margin:8px 0 0">
-   {if $f['telefono']}<a class="pill" href="tel:{$tel($f['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>{/if}
+   {if $f['telefono']}<a class="pill solo-movil" href="tel:{$tel($f['telefono'])}" style="text-decoration:none">{$ico('phone')|noescape} {$t('directorio.llamar')}</a>{/if}
    {if $f['email']}<a class="pill" href="mailto:{$f['email']}" style="text-decoration:none">{$ico('paper-plane-tilt')|noescape} {$t('directorio.correo')}</a>{/if}
   </div>
   {/if}

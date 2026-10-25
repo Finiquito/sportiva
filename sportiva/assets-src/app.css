@@ -365,3 +365,16 @@ html.mf-abierto,html.mf-abierto body{overflow:hidden}
 .lpin .pi{width:22px;height:22px}
 .lyo{display:grid!important;place-items:center;border-radius:50%;background:#BD8DFF;color:#10201F;border:3px solid #fff;box-shadow:0 3px 10px rgba(16,32,31,.35)}
 .lyo .pi{width:22px;height:22px}
+/* Etiquetas según contexto: corta en el teléfono, completa en PC */
+.lbl-pc{display:none}.lbl-mv{display:inline}
+@media (min-width:1000px){
+ .lbl-pc{display:inline}.lbl-mv{display:none}
+ /* El mapa ampliado en PC: la información va en una tarjeta a la izquierda y el mapa ocupa el resto */
+ .mapa-full .mf-hoja{left:16px;right:auto;top:16px;bottom:16px;width:380px;max-width:none;margin:0;border-radius:24px;padding:18px 18px 18px;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(16,32,31,.25)}
+ .mapa-full .mf-asa{display:none}
+ .mapa-full .mf-lugar b{font-size:24px}
+ .mapa-full .mf-btns{margin-top:auto;padding-top:16px}
+ .mapa-full .mf-top{left:412px}
+ .mapa-full .leaflet-top.leaflet-left{left:412px}
+ .mapa-full .mf-res b{font-size:28px}.mapa-full .mf-res .mf-dur{font-size:38px}
+}

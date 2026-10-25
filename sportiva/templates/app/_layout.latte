@@ -63,20 +63,21 @@
    +'<div class="mf-lado"><button type="button" class="mf-r mf-yo">'+OBJETIVO+'</button></div>'
    +'<div class="mf-hoja"><i class="mf-asa"></i><div class="mf-lugar"><b></b><small></small></div>'
    +'<div class="mf-info"><button type="button" class="mf-cta"><span class="mf-ci">'+ic('yo')+'</span><span><b></b><small></small></span></button></div>'
-   +'<div class="mf-btns"><a class="bt s mf-ir" target="_blank" rel="noopener">'+ic('nav')+'<span></span></a><a class="bt mf-waze" target="_blank" rel="noopener">Waze</a></div></div>';
+   +'<div class="mf-btns"><a class="bt s mf-ir" target="_blank" rel="noopener">'+ic('nav')+'<span class="lbl-mv"></span><span class="lbl-pc"></span></a><a class="bt mf-waze" target="_blank" rel="noopener"><span class="lbl-mv"></span><span class="lbl-pc"></span></a></div></div>';
   var q=function(s){return ov.querySelector(s);};
   q('.mf-x').innerHTML=ic('x');q('.mf-x').setAttribute('aria-label',T.cerrar);q('.mf-enc').setAttribute('aria-label',T.encuadrar);q('.mf-yo').setAttribute('aria-label',T.mi);
   q('.mf-nombre b').textContent=d.nombre||'';q('.mf-lugar b').textContent=d.nombre||'';q('.mf-lugar small').textContent=d.dir||'';if(!d.dir)q('.mf-lugar small').hidden=true;
   q('.mf-cta b').textContent=T.cta;q('.mf-cta small').textContent=T.ctaSub;
-  q('.mf-ir span').textContent=T.ir;q('.mf-ir').href=d.ruta||d.google;q('.mf-waze').href=d.waze;
+  q('.mf-ir .lbl-mv').textContent=T.irMv;q('.mf-ir .lbl-pc').textContent=T.irPc;q('.mf-ir').href=d.ruta||d.google;q('.mf-waze .lbl-mv').textContent=T.wazeMv;q('.mf-waze .lbl-pc').textContent=T.wazePc;q('.mf-waze').href=d.waze;
   if(!navigator.geolocation){q('.mf-yo').hidden=true;q('.mf-cta').hidden=true;}
   document.body.appendChild(ov);document.documentElement.classList.add('mf-abierto');
   var watch=null,miCapa=null,rutaCapas=[],ultima=null,pedido=0,primera=true,yoPos=null;
   function tecla(e){if(e.key==='Escape')cerrar();}
   function cerrar(){if(watch!==null&&navigator.geolocation)navigator.geolocation.clearWatch(watch);if(map){map.remove();map=null;}ov.remove();document.documentElement.classList.remove('mf-abierto');document.removeEventListener('keydown',tecla);b.focus();}
   q('.mf-x').addEventListener('click',cerrar);document.addEventListener('keydown',tecla);q('.mf-x').focus();
-  function relleno(){var h=q('.mf-hoja').offsetHeight;return {paddingTopLeft:[48,84],paddingBottomRight:[48,h+28]};}
-  function encuadrar(){if(!map)return;if(yoPos){map.fitBounds(L.latLngBounds([[lat,lon],yoPos]),Object.assign({maxZoom:16},relleno()));}else{map.setView([lat,lon],16);map.panBy([0,Math.round(q('.mf-hoja').offsetHeight/2.4)],{animate:false});}}
+  function pc(){return window.innerWidth>=1000;}
+  function relleno(){var h=q('.mf-hoja').offsetHeight;return pc()?{paddingTopLeft:[420,90],paddingBottomRight:[70,50]}:{paddingTopLeft:[48,84],paddingBottomRight:[48,h+28]};}
+  function encuadrar(){if(!map)return;if(yoPos){map.fitBounds(L.latLngBounds([[lat,lon],yoPos]),Object.assign({maxZoom:16},relleno()));}else{map.setView([lat,lon],16);map.panBy(pc()?[-190,0]:[0,Math.round(q('.mf-hoja').offsetHeight/2.4)],{animate:false});}}
   function resumen(min,dist,aprox){
    var i=q('.mf-info');
    i.innerHTML='<div class="mf-modo"><span class="mf-mi">'+ic('car')+'</span>'+T.enAuto+(aprox?' <em>'+T.aprox+'</em>':'')+'</div>'
