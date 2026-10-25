@@ -82,7 +82,7 @@ final class Mapa
     public static function coordenadasDeEnlace(string $t): ?array
     {
         $t = urldecode(trim($t));
-        foreach (['/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/', '/!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/', '/[?&](?:q|ll|query|destination)=(-?\d{1,2}\.\d+)[, ](-?\d{1,3}\.\d+)/', '/mlat=(-?\d{1,2}\.\d+)&mlon=(-?\d{1,3}\.\d+)/', '/^\s*(-?\d{1,2}\.\d+)\s*[,;]\s*(-?\d{1,3}\.\d+)\s*$/'] as $re) {
+        foreach (['/!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/', '/@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/', '/[?&](?:q|ll|query|destination)=(-?\d{1,2}\.\d+)[, ](-?\d{1,3}\.\d+)/', '/mlat=(-?\d{1,2}\.\d+)&mlon=(-?\d{1,3}\.\d+)/', '/^\s*(-?\d{1,2}\.\d+)\s*[,;]\s*(-?\d{1,3}\.\d+)\s*$/'] as $re) {
             if (preg_match($re, $t, $m) && self::valido($m[1], $m[2])) {
                 return [$m[1], $m[2]];
             }

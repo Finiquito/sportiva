@@ -1127,6 +1127,8 @@ check(in_array($nuevoJ, $S['ev']->convocadosIds($pid), true) && count($S['ev']->
 check(count($tit($apNuevo)) > $antesN && count(array_filter(array_slice($tit($apNuevo), 0, 2), fn($t) => str_contains($t, 'Citaron') || str_contains($t, 'Ton enfant est convoqué'))) === 1, 'quien entra a la lista recibe un aviso');
 // Mapas y compartir
 check(S\Mapa::coordenadasDeEnlace('https://www.google.com/maps/place/Stade/@46.480236,-0.599575,17z/data=!3m1') === ['46.480236', '-0.599575'], 'se sacan las coordenadas de un enlace de Google Maps');
+check(S\Mapa::coordenadasDeEnlace('https://www.google.com/maps/place/Stade+Espinassou/@46.3289581,-0.465113,14z/') === ['46.3289581', '-0.465113'], 'enlace de lugar de Google Maps con solo el centro del mapa');
+check(S\Mapa::coordenadasDeEnlace('https://www.google.com/maps/place/Stade+Espinassou/@46.3289581,-0.465113,14z/data=!4m10!1m2!2m1!1sniort+stade!3m6!1s0x4807303a2cc9a0c1:0x5c653953ebd87e43!8m2!3d46.3352282!4d-0.4576478!15sCg9u!16s%2Fg%2F11b77bwqd3?entry=ttu&g_ep=Eg%3D%3D') === ['46.3352282', '-0.4576478'], 'si el enlace trae la ubicación exacta del lugar (!3d!4d), se usa esa y no el centro del mapa');
 check(S\Mapa::coordenadasDeEnlace('https://maps.google.com/?q=-33.4489,-70.6693') === ['-33.4489', '-70.6693'] && S\Mapa::coordenadasDeEnlace('-33.45, -70.66') === ['-33.45', '-70.66'] && S\Mapa::coordenadasDeEnlace('hola') === null, 'también de ?q=, de «lat, lon» y rechaza lo que no lo es');
 $sin = S\Mapa::enlacesLugar(['lugar' => 'Cancha Norte', 'lugar_direccion' => 'Calle 1', 'lugar_lat' => null, 'lugar_lon' => null]);
 check($sin !== null && str_contains($sin['google'], 'Cancha%20Norte') && str_contains($sin['waze'], 'q='), 'un lugar sin coordenadas igual ofrece Google Maps y Waze buscando por nombre y dirección');
@@ -1312,7 +1314,7 @@ $sinC = $ls->crear($cid, ['nombre' => 'Estadio sin coordenadas', 'direccion' => 
 $evSC = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido sin mapa', 'rival' => 'Z', 'inicio' => '2030-08-03 15:00:00', 'fin' => null, 'hora_cancha' => '2030-08-03 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $sinC, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
 $comoRol('pedro@ejemplo.fr', 'entrenador');
 [$h] = llamar(fn() => $ag->evento($evSC));
-check(!str_contains($h, 'class="mapa"') && str_contains($h, 'Falta la ubicación en el mapa') && str_contains($h, '/ubicacion'), 'si el lugar no tiene coordenadas, el entrenador ve cómo agregarlas');
+check(!str_contains($h, 'class="mapa"') && str_contains($h, 'Falta la ubicación en el mapa') && str_contains($h, '/ubicacion') && preg_match('/class="ubic">\s*<input type="hidden" name="csrf"/', $h) === 1, 'si el lugar no tiene coordenadas, el entrenador ve cómo agregarlas');
 $comoRol('daniela@ejemplo.fr', 'apoderado');
 [$h] = llamar(fn() => $ag->evento($evSC));
 check(!str_contains($h, 'Falta la ubicación'), 'las familias no ven el aviso de ubicación faltante');
