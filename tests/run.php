@@ -1328,7 +1328,7 @@ check($ls->buscar($sinC)['lat'] === '46.3' && $ls->buscar($sinC)['lon'] === '-0.
 [$h] = llamar(fn() => $ag->evento($evSC));
 check(str_contains($h, 'class="mapa"') && str_contains($h, 'data-mapa-full') && str_contains($h, 'data-lat="46.3"') && str_contains($h, 'data-google=') && str_contains($h, 'data-waze=') && str_contains($h, 'Ampliar'), 'con coordenadas el mapa chico trae el botón Ampliar con todo lo que necesita la pantalla completa');
 check(str_contains($h, 'onerror="this.onerror=null;this.src=this.dataset.f"') && str_contains($h, 'tile.openstreetmap.org'), 'si las teselas no cargan, el mapa chico prueba con las de respaldo');
-check(str_contains($h, 'data-mi="Mi ubicación"') && str_contains($h, 'data-mi-error='), 'el mapa ampliado trae el texto del botón «Mi ubicación» y del error');
+check(str_contains($h, 'data-mi="Mi ubicación"') && str_contains($h, 'data-mi-error=') && str_contains($h, 'data-yo-ico=') && str_contains($h, 'data-est="En auto ≈ {min} min') && str_contains($h, 'data-est-aprox='), 'el mapa ampliado trae el texto del botón «Mi ubicación» y del error');
 check(S\RecursosController::archivo('leaflet-js')['mime'] === 'application/javascript; charset=utf-8' && S\RecursosController::archivo('leaflet-css')['mime'] === 'text/css; charset=utf-8', 'Leaflet se sirve desde el propio plugin');
 $comoRol('otro.coach@ejemplo.fr', 'entrenador');
 llamar(fn() => $ag->guardarUbicacion($evSC), conCsrf(['enlace' => 'https://www.google.com/maps/@10.1,-0.9,15z']));

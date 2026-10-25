@@ -330,3 +330,6 @@ html.mf-abierto,html.mf-abierto body{overflow:hidden}
 .mapa-full .mf-msg{padding:8px 14px;background:var(--aviso,#E3F1EC);font:500 12.5px/1.4 var(--font-body);color:var(--tinta)}
 .mapa-full .mf-pie{flex-wrap:nowrap}
 .mapa-full .mf-pie .bt{white-space:nowrap}
+.lyo{display:grid!important;place-items:center;border-radius:50%;background:#BD8DFF;color:#10201F;border:3px solid #fff;box-shadow:0 3px 10px rgba(16,32,31,.35)}
+.lyo .pi{width:22px;height:22px}
+.mapa-full .mf-msg.est{background:var(--club);color:#F7F1E8;font-weight:600;text-align:center}

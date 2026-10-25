@@ -48,6 +48,9 @@ final class Mapa
             . '" data-t1="' . htmlspecialchars(self::TESELAS, ENT_QUOTES) . '" data-t2="' . htmlspecialchars(self::RESPALDO, ENT_QUOTES)
             . '" data-pin="' . htmlspecialchars(Iconos::svg('map-pin', 'fill'), ENT_QUOTES)
             . '" data-mi="' . htmlspecialchars($i ? $i->t('mapa.mi_ubicacion') : 'Mi ubicación', ENT_QUOTES) . '" data-mi-error="' . htmlspecialchars($i ? $i->t('mapa.sin_ubicacion') : 'No pude obtener tu ubicación', ENT_QUOTES)
+            . '" data-yo-ico="' . htmlspecialchars(Iconos::svg('users-three', 'fill'), ENT_QUOTES)
+            . '" data-est="' . htmlspecialchars($i ? $i->t('mapa.estimado') : 'En auto ≈ {min} min · {km} km · llegas ~{hora}', ENT_QUOTES)
+            . '" data-est-aprox="' . htmlspecialchars($i ? $i->t('mapa.estimado_aprox') : 'En auto ≈ {min} min (aprox.) · {km} km', ENT_QUOTES)
             . '" data-cerrar="' . htmlspecialchars($i ? $i->t('mapa.cerrar') : 'Cerrar', ENT_QUOTES) . '" aria-label="' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '">'
             . '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
             . '<span>' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '</span></button>';
