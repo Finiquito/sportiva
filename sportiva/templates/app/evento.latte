@@ -27,7 +27,8 @@
   {if $verCamino}{$mapa|noescape}{/if}
   {if $verCamino || $verComp}<div class="nav">
    {if $enlaces && $verCamino}
-   <a class="bt pill-sm" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Google Maps</a>
+   <a class="bt pill-sm" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}GMaps</a>
+   <a class="bt pill-sm" href="{$enlaces['waze']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}Waze</a>
    {/if}
    {if $verComp}<a class="bt s pill-sm" href="https://wa.me/?text={rawurlencode($compartir)}" target="_blank" rel="noopener" data-compartir="{$compartir}" data-titulo="{$e['titulo']}">{$ico('share-network')|noescape}{$t('compartir')}</a>{/if}
   </div>{/if}

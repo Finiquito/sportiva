@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.14.0";
+  --css-v:"0.14.1";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -655,3 +655,7 @@ html,body{background:var(--club)}
 .fil-tipo{gap:6px;margin-top:-4px}
 .fil-tipo .pill{height:34px;padding:0 12px;font-size:13px;display:inline-flex;align-items:center;gap:6px}
 .fil-tipo .av-n{margin-left:0;padding:2px 6px;font-size:10.5px}
+.ficha-evento .nav{flex-wrap:nowrap;gap:6px}
+.ficha-evento .nav .bt{flex:0 1 auto;min-width:0;height:36px;padding:0 11px;font-size:13px;gap:5px;white-space:nowrap}
+.ficha-evento .nav .bt .pi{font-size:15px}
+@media (max-width:340px){.ficha-evento .nav .bt{padding:0 8px;font-size:12px}}
