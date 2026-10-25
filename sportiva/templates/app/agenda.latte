@@ -39,7 +39,7 @@
    {include '_evento-card.latte', e: $e, coach: $coach}
   {/foreach}
  {else}
-  {if !$proximo}
+  {if !$proximo && !$pendientes}
   <section class="card vacio">
    <span class="fi">{$ico('calendar-blank')|noescape}</span>
    <b>{$t('agenda.vacio.titulo')}</b>
@@ -47,6 +47,12 @@
   </section>
   {/if}
  {/foreach}
+ {if $pendientes}
+  <div class="dia">{$t('agenda.por_confirmar')}</div>
+  {foreach $pendientes as $e}
+   {include '_evento-card.latte', e: $e, coach: $coach}
+  {/foreach}
+ {/if}
  {if $oculto > 0}<a class="bt w" href="{$url('agenda')}?dias={$masDias}" style="margin-top:12px">{$ico('calendar-dots')|noescape}{$t('agenda.ver_mas')}</a>{/if}
  {/if}
  </div>

@@ -701,5 +701,15 @@
  "mapa.err_politica": "El servidor de u330 tiene bloqueada la ubicación (cabecera Permissions-Policy), por eso el navegador no pregunta. Hay que permitirla en el .htaccess de public_html: geolocation=(self).",
  "mapa.err_bloqueado": "El navegador tiene bloqueada la ubicación para este sitio. Toca el candado (o el ícono de ubicación) de la barra de direcciones, permite «Ubicación» y vuelve a intentar.",
  "mapa.err_no_disp": "El dispositivo no pudo calcular tu ubicación. Revisa que la ubicación del sistema esté activada (en el computador, Ajustes › Privacidad › Localización) y vuelve a intentar.",
- "mapa.err_tiempo": "Tardó demasiado en encontrar tu ubicación. Vuelve a intentar."
+ "mapa.err_tiempo": "Tardó demasiado en encontrar tu ubicación. Vuelve a intentar.",
+ "evento.conf.def": "Definidas",
+ "evento.conf.solo_hora": "Hora por confirmar",
+ "evento.conf.todo": "Fecha por confirmar",
+ "evento.conf.fecha": "Fecha por confirmar",
+ "evento.conf.hora": "Hora por confirmar",
+ "hora.conf": "Por confirmar",
+ "evento.conf.ayuda": "Las familias verán «por confirmar» y les avisaremos cuando lo definas.",
+ "aviso.evento.confirmado": "Se confirmó: {titulo}",
+ "avisos.confirmada": "Confirmada",
+ "agenda.por_confirmar": "Por confirmar"
 }

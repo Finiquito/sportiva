@@ -72,7 +72,7 @@
 </aside>
 
 <div class="dos-b">
- {if $e['tipo'] === 'partido'}
+ {if $e['tipo'] === 'partido' && !\TypeDock\Plugin\Sportiva\Tiempo::sinFecha($e['inicio']) && !\TypeDock\Plugin\Sportiva\Tiempo::sinHora($e['inicio'])}
  <section class="card"><div class="hilo">
   <span class="fi">{$ico('timer')|noescape}</span>
   <div><span class="ey">{$t('evento.en_partido')}</span><b class="hora-mono">{$h($e['inicio'])}</b><p>{$t('evento.en_vivo_pronto')}</p></div>

@@ -65,3 +65,6 @@
 @media (max-width:1000px){.g2,.g3{grid-template-columns:minmax(0,1fr)}.cars{grid-template-columns:minmax(0,1fr)}}
 .dia{display:flex;align-items:center;gap:12px;font:500 11.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2)}
 .dia::after{content:"";flex:1;border-top:1.5px dashed var(--linea-2)}
+
+.horas .hora.conf{font:700 20px/1.15 var(--font-display);letter-spacing:0;color:var(--tinta-2)}.horas .hora.conf .hl{color:inherit}
+.av-fecha.pend b{font-size:18px}

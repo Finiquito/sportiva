@@ -81,7 +81,7 @@ final class FeedController extends AppBase
         }
         $sig = null;
         foreach ($items as $i) {
-            if ($i['k'] === 'evento' && ($sig === null || $i['p']['inicio'] < $sig['inicio'])) {
+            if ($i['k'] === 'evento' && !Tiempo::sinFecha($i['p']['inicio']) && ($sig === null || $i['p']['inicio'] < $sig['inicio'])) {
                 $sig = $i['p'];
             }
         }

@@ -102,7 +102,11 @@ final class Mapa
     {
         $l = [$i->t('compartir.' . ($e['tipo'] === 'partido' ? 'partido' : 'evento'), ['titulo' => $e['titulo'], 'equipo' => $e['equipo']])];
         $l[] = Tiempo::diaLargo($e['inicio'], $i);
-        if ($e['tipo'] === 'partido') {
+        if (Tiempo::sinFecha($e['inicio'])) {
+            // solo la línea de fecha («por confirmar»)
+        } elseif (Tiempo::sinHora($e['inicio'])) {
+            $l[] = $i->t('evento.conf.hora');
+        } elseif ($e['tipo'] === 'partido') {
             $h = [];
             if (!empty($e['hora_encuentro'])) {
                 $h[] = $i->t('hora.encuentro') . ' ' . Tiempo::hora($e['hora_encuentro']);

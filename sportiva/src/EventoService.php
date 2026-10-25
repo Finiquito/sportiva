@@ -40,9 +40,17 @@ final class EventoService extends Repo
         $e = [];
         $tipo = in_array($in['tipo'] ?? '', self::TIPOS, true) ? $in['tipo'] : 'partido';
         $fecha = (string) ($in['fecha'] ?? '');
-        $inicio = self::unir($fecha, (string) ($in['hora_partido'] ?? ''));
+        // «Por confirmar»: solo la hora, o fecha y hora (no aplica a los entrenamientos, que se planifican). Ver Tiempo::SIN_FECHA / SIN_HORA.
+        $conf = $tipo !== 'entreno' && in_array($in['conf'] ?? '', ['hora', 'fecha'], true) ? (string) $in['conf'] : '';
+        if ($conf === 'fecha') {
+            $fecha = Tiempo::SIN_FECHA;
+        }
+        $inicio = $conf === '' ? self::unir($fecha, (string) ($in['hora_partido'] ?? '')) : (preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha) ? $fecha . ' ' . Tiempo::SIN_HORA : null);
         if ($inicio === null) {
             $e['fecha'] = 'evento.error.fecha';
+        }
+        if ($conf !== '') {
+            $in['hora_fin'] = $in['hora_cancha'] = $in['hora_encuentro'] = $in['hay_encuentro'] = null;
         }
         $fin = $tipo === 'partido' ? null : self::unir($fecha, (string) ($in['hora_fin'] ?? ''));
         $cancha = $tipo === 'partido' ? self::unir($fecha, (string) ($in['hora_cancha'] ?? '')) : null;
@@ -54,7 +62,7 @@ final class EventoService extends Repo
             $in['rival'] = null;
         }
         $encuentro = !empty($in['hay_encuentro']) ? self::unir($fecha, (string) ($in['hora_encuentro'] ?? '')) : null;
-        if ($tipo === 'partido' && $cancha === null && $inicio !== null) {
+        if ($tipo === 'partido' && $cancha === null && $inicio !== null && $conf === '') {
             $min = (int) ($in['cancha_antes'] ?? 45);
             $cancha = (new \DateTimeImmutable($inicio))->modify('-' . max(0, min(180, $min)) . ' minutes')->format('Y-m-d H:i:s');
         }

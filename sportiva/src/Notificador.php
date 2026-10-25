@@ -151,7 +151,7 @@ final class Notificador
             $hasta = $ahora->modify('+24 hours')->format('Y-m-d H:i:s');
             foreach ($this->avisos->recordatoriosPendientes($club['id'], $desde, $hasta) as $r) {
                 $e = $r['evento'];
-                $n += $this->avisar($r['personas'], $club['id'], 'agenda', fn(I18n $i) => [$i->t('aviso.recordatorio', ['titulo' => $e['titulo']]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($e['inicio'], $i), 'hora' => Tiempo::hora($e['inicio'])])], '/app/evento/' . $e['id']);
+                $n += $this->avisar($r['personas'], $club['id'], 'agenda', fn(I18n $i) => [$i->t('aviso.recordatorio', ['titulo' => $e['titulo']]), Tiempo::cuando($e['inicio'], $i)], '/app/evento/' . $e['id']);
                 foreach ($r['personas'] as $p) {
                     $this->avisos->recordado($e['id'], $p);
                 }

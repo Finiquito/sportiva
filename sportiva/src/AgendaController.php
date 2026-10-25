@@ -115,6 +115,8 @@ final class AgendaController extends AppBase
         $dias_ = max(10, min(90, (int) round(((int) ($_GET['dias'] ?? 10)) / 10) * 10));
         $limite = (new \DateTimeImmutable($hoyD))->modify('+' . $dias_ . ' days')->format('Y-m-d') . ' 23:59:59';
         $topeEntrenos = 2 * intdiv($dias_, 10);
+        $sinFecha = array_values(array_filter($filas, fn($f) => Tiempo::sinFecha($f['inicio'])));
+        $filas = array_values(array_filter($filas, fn($f) => !Tiempo::sinFecha($f['inicio'])));
         $primero = $filas[0]['id'] ?? null;
         $entrenos = [];
         foreach ($filas as $f) {
@@ -134,7 +136,7 @@ final class AgendaController extends AppBase
             }
         }
         echo $this->vista()->pagina('agenda.latte', [
-            'proximo' => $proximo, 'dias' => $resto, 'oculto' => $oculto, 'masDias' => min(90, $dias_ + 10),
+            'proximo' => $proximo, 'pendientes' => $sinFecha, 'dias' => $resto, 'oculto' => $oculto, 'masDias' => min(90, $dias_ + 10),
         ] + $base);
     }
 
@@ -234,8 +236,8 @@ final class AgendaController extends AppBase
     {
         $titulo = (string) $d['titulo'];
         $inicio = (string) $d['inicio'];
-        $motivo = ['aviso.evento.nuevo' => 'nueva', 'aviso.evento.lugar' => 'lugar', 'aviso.evento.hora' => 'hora', 'aviso.evento.cancelado' => 'cancelado'][$clave] ?? 'otro';
-        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($id), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id, ['id' => $id, 'motivo' => $motivo]);
+        $motivo = ['aviso.evento.nuevo' => 'nueva', 'aviso.evento.lugar' => 'lugar', 'aviso.evento.hora' => 'hora', 'aviso.evento.cancelado' => 'cancelado', 'aviso.evento.confirmado' => 'confirmado'][$clave] ?? 'otro';
+        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($id), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), Tiempo::cuando($inicio, $i)], '/app/evento/' . $id, ['id' => $id, 'motivo' => $motivo]);
     }
 
     // ---- entrenadores: crear / editar / cancelar ------------------------------------------------
@@ -399,7 +401,7 @@ final class AgendaController extends AppBase
             return;
         }
         $d = [
-            'tipo' => $e['tipo'], 'titulo' => $e['titulo'], 'rival' => $e['rival'] ?? '', 'fecha' => Tiempo::dia($e['inicio']), 'hora_partido' => Tiempo::hora($e['inicio']),
+            'tipo' => $e['tipo'], 'titulo' => $e['titulo'], 'rival' => $e['rival'] ?? '', 'conf' => Tiempo::sinFecha($e['inicio']) ? 'fecha' : (Tiempo::sinHora($e['inicio']) ? 'hora' : ''), 'fecha' => Tiempo::sinFecha($e['inicio']) ? '' : Tiempo::dia($e['inicio']), 'hora_partido' => Tiempo::hora($e['inicio']),
             'hora_fin' => Tiempo::hora($e['fin']), 'hora_cancha' => Tiempo::hora($e['hora_cancha']), 'hay_encuentro' => $e['hora_encuentro'] ? '1' : '',
             'hora_encuentro' => Tiempo::hora($e['hora_encuentro']), 'lugar_id' => $e['lugar_id'], 'encuentro_texto' => $e['encuentro_texto'] ?? '', 'nota' => $e['nota'] ?? '',
             'equipo_id' => $e['equipo_id'], 'extra' => [],
@@ -439,12 +441,14 @@ final class AgendaController extends AppBase
             $inicio = (string) $d['inicio'];
             foreach (['aviso.evento.citado' => array_diff($jug, $antes), 'aviso.evento.descitado' => array_diff($antes, $jug)] as $clave => $ids) {
                 if ($ids !== []) {
-                    $this->notificar($svc->adultosDe(array_values($ids)), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), $i->t('aviso.cuando', ['dia' => Tiempo::diaCorto($inicio, $i), 'hora' => Tiempo::hora($inicio)])], '/app/evento/' . $id, ['id' => $id, 'motivo' => $clave === 'aviso.evento.citado' ? 'citado' : 'descitado']);
+                    $this->notificar($svc->adultosDe(array_values($ids)), 'agenda', fn(I18n $i) => [$i->t($clave, ['titulo' => $titulo]), Tiempo::cuando($inicio, $i)], '/app/evento/' . $id, ['id' => $id, 'motivo' => $clave === 'aviso.evento.citado' ? 'citado' : 'descitado']);
                 }
             }
         }
         if ($d['lugar_id'] !== $e['lugar_id']) {
             $this->avisarEvento($id, $d, 'aviso.evento.lugar');
+        } elseif (($d['inicio'] !== $e['inicio'] || $d['hora_cancha'] !== $e['hora_cancha'] || $d['hora_encuentro'] !== $e['hora_encuentro']) && (Tiempo::sinFecha($e['inicio']) || Tiempo::sinHora($e['inicio'])) && !Tiempo::sinFecha($d['inicio']) && !Tiempo::sinHora($d['inicio'])) {
+            $this->avisarEvento($id, $d, 'aviso.evento.confirmado');
         } elseif ($d['inicio'] !== $e['inicio'] || $d['hora_cancha'] !== $e['hora_cancha'] || $d['hora_encuentro'] !== $e['hora_encuentro']) {
             $this->avisarEvento($id, $d, 'aviso.evento.hora');
         }

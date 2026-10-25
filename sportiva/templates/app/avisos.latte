@@ -22,7 +22,8 @@
  {var $ev = $a['evento']}
  <a class="av{if !$a['leido_en']} nuevo{/if}" href="{$url('avisos/' . $a['id'])}">
   {if $ev}
-  <span class="av-fecha{if $ev['estado'] === 'cancelado'} canc{/if}" aria-hidden="true"><small>{$lista('fmt.meses_cortos')[(int) substr($ev['inicio'], 5, 2) - 1]}</small><b>{(int) substr($ev['inicio'], 8, 2)}</b></span>
+  {if \TypeDock\Plugin\Sportiva\Tiempo::sinFecha($ev['inicio'])}<span class="av-fecha pend{if $ev['estado'] === 'cancelado'} canc{/if}" aria-hidden="true"><small>···</small><b>?</b></span>
+  {else}<span class="av-fecha{if $ev['estado'] === 'cancelado'} canc{/if}" aria-hidden="true"><small>{$lista('fmt.meses_cortos')[(int) substr($ev['inicio'], 5, 2) - 1]}</small><b>{(int) substr($ev['inicio'], 8, 2)}</b></span>{/if}
   {else}
   <span class="fi av-ico{if $a['grupo'] === 'citaciones'} verde{/if}">{$ico($a['categoria'] === 'consultas' ? 'chat-circle-dots' : ($a['categoria'] === 'feed' ? 'newspaper' : ($a['categoria'] === 'turnos' ? 'car' : ($a['categoria'] === 'plantel' ? 'users-three' : 'calendar-blank'))))|noescape}</span>
   {/if}
@@ -32,6 +33,7 @@
    <p class="av-cita{if $ev['estado'] === 'cancelado'} canc{/if}">
     <span class="av-dia">{$dc($ev['inicio'])}</span>
     {if $ev['estado'] === 'cancelado'}<span class="av-tag">{$t('avisos.cancelada')}</span>
+    {elseif $a['motivo'] === 'confirmado'}<span class="av-tag">{$t('avisos.confirmada')}</span>
     {elseif $a['motivo'] === 'hora' || $a['motivo'] === 'lugar'}<span class="av-tag">{$t($a['motivo'] === 'hora' ? 'avisos.cambio_hora' : 'avisos.cambio_lugar')}</span>{/if}
    </p>
    {if $ev['estado'] !== 'cancelado'}{include '_horas.latte', e: $ev, tam: 's'}{/if}

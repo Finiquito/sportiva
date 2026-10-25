@@ -1,6 +1,9 @@
 {* Horarios de una cita, el mismo diseño en todo el plugin. Recibe $e (tipo, inicio, fin, hora_cancha, hora_encuentro) y $tam: xl (ficha), g (agenda), m (feed), s (avisos). *}
 {var $hs = []}
-{if $e['tipo'] === 'partido'}
+{var $pend = \TypeDock\Plugin\Sportiva\Tiempo::sinFecha($e['inicio']) || \TypeDock\Plugin\Sportiva\Tiempo::sinHora($e['inicio'])}
+{if $pend}
+ {do $hs[] = ['k' => 'hora.' . ($e['tipo'] === 'partido' ? 'partido' : 'inicio'), 'i' => $ico('clock'), 'v' => $t('hora.conf'), 'p' => true]}
+{elseif $e['tipo'] === 'partido'}
  {if $e['hora_encuentro']}{do $hs[] = ['k' => 'hora.encuentro', 'i' => $ico('users-three'), 'v' => $h($e['hora_encuentro'])]}{/if}
  {if $e['hora_cancha'] && $e['hora_cancha'] !== $e['inicio']}{do $hs[] = ['k' => 'hora.cancha', 'i' => $cancha(), 'v' => $h($e['hora_cancha'])]}{/if}
  {do $hs[] = ['k' => 'hora.partido', 'i' => $ico('timer'), 'v' => $h($e['inicio'])]}
@@ -10,6 +13,6 @@
 {/if}
 <div class="horas h-{$tam} n{count($hs)}" style="--n:{count($hs)}">
  {foreach $hs as $i => $x}
- <div><small>{$x['i']|noescape}{$t($x['k'])}</small><span class="hora">{if $i === 0}<span class="hl">{$x['v']}</span>{else}{$x['v']}{/if}</span></div>
+ <div><small>{$x['i']|noescape}{$t($x['k'])}</small><span class="hora{if !empty($x['p'])} conf{/if}">{if $i === 0}<span class="hl">{$x['v']}</span>{else}{$x['v']}{/if}</span></div>
  {/foreach}
 </div>

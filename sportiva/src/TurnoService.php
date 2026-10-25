@@ -150,7 +150,7 @@ final class TurnoService extends Repo
         }
         $hechos = 0;
         foreach ($this->filas(
-            "SELECT ev.id FROM sportiva_eventos ev WHERE ev.club_id = ? AND ev.equipo_id = ? AND ev.tipo = 'partido' AND ev.estado = 'publicado' AND ev.inicio >= ?
+            "SELECT ev.id FROM sportiva_eventos ev WHERE ev.club_id = ? AND ev.equipo_id = ? AND ev.tipo = 'partido' AND ev.estado = 'publicado' AND ev.inicio >= ? AND ev.inicio < '2999'
              AND NOT EXISTS (SELECT 1 FROM sportiva_turnos t WHERE t.evento_id = ev.id) ORDER BY ev.inicio",
             [$club, $equipo, $desde]
         ) as $ev) {
@@ -175,7 +175,7 @@ final class TurnoService extends Repo
         $in = implode(',', array_fill(0, count($equipos), '?'));
         $ev = $this->filas(
             "SELECT ev.id, ev.titulo, ev.inicio, ev.equipo_id, eq.nombre AS equipo FROM sportiva_eventos ev JOIN sportiva_equipos eq ON eq.id = ev.equipo_id
-             WHERE ev.club_id = ? AND ev.tipo = 'partido' AND ev.estado = 'publicado' AND ev.inicio >= ? AND ev.equipo_id IN ({$in}) ORDER BY ev.inicio",
+             WHERE ev.club_id = ? AND ev.tipo = 'partido' AND ev.estado = 'publicado' AND ev.inicio >= ? AND ev.inicio < '2999' AND ev.equipo_id IN ({$in}) ORDER BY ev.inicio",
             array_merge([$club, $desde], $equipos)
         );
         foreach ($ev as &$e) {

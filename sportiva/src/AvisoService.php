@@ -228,7 +228,7 @@ final class AvisoService extends Repo
     public function recordatoriosPendientes(string $club, string $desde, string $hasta): array
     {
         $r = [];
-        foreach ($this->filas("SELECT id, titulo, inicio FROM sportiva_eventos WHERE club_id = ? AND estado = 'publicado' AND tipo <> 'especial' AND inicio >= ? AND inicio <= ?", [$club, $desde, $hasta]) as $e) {
+        foreach ($this->filas("SELECT id, titulo, inicio FROM sportiva_eventos WHERE club_id = ? AND estado = 'publicado' AND tipo <> 'especial' AND inicio >= ? AND inicio <= ? AND inicio NOT LIKE '%23:59:59'", [$club, $desde, $hasta]) as $e) {
             $p = array_column($this->filas(
                 'SELECT DISTINCT aj.persona_id FROM sportiva_convocados c JOIN sportiva_apoderados_jugadores aj ON aj.jugador_id = c.jugador_id
                  LEFT JOIN sportiva_asistencias a ON a.evento_id = c.evento_id AND a.jugador_id = c.jugador_id

@@ -701,5 +701,15 @@
  "mapa.err_politica": "Le serveur u330 bloque la localisation (en-tête Permissions-Policy), c'est pourquoi le navigateur ne demande rien. Il faut l'autoriser dans le .htaccess de public_html : geolocation=(self).",
  "mapa.err_bloqueado": "Le navigateur bloque la localisation pour ce site. Touche le cadenas (ou l'icône de localisation) dans la barre d'adresse, autorise « Localisation » et réessaie.",
  "mapa.err_no_disp": "L'appareil n'a pas pu déterminer ta position. Vérifie que la localisation du système est activée et réessaie.",
- "mapa.err_tiempo": "La position a mis trop de temps à arriver. Réessaie."
+ "mapa.err_tiempo": "La position a mis trop de temps à arriver. Réessaie.",
+ "evento.conf.def": "Définies",
+ "evento.conf.solo_hora": "Heure à confirmer",
+ "evento.conf.todo": "Date à confirmer",
+ "evento.conf.fecha": "Date à confirmer",
+ "evento.conf.hora": "Heure à confirmer",
+ "hora.conf": "À confirmer",
+ "evento.conf.ayuda": "Les familles verront « à confirmer » et seront prévenues quand tu le définiras.",
+ "aviso.evento.confirmado": "Confirmé : {titulo}",
+ "avisos.confirmada": "Confirmé",
+ "agenda.por_confirmar": "À confirmer"
 }
