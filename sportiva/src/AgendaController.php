@@ -181,10 +181,31 @@ final class AgendaController extends AppBase
             'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
             'elegibles' => $puede ? $tu->elegibles($id) : [],
             'activa' => 'agenda', 'e' => $e, 'conv' => $conv, 'mios' => $mios, 'resumen' => $ev->resumen($id), 'puede' => $puede,
-            'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar']) : '',
+            'mapa' => Mapa::valido($e['lugar_lat'], $e['lugar_lon']) ? Mapa::html((string) $e['lugar_lat'], (string) $e['lugar_lon'], 16, (string) $e['lugar'], $this->i18n) : '',
             'enlaces' => $enlaces, 'zona' => $this->zona(),
             'compartir' => Mapa::textoCompartir($e, $this->i18n, $this->urlAbsoluta('/app/evento/' . $id)), 'serie' => $puede ? (new SerieService($this->pdo))->deEvento($id) : null,
         ]);
+    }
+
+    /** Un entrenador agrega la ubicación del lugar de la citación pegando un enlace de Google Maps. */
+    public function guardarUbicacion(string $id): void
+    {
+        if (($r = $this->exigirCoach()) !== null) {
+            $this->ir($r);
+            return;
+        }
+        $e = $this->eventos()->buscar($id);
+        if ($e === null || $e['club_id'] !== $this->club['id'] || !$e['lugar_id'] || !in_array($e['equipo_id'], array_column($this->gestionables(), 'id'), true) || !$this->csrfOk()) {
+            $this->ir('/app/agenda');
+            return;
+        }
+        $c = Mapa::coordenadasDeEnlace((string) ($_POST['enlace'] ?? ''));
+        if ($c === null) {
+            $this->ctx->redirect('/app/evento/' . $id, $this->i18n->t('mapa.enlace_invalido'), 'error');
+            return;
+        }
+        (new LugarService($this->pdo))->ponerCoordenadas((string) $e['lugar_id'], $c[0], $c[1]);
+        $this->ctx->redirect('/app/evento/' . $id, $this->i18n->t('mapa.ubicacion_guardada'));
     }
 
     public function responder(string $id): void

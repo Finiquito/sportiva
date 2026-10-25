@@ -11,6 +11,8 @@ namespace TypeDock\Plugin\Sportiva;
 final class Mapa
 {
     public const TESELAS = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+    /** Si las teselas principales no cargan (bloqueo, caída), se prueba con estas. */
+    public const RESPALDO = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     public const ATRIBUCION = 'Esri · © OpenStreetMap';
 
     public static function valido(?string $lat, ?string $lon): bool
@@ -18,7 +20,7 @@ final class Mapa
         return $lat !== null && $lon !== null && is_numeric($lat) && is_numeric($lon) && abs((float) $lat) <= 90 && abs((float) $lon) <= 180;
     }
 
-    public static function html(string $lat, string $lon, int $zoom = 16, string $etiqueta = ''): string
+    public static function html(string $lat, string $lon, int $zoom = 16, string $etiqueta = '', ?I18n $i = null): string
     {
         $la = (float) $lat;
         $lo = (float) $lon;
@@ -32,15 +34,25 @@ final class Mapa
         $imgs = '';
         for ($r = 0; $r < $rows; $r++) {
             for ($c = 0; $c < $cols; $c++) {
-                $u = str_replace(['{z}', '{x}', '{y}'], [(string) $zoom, (string) ($tx0 + $c), (string) ($ty0 + $r)], self::TESELAS);
-                $imgs .= '<img src="' . htmlspecialchars($u, ENT_QUOTES) . '" alt="" width="256" height="256" loading="lazy">';
+                $rep = [(string) $zoom, (string) ($tx0 + $c), (string) ($ty0 + $r)];
+                $u = str_replace(['{z}', '{x}', '{y}'], $rep, self::TESELAS);
+                $f = str_replace(['{z}', '{x}', '{y}'], $rep, self::RESPALDO);
+                $imgs .= '<img src="' . htmlspecialchars($u, ENT_QUOTES) . '" data-f="' . htmlspecialchars($f, ENT_QUOTES) . '" onerror="this.onerror=null;this.src=this.dataset.f" alt="" width="256" height="256" loading="lazy">';
             }
         }
         $ox = $px - $tx0 * 256;
         $oy = $py - $ty0 * 256;
+        $en = self::enlaces($lat, $lon);
+        $boton = '<button type="button" class="mapa-amp" data-mapa-full data-lat="' . htmlspecialchars($lat, ENT_QUOTES) . '" data-lon="' . htmlspecialchars($lon, ENT_QUOTES) . '" data-nombre="' . htmlspecialchars($etiqueta, ENT_QUOTES)
+            . '" data-google="' . htmlspecialchars($en['google'], ENT_QUOTES) . '" data-waze="' . htmlspecialchars($en['waze'], ENT_QUOTES)
+            . '" data-t1="' . htmlspecialchars(self::TESELAS, ENT_QUOTES) . '" data-t2="' . htmlspecialchars(self::RESPALDO, ENT_QUOTES)
+            . '" data-pin="' . htmlspecialchars(Iconos::svg('map-pin', 'fill'), ENT_QUOTES)
+            . '" data-cerrar="' . htmlspecialchars($i ? $i->t('mapa.cerrar') : 'Cerrar', ENT_QUOTES) . '" aria-label="' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '">'
+            . '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+            . '<span>' . htmlspecialchars($i ? $i->t('mapa.ampliar') : 'Ampliar', ENT_QUOTES) . '</span></button>';
         return sprintf(
-            '<div class="mapa" role="img" aria-label="%s"><div class="tiles" style="width:%dpx;height:%dpx;transform:translate(-%.1fpx,-%.1fpx)">%s</div><span class="pin">%s</span><span class="osm">%s</span></div>',
-            htmlspecialchars($etiqueta, ENT_QUOTES), $cols * 256, $rows * 256, $ox, $oy, $imgs, Iconos::svg('map-pin', 'fill'), self::ATRIBUCION
+            '<div class="mapa" role="img" aria-label="%s"><div class="tiles" style="width:%dpx;height:%dpx;transform:translate(-%.1fpx,-%.1fpx)">%s</div><span class="pin">%s</span><span class="osm">%s</span>%s</div>',
+            htmlspecialchars($etiqueta, ENT_QUOTES), $cols * 256, $rows * 256, $ox, $oy, $imgs, Iconos::svg('map-pin', 'fill'), self::ATRIBUCION, $boton
         );
     }
 

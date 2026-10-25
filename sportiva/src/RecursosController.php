@@ -13,8 +13,9 @@ final class RecursosController
     private const ARCHIVOS = [
         'grano' => 'grano.png', 'favicon' => 'marca/favicon.svg', 'apple-touch-icon' => 'marca/apple-touch-icon.png',
         'icon-192' => 'marca/icon-192.png', 'icon-512' => 'marca/icon-512.png',
+        'leaflet-js' => 'vendor/leaflet.js', 'leaflet-css' => 'vendor/leaflet.css',
     ];
-    private const TIPOS = ['png' => 'image/png', 'svg' => 'image/svg+xml'];
+    private const TIPOS = ['png' => 'image/png', 'svg' => 'image/svg+xml', 'js' => 'application/javascript; charset=utf-8', 'css' => 'text/css; charset=utf-8'];
 
     public static function assets(): string
     {

@@ -1175,13 +1175,13 @@ $comoRol('pedro@ejemplo.fr', 'entrenador');
 $ls->marcarLocal($cid, $lugarX, true);
 $entr = $pdo->query("SELECT id FROM sportiva_eventos WHERE titulo = 'Entreno largo' ORDER BY inicio LIMIT 1")->fetchColumn();
 [$h] = llamar(fn() => $ag->evento($entr));
-check(!str_contains($h, 'GMaps') && !str_contains($h, 'Waze') && !str_contains($h, 'wa.me/?text=') && !str_contains($h, 'class="mapa"'), 'un entrenamiento en lugar local no muestra mapa, cómo llegar ni compartir');
+check(!str_contains($h, 'google.com/maps') && !str_contains($h, 'waze.com') && !str_contains($h, 'wa.me/?text=') && !str_contains($h, 'class="mapa"'), 'un entrenamiento en lugar local no muestra mapa, cómo llegar ni compartir');
 $partL = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido en casa', 'rival' => 'X', 'inicio' => '2030-06-01 15:00:00', 'fin' => null, 'hora_cancha' => '2030-06-01 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $lugarX, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
 [$h] = llamar(fn() => $ag->evento($partL));
-check(str_contains($h, 'wa.me/?text=') && !str_contains($h, 'GMaps') && !str_contains($h, 'Waze'), 'un partido en casa se puede compartir pero no pide cómo llegar');
+check(str_contains($h, 'wa.me/?text=') && !preg_match('/href="https:\/\/(www\.google\.com\/maps|waze\.com)/', $h), 'un partido en casa se puede compartir pero no pide cómo llegar');
 $ls->marcarLocal($cid, $lugarX, false);
 [$h] = llamar(fn() => $ag->evento($entr));
-check(str_contains($h, 'GMaps') && str_contains($h, 'Waze') && str_contains($h, 'wa.me/?text='), 'de visita (lugar no local) sí hay mapa, cómo llegar y compartir');
+check(str_contains($h, 'google.com/maps') && str_contains($h, 'waze.com') && str_contains($h, 'wa.me/?text='), 'de visita (lugar no local) sí hay mapa, cómo llegar y compartir');
 $ls->marcarLocal($cid, $lugarX, true);
 // formulario: campos según el tipo
 [$h] = llamar(fn() => $ag->nuevo());
@@ -1301,6 +1301,35 @@ check(str_contains($h, '<article class="card ev ev-m">') && !str_contains($h, '<
 check(str_contains($h, 'Todo') && str_contains($h, 'Publicaciones') && str_contains($h, 'Citaciones') && str_contains($h, 'Fotos'), 'el feed tiene filtros Todo / Publicaciones / Citaciones / Fotos');
 [$h] = llamar(fn() => $fc->inicio(), [], ['t' => 'cualquiera']);
 check(str_contains($h, '<article class="card ev ev-m">'), 'un filtro inválido muestra todo');
+
+
+seccion('Mapa ampliable y ubicación faltante');
+$cid = $S['club']->porSlug('fcj-oree-de-l-autize')['id'];
+$u12 = $pdo->query("SELECT id FROM sportiva_equipos WHERE club_id = '{$cid}' AND nombre = 'U12'")->fetchColumn();
+$ag = new S\AgendaController($ctx);
+$ls = new S\LugarService($pdo);
+$sinC = $ls->crear($cid, ['nombre' => 'Estadio sin coordenadas', 'direccion' => 'Calle 9']);
+$evSC = $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => 'Partido sin mapa', 'rival' => 'Z', 'inicio' => '2030-08-03 15:00:00', 'fin' => null, 'hora_cancha' => '2030-08-03 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $sinC, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $S['pers']->porCorreo('pedro@ejemplo.fr')['id']);
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h] = llamar(fn() => $ag->evento($evSC));
+check(!str_contains($h, 'class="mapa"') && str_contains($h, 'Falta la ubicación en el mapa') && str_contains($h, '/ubicacion'), 'si el lugar no tiene coordenadas, el entrenador ve cómo agregarlas');
+$comoRol('daniela@ejemplo.fr', 'apoderado');
+[$h] = llamar(fn() => $ag->evento($evSC));
+check(!str_contains($h, 'Falta la ubicación'), 'las familias no ven el aviso de ubicación faltante');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+[$h, $r] = llamar(fn() => $ag->guardarUbicacion($evSC), conCsrf(['enlace' => 'hola']));
+check($ls->buscar($sinC)['lat'] === null, 'un enlace sin coordenadas no se guarda');
+llamar(fn() => $ag->guardarUbicacion($evSC), ['enlace' => 'https://www.google.com/maps/@46.3,-0.4,15z']);
+check($ls->buscar($sinC)['lat'] === null, 'guardar la ubicación exige CSRF');
+llamar(fn() => $ag->guardarUbicacion($evSC), conCsrf(['enlace' => 'https://www.google.com/maps/@46.3,-0.4,15z']));
+check($ls->buscar($sinC)['lat'] === '46.3' && $ls->buscar($sinC)['lon'] === '-0.4', 'el entrenador guarda la ubicación del lugar con un enlace de Google Maps');
+[$h] = llamar(fn() => $ag->evento($evSC));
+check(str_contains($h, 'class="mapa"') && str_contains($h, 'data-mapa-full') && str_contains($h, 'data-lat="46.3"') && str_contains($h, 'data-google=') && str_contains($h, 'data-waze=') && str_contains($h, 'Ampliar'), 'con coordenadas el mapa chico trae el botón Ampliar con todo lo que necesita la pantalla completa');
+check(str_contains($h, 'onerror="this.onerror=null;this.src=this.dataset.f"') && str_contains($h, 'tile.openstreetmap.org'), 'si las teselas no cargan, el mapa chico prueba con las de respaldo');
+check(S\RecursosController::archivo('leaflet-js')['mime'] === 'application/javascript; charset=utf-8' && S\RecursosController::archivo('leaflet-css')['mime'] === 'text/css; charset=utf-8', 'Leaflet se sirve desde el propio plugin');
+$comoRol('otro.coach@ejemplo.fr', 'entrenador');
+llamar(fn() => $ag->guardarUbicacion($evSC), conCsrf(['enlace' => 'https://www.google.com/maps/@10.1,-0.9,15z']));
+check($ls->buscar($sinC)['lat'] === '46.3', 'un entrenador de otro equipo no cambia la ubicación');
 
 seccion('Hoja de estilos y recursos servidos por PHP');
 $css = S\RecursosController::contenidoCss();

@@ -134,6 +134,7 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/evento/@id',        $p(fn(string $id) => $agenda->evento($id)));
         \Flight::route('POST /app/evento/@id',       $p(fn(string $id) => $agenda->actualizar($id)));
         \Flight::route('GET /app/evento/@id/editar', $p(fn(string $id) => $agenda->editar($id)));
+        \Flight::route('POST /app/evento/@id/ubicacion', $p(fn(string $id) => $agenda->guardarUbicacion($id)));
         \Flight::route('POST /app/evento/@id/asistencia', $p(fn(string $id) => $agenda->responder($id)));
         \Flight::route('POST /app/evento/@id/cancelar',   $p(fn(string $id) => $agenda->cancelar($id)));
         \Flight::route('GET /app/plantel',                              $p([$plantel, 'inicio']));
@@ -197,7 +198,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.14.1';
+        return '0.15.0';
     }
 
     public function provides(): array

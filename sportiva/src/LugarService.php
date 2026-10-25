@@ -76,4 +76,9 @@ final class LugarService extends Repo
     {
         return $this->filas('SELECT l.* FROM sportiva_lugares l JOIN sportiva_lugares_locales x ON x.lugar_id = l.id WHERE l.club_id = ? ORDER BY l.nombre', [$club]);
     }
+
+    public function ponerCoordenadas(string $id, string $lat, string $lon): void
+    {
+        $this->ejecutar('UPDATE sportiva_lugares SET lat = ?, lon = ? WHERE id = ?', [$lat, $lon, $id]);
+    }
 }

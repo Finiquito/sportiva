@@ -25,6 +25,12 @@
   {var $verCamino = $e['lugar'] && !$local}
   {var $verComp = !$local || $e['tipo'] !== 'entreno'}
   {if $verCamino}{$mapa|noescape}{/if}
+  {if $puede && $verCamino && !$mapa}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/ubicacion')}" class="ubic">
+   <label class="campo"><span>{$t('mapa.falta')}</span><input class="in" type="url" name="enlace" placeholder="https://www.google.com/maps/…"><small>{$t('evento.lugar_enlace_ayuda')}</small></label>
+   <button class="bt s pill-sm" type="submit">{$ico('check')|noescape}{$t('mapa.guardar_ubicacion')}</button>
+  </form>
+  {/if}
   {if $verCamino || $verComp}<div class="nav">
    {if $enlaces && $verCamino}
    <a class="bt pill-sm" href="{$enlaces['google']}" target="_blank" rel="noopener">{$ico('navigation-arrow')|noescape}GMaps</a>

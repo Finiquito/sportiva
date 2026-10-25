@@ -675,5 +675,11 @@
  "feed.filtro.todo": "Todo",
  "feed.filtro.posts": "Publicaciones",
  "feed.filtro.citaciones": "Citaciones",
- "feed.filtro.fotos": "Fotos"
+ "feed.filtro.fotos": "Fotos",
+ "mapa.ampliar": "Ampliar",
+ "mapa.cerrar": "Cerrar",
+ "mapa.falta": "Falta la ubicación en el mapa",
+ "mapa.guardar_ubicacion": "Guardar ubicación",
+ "mapa.enlace_invalido": "No pude sacar la ubicación de ese enlace. Pega el enlace largo de Google Maps.",
+ "mapa.ubicacion_guardada": "Ubicación guardada."
 }

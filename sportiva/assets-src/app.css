@@ -315,3 +315,15 @@ html,body{background:var(--club)}
 .ficha-evento .nav .bt{flex:0 1 auto;min-width:0;height:36px;padding:0 11px;font-size:13px;gap:5px;white-space:nowrap}
 .ficha-evento .nav .bt .pi{font-size:15px}
 @media (max-width:340px){.ficha-evento .nav .bt{padding:0 8px;font-size:12px}}
+/* Mapa pequeño con botón para ampliarlo a pantalla completa (mover y hacer zoom) */
+.mapa-amp{position:absolute;top:8px;right:8px;z-index:3;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:0;background:var(--papel);color:var(--tinta);font:700 12.5px/1 var(--font-body);box-shadow:0 2px 8px rgba(16,32,31,.18);cursor:pointer}
+.mapa-full{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:var(--hueso)}
+.mapa-full .mf-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;background:var(--club);color:#F7F1E8}
+.mapa-full .mf-cab b{font:700 15px/1.2 var(--font-body);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mapa-full .mf-mapa{flex:1;min-height:0;isolation:isolate;background:var(--hueso)}
+.mapa-full .mf-pie{display:flex;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--papel);border-top:1px solid var(--linea)}
+html.mf-abierto,html.mf-abierto body{overflow:hidden}
+.lpin{display:grid!important;place-items:center;border-radius:50%;background:var(--club);color:var(--amarillo);box-shadow:0 3px 10px rgba(16,32,31,.35)}
+.lpin .pi{width:22px;height:22px}
+.leaflet-container{font-family:var(--font-body)}
+.ubic{margin:12px 0 0;padding:12px;border:1.5px dashed var(--linea-2);border-radius:16px}

@@ -675,5 +675,11 @@
  "feed.filtro.todo": "Tout",
  "feed.filtro.posts": "Publications",
  "feed.filtro.citaciones": "Convocations",
- "feed.filtro.fotos": "Photos"
+ "feed.filtro.fotos": "Photos",
+ "mapa.ampliar": "Agrandir",
+ "mapa.cerrar": "Fermer",
+ "mapa.falta": "La position sur la carte manque",
+ "mapa.guardar_ubicacion": "Enregistrer la position",
+ "mapa.enlace_invalido": "Impossible d'extraire la position de ce lien. Colle le lien long de Google Maps.",
+ "mapa.ubicacion_guardada": "Position enregistrée."
 }

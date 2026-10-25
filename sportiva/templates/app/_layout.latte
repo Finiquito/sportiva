@@ -43,6 +43,33 @@
 </main>
  </div>
 </div>
+<script n:syntax="off">
+(function(){
+ var ov=null,map=null,cargado=null;
+ function cargar(){if(cargado)return cargado;cargado=new Promise(function(ok,ko){var l=document.createElement('link');l.rel='stylesheet';l.href='/app/recurso/leaflet-css';document.head.appendChild(l);var s=document.createElement('script');s.src='/app/recurso/leaflet-js';s.onload=ok;s.onerror=ko;document.head.appendChild(s);});return cargado;}
+ function abrir(b){
+  var d=b.dataset;
+  ov=document.createElement('div');ov.className='mapa-full';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label',d.nombre||'');
+  ov.innerHTML='<div class="mf-cab"><b></b><button type="button" class="bt pill-sm mf-x"></button></div><div class="mf-mapa"></div><div class="mf-pie"><a class="bt pill-sm" target="_blank" rel="noopener">GMaps</a><a class="bt pill-sm" target="_blank" rel="noopener">Waze</a></div>';
+  ov.querySelector('b').textContent=d.nombre||'';
+  var x=ov.querySelector('.mf-x');x.textContent=d.cerrar;
+  var as=ov.querySelectorAll('.mf-pie a');as[0].href=d.google;as[1].href=d.waze;
+  document.body.appendChild(ov);document.documentElement.classList.add('mf-abierto');
+  function tecla(e){if(e.key==='Escape')cerrar();}
+  function cerrar(){if(map){map.remove();map=null;}ov.remove();document.documentElement.classList.remove('mf-abierto');document.removeEventListener('keydown',tecla);b.focus();}
+  x.addEventListener('click',cerrar);document.addEventListener('keydown',tecla);x.focus();
+  cargar().then(function(){
+   var lat=parseFloat(d.lat),lon=parseFloat(d.lon);
+   map=L.map(ov.querySelector('.mf-mapa'),{attributionControl:true}).setView([lat,lon],16);
+   var capa=L.tileLayer(d.t1,{maxNativeZoom:16,maxZoom:18,minZoom:4,attribution:'Esri · © OpenStreetMap'}),fallo=false;
+   capa.on('tileerror',function(){if(fallo)return;fallo=true;map.removeLayer(capa);L.tileLayer(d.t2,{maxZoom:19,minZoom:4,attribution:'© OpenStreetMap'}).addTo(map);map.setMaxZoom(19);});
+   capa.addTo(map);
+   L.marker([lat,lon],{keyboard:false,icon:L.divIcon({className:'lpin',html:d.pin,iconSize:[40,40],iconAnchor:[20,40]})}).addTo(map);
+  }).catch(function(){ov.querySelector('.mf-mapa').textContent='…';});
+ }
+ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-mapa-full]');if(b){e.preventDefault();abrir(b);}});
+})();
+</script>
 <template id="toast-ok"><span class="ia ok">{$ico('check')|noescape}</span></template>
 <template id="toast-err"><span class="ia err">{$ico('warning-circle')|noescape}</span></template>
 <div id="toast" class="toast" role="status" aria-live="polite" data-ok="{$t('ajax.guardado')}" hidden></div>
