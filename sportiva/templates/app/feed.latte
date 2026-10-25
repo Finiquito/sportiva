@@ -40,6 +40,14 @@
   {if isset($adj[$p['id']])}<a href="{$url('adjunto/' . $adj[$p['id']] . '/f')}" target="_blank" rel="noopener"><img class="adj" src="{$url('adjunto/' . $adj[$p['id']] . '/m')}" alt="{$t('adjunto.foto')}" loading="lazy"></a>{/if}
   <div class="post-f"><a class="bt" href="{$url('feed/' . $p['id'])}">{$ico('chat-circle-dots')|noescape}{if $p['comentarios'] > 0}{$n('feed.comentarios', (int) $p['comentarios'])}{else}{$t('feed.comentar')}{/if}</a></div>
  </article>
+ {elseif $it['k'] === 'resultado'}
+ {var $q = $it['p']}
+ <article class="card"><div class="hilo">
+  <span class="fi">{$balon()|noescape}</span>
+  <div><span class="ey">{$t('envivo.terminado')}{if $q['confirmado']} · {$t('envivo.confirmado')}{/if}</span><b>{$q['titulo']}</b><p>{$q['equipo']}{if $q['rival']} · {$q['rival']}{/if}</p>
+   <p style="font:800 34px/1 var(--font-display);color:var(--tinta);margin:2px 0 10px">{(int) $q['nuestro']} – {(int) $q['goles_rival']}</p>
+   <a class="bt" href="{$url('evento/' . $q['id'])}">{$t('abrir')}</a></div>
+ </div></article>
  {elseif $it['k'] === 'medios'}
  {var $q = $it['p']}
  <article class="card"><div class="hilo">

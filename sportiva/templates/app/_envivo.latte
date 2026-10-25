@@ -1,0 +1,52 @@
+{* Reporte en vivo en la ficha del partido. Recibe $e, $env (EnVivoService::vista), $dep, $puede (staff del equipo), $puedeRep, $soyPresente. Tres estados: envivo, sin, fin. *}
+{var $act = $env['act']}
+{var $notas = $env['notas']}
+{var $hm = null}{foreach $notas as $x}{if $x['nuestro'] !== null && !$hm}{do $hm = $x}{/if}{/foreach}
+{var $rg = []}{foreach $notas as $x}{if $x['regreso']}{do $rg[] = $x}{/if}{/foreach}
+<section class="card" id="envivo">
+ {if $env['estado'] === 'sin'}
+ <div class="hilo">
+  <span class="fi">{$ico('timer')|noescape}</span>
+  <div><span class="ey">{$t('envivo.sin')}</span><b class="hora-mono">{$h($e['inicio'])}</b><p>{$t('envivo.sin_texto')}</p></div>
+ </div>
+ {else}
+ <div class="ch">
+  {if $env['estado'] === 'fin'}<h3>{$t('envivo.terminado')}</h3>{if $act['confirmado']}<span class="tag">{$ico('check')|noescape}{$t('envivo.confirmado')}</span>{/if}
+  {else}<h3>{$t('envivo.titulo')}</h3><span class="tag vivo">● {if $act['estado'] === 'descanso'}{$t('envivo.descanso.' . $dep)}{elseif (int) $act['periodo'] > 0}{$t('envivo.per.' . $dep, ['n' => (int) $act['periodo']])}{else}{$t('envivo.previo')}{/if}</span>{/if}
+ </div>
+ <div class="vivo-marc">
+  <small>{$e['equipo']}{if $e['rival']} · {$e['rival']}{/if}</small>
+  <b>{(int) $act['nuestro']} – {(int) $act['rival']}</b>
+  {if $hm}<em>{$t('envivo.marcador_de', ['quien' => $hm['autor'], 'hace' => $hace($hm['created_at'])])}</em>{/if}
+ </div>
+ {/if}
+ {if $act && $act['regreso']}
+ <div class="vivo-reg">
+  <small>{$t($env['estado'] === 'envivo' ? 'envivo.regreso' : ($env['estado'] === 'fin' ? 'envivo.regreso' : 'envivo.regreso_tent'))}</small>
+  <b class="{if $env['estado'] === 'sin'}tent{else}hl{/if}">{if $env['estado'] === 'sin'}{$h($act['regreso'])}{else}<span class="hl">{$h($act['regreso'])}</span>{/if}</b>
+  {if count($rg) > 1}<em>{$t('envivo.antes', ['hora' => $h($rg[1]['regreso']), 'hace' => $hace($act['regreso_at'])])}</em>
+  {elseif $act['regreso_at']}<em>{$t('envivo.actualizada', ['hace' => $hace($act['regreso_at'])])}</em>{/if}
+ </div>
+ {/if}
+ {if $notas}
+ <div class="vivo-notas">
+  {foreach $notas as $x}
+  <div class="vivo-nota"><span>{$h($x['created_at'])}</span><div>
+   <b>{if in_array($x['tipo'], ['descanso', 'reanuda'], true)}{$t('envivo.t.' . $x['tipo'] . '.' . $dep)}{else}{$t('envivo.t.' . $x['tipo'])}{/if}{if $x['texto']} · {$x['texto']}{/if}</b>
+   <small>{$x['autor']}{if $x['nuestro'] !== null} · {(int) $x['nuestro']} – {(int) $x['rival']}{/if}{if $x['regreso']} · {$h($x['regreso'])}{/if}</small>
+  </div></div>
+  {/foreach}
+ </div>
+ {/if}
+ {if $env['abierto'] && $puedeRep || ($puede && $env['estado'] === 'fin' && $act && !$act['confirmado'])}
+ <div class="vivo-acc">
+  {if $env['abierto'] && $puedeRep}
+   {if $soyPresente || $puede}<a class="bt s w" href="{$url('evento/' . $e['id'] . '/envivo')}">{$ico('megaphone')|noescape}{$t('envivo.publicar')}</a>
+   {else}<form method="post" action="{$url('evento/' . $e['id'] . '/envivo/presente')}"><input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="ir" value="1"><button class="bt s w" type="submit">{$ico('map-pin')|noescape}{$t('envivo.estoy')}</button></form>{/if}
+  {/if}
+  {if $puede && $env['estado'] === 'fin' && $act && !$act['confirmado']}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/envivo/confirmar')}" data-ok="{$t('envivo.confirmado_ok')}"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('check')|noescape}{$t('envivo.confirmar')}</button></form>
+  {/if}
+ </div>
+ {/if}
+</section>

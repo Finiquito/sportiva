@@ -68,13 +68,19 @@ final class FeedController extends AppBase
             }
         }
         if ($vista === 'equipo') {
+            $desdeR = Tiempo::ahora((string) $this->club['zona'])->modify('-7 days')->format('Y-m-d H:i:s');
+            foreach ($svc->resultados($this->club['id'], $eq, $desdeR) as $r) {
+                $items[] = ['k' => 'resultado', 'f' => 0, 't' => $r['updated_at'], 'p' => $r];
+            }
+        }
+        if ($vista === 'equipo') {
             $desdeM = Tiempo::ahora((string) $this->club['zona'])->modify('-7 days')->format('Y-m-d H:i:s');
             foreach ((new MedioService($this->pdo))->novedades($this->club['id'], $eq, $desdeM) as $n) {
                 $items[] = ['k' => 'medios', 'f' => 0, 't' => $n['ultimo'], 'p' => $n];
             }
         }
         // Filtro por tipo: todo | publicaciones | convocatorias | fotos (con su cantidad)
-        $tipos = ['post' => 'posts', 'evento' => 'citaciones', 'medios' => 'fotos'];
+        $tipos = ['post' => 'posts', 'evento' => 'citaciones', 'resultado' => 'citaciones', 'medios' => 'fotos'];
         $conteo = ['todo' => count($items), 'posts' => 0, 'citaciones' => 0, 'fotos' => 0];
         foreach ($items as $i) {
             $conteo[$tipos[$i['k']] ?? 'posts']++;

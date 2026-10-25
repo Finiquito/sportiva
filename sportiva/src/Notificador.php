@@ -156,6 +156,15 @@ final class Notificador
                     $this->avisos->recordado($e['id'], $p);
                 }
             }
+            // «¿Puedes actualizar el marcador?» a quienes están en la cancha cuando empieza el partido
+            $envivo = new EnVivoService($this->pdo);
+            foreach ($envivo->porPedir($club['id'], $ahora->modify('-45 minutes')->format('Y-m-d H:i:s'), $desde) as $r) {
+                $e = $r['evento'];
+                $n += $this->avisar($r['personas'], $club['id'], 'agenda', fn(I18n $i) => [$i->t('aviso.envivo.pedir'), $e['titulo']], '/app/evento/' . $e['id'] . '/envivo');
+                foreach ($r['personas'] as $p) {
+                    $envivo->pedido($e['id'], $p);
+                }
+            }
         }
         return $n;
     }

@@ -1,0 +1,41 @@
+{layout '_layout.latte'}
+{block titulo}{$t('envivo.f.titulo')} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('evento/' . $e['id'])}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:6px">{$t('envivo.f.titulo')}</h1>
+<p class="hola" style="margin:0 0 14px">{$e['titulo']}</p>
+{if !$abierto}
+<section class="card"><p class="texto" style="margin:0">{$t('envivo.f.cerrado')}</p></section>
+{else}
+<form method="post" action="{$url('evento/' . $e['id'] . '/envivo')}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ {if isset($errores['general'])}<div class="aviso" role="alert" style="margin-bottom:12px"><span class="ia am">{$ico('warning')|noescape}</span><div><b>{$t($errores['general'])}</b></div></div>{/if}
+ <section class="card">
+  <div class="ch"><h3>{$t('envivo.f.novedad')}</h3></div>
+  <div class="grupo-pills" id="vivo-tipos" style="margin:0 0 14px">
+   {foreach $botones as $b}
+   <label class="pill-radio"><input type="radio" name="tipo" value="{$b}" {if ($d['tipo'] ?? '') === $b}checked{/if}><span class="pill">{if in_array($b, ['descanso', 'reanuda'], true)}{$t('envivo.b.' . $b . '.' . $dep)}{else}{$t('envivo.b.' . $b)}{/if}</span></label>
+   {/foreach}
+  </div>
+  <div class="campo" style="margin-bottom:0"><span>{$t('envivo.f.marcador')}</span></div>
+  <div class="vivo-step">
+   <div class="eq"><em>{$t('envivo.f.nosotros')}</em><div><button type="button" data-paso="-1" data-a="nuestro" aria-label="−">−</button><input type="number" inputmode="numeric" min="0" max="99" name="nuestro" value="{$d['nuestro'] ?? (int) ($act['nuestro'] ?? 0)}" aria-label="{$t('envivo.f.nosotros')}"><button type="button" data-paso="1" data-a="nuestro" aria-label="+">+</button></div></div>
+   <div class="vs">–</div>
+   <div class="eq"><em>{$t('envivo.f.rival')}</em><div><button type="button" data-paso="-1" data-a="rival" aria-label="−">−</button><input type="number" inputmode="numeric" min="0" max="99" name="rival" value="{$d['rival'] ?? (int) ($act['rival'] ?? 0)}" aria-label="{$t('envivo.f.rival')}"><button type="button" data-paso="1" data-a="rival" aria-label="+">+</button></div></div>
+  </div>
+  <label class="campo"><span>{$t('envivo.f.regreso')}</span><input class="in" type="time" name="regreso" value="{$d['regreso'] ?? ($act && $act['regreso'] ? $h($act['regreso']) : '')}"></label>
+  <label class="campo"><span>{$t('envivo.f.nota')}</span><input class="in" type="text" name="texto" value="{$d['texto'] ?? ''}" maxlength="200" placeholder="{$t('envivo.f.nota_ph')}"></label>
+  <a class="bt w" href="{$url('evento/' . $e['id'] . '/fotos')}" style="margin-bottom:8px">{$ico('camera')|noescape}{$t('envivo.f.foto')}</a>
+  <button class="bt s w" type="submit">{$ico('paper-plane-tilt')|noescape}{$t('envivo.f.publicar')}</button>
+  <p class="texto" style="margin:10px 0 0;font-size:12.5px">{$t('envivo.f.aviso')}</p>
+ </section>
+</form>
+{if $presente}
+<form method="post" action="{$url('evento/' . $e['id'] . '/envivo/presente')}" style="margin-top:8px"><input type="hidden" name="csrf" value="{$csrf}"><button class="bt w" type="submit">{$ico('x')|noescape}{$t('envivo.ya_no')}</button></form>
+{/if}
+{/if}
+<script n:syntax="off">(function(){
+document.querySelectorAll('.vivo-step button').forEach(function(b){b.addEventListener('click',function(){var i=document.querySelector('input[name='+b.dataset.a+']');i.value=Math.max(0,Math.min(99,(parseInt(i.value,10)||0)+parseInt(b.dataset.paso,10)));});});
+var r=document.querySelectorAll('#vivo-tipos input');r.forEach(function(i){i.addEventListener('click',function(){if(i.dataset.on){i.checked=false;i.dataset.on='';}else{r.forEach(function(o){o.dataset.on='';});i.dataset.on='1';}});if(i.checked)i.dataset.on='1';});
+})();</script>
+{/block}

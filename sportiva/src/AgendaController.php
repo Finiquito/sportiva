@@ -178,7 +178,14 @@ final class AgendaController extends AppBase
                 $mioPend = $mioPend || $t['estado'] === 'pendiente';
             }
         }
+        $env = null;
+        $sv = new EnVivoService($this->pdo);
+        if ($e['tipo'] === 'partido' && $e['estado'] === 'publicado') {
+            $env = $sv->vista($e, Tiempo::ahora($this->zona()));
+        }
         echo $this->vista()->pagina('evento.latte', [
+            'env' => $env, 'dep' => EnVivoService::deporte($this->club['deporte'] ?? null), 'puedeRep' => $puede || ($this->rol === 'apoderado' && $mios !== []),
+            'soyPresente' => $env !== null && $sv->esPresente($id, $this->persona['id']),
             'medios' => (new MedioService($this->pdo))->delEvento($id, 6), 'mediosTotal' => (new MedioService($this->pdo))->cuantos($id), 'puedeMedios' => in_array($this->rol, ['apoderado', 'jugador', 'directiva'], true) || $puede,
             'turnos' => $turnos, 'turnoMio' => $mioConf, 'turnoPendiente' => $mioPend, 'puedePedir' => $misFam !== [] && !$mioConf && !$mioPend && $e['estado'] === 'publicado',
             'elegibles' => $puede ? $tu->elegibles($id) : [],

@@ -55,6 +55,23 @@ final class FeedService extends Repo
         return $this->filas($sql . ' ORDER BY ev.created_at DESC LIMIT 10', $par);
     }
 
+    /** Partidos terminados hace poco, con su marcador (aparecen en el feed). @return array<int, array<string, mixed>> */
+    public function resultados(string $club, ?array $equipos, string $desde): array
+    {
+        $sql = "SELECT ev.id, ev.titulo, ev.rival, ev.inicio, eq.nombre AS equipo, v.nuestro, v.rival AS goles_rival, v.confirmado, v.updated_at
+                FROM sportiva_envivo v JOIN sportiva_eventos ev ON ev.id = v.evento_id JOIN sportiva_equipos eq ON eq.id = ev.equipo_id
+                WHERE ev.club_id = ? AND ev.estado = 'publicado' AND v.estado = 'terminado' AND v.updated_at >= ?";
+        $par = [$club, $desde];
+        if ($equipos !== null) {
+            if ($equipos === []) {
+                return [];
+            }
+            $sql .= ' AND ev.equipo_id IN (' . implode(',', array_fill(0, count($equipos), '?')) . ')';
+            $par = array_merge($par, $equipos);
+        }
+        return $this->filas($sql . ' ORDER BY v.updated_at DESC LIMIT 10', $par);
+    }
+
     public function post(string $id): ?array
     {
         return $this->fila('SELECT p.*, a.nombre AS autor, e.nombre AS equipo FROM sportiva_posts p JOIN sportiva_personas a ON a.id = p.autor_id LEFT JOIN sportiva_equipos e ON e.id = p.equipo_id WHERE p.id = ?', [$id]);

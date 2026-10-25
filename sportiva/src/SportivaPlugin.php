@@ -53,6 +53,7 @@ class SportivaPlugin implements PluginInterface
         $consulta = new ConsultaController($ctx);
         $avisos = new AvisosController($ctx);
         $medios = new MedioController($ctx);
+        $envivo = new EnVivoController($ctx);
         $adjuntos = new AdjuntoController($ctx);
         $recursos = new RecursosController();
         $club = new ClubController($ctx);
@@ -140,6 +141,10 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/plantel',                              $p([$plantel, 'inicio']));
         \Flight::route('POST /app/plantel/locales',                     $p([$plantel, 'localAgregar']));
         \Flight::route('POST /app/plantel/locales/@id/quitar',          $p(fn(string $id) => $plantel->localQuitar($id)));
+        \Flight::route('POST /app/evento/@id/envivo/presente',         $p(fn(string $id) => $envivo->presente($id)));
+        \Flight::route('GET /app/evento/@id/envivo',                   $p(fn(string $id) => $envivo->formulario($id)));
+        \Flight::route('POST /app/evento/@id/envivo',                  $p(fn(string $id) => $envivo->publicar($id)));
+        \Flight::route('POST /app/evento/@id/envivo/confirmar',        $p(fn(string $id) => $envivo->confirmar($id)));
         \Flight::route('GET /app/plantel/equipo/@id',                  $p(fn(string $id) => $plantel->equipoEditar($id)));
         \Flight::route('POST /app/plantel/equipo/@id',                 $p(fn(string $id) => $plantel->equipoGuardar($id)));
         \Flight::route('GET /app/plantel/nuevo',                        $p([$plantel, 'nuevo']));
@@ -200,7 +205,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.16.7';
+        return '0.17.0';
     }
 
     public function provides(): array

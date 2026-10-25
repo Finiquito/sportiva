@@ -33,6 +33,7 @@
    <p class="av-cita{if $ev['estado'] === 'cancelado'} canc{/if}">
     <span class="av-dia">{$dc($ev['inicio'])}</span>
     {if $ev['estado'] === 'cancelado'}<span class="av-tag">{$t('avisos.cancelada')}</span>
+    {elseif in_array($a['motivo'], ['marcador', 'regreso', 'final'], true)}<span class="av-tag">{$t('avisos.' . $a['motivo'])}</span>
     {elseif $a['motivo'] === 'confirmado'}<span class="av-tag">{$t('avisos.confirmada')}</span>
     {elseif $a['motivo'] === 'hora' || $a['motivo'] === 'lugar'}<span class="av-tag">{$t($a['motivo'] === 'hora' ? 'avisos.cambio_hora' : 'avisos.cambio_lugar')}</span>{/if}
    </p>
