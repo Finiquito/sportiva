@@ -1410,28 +1410,28 @@ $reloj = fn(string $f) => S\Tiempo::$ahora = new \DateTimeImmutable($f, $zonaP);
 $pedroId = $S['pers']->porCorreo('pedro@ejemplo.fr')['id'];
 $partido = fn(string $t, string $dia = '2030-08-20') => $S['ev']->crear($cid, $u12, ['tipo' => 'partido', 'titulo' => $t, 'rival' => 'Rival', 'inicio' => $dia . ' 15:00:00', 'fin' => null, 'hora_cancha' => $dia . ' 14:15:00', 'hora_encuentro' => null, 'lugar_id' => $sinC, 'encuentro_texto' => null, 'nota' => null, 'precio_info' => null], $pedroId);
 $toca = function (string $ev, string $dep, string ...$acc) use ($sv2) { foreach ($acc as $a) { $r = $sv2->tocar($ev, $dep, $a); } return $r ?? null; };
-// fútbol
-$f = $partido('Fútbol');
-check($sv2->tocar($f, 'futbol', 'nos+1') === null, 'no se anota antes de comenzar el partido');
-check(array_column($sv2->etapas($sv2->marcador($f, 'futbol')), 'accion') === ['comenzar'], 'antes de empezar solo hay «Comenzar el partido»');
-$sv2->avanzar($f, 'futbol', 'comenzar', $pedroId);
-$m = $toca($f, 'futbol', 'nos+1', 'nos+1', 'riv+1');
-check($m['nuestro'] === 2 && $m['rival'] === 1 && $m['total'] === ['nos' => 2, 'riv' => 1] && count($m['cols']) === 1 && $m['cols'][0]['actual'], 'fútbol: se anotan goles de a uno y el total corre');
-check($sv2->tocar($f, 'futbol', 'nos+2') === null && $sv2->tocar($f, 'futbol', 'nos-2') === null, 'en fútbol solo se suma de a un gol');
-check($sv2->tocar($f, 'futbol', 'riv-1')['rival'] === 0 && $sv2->tocar($f, 'futbol', 'riv-1')['rival'] === 0, 'corregir no baja de cero');
-$sv2->tocar($f, 'futbol', 'riv+1');
-check(array_column($sv2->etapas($sv2->marcador($f, 'futbol')), 'accion') === ['entretiempo', 'terminar'], 'en el primer tiempo: Entretiempo y Terminar');
-[$er, $av] = $sv2->avanzar($f, 'futbol', 'entretiempo', $pedroId);
-$m = $sv2->marcador($f, 'futbol');
-check($er === null && $m['estado'] === 'descanso' && $m['cols'][0]['nos'] === 2 && $m['cols'][0]['riv'] === 1 && $sv2->tocar($f, 'futbol', 'nos+1') === null, 'el entretiempo cierra el primer tiempo y no deja anotar');
-check(array_column($sv2->etapas($m), 'accion') === ['segundo', 'terminar'], 'en el entretiempo: Comenzar el 2.º tiempo');
-$sv2->avanzar($f, 'futbol', 'segundo', $pedroId);
-$m = $toca($f, 'futbol', 'nos+1');
-check($m['total'] === ['nos' => 3, 'riv' => 1] && $m['cols'][1]['actual'] && $m['cols'][1]['nos'] === 1 && $m['cols'][1]['riv'] === 0, 'el segundo tiempo muestra sus propios goles y el total sigue');
-[$er, $av] = $sv2->avanzar($f, 'futbol', 'terminar', $pedroId);
-$m = $sv2->marcador($f, 'futbol');
-check($er === null && $av['motivo'] === 'final' && $m['estado'] === 'terminado' && count($m['cols']) === 2 && !$m['cols'][1]['actual'] && $m['total'] === ['nos' => 3, 'riv' => 1], 'al terminar se cierran los periodos y queda el total');
-check($sv2->tocar($f, 'futbol', 'nos+1') === null && $sv2->avanzar($f, 'futbol', 'terminar', $pedroId)[0] === 'envivo.error.etapa', 'terminado no admite más goles ni terminar de nuevo');
+// fútbol y handball: un solo marcador del partido, sin tiempos ni tabla (los tiempos son solo notas)
+foreach (['futbol' => 'Fútbol', 'handball' => 'Handball'] as $dep => $nom) {
+    $f = $partido($nom);
+    check($sv2->tocar($f, $dep, 'nos+1') === null, "{$nom}: no se anota antes de comenzar el partido");
+    check(array_column($sv2->etapas($sv2->marcador($f, $dep)), 'accion') === ['comenzar'], "{$nom}: antes de empezar solo hay «Comenzar el partido»");
+    $sv2->avanzar($f, $dep, 'comenzar', $pedroId);
+    $m = $toca($f, $dep, 'nos+1', 'nos+1', 'riv+1');
+    check($m['nuestro'] === 2 && $m['rival'] === 1 && $m['total'] === ['nos' => 2, 'riv' => 1] && $m['cols'] === [], "{$nom}: se anotan goles de a uno, el total corre y no hay tabla");
+    check($sv2->tocar($f, $dep, 'nos+2') === null && $sv2->tocar($f, $dep, 'nos-2') === null, "{$nom}: solo se suma de a un gol");
+    check($sv2->tocar($f, $dep, 'riv-1')['rival'] === 0 && $sv2->tocar($f, $dep, 'riv-1')['rival'] === 0, "{$nom}: corregir no baja de cero");
+    check(array_column($sv2->etapas($sv2->marcador($f, $dep)), 'accion') === ['terminar'], "{$nom}: en juego solo está «Terminar partido» (sin entretiempo obligatorio)");
+    $sv2->tocar($f, $dep, 'riv+1');
+    $sv2->tocar($f, $dep, 'nos+1');
+    check($sv2->avanzar($f, $dep, 'entretiempo', $pedroId)[0] === 'envivo.error.etapa' && $sv2->avanzar($f, $dep, 'cuarto', $pedroId)[0] === 'envivo.error.etapa' && $sv2->avanzar($f, $dep, 'cerrar_set', $pedroId)[0] === 'envivo.error.etapa', "{$nom}: no hay tiempos ni cuartos ni sets como etapas");
+    check($sv2->novedad($f, $pedroId, $dep, 'descanso', 'Va 1 – 1') === null && $sv2->novedad($f, $pedroId, $dep, 'reanuda', '') === null && $sv2->marcador($f, $dep)['marcable'], "{$nom}: «Entretiempo» y «2.º tiempo» son solo notas y no frenan el partido");
+    check($sv2->tocar($f, $dep, 'nos+1')['nuestro'] === 4, "{$nom}: después de una nota de entretiempo se sigue anotando");
+    [$er, $av] = $sv2->avanzar($f, $dep, 'terminar', $pedroId);
+    $m = $sv2->marcador($f, $dep);
+    check($er === null && $av['motivo'] === 'final' && $m['estado'] === 'terminado' && $m['total'] === ['nos' => 4, 'riv' => 1] && $sv2->resultado($f, $dep) === [4, 1], "{$nom}: al terminar queda el resultado");
+    check($sv2->tocar($f, $dep, 'nos+1') === null && $sv2->avanzar($f, $dep, 'terminar', $pedroId)[0] === 'envivo.error.etapa', "{$nom}: terminado no admite más goles ni terminar de nuevo");
+}
+check($sv2->novedad($f, $pedroId, 'basquet', 'descanso', '') === 'envivo.error.tipo' && $sv2->novedad($f, $pedroId, 'voley', 'reanuda', '') === 'envivo.error.tipo', 'en básquet y vóley no existen las notas de entretiempo');
 // vóley
 $v = $partido('Vóley');
 $sv2->avanzar($v, 'voley', 'comenzar', $pedroId);
@@ -1469,27 +1469,20 @@ $sv2->avanzar($v2, 'voley', 'comenzar', $pedroId);
 $toca($v2, 'voley', 'nos+1', 'nos+1', 'nos+1');
 [$er, $av] = $sv2->avanzar($v2, 'voley', 'terminar', $pedroId);
 check($av['motivo'] === 'final' && $sv2->marcador($v2, 'voley')['estado'] === 'terminado' && count($sv2->marcador($v2, 'voley')['cols']) === 1, 'se puede terminar un partido de vóley antes de tiempo (queda el set incompleto)');
-// básquet
+// básquet: un solo marcador del partido (sin cuartos), con +1 +2 +3
 $b = $partido('Básquet');
 $sv2->avanzar($b, 'basquet', 'comenzar', $pedroId);
 $m = $toca($b, 'basquet', 'nos+2', 'nos+3', 'riv+2');
-check($m['nuestro'] === 5 && $m['rival'] === 2 && $m['toques'] === [1, 2, 3], 'básquet: se anota de a 1, 2 o 3');
+check($m['nuestro'] === 5 && $m['rival'] === 2 && $m['toques'] === [1, 2, 3] && $m['cols'] === [], 'básquet: se anota de a 1, 2 o 3 y no hay tabla ni cuartos');
 check($sv2->tocar($b, 'basquet', 'nos+4') === null && $sv2->tocar($b, 'basquet', 'nos-2') === null, 'básquet: no existe +4 ni corregir de a 2');
-check(array_column($sv2->etapas($sv2->marcador($b, 'basquet')), 'accion') === ['cuarto', 'terminar'], 'básquet: Fin del cuarto y Terminar partido');
-[$er, $av] = $sv2->avanzar($b, 'basquet', 'cuarto', $pedroId);
-check($av['motivo'] === 'cuarto' && $av['n'] === 1 && $av['nos'] === 5 && $av['riv'] === 2 && $av['total'] === [5, 2], 'cerrar el cuarto avisa lo anotado en el cuarto y el total');
+check(array_column($sv2->etapas($sv2->marcador($b, 'basquet')), 'accion') === ['terminar'], 'básquet: solo «Terminar partido»');
+check($sv2->avanzar($b, 'basquet', 'cuarto', $pedroId)[0] === 'envivo.error.etapa', 'básquet: no hay cuartos');
 $m = $toca($b, 'basquet', 'nos+3', 'riv+1');
-check($m['periodo'] === 2 && $m['total'] === ['nos' => 8, 'riv' => 3] && $m['cols'][0]['nos'] === 5 && $m['cols'][1]['nos'] === 3 && $m['cols'][1]['riv'] === 1, 'el total corre y cada cuarto muestra lo suyo');
-$sv2->avanzar($b, 'basquet', 'cuarto', $pedroId);
-$sv2->avanzar($b, 'basquet', 'cuarto', $pedroId);
-$m = $sv2->marcador($b, 'basquet');
-$et = $sv2->etapas($m);
-check($m['periodo'] === 4 && $et[0]['accion'] === 'cuarto' && $et[0]['k'] === 'envivo.m.prorroga', 'en el cuarto 4 el botón pasa a ser «Prórroga»');
-$sv2->avanzar($b, 'basquet', 'cuarto', $pedroId);
-check($sv2->marcador($b, 'basquet')['periodo'] === 5, 'la prórroga es el periodo 5');
+check($m['total'] === ['nos' => 8, 'riv' => 3], 'básquet: el total corre durante todo el partido');
 [$er, $av] = $sv2->avanzar($b, 'basquet', 'terminar', $pedroId);
 check($av['motivo'] === 'final' && $sv2->marcador($b, 'basquet')['estado'] === 'terminado' && $sv2->resultado($b, 'basquet') === [8, 3], 'básquet termina con el total');
-check($sv2->avanzar($b, 'basquet', 'segundo', $pedroId)[0] === 'envivo.error.etapa' && $sv2->avanzar($f, 'futbol', 'cerrar_set', $pedroId)[0] === 'envivo.error.etapa', 'cada deporte solo admite sus etapas');
+check($sv2->avanzar($f, 'futbol', 'cerrar_set', $pedroId)[0] === 'envivo.error.etapa', 'cada deporte solo admite sus etapas');
+check(S\EnVivoService::deporte('handball') === 'handball' && S\EnVivoService::deporte('voley-playa') === 'voley' && S\EnVivoService::deporte(null) === 'futbol', 'el handball es un deporte más (y el vóley playa se reporta como vóley)');
 
 seccion('En vivo: reportero, avisos y pantallas');
 $notasN = fn(string $evt, string $tipo = '') => (int) $pdo->query("SELECT COUNT(*) FROM sportiva_envivo_notas WHERE evento_id = '{$evt}'" . ($tipo ? " AND tipo = '{$tipo}'" : ''))->fetchColumn();
@@ -1540,7 +1533,7 @@ $av1 = (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos")->fetchColumn();
 check($notasN($evR, 'llegamos') === 1 && (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos")->fetchColumn() === $av1, 'una novedad informativa se publica sin avisar a nadie');
 llamar(fn() => $ev2->novedad($evR), conCsrf(['tipo' => 'comenzo']));
 llamar(fn() => $ev2->novedad($evR), conCsrf(['tipo' => '', 'texto' => '']));
-check($notasN($evR) === 2, 'solo existen las novedades llegamos y vuelta, y no se publica algo vacío');
+check($notasN($evR) === 2, 'solo se publican las novedades del deporte, y no se publica algo vacío');
 $av2 = (int) $pdo->query("SELECT COUNT(*) FROM sportiva_avisos")->fetchColumn();
 llamar(fn() => $ev2->regreso($evR), conCsrf(['regreso' => '17:15']));
 check($sv2->actual($evR)['regreso'] === '2030-08-10 17:15:00' && $avisosMotivo($evR, 'regreso') > 0, 'cambiar la hora de regreso avisa a las familias');
@@ -1550,10 +1543,10 @@ check($avisosMotivo($evR, 'regreso') === $av3, 'repetir la misma hora de regreso
 llamar(fn() => $ev2->regreso($evR), conCsrf(['regreso' => '99:99']));
 check($sv2->actual($evR)['regreso'] === '2030-08-10 17:15:00', 'una hora de regreso inválida se rechaza');
 [$h] = llamar(fn() => $ev2->formulario($evR));
-check(str_contains($h, 'data-marc') && str_contains($h, 'class="vm-t"') && str_contains($h, 'data-accion="nos+1"') && str_contains($h, 'data-confirmar') && str_contains($h, 'id="novedad"') && str_contains($h, 'id="regreso"'), 'la pantalla de reportar tiene tres bloques: marcador, novedad y hora de regreso');
-check(str_contains($h, 'Terminar partido') && str_contains($h, 'Entretiempo'), 'fútbol: botones de etapa con confirmación');
+check(str_contains($h, 'data-marc') && !str_contains($h, 'class="vm-t"') && str_contains($h, 'data-accion="nos+1"') && str_contains($h, 'data-confirmar') && str_contains($h, 'id="novedad"') && str_contains($h, 'id="regreso"'), 'la pantalla de reportar tiene tres bloques: marcador, novedad y hora de regreso');
+check(str_contains($h, 'Terminar partido') && str_contains($h, 'name="tipo" value="descanso"') && !str_contains($h, 'value="entretiempo"'), 'fútbol: Terminar partido con confirmación y los tiempos solo como notas');
 [$h] = llamar(fn() => $ag->evento($evR));
-check(str_contains($h, 'class="tag vivo"') && str_contains($h, 'class="vm-t"') && !str_contains($h, 'data-tap'), 'la ficha muestra el marcador sin los controles');
+check(str_contains($h, 'class="tag vivo"') && str_contains($h, 'class="vivo-marc"') && !str_contains($h, 'class="vm-t"') && !str_contains($h, 'data-tap'), 'la ficha de fútbol muestra el marcador simple sin controles');
 // el entrenador
 $comoRol('pedro@ejemplo.fr', 'entrenador');
 [$h] = llamar(fn() => $ag->evento($evR));
@@ -1604,7 +1597,7 @@ for ($i = 0; $i < 25; $i++) { llamar(fn() => $ev2->marcador($evV), conCsrf(['acc
 for ($i = 0; $i < 20; $i++) { llamar(fn() => $ev2->marcador($evV), conCsrf(['accion' => 'riv+1'])); }
 check($avisosMotivo($evV, 'marcador') === 0 && $avisosMotivo($evV, 'set') === 0, 'en vóley los puntos sueltos no mandan ninguna notificación');
 [$h] = llamar(fn() => $ev2->formulario($evV));
-check(str_contains($h, '+ Punto') && str_contains($h, 'Cerrar set 1') && str_contains($h, 'Terminar partido') && str_contains($h, 'data-confirmar'), 'vóley: «+ Punto», «Cerrar set 1» y «Terminar partido», con confirmación');
+check(str_contains($h, 'class="vm-t"') && str_contains($h, '+ Punto') && str_contains($h, 'Cerrar set 1') && str_contains($h, 'Terminar partido') && str_contains($h, 'data-confirmar'), 'vóley: «+ Punto», «Cerrar set 1» y «Terminar partido», con confirmación');
 check(!str_contains($h, 'Set para'), 'sin el aviso redundante «Set para…»');
 llamar(fn() => $ev2->etapa($evV), conCsrf(['accion' => 'cerrar_set']));
 check($avisosMotivo($evV, 'set') > 0 && $sv2->marcador($evV, 'voley')['total'] === ['nos' => 1, 'riv' => 0], 'cerrar el set sí avisa (una vez por set)');
@@ -1614,6 +1607,19 @@ check($sv2->marcador($evV, 'voley')['estado'] === 'terminado' && $avisosMotivo($
 $comoRol('rosa@ejemplo.fr', 'apoderado');
 [$h] = llamar(fn() => (new S\FeedController($ctx))->inicio());
 check(str_contains($h, '2 – 0') && str_contains($h, 'sets'), 'el feed muestra el resultado de vóley en sets');
+// handball (y básquet): los goles sueltos no avisan, solo el final
+$pdo->exec("UPDATE sportiva_clubes SET deporte = 'handball' WHERE id = '{$cid}'");
+$evH = $partido('Handball de prueba', '2030-08-13');
+$reloj('2030-08-13 15:10:00');
+$comoRol('pedro@ejemplo.fr', 'entrenador');
+llamar(fn() => $ev2->etapa($evH), conCsrf(['accion' => 'comenzar']));
+for ($i = 0; $i < 6; $i++) { llamar(fn() => $ev2->marcador($evH), conCsrf(['accion' => 'nos+1'])); }
+check($avisosMotivo($evH, 'marcador') === 0 && $sv2->actual($evH)['nuestro'] === 6, 'en handball los goles sueltos no mandan notificaciones');
+[$h] = llamar(fn() => $ev2->formulario($evH));
+check(str_contains($h, '+ Gol') && !str_contains($h, 'class="vm-t"') && str_contains($h, 'Handball') && str_contains($h, 'name="tipo" value="reanuda"'), 'handball: «+ Gol», sin tabla y con las notas de tiempos');
+llamar(fn() => $ev2->etapa($evH), conCsrf(['accion' => 'terminar']));
+check($avisosMotivo($evH, 'final') > 0, 'al terminar el partido de handball se avisa el resultado');
+check(str_contains(S\Iconos::balon('handball'), '<svg') && str_contains(S\Iconos::cancha('handball'), '<svg') && S\Iconos::balon('handball') !== S\Iconos::balon('futbol'), 'el handball tiene su propio ícono de balón y de cancha');
 $pdo->exec("UPDATE sportiva_clubes SET deporte = 'futbol' WHERE id = '{$cid}'");
 S\Tiempo::$ahora = null;
 

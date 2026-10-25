@@ -149,7 +149,7 @@ final class EnVivoController extends AppBase
         $ahora = Tiempo::ahora($this->zona());
         $env = $svc->vista($e, $ahora, $dep);
         echo $this->vista()->pagina('evento-envivo.latte', [
-            'activa' => 'agenda', 'e' => $e, 'act' => $svc->actual($e['id']), 'd' => $d, 'errores' => $err, 'dep' => $dep, 'novedades' => EnVivoService::NOVEDADES,
+            'activa' => 'agenda', 'e' => $e, 'act' => $svc->actual($e['id']), 'd' => $d, 'errores' => $err, 'dep' => $dep, 'novedades' => EnVivoService::NOVEDADES[$dep] ?? EnVivoService::NOVEDADES['futbol'],
             'presente' => $presente, 'abierto' => EnVivoService::abierto((string) $e['inicio'], $ahora),
             'env' => $env, 'puede' => $staff, 'puedeRep' => true, 'reportero' => $rep,
             'soyReportero' => !$staff && $presente && ($rep === null || $rep['persona_id'] === $this->persona['id']),
@@ -180,6 +180,7 @@ final class EnVivoController extends AppBase
         }
         $svc->marcarPresente($id, $this->persona['id'], true);
         $this->avisarInicio($e);
+        // solo el fútbol avisa cada gol (pocos y importantes); en handball, básquet y vóley los puntos sueltos no mandan notificaciones
         if ($dep === 'futbol' && str_contains($accion, '+') && $svc->puedeAvisarGol($id)) {
             $titulo = (string) $e['titulo'];
             $n = (int) $m['nuestro'];
@@ -192,7 +193,7 @@ final class EnVivoController extends AppBase
                 ['id' => $id, 'motivo' => 'marcador']
             );
         }
-        $cur = ['nos' => 0, 'riv' => 0];
+        $cur = ['nos' => $m['nuestro'], 'riv' => $m['rival']];
         foreach ($m['cols'] as $c) {
             if ($c['actual']) {
                 $cur = ['nos' => $c['nos'], 'riv' => $c['riv']];
@@ -242,7 +243,7 @@ final class EnVivoController extends AppBase
             return;
         }
         [$e] = $a;
-        $err = $this->svc()->novedad($id, $this->persona['id'], (string) ($_POST['tipo'] ?? ''), (string) ($_POST['texto'] ?? ''));
+        $err = $this->svc()->novedad($id, $this->persona['id'], $this->dep(), (string) ($_POST['tipo'] ?? ''), (string) ($_POST['texto'] ?? ''));
         if ($err !== null) {
             $this->aqui($id, $this->i18n->t($err), 'error');
             return;
@@ -306,7 +307,7 @@ final class EnVivoController extends AppBase
         );
     }
 
-    /** Avisos de etapa: set cerrado (vóley), cuarto (básquet) y final. Los goles y los puntos sueltos no avisan aquí. */
+    /** Avisos de etapa: set cerrado (vóley) y final. Los goles y los puntos sueltos no avisan aquí. */
     private function avisarEtapa(array $e, array $av): void
     {
         $titulo = (string) $e['titulo'];
@@ -317,9 +318,6 @@ final class EnVivoController extends AppBase
             $b = (int) ($av['riv'] ?? 0);
             if ($motivo === 'set') {
                 return [$i->t('aviso.envivo.set', ['titulo' => $titulo, 'n' => $av['n'], 'a' => $a, 'b' => $b]), $i->t('aviso.envivo.set_cuerpo', ['a' => $av['sets'][0], 'b' => $av['sets'][1]])];
-            }
-            if ($motivo === 'cuarto') {
-                return [$i->t('aviso.envivo.cuarto', ['titulo' => $titulo, 'n' => $av['n'], 'a' => $a, 'b' => $b]), $i->t('aviso.envivo.cuarto_cuerpo', ['a' => $av['total'][0], 'b' => $av['total'][1]])];
             }
             if ($dep === 'voley') {
                 return [$i->t('aviso.envivo.final_sets', ['titulo' => $titulo, 'a' => $av['sets'][0], 'b' => $av['sets'][1]]), ''];

@@ -268,7 +268,7 @@ final class ClubController extends AppBase
 
     private function formularioAjustes(array $d, array $err): void
     {
-        echo $this->vista()->pagina('club-ajustes.latte', ['activa' => 'club', 'd' => $d, 'errores' => $err, 'idiomas' => I18n::disponibles(), 'zonas' => self::ZONAS, 'deportes' => ['futbol', 'voley', 'basquet']]);
+        echo $this->vista()->pagina('club-ajustes.latte', ['activa' => 'club', 'd' => $d, 'errores' => $err, 'idiomas' => I18n::disponibles(), 'zonas' => self::ZONAS, 'deportes' => ['futbol', 'voley', 'basquet', 'handball']]);
     }
 
     public function ajustes(): void
@@ -291,7 +291,7 @@ final class ClubController extends AppBase
         foreach (['nombre', 'ciudad', 'telefono', 'direccion', 'descripcion', 'lat', 'lon'] as $k) {
             $d[$k] = trim((string) ($_POST[$k] ?? ''));
         }
-        $d['deporte'] = in_array($_POST['deporte'] ?? '', ['futbol', 'voley', 'basquet'], true) ? $_POST['deporte'] : $this->club['deporte'];
+        $d['deporte'] = in_array($_POST['deporte'] ?? '', ['futbol', 'voley', 'basquet', 'handball'], true) ? $_POST['deporte'] : $this->club['deporte'];
         $d['idioma'] = I18n::esValido((string) ($_POST['idioma'] ?? '')) ? $_POST['idioma'] : $this->club['idioma'];
         $d['zona'] = in_array($_POST['zona'] ?? '', timezone_identifiers_list(), true) ? $_POST['zona'] : $this->club['zona'];
         $d['publico'] = !empty($_POST['publico']) ? 1 : 0;

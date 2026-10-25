@@ -12,7 +12,7 @@
  <div class="ch"><h3>{$t('envivo.m.titulo')}</h3>
   {if $m['estado'] === 'terminado'}<span class="tag">{$t('envivo.terminado')}</span>
   {elseif $m['estado'] === 'previo'}<span class="tag">{$t('envivo.previo')}</span>
-  {else}<span class="tag vivo">● {if $m['estado'] === 'descanso'}{$t('envivo.descanso.' . $dep)}{elseif $dep === 'basquet' && $m['periodo'] > 4}{$t('envivo.per.prorroga', ['n' => $m['periodo'] - 4])}{else}{$t('envivo.per.' . $dep, ['n' => $m['periodo']])}{/if}</span>{/if}
+  {else}<span class="tag vivo">● {if $dep === 'voley'}{$t('envivo.per.voley', ['n' => $m['periodo']])}{else}{$t('envivo.m.en_juego')}{/if}</span>{/if}
  </div>
  {include '_marcador.latte', m: $m, e: $e, dep: $dep, inter: true, etapas: $env['etapas']}
 </section>

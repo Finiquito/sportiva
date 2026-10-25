@@ -11,7 +11,7 @@
  {else}
  <div class="ch">
   {if $env['estado'] === 'fin'}<h3>{$t('envivo.terminado')}</h3>{if $act['confirmado']}<span class="tag">{$ico('check')|noescape}{$t('envivo.confirmado')}</span>{/if}
-  {else}<h3>{$t('envivo.titulo')}</h3><span class="tag vivo">● {if $act['estado'] === 'descanso'}{$t('envivo.descanso.' . $dep)}{elseif (int) $act['periodo'] > 0}{$t('envivo.per.' . $dep, ['n' => (int) $act['periodo']])}{else}{$t('envivo.previo')}{/if}</span>{/if}
+  {else}<h3>{$t('envivo.titulo')}</h3><span class="tag vivo">● {if (int) $act['periodo'] < 1}{$t('envivo.previo')}{elseif $dep === 'voley'}{$t('envivo.per.voley', ['n' => (int) $act['periodo']])}{else}{$t('envivo.m.en_juego')}{/if}</span>{/if}
  </div>
  {include '_marcador.latte', m: $env['m'], e: $e, dep: $dep, inter: false, etapas: []}
  {/if}

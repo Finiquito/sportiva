@@ -848,5 +848,9 @@
  "avisos.set": "Set",
  "avisos.cuarto": "Cuarto",
  "envivo.m.sets": "sets",
- "envivo.f.hora": "Hora"
+ "envivo.f.hora": "Hora",
+ "deporte.handball": "Handball",
+ "envivo.m.en_juego": "En juego",
+ "envivo.b.descanso": "Entretiempo",
+ "envivo.b.reanuda": "2.º tiempo"
 }

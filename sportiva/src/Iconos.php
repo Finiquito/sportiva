@@ -31,12 +31,12 @@ final class Iconos
     /** Ícono de balón del deporte del club (el de básquet es la cancha hasta tener el balón). */
     public static function balon(?string $deporte): string
     {
-        return self::propio(['voley' => 'deporte-voley', 'basquet' => 'cancha-basquet', 'voley-playa' => 'deporte-voley-playa'][(string) $deporte] ?? 'deporte-futbol');
+        return self::propio(['voley' => 'deporte-voley', 'basquet' => 'cancha-basquet', 'voley-playa' => 'deporte-voley-playa', 'handball' => 'deporte-handball'][(string) $deporte] ?? 'deporte-futbol');
     }
 
     public static function cancha(?string $deporte): string
     {
-        return self::propio(['voley' => 'cancha-voley', 'basquet' => 'cancha-basquet'][(string) $deporte] ?? 'cancha-futbol');
+        return self::propio(['voley' => 'cancha-voley', 'basquet' => 'cancha-basquet', 'handball' => 'cancha-handball'][(string) $deporte] ?? 'cancha-futbol');
     }
 
     /** Avatar de un jugador: su foto si la tiene (se sirve solo a quien está en el club) o su inicial. */

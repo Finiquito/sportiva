@@ -12,7 +12,7 @@
   <p><input class="form-input" name="direccion" value="{$club['direccion']}" placeholder="Dirección" size="48"></p>
   <p><input class="form-input" name="lat" value="{$club['lat']}" placeholder="Latitud del estadio"> <input class="form-input" name="lon" value="{$club['lon']}" placeholder="Longitud"></p>
   <p><textarea class="form-input" name="descripcion" rows="5" cols="70" placeholder="Presentación del club">{$club['descripcion']}</textarea></p>
-  <p><select class="form-input" name="deporte">{foreach ['futbol' => 'Fútbol', 'voley' => 'Vóley', 'basquet' => 'Básquet'] as $k => $n}<option value="{$k}" {if $club['deporte'] === $k}selected{/if}>{$n}</option>{/foreach}</select>
+  <p><select class="form-input" name="deporte">{foreach ['futbol' => 'Fútbol', 'voley' => 'Vóley', 'basquet' => 'Básquet', 'handball' => 'Handball'] as $k => $n}<option value="{$k}" {if $club['deporte'] === $k}selected{/if}>{$n}</option>{/foreach}</select>
   <select class="form-input" name="idioma">{foreach $idiomas as $c => $n}<option value="{$c}" {if $club['idioma'] === $c}selected{/if}>{$n}</option>{/foreach}</select>
   <input class="form-input" name="zona" value="{$club['zona']}"></p>
   <p><label><input type="checkbox" name="publico" value="1" {if $club['publico']}checked{/if}> Aparece en la lista pública de clubes</label>

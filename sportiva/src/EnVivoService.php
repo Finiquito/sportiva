@@ -10,15 +10,14 @@ namespace TypeDock\Plugin\Sportiva;
  */
 final class EnVivoService extends Repo
 {
-    /** Novedades informativas (el marcador y las etapas del partido tienen sus propios controles). */
-    public const NOVEDADES = ['llegamos', 'vuelta'];
-    /** Vóley: al mejor de 3 sets de 25 puntos (15 el set decisivo), con 2 de diferencia. Básquet: 4 cuartos. */
+    /** Novedades informativas por deporte (los tiempos de fútbol y handball son solo notas; el marcador y las etapas tienen sus propios controles). */
+    public const NOVEDADES = ['futbol' => ['llegamos', 'descanso', 'reanuda', 'vuelta'], 'handball' => ['llegamos', 'descanso', 'reanuda', 'vuelta'], 'basquet' => ['llegamos', 'vuelta'], 'voley' => ['llegamos', 'vuelta']];
+    /** Vóley: al mejor de 3 sets de 25 puntos (15 el set decisivo), con 2 de diferencia, como en el tenis. Los demás deportes llevan solo el marcador del partido. */
     public const SETS = 3;
     public const PUNTOS_SET = 25;
     public const PUNTOS_DECISIVO = 15;
-    public const CUARTOS = 4;
     /** Cuánto suma cada toque según el deporte. */
-    public const TOQUES = ['futbol' => [1], 'voley' => [1], 'basquet' => [1, 2, 3]];
+    public const TOQUES = ['futbol' => [1], 'handball' => [1], 'voley' => [1], 'basquet' => [1, 2, 3]];
     /** El reporte se abre 3 h antes del partido y se cierra 12 h después de su inicio. */
     public const ANTES = 3;
     public const DESPUES = 12;
@@ -32,6 +31,7 @@ final class EnVivoService extends Repo
         return match ($d) {
             'voley', 'voley-playa' => 'voley',
             'basquet' => 'basquet',
+            'handball' => 'handball',
             default => 'futbol',
         };
     }
@@ -159,68 +159,58 @@ final class EnVivoService extends Repo
 
     /**
      * Todo lo que se dibuja del marcador, según el deporte.
-     * `cols`: un periodo por columna (los cerrados y el que está en juego). `total`: sets ganados en vóley; goles o puntos totales en los demás.
-     * `actual`: lo que se toca ahora (en vóley los puntos del set; en fútbol y básquet el total).
+     * Vóley (por sets, como el tenis): `cols` = un set por columna (los cerrados y el que está en juego) y `total` = sets ganados.
+     * Fútbol, handball y básquet: un solo marcador del partido (`cols` vacío, `total` = goles o puntos).
+     * `nuestro` y `rival`: lo que se toca ahora (en vóley los puntos del set en juego).
      * @return array<string, mixed>
      */
     public function marcador(string $evento, string $dep): array
     {
         $a = $this->vigente($evento);
         $estado = (string) $a['estado'];
-        $cols = [];
-        $sn = 0;
-        $sr = 0;
-        $ganados = [0, 0];
-        foreach ($this->periodos($evento) as $p) {
-            $cols[] = ['n' => (int) $p['numero'], 'nos' => (int) $p['nuestro'], 'riv' => (int) $p['rival'], 'actual' => false];
-            $sn += (int) $p['nuestro'];
-            $sr += (int) $p['rival'];
-            if ((int) $p['nuestro'] > (int) $p['rival']) {
-                $ganados[0]++;
-            } elseif ((int) $p['rival'] > (int) $p['nuestro']) {
-                $ganados[1]++;
-            }
-        }
         $periodo = (int) $a['periodo'];
         $nos = (int) $a['nuestro'];
         $riv = (int) $a['rival'];
-        $enJuego = $estado === 'jugando';
-        if ($enJuego) {
-            $cols[] = ['n' => $periodo, 'nos' => $dep === 'voley' ? $nos : $nos - $sn, 'riv' => $dep === 'voley' ? $riv : $riv - $sr, 'actual' => true];
-        }
         $voley = $dep === 'voley';
+        $cols = [];
+        $ganados = [0, 0];
+        if ($voley) {
+            foreach ($this->periodos($evento) as $p) {
+                $cols[] = ['n' => (int) $p['numero'], 'nos' => (int) $p['nuestro'], 'riv' => (int) $p['rival'], 'actual' => false];
+                if ((int) $p['nuestro'] > (int) $p['rival']) {
+                    $ganados[0]++;
+                } elseif ((int) $p['rival'] > (int) $p['nuestro']) {
+                    $ganados[1]++;
+                }
+            }
+            if ($estado === 'jugando') {
+                $cols[] = ['n' => $periodo, 'nos' => $nos, 'riv' => $riv, 'actual' => true];
+            }
+        }
         return [
             'dep' => $dep, 'estado' => $estado, 'periodo' => $periodo, 'nuestro' => $nos, 'rival' => $riv, 'cols' => $cols,
             'total' => $voley ? ['nos' => $ganados[0], 'riv' => $ganados[1]] : ['nos' => $nos, 'riv' => $riv],
-            'cerrable' => $voley && $enJuego && max($nos, $riv) >= self::metaSet($periodo) && abs($nos - $riv) >= 2,
+            'cerrable' => $voley && $estado === 'jugando' && max($nos, $riv) >= self::metaSet($periodo) && abs($nos - $riv) >= 2,
             'sets' => $voley ? $ganados : null,
-            'marcable' => $enJuego, 'toques' => self::TOQUES[$dep] ?? [1],
+            'marcable' => $estado === 'jugando', 'toques' => self::TOQUES[$dep] ?? [1],
         ];
     }
 
-    /** Botones de etapa según el deporte y el momento: [accion, k = clave del texto, v = variables, seguro = clave del «¿estás seguro?» o null, principal]. @return array<int, array<string, mixed>> */
+    /** Botones de etapa: [accion, k = clave del texto, v = variables, seguro = clave del «¿estás seguro?» o null, principal]. Solo el vóley cierra sets; los demás empiezan y terminan. @return array<int, array<string, mixed>> */
     public function etapas(array $m): array
     {
-        $dep = $m['dep'];
         $e = $m['estado'];
-        $n = (int) $m['periodo'];
         if ($e === 'terminado') {
             return [];
         }
         if ($e === 'previo') {
             return [['accion' => 'comenzar', 'k' => 'envivo.m.comenzar', 'v' => [], 'seguro' => null, 'principal' => true]];
         }
-        $terminar = ['accion' => 'terminar', 'k' => 'envivo.m.terminar', 'v' => [], 'seguro' => 'envivo.m.seguro.terminar', 'principal' => false];
-        if ($dep === 'voley') {
-            return [['accion' => 'cerrar_set', 'k' => 'envivo.m.cerrar_set', 'v' => ['n' => $n], 'seguro' => 'envivo.m.seguro.cerrar_set', 'principal' => $m['cerrable']], $terminar];
+        $terminar = ['accion' => 'terminar', 'k' => 'envivo.m.terminar', 'v' => [], 'seguro' => 'envivo.m.seguro.terminar', 'principal' => $m['dep'] !== 'voley'];
+        if ($m['dep'] === 'voley') {
+            return [['accion' => 'cerrar_set', 'k' => 'envivo.m.cerrar_set', 'v' => ['n' => (int) $m['periodo']], 'seguro' => 'envivo.m.seguro.cerrar_set', 'principal' => $m['cerrable']], $terminar];
         }
-        if ($dep === 'basquet') {
-            return [['accion' => 'cuarto', 'k' => $n >= self::CUARTOS ? 'envivo.m.prorroga' : 'envivo.m.fin_cuarto', 'v' => ['n' => $n], 'seguro' => $n >= self::CUARTOS ? 'envivo.m.seguro.prorroga' : 'envivo.m.seguro.cuarto', 'principal' => $n < self::CUARTOS], $terminar];
-        }
-        if ($e === 'descanso') {
-            return [['accion' => 'segundo', 'k' => 'envivo.m.segundo', 'v' => [], 'seguro' => null, 'principal' => true], $terminar];
-        }
-        return $n <= 1 ? [['accion' => 'entretiempo', 'k' => 'envivo.m.entretiempo', 'v' => [], 'seguro' => 'envivo.m.seguro.entretiempo', 'principal' => true], $terminar] : [$terminar];
+        return [$terminar];
     }
 
     private function nota(string $evento, string $persona, string $tipo, ?string $texto = null, ?int $nuestro = null, ?int $rival = null, ?string $regreso = null): void
@@ -253,7 +243,7 @@ final class EnVivoService extends Repo
     }
 
     /**
-     * Cambia de etapa: comenzar, entretiempo, segundo tiempo, cerrar set, fin de cuarto o terminar el partido.
+     * Cambia de etapa: comenzar, cerrar set (vóley) o terminar el partido.
      * Devuelve [error|null, aviso|null]; el aviso dice qué se debe notificar a las familias.
      * @return array{0: string|null, 1: array<string, mixed>|null}
      */
@@ -265,14 +255,8 @@ final class EnVivoService extends Repo
         $n = (int) $a['periodo'];
         $nos = (int) $a['nuestro'];
         $riv = (int) $a['rival'];
-        $m = $this->marcador($evento, $dep);
+        $voley = $dep === 'voley';
         $aviso = null;
-        $sn = 0;
-        $sr = 0;
-        foreach ($this->periodos($evento) as $p) {
-            $sn += (int) $p['nuestro'];
-            $sr += (int) $p['rival'];
-        }
         switch ($accion) {
             case 'comenzar':
                 if ($est !== 'previo') {
@@ -282,37 +266,22 @@ final class EnVivoService extends Repo
                 $a['periodo'] = 1;
                 $this->nota($evento, $persona, 'comenzo');
                 break;
-            case 'entretiempo':
-                if ($dep !== 'futbol' || $est !== 'jugando' || $n !== 1) {
-                    return ['envivo.error.etapa', null];
-                }
-                $this->cerrarPeriodo($evento, 1, $nos, $riv);
-                $a['estado'] = 'descanso';
-                $this->nota($evento, $persona, 'descanso', null, $nos, $riv);
-                break;
-            case 'segundo':
-                if ($dep !== 'futbol' || $est !== 'descanso') {
-                    return ['envivo.error.etapa', null];
-                }
-                $a['estado'] = 'jugando';
-                $a['periodo'] = 2;
-                $this->nota($evento, $persona, 'reanuda');
-                break;
             case 'cerrar_set':
-                if ($dep !== 'voley' || $est !== 'jugando') {
+                if (!$voley || $est !== 'jugando') {
                     return ['envivo.error.etapa', null];
                 }
                 if ($nos === 0 && $riv === 0) {
                     return ['envivo.error.set_vacio', null];
                 }
+                $ganados = $this->marcador($evento, $dep)['sets'];
                 $this->cerrarPeriodo($evento, $n, $nos, $riv);
                 $this->nota($evento, $persona, 'set', (string) $n, $nos, $riv);
-                $ganados = $m['sets'];
-                $ganados[$nos > $riv ? 0 : ($riv > $nos ? 1 : 0)] += $nos === $riv ? 0 : 1;
-                $meta = intdiv(self::SETS, 2) + 1;
+                if ($nos !== $riv) {
+                    $ganados[$nos > $riv ? 0 : 1]++;
+                }
                 $a['nuestro'] = 0;
                 $a['rival'] = 0;
-                if (max($ganados) >= $meta) {
+                if (max($ganados) >= intdiv(self::SETS, 2) + 1) {
                     $a['estado'] = 'terminado';
                     $a['confirmado'] = 0;
                     $this->nota($evento, $persona, 'termino', null, $ganados[0], $ganados[1]);
@@ -322,33 +291,22 @@ final class EnVivoService extends Repo
                     $aviso = ['motivo' => 'set', 'n' => $n, 'nos' => $nos, 'riv' => $riv, 'sets' => $ganados];
                 }
                 break;
-            case 'cuarto':
-                if ($dep !== 'basquet' || $est !== 'jugando') {
-                    return ['envivo.error.etapa', null];
-                }
-                $propio = [$nos - $sn, $riv - $sr];
-                $this->cerrarPeriodo($evento, $n, $propio[0], $propio[1]);
-                $this->nota($evento, $persona, $n >= self::CUARTOS ? 'prorroga' : 'cuarto', (string) $n, $propio[0], $propio[1]);
-                $a['periodo'] = $n + 1;
-                $aviso = ['motivo' => 'cuarto', 'n' => $n, 'nos' => $propio[0], 'riv' => $propio[1], 'total' => [$nos, $riv]];
-                break;
             case 'terminar':
-                if (!in_array($est, ['jugando', 'descanso'], true)) {
+                if ($est !== 'jugando') {
                     return ['envivo.error.etapa', null];
                 }
-                if ($est === 'jugando') {
-                    $propio = $dep === 'voley' ? [$nos, $riv] : [$nos - $sn, $riv - $sr];
-                    if ($dep === 'voley' ? ($nos > 0 || $riv > 0) : true) {
-                        $this->cerrarPeriodo($evento, $n, $propio[0], $propio[1]);
-                    }
+                if ($voley && ($nos > 0 || $riv > 0)) {
+                    $this->cerrarPeriodo($evento, $n, $nos, $riv);
                 }
-                $tot = $this->marcador($evento, $dep)['total'];
                 $a['estado'] = 'terminado';
                 $a['confirmado'] = 0;
-                $a['nuestro'] = $dep === 'voley' ? 0 : $nos;
-                $a['rival'] = $dep === 'voley' ? 0 : $riv;
+                if ($voley) {
+                    $a['nuestro'] = 0;
+                    $a['rival'] = 0;
+                }
+                $tot = $this->marcador($evento, $dep)['total'];
                 $this->nota($evento, $persona, 'termino', null, $tot['nos'], $tot['riv']);
-                $aviso = ['motivo' => 'final', 'sets' => $dep === 'voley' ? [$tot['nos'], $tot['riv']] : null, 'nos' => $tot['nos'], 'riv' => $tot['riv']];
+                $aviso = ['motivo' => 'final', 'sets' => $voley ? [$tot['nos'], $tot['riv']] : null, 'nos' => $tot['nos'], 'riv' => $tot['riv']];
                 break;
             default:
                 return ['envivo.error.etapa', null];
@@ -358,10 +316,10 @@ final class EnVivoService extends Repo
     }
 
     /** Novedad informativa (llegamos, salimos de vuelta) con nota opcional. Devuelve el error o null. */
-    public function novedad(string $evento, string $persona, string $tipo, string $texto): ?string
+    public function novedad(string $evento, string $persona, string $dep, string $tipo, string $texto): ?string
     {
         $texto = trim($texto);
-        if ($tipo !== '' && !in_array($tipo, self::NOVEDADES, true)) {
+        if ($tipo !== '' && !in_array($tipo, self::NOVEDADES[$dep] ?? self::NOVEDADES['futbol'], true)) {
             return 'envivo.error.tipo';
         }
         if (mb_strlen($texto) > 200) {

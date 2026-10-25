@@ -1,14 +1,15 @@
 {* Marcador por deporte. Recibe $m (EnVivoService::marcador), $e, $dep, $inter (con controles para el reportero) y, si $inter, $etapas.
-   Tabla de periodos: rival arriba, nosotros abajo; la columna en juego va resaltada. Vóley: columnas = sets y a la derecha los sets ganados.
-   Fútbol y básquet: columnas = tiempos o cuartos y a la derecha el total. *}
+   Vóley (por sets, como el tenis): tabla con el rival arriba y nosotros abajo, una columna por set (la del set en juego resaltada) y a la derecha los sets ganados.
+   Fútbol, handball y básquet: un solo marcador del partido, sin tabla. *}
 {var $nom = $e['equipo']}
 {var $riv = $e['rival'] ?: $t('envivo.m.rival')}
 <div class="vm" {if $inter}data-marc data-url="{$url('evento/' . $e['id'] . '/envivo/marcador')}" data-csrf="{$csrf}" data-dep="{$dep}"{/if}>
+ {if $dep === 'voley'}
  <table class="vm-t" aria-label="{$t('envivo.m.titulo')}">
   <thead><tr>
-   <th class="eq">{$t('envivo.m.col.' . $dep)}</th>
-   {foreach $m['cols'] as $c}<th class="{if $c['actual']}act{/if}">{if $dep === 'basquet' && $c['n'] > 4}PR{if $c['n'] > 5}{$c['n'] - 4}{/if}{else}{$c['n']}{/if}</th>{/foreach}
-   <th class="tot">{if $dep !== 'voley'}{$t('envivo.m.col.total')}{/if}</th>
+   <th class="eq">{$t('envivo.m.col.voley')}</th>
+   {foreach $m['cols'] as $c}<th class="{if $c['actual']}act{/if}">{$c['n']}</th>{/foreach}
+   <th class="tot"></th>
   </tr></thead>
   <tbody>
    {foreach [['riv', $riv], ['nos', $nom]] as [$lado, $nombre]}
@@ -16,13 +17,19 @@
     <th class="eq"><span class="vm-n {$lado}">{$nombre}</span></th>
     {foreach $m['cols'] as $c}
     {var $mio = $c[$lado]}{var $otro = $c[$lado === 'nos' ? 'riv' : 'nos']}
-    <td class="{if $c['actual']}act{/if}{if !$c['actual'] || $dep === 'voley'}{if $mio > $otro} g{elseif $mio < $otro} p{/if}{/if}"><span {if $c['actual']}data-cur="{$lado}"{/if}>{$mio}</span></td>
+    <td class="{if $c['actual']}act{/if}{if $mio > $otro} g{elseif $mio < $otro} p{/if}"><span {if $c['actual']}data-cur="{$lado}"{/if}>{$mio}</span></td>
     {/foreach}
-    <td class="tot">{var $tm = $m['total'][$lado]}{var $to = $m['total'][$lado === 'nos' ? 'riv' : 'nos']}<b class="{if $dep === 'voley' && $tm > $to}lider{/if}" data-tot="{$lado}">{$tm}</b></td>
+    <td class="tot">{var $tm = $m['total'][$lado]}{var $to = $m['total'][$lado === 'nos' ? 'riv' : 'nos']}<b class="{if $tm > $to}lider{/if}" data-tot="{$lado}">{$tm}</b></td>
    </tr>
    {/foreach}
   </tbody>
  </table>
+ {elseif !$inter}
+ <div class="vivo-marc">
+  <small>{$nom}{if $e['rival']} · {$e['rival']}{/if}</small>
+  <b>{$m['nuestro']} – {$m['rival']}</b>
+ </div>
+ {/if}
 
  {if $inter && $m['marcable']}
  <div class="vm-cuadros">
