@@ -117,6 +117,26 @@ final class PlantelController extends AppBase
         if (!$err && !in_array($hijo['equipo_id'], $this->ids(), true)) {
             $err['equipo_id'] = 'plantel.error.equipo';
         }
+        if (!empty($_POST['adulto'])) {
+            [$ad, $e2] = $svc->normalizarAdulto(['nombre' => $hijo['nombre'] ?: 'x', 'email' => $_POST['email_j'] ?? '', 'telefono' => $_POST['telefono_j'] ?? '']);
+            if (isset($e2['email'])) {
+                $err['adulto_email_j'] = $e2['email'];
+            }
+            if (isset($e2['telefono'])) {
+                $err['adulto_telefono_j'] = $e2['telefono'];
+            }
+            if ($err) {
+                $this->formularioNuevo($_POST, $err);
+                return;
+            }
+            $existia = (new PersonaService($this->pdo))->porCorreo($ad['email']) !== null;
+            $r = $svc->cargarAdulto($this->club['id'], $hijo, $ad['email'], $ad['telefono'] ?: null);
+            if (!$existia) {
+                (new Correo($this->ctx, $this->pdo))->invitacion($ad['email'], $hijo['nombre'], (string) $this->club['nombre'], (string) $this->persona['nombre'], $this->i18nDe($ad['email']));
+            }
+            $this->ctx->redirect('/app/plantel/jugador/' . $r['jugador'], $this->i18n->t('plantel.cargado_adulto'));
+            return;
+        }
         if ($familia !== 'nueva') {
             if ($svc->hijosDeTitular($familia, $this->club['id']) === []) {
                 $err['familia'] = 'plantel.error.familia';
@@ -141,6 +161,39 @@ final class PlantelController extends AppBase
             (new Correo($this->ctx, $this->pdo))->invitacion($adulto['email'], $adulto['nombre'], (string) $this->club['nombre'], (string) $this->persona['nombre'], $this->i18nDe($adulto['email']));
         }
         $this->ctx->redirect('/app/plantel/jugador/' . $r['jugador'], $this->i18n->t($existia ? 'plantel.cargado_familia' : 'plantel.cargado'));
+    }
+
+    /** El entrenador o encargado corrige el nombre y la temporada de sus propios equipos. */
+    public function equipoEditar(string $id): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        $e = $this->svc()->equipo($id);
+        if ($e === null || $e['club_id'] !== $this->club['id'] || !in_array($id, $this->ids(), true)) {
+            \Flight::notFound();
+            return;
+        }
+        echo $this->vista()->pagina('plantel-equipo.latte', ['activa' => 'plantel', 'e' => $e, 'd' => [], 'errores' => []]);
+    }
+
+    public function equipoGuardar(string $id): void
+    {
+        if (!$this->entrar()) {
+            return;
+        }
+        $e = $this->svc()->equipo($id);
+        if ($e === null || $e['club_id'] !== $this->club['id'] || !in_array($id, $this->ids(), true) || !$this->csrfOk()) {
+            $this->ir('/app/plantel');
+            return;
+        }
+        $nombre = trim((string) ($_POST['nombre'] ?? ''));
+        if ($nombre === '' || mb_strlen($nombre) > 80) {
+            echo $this->vista()->pagina('plantel-equipo.latte', ['activa' => 'plantel', 'e' => $e, 'd' => $_POST, 'errores' => ['nombre' => 'plantel.error.nombre']]);
+            return;
+        }
+        (new ClubService($this->pdo))->actualizarEquipo($id, $nombre, mb_substr((string) ($_POST['temporada'] ?? ''), 0, 16));
+        $this->ctx->redirect('/app/plantel?equipo=' . $id, $this->i18n->t('evento.guardado'));
     }
 
     private function i18nDe(string $email): I18n

@@ -1,0 +1,15 @@
+{layout '_layout.latte'}
+{block titulo}{$e['nombre']} · u330{/block}
+{block contenido}
+<a class="volver" href="{$url('plantel')}?equipo={$e['id']}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
+<h1 style="font-size:34px;margin-bottom:12px">{$t('plantel.equipo.editar')}</h1>
+<form method="post" action="{$url('plantel/equipo/' . $e['id'])}" novalidate>
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <p class="texto" style="margin:0 0 12px">{$t('plantel.equipo.ayuda')}</p>
+  <label class="campo"><span>{$t('club.equipo.nombre')}</span><input class="in" type="text" name="nombre" value="{$d['nombre'] ?? $e['nombre']}" maxlength="80">{if isset($errores['nombre'])}<small class="error" role="alert">{$t($errores['nombre'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('club.temporada')}</span><input class="in" type="text" name="temporada" value="{$d['temporada'] ?? $e['temporada']}" maxlength="16"></label>
+  <button class="bt s" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
+ </section>
+</form>
+{/block}

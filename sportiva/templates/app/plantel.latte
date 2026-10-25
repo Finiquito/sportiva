@@ -15,7 +15,7 @@
  <a class="pill{if $equipo && $q['id'] === $equipo['id']} on{/if}" href="{$url('plantel')}?equipo={$q['id']}" {if $equipo && $q['id'] === $equipo['id']}aria-current="true"{/if} style="display:inline-flex;align-items:center;text-decoration:none">{$q['nombre']}</a>
  {/foreach}
 </div>
-<a class="bt s" href="{$url('plantel/nuevo')}{if $equipo}?equipo={$equipo['id']}{/if}" style="margin-bottom:12px">{$ico('plus')|noescape}{$t('plantel.nuevo')}</a>
+<div class="acciones" style="margin:0 0 12px"><a class="bt s" href="{$url('plantel/nuevo')}{if $equipo}?equipo={$equipo['id']}{/if}">{$ico('plus')|noescape}{$t('plantel.nuevo')}</a>{if $equipo}<a class="bt s" href="{$url('plantel/equipo/' . $equipo['id'])}">{$ico('pencil-simple')|noescape}{$t('plantel.equipo.editar')}</a>{/if}</div>
 <section class="card">
  <div class="ch"><h3>{$equipo['nombre']} · {$n('plantel.jugadores', count($jugadores))}</h3></div>
  {foreach $jugadores as $j}

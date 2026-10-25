@@ -3,7 +3,7 @@
 {block contenido}
 <a class="volver" href="{$url('plantel')}?equipo={$j['equipo_id']}">{$ico('arrow-right')|noescape}{$t('volver')}</a>
 <div class="ficha-cab">{$avatar($j, 'grande')|noescape}<div><h1 style="font-size:34px;margin:0 0 4px">{$j['nombre']}</h1>
-<p class="hola" style="margin:0">{$j['equipo']}{if $j['nacimiento']} · {$t('plantel.edad', ['n' => $edad($j['nacimiento'])])}{/if}</p></div></div>
+<p class="hola" style="margin:0">{$j['equipo']}{if $j['nacimiento']} · {$t('plantel.edad', ['n' => $edad($j['nacimiento'])])}{/if}</p>{if $j['persona_id']}<span class="tag" style="margin-top:6px">{$t('plantel.adulto_tag')}</span>{/if}</div></div>
 
 {if $editar}
 <form method="post" action="{$url('plantel/jugador/' . $j['id'])}" novalidate>

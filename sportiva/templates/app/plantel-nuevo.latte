@@ -13,9 +13,16 @@
    <select class="in" name="equipo_id">{foreach $equipos as $q}<option value="{$q['id']}" {if ($d['equipo_id'] ?? '') === $q['id']}selected{/if}>{$q['nombre']}</option>{/foreach}</select>
    {if isset($errores['equipo_id'])}<small class="error" role="alert">{$t($errores['equipo_id'])}</small>{/if}
   </label>
+  <label class="tog" style="border-top:1.5px dashed var(--linea-2);margin-top:6px"><span><b>{$t('plantel.adulto')}</b><small>{$t('plantel.adulto.ayuda')}</small></span><input class="sw-c" type="checkbox" name="adulto" value="1" id="es-adulto" {if !empty($d['adulto'])}checked{/if}></label>
  </section>
  {var $sel = $d['familia'] ?? 'nueva'}
- <section class="card">
+ <section class="card" id="acc-card" {if empty($d['adulto'])}hidden{/if}>
+  <div class="ch"><h3>{$t('plantel.acceso')}</h3></div>
+  <p class="texto" style="margin:0 0 12px">{$t('plantel.acceso.ayuda')}</p>
+  <label class="campo"><span>{$t('plantel.correo_jugador')}</span><input class="in" type="email" name="email_j" value="{$d['email_j'] ?? ''}" maxlength="190" autocapitalize="off">{if isset($errores['adulto_email_j'])}<small class="error" role="alert">{$t($errores['adulto_email_j'])}</small>{/if}</label>
+  <label class="campo"><span>{$t('plantel.telefono')}</span><input class="in" type="tel" name="telefono_j" value="{$d['telefono_j'] ?? ''}" maxlength="40"></label>
+ </section>
+ <section class="card" id="fam-card" {if !empty($d['adulto'])}hidden{/if}>
   <div class="ch"><h3>{$t('plantel.familia')}</h3></div>
   {if $familias}
   <p class="texto" style="margin:0 0 12px">{$t('plantel.familia.ayuda')}</p>
@@ -38,6 +45,7 @@
  <button class="bt s w" type="submit">{$ico('check')|noescape}{$t('plantel.guardar')}</button>
 </form>
 <script n:syntax="off">
+(function(){var a=document.getElementById('es-adulto');if(a){var ac=document.getElementById('acc-card'),fc=document.getElementById('fam-card');var m=function(){ac.hidden=!a.checked;fc.hidden=a.checked;};a.addEventListener('change',m);m();}})();
 (function(){var q=document.getElementById('fam-buscar');if(!q)return;q.addEventListener('input',function(){var t=q.value.toLowerCase().trim();document.querySelectorAll('.fam-op[data-q]').forEach(function(l){l.hidden=t!==''&&l.getAttribute('data-q').indexOf(t)<0;});});})();
 </script>
 {/block}

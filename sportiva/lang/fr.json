@@ -711,5 +711,14 @@
  "evento.conf.ayuda": "Les familles verront « à confirmer » et seront prévenues quand tu le définiras.",
  "aviso.evento.confirmado": "Confirmé : {titulo}",
  "avisos.confirmada": "Confirmé",
- "agenda.por_confirmar": "À confirmer"
+ "agenda.por_confirmar": "À confirmer",
+ "plantel.adulto": "Joueur majeur",
+ "plantel.adulto.ayuda": "Il entre avec son propre e-mail, sans parent",
+ "plantel.acceso": "Accès du joueur",
+ "plantel.acceso.ayuda": "Il confirme sa présence, reçoit les avis et écrit au coach par lui-même.",
+ "plantel.correo_jugador": "E-mail du joueur",
+ "plantel.cargado_adulto": "Joueur ajouté. L’invitation a été envoyée à son e-mail.",
+ "plantel.adulto_tag": "Joueur adulte",
+ "plantel.equipo.editar": "Modifier l’équipe",
+ "plantel.equipo.ayuda": "Corrige le nom ou la saison. Les joueurs et les convocations ne changent pas."
 }

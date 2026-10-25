@@ -140,6 +140,8 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('GET /app/plantel',                              $p([$plantel, 'inicio']));
         \Flight::route('POST /app/plantel/locales',                     $p([$plantel, 'localAgregar']));
         \Flight::route('POST /app/plantel/locales/@id/quitar',          $p(fn(string $id) => $plantel->localQuitar($id)));
+        \Flight::route('GET /app/plantel/equipo/@id',                  $p(fn(string $id) => $plantel->equipoEditar($id)));
+        \Flight::route('POST /app/plantel/equipo/@id',                 $p(fn(string $id) => $plantel->equipoGuardar($id)));
         \Flight::route('GET /app/plantel/nuevo',                        $p([$plantel, 'nuevo']));
         \Flight::route('POST /app/plantel',                             $p([$plantel, 'crear']));
         \Flight::route('GET /app/plantel/solicitudes',                  $p([$plantel, 'solicitudes']));
@@ -198,7 +200,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.16.5';
+        return '0.16.6';
     }
 
     public function provides(): array

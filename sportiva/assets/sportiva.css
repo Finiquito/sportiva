@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.16.5";
+  --css-v:"0.16.6";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -287,6 +287,11 @@ a.bt{text-decoration:none;color:inherit}
 .ia.err{color:var(--error)}
 .ia.am{background:var(--amarillo);color:var(--tinta)}
 .ia.dor{color:var(--dorado-txt)}
+.tog .sw-c{appearance:none;-webkit-appearance:none;width:44px;height:26px;margin:0;border-radius:13px;border:1.5px solid var(--linea-2);background:var(--papel);position:relative;cursor:pointer;flex:none;transition:background .15s,border-color .15s}
+.tog .sw-c::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--tinta-2);transition:left .15s,background .15s}
+.tog .sw-c:checked{background:var(--club);border-color:var(--club)}
+.tog .sw-c:checked::after{left:21px;background:var(--amarillo)}
+.tog .sw-c:focus-visible{outline:2px solid var(--club);outline-offset:3px}
 .fotos.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .fotos.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .fotos.g4 span,.fotos.g3 span{min-height:90px}

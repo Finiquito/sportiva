@@ -184,6 +184,25 @@ final class PlantelService extends Repo
         return ['jugador' => $jid, 'persona' => $pid, 'nueva' => $nueva];
     }
 
+    /**
+     * Jugador mayor de edad: tiene cuenta propia (su correo) y es su propio titular, sin apoderado.
+     * Queda con rol de apoderado de sí mismo (confirma asistencia, recibe avisos, consulta) y `persona_id` en su ficha.
+     * @param array<string, string> $hijo @return array{jugador: string, persona: string, nueva: bool}
+     */
+    public function cargarAdulto(string $club, array $hijo, string $email, ?string $tel): array
+    {
+        [$pid, $nueva] = $this->apoderado($club, $hijo['nombre'], $email, $tel);
+        $jid = $this->personas()->crearJugador($club, $hijo['equipo_id'], $hijo['nombre'], $hijo['nacimiento'] ?: null, $pid);
+        $this->personas()->vincularHijo($pid, $jid, true);
+        return ['jugador' => $jid, 'persona' => $pid, 'nueva' => $nueva];
+    }
+
+    /** @return array<string, mixed>|null */
+    public function equipo(string $id): ?array
+    {
+        return $this->fila('SELECT id, club_id, nombre, temporada FROM sportiva_equipos WHERE id = ? AND archivado = 0', [$id]);
+    }
+
     /** Agrega un adulto a la familia de un titular (a todos sus hijos del club). @return array{0: string, 1: bool} */
     public function agregarAdulto(string $titular, string $club, array $d): array
     {

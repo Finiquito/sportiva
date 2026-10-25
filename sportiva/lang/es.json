@@ -711,5 +711,14 @@
  "evento.conf.ayuda": "Las familias verán «por confirmar» y les avisaremos cuando lo definas.",
  "aviso.evento.confirmado": "Se confirmó: {titulo}",
  "avisos.confirmada": "Confirmada",
- "agenda.por_confirmar": "Por confirmar"
+ "agenda.por_confirmar": "Por confirmar",
+ "plantel.adulto": "Jugador mayor de edad",
+ "plantel.adulto.ayuda": "Entra con su propio correo, sin apoderado",
+ "plantel.acceso": "Acceso del jugador",
+ "plantel.acceso.ayuda": "Confirma su asistencia, recibe avisos y consulta al entrenador por su cuenta.",
+ "plantel.correo_jugador": "Correo del jugador",
+ "plantel.cargado_adulto": "Jugador cargado. Le enviamos la invitación a su correo.",
+ "plantel.adulto_tag": "Jugador adulto",
+ "plantel.equipo.editar": "Editar equipo",
+ "plantel.equipo.ayuda": "Corrige el nombre o la temporada. Los jugadores y las citaciones no cambian."
 }
