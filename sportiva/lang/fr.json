@@ -720,5 +720,6 @@
  "plantel.cargado_adulto": "Joueur ajouté. L’invitation a été envoyée à son e-mail.",
  "plantel.adulto_tag": "Joueur adulte",
  "plantel.equipo.editar": "Modifier l’équipe",
- "plantel.equipo.ayuda": "Corrige le nom ou la saison. Les joueurs et les convocations ne changent pas."
+ "plantel.equipo.ayuda": "Corrige le nom ou la saison. Les joueurs et les convocations ne changent pas.",
+ "mas.club_actual": "tu es ici"
 }

@@ -233,6 +233,8 @@ check($r === '/app/agenda' && S\Sesion::club() === $otro, 'elige el club');
 check(str_contains($h, '404'), 'un evento de otro club no se ve (404)');
 [$h] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
 check(!str_contains($h, 'U12 vs Niort'), 'la agenda no mezcla clubes');
+[$h] = llamar(fn() => (new S\AuthController($ctx))->mas());
+check(str_contains($h, 'name="membresia"') && str_contains($h, 'Club Pampa') && str_contains($h, 'aria-current="true"'), 'Más lista los clubes directo, con el actual marcado');
 S\Sesion::elegir($otro, 'apoderado'); // rol que no tiene en ese club
 [$h, $r] = llamar(fn() => (new S\AgendaController($ctx))->agenda());
 check($r === '/app/elegir', 'un rol que no le corresponde en ese club se rechaza');

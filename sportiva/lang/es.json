@@ -720,5 +720,6 @@
  "plantel.cargado_adulto": "Jugador cargado. Le enviamos la invitación a su correo.",
  "plantel.adulto_tag": "Jugador adulto",
  "plantel.equipo.editar": "Editar equipo",
- "plantel.equipo.ayuda": "Corrige el nombre o la temporada. Los jugadores y las citaciones no cambian."
+ "plantel.equipo.ayuda": "Corrige el nombre o la temporada. Los jugadores y las citaciones no cambian.",
+ "mas.club_actual": "estás aquí"
 }

@@ -8,6 +8,22 @@
   <li><span class="lk" style="grid-template-columns:auto minmax(0,1fr)"><span class="fi">{$ico('user-circle')|noescape}</span><span><b>{$persona['nombre']}</b><small>{$persona['email']} · {$t('rol.' . $rol)}</small></span></span></li>
  </ul>
 </section>
+{if count($mem) > 1}
+<form method="post" action="/app/elegir">
+ <input type="hidden" name="csrf" value="{$csrf}">
+ <section class="card">
+  <div class="ch"><h3>{$t('mas.clubes')}</h3><span class="est">{count($mem)}</span></div>
+  {foreach $mem as $m}
+  {var $actual = $m['club_id'] === $club['id'] && $m['rol'] === $rol}
+  <button class="clubrow{if $actual} actual{/if}" type="submit" name="membresia" value="{$m['id']}" {if $actual}aria-current="true"{/if}>
+   <span class="escudo">{mb_strtoupper(mb_substr(preg_replace('/[^\p{L}]/u', '', $m['club']) ?: 'C', 0, 2))}</span>
+   <span><b>{$m['club']}</b><small>{$t('rol.' . $m['rol'])}{if $actual} · {$t('mas.club_actual')}{/if}</small></span>
+   {if $actual}<span class="chev">{$ico('check')|noescape}</span>{else}<span class="chev">{$ico('arrow-right')|noescape}</span>{/if}
+  </button>
+  {/foreach}
+ </section>
+</form>
+{/if}
 <section class="card solo-movil" id="instalar" hidden>
  <div class="ch"><h3>{$t('instalar.titulo')}</h3></div>
  <p class="texto" style="margin:0 0 8px">{$t('instalar.texto')}</p>
@@ -23,14 +39,7 @@
   {/foreach}
  </ul>
 </section>
-{if count($mem) > 1}
-<section class="card">
- <div class="ch"><h3>{$t('mas.clubes')}</h3></div>
- <ul class="lkl">
-  <li><a class="lk" href="/app/elegir" style="grid-template-columns:auto minmax(0,1fr) auto"><span class="fi">{$ico('house')|noescape}</span><span><b>{$t('mas.cambiar_club')}</b><small>{count($mem)}</small></span><span class="chev">{$ico('arrow-right')|noescape}</span></a></li>
- </ul>
-</section>
-{/if}
+
 <form method="post" action="/app/salir">
  <input type="hidden" name="csrf" value="{$csrf}">
  <button class="bt w danger" type="submit">{$t('mas.salir')}</button>
