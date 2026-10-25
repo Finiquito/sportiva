@@ -1,0 +1,53 @@
+{* Marcador por deporte. Recibe $m (EnVivoService::marcador), $e, $dep, $inter (con controles para el reportero) y, si $inter, $etapas.
+   Tabla de periodos: rival arriba, nosotros abajo; la columna en juego va resaltada. Vóley: columnas = sets y a la derecha los sets ganados.
+   Fútbol y básquet: columnas = tiempos o cuartos y a la derecha el total. *}
+{var $nom = $e['equipo']}
+{var $riv = $e['rival'] ?: $t('envivo.m.rival')}
+<div class="vm" {if $inter}data-marc data-url="{$url('evento/' . $e['id'] . '/envivo/marcador')}" data-csrf="{$csrf}" data-dep="{$dep}"{/if}>
+ <table class="vm-t" aria-label="{$t('envivo.m.titulo')}">
+  <thead><tr>
+   <th class="eq">{$t('envivo.m.col.' . $dep)}</th>
+   {foreach $m['cols'] as $c}<th class="{if $c['actual']}act{/if}">{if $dep === 'basquet' && $c['n'] > 4}PR{if $c['n'] > 5}{$c['n'] - 4}{/if}{else}{$c['n']}{/if}</th>{/foreach}
+   <th class="tot">{if $dep !== 'voley'}{$t('envivo.m.col.total')}{/if}</th>
+  </tr></thead>
+  <tbody>
+   {foreach [['riv', $riv], ['nos', $nom]] as [$lado, $nombre]}
+   <tr>
+    <th class="eq"><span class="vm-n {$lado}">{$nombre}</span></th>
+    {foreach $m['cols'] as $c}
+    {var $mio = $c[$lado]}{var $otro = $c[$lado === 'nos' ? 'riv' : 'nos']}
+    <td class="{if $c['actual']}act{/if}{if !$c['actual'] || $dep === 'voley'}{if $mio > $otro} g{elseif $mio < $otro} p{/if}{/if}"><span {if $c['actual']}data-cur="{$lado}"{/if}>{$mio}</span></td>
+    {/foreach}
+    <td class="tot">{var $tm = $m['total'][$lado]}{var $to = $m['total'][$lado === 'nos' ? 'riv' : 'nos']}<b class="{if $dep === 'voley' && $tm > $to}lider{/if}" data-tot="{$lado}">{$tm}</b></td>
+   </tr>
+   {/foreach}
+  </tbody>
+ </table>
+
+ {if $inter && $m['marcable']}
+ <div class="vm-cuadros">
+  {foreach [['nos', $nom, 'nos'], ['riv', $riv, 'riv']] as [$lado, $nombre, $cls]}
+  <div class="vm-eq {$cls}">
+   <small>{$nombre}</small>
+   <b data-reg="{$lado}">{$lado === 'nos' ? $m['nuestro'] : $m['rival']}</b>
+   <div class="mas">
+    {foreach $m['toques'] as $tq}<button type="button" data-tap data-accion="{$lado}+{$tq}">{if count($m['toques']) === 1}{$t($dep === 'voley' ? 'envivo.m.mas_punto' : 'envivo.m.mas_gol')}{else}+{$tq}{/if}</button>{/foreach}
+   </div>
+   <button type="button" class="menos" data-tap data-accion="{$lado}-1">{$t('envivo.m.corregir')}</button>
+  </div>
+  {/foreach}
+ </div>
+ {/if}
+
+ {if $inter && $etapas}
+ <div class="vm-etapas">
+  {foreach $etapas as $et}
+  <form method="post" action="{$url('evento/' . $e['id'] . '/envivo/etapa')}" data-ok="{$t('envivo.listo')}"
+        {if $et['seguro']}data-confirmar="{$t($et['seguro'], $et['v'])}" data-si="{$t('envivo.m.si_seguro')}" data-no="{$t('cancelar_accion')}"{/if}>
+   <input type="hidden" name="csrf" value="{$csrf}"><input type="hidden" name="accion" value="{$et['accion']}">
+   <button class="bt w{if $et['principal']} s{/if}" type="submit">{$t($et['k'], $et['v'])}</button>
+  </form>
+  {/foreach}
+ </div>
+ {/if}
+</div>

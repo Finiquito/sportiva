@@ -1,6 +1,6 @@
 /* Sportiva · generado por scripts/css.sh — no editar a mano (fuente: assets-src/) */
 :root{
-  --css-v:"0.17.1";
+  --css-v:"0.17.2";
   --verde:#0F4F4E;      
   --hueso:#F7F1E8;      
   --amarillo:#F6F24A;   
@@ -401,15 +401,40 @@ h1{line-height:1.06}
 .vivo-nota small{display:block;font:400 12px/1.4 var(--font-mono);color:var(--tinta-2);margin-top:2px}
 .vivo-acc{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .vivo-acc form{flex:1 1 auto;margin:0}
-.vivo-step{display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:6px 0 14px}
-.vivo-step .eq{display:flex;flex-direction:column;align-items:center;gap:8px}
-.vivo-step .eq>em{font:500 11.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);font-style:normal}
-.vivo-step .eq>div{display:flex;align-items:center;gap:4px}
-.vivo-step input{width:46px;text-align:center;border:0;background:transparent;font:800 44px/1 var(--font-display);color:var(--tinta);font-variant-numeric:tabular-nums;-moz-appearance:textfield;padding:0;min-width:0}
-.vivo-step input::-webkit-outer-spin-button,.vivo-step input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.vivo-step .vs{font:800 28px/1 var(--font-display);padding:0 2px 10px}
-.vivo-step button{width:38px;height:38px;flex:none;border-radius:50%;border:1.5px solid var(--linea-2);background:var(--papel);font:700 20px/1 var(--font-body);color:var(--tinta);cursor:pointer;padding:0}
-.vivo-step button:focus-visible{outline:2px solid var(--club);outline-offset:2px}
+.vm{margin:0 0 4px}
+.vm-t{width:100%;border-collapse:collapse;margin:0 0 14px;font:600 15px/1.2 var(--font-mono)}
+.vm-t th,.vm-t td{padding:9px 6px;text-align:center;vertical-align:middle}
+.vm-t thead th{font:500 13px/1 var(--font-mono);color:var(--tinta-2);text-transform:lowercase}
+.vm-t tbody tr:first-child>*{border-bottom:1.5px solid var(--linea-2)}
+.vm-t td,.vm-t thead th:not(.eq){border-left:1.5px solid var(--linea-2)}
+.vm-t thead th.tot,.vm-t td.tot{border-left:0}
+.vm-t .eq{text-align:left;white-space:nowrap;padding-left:0}
+.vm-n{display:inline-block;padding:4px 10px;font:700 15px/1.2 var(--font-mono);color:var(--club);max-width:150px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+.vm-n.nos{background:var(--club);color:#fff}
+.vm-t td.g{font-weight:800;color:var(--tinta)}
+.vm-t td.p{color:var(--club);font-weight:500}
+.vm-t .act{background:var(--amarillo-t)}
+.vm-t td.tot b{display:inline-grid;place-items:center;min-width:36px;height:32px;padding:0 6px;border:2px solid var(--club);color:var(--club);font:700 16px/1 var(--font-mono);font-variant-numeric:tabular-nums}
+.vm-t td.tot b.lider{background:var(--club);color:#fff}
+.vm-cuadros{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+.vm-eq{border:1.5px solid var(--linea-2);border-radius:20px;padding:12px 10px 10px;text-align:center;min-width:0}
+.vm-eq.nos{border-color:var(--club);background:var(--club-t)}
+.vm-eq small{display:block;font:600 11.5px/1.2 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vm-eq b{display:block;font:800 60px/1 var(--font-display);letter-spacing:-.03em;margin:8px 0 10px;font-variant-numeric:tabular-nums}
+.vm-eq .mas{display:flex;gap:6px;justify-content:center}
+.vm-eq .mas button{flex:1;min-width:0;height:46px;border-radius:999px;border:0;background:var(--club);color:#fff;font:800 16px/1 var(--font-body);cursor:pointer;touch-action:manipulation}
+.vm-eq.riv .mas button{background:var(--papel);color:var(--tinta);border:1.5px solid var(--linea-2)}
+.vm-eq .mas button:active{transform:scale(.97)}
+.vm-eq .menos{display:block;margin:8px auto 0;padding:6px 8px;border:0;background:none;font:600 12px/1 var(--font-mono);color:var(--tinta-2);cursor:pointer;touch-action:manipulation}
+.vm-etapas{display:flex;gap:8px;margin:0 0 4px}
+.vm-etapas form{flex:1 1 0;margin:0;min-width:0}
+.vm-etapas .bt{width:100%}
+.confirma{margin:10px 0 0;padding:14px;border-radius:18px;background:var(--aviso)}
+.confirma p{margin:0 0 10px;font:600 14px/1.4 var(--font-body);color:var(--tinta)}
+.confirma .acc{display:flex;gap:8px}.confirma .acc .bt{flex:1}
+.vm-reg{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
+.vm-reg .bt{height:50px}
+input.in[type=time],input.in[type=date]{width:100%;min-width:0;max-width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none}
 html{-webkit-text-size-adjust:100%}
 a{color:inherit}
 .app{width:100%;max-width:560px;margin:0 auto;min-height:100vh;border-radius:0;border:0;display:flex;flex-direction:column;background:var(--hueso)}

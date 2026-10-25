@@ -183,7 +183,7 @@ final class AgendaController extends AppBase
         $env = null;
         $sv = new EnVivoService($this->pdo);
         if ($e['tipo'] === 'partido' && $e['estado'] === 'publicado') {
-            $env = $sv->vista($e, Tiempo::ahora($this->zona()));
+            $env = $sv->vista($e, Tiempo::ahora($this->zona()), EnVivoService::deporte($this->club['deporte'] ?? null));
         }
         echo $this->vista()->pagina('evento.latte', [
             'env' => $env, 'dep' => EnVivoService::deporte($this->club['deporte'] ?? null), 'puedeRep' => $puede || ($this->rol === 'apoderado' && $mios !== []),

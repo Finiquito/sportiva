@@ -69,7 +69,11 @@ final class FeedController extends AppBase
         }
         if ($vista === 'equipo') {
             $desdeR = Tiempo::ahora((string) $this->club['zona'])->modify('-7 days')->format('Y-m-d H:i:s');
+            $envivo = new EnVivoService($this->pdo);
+            $dep = EnVivoService::deporte($this->club['deporte'] ?? null);
             foreach ($svc->resultados($this->club['id'], $eq, $desdeR) as $r) {
+                [$r['nuestro'], $r['goles_rival']] = $envivo->resultado($r['id'], $dep);
+                $r['sets'] = $dep === 'voley';
                 $items[] = ['k' => 'resultado', 'f' => 0, 't' => $r['updated_at'], 'p' => $r];
             }
         }

@@ -143,7 +143,10 @@ class SportivaPlugin implements PluginInterface
         \Flight::route('POST /app/plantel/locales/@id/quitar',          $p(fn(string $id) => $plantel->localQuitar($id)));
         \Flight::route('POST /app/evento/@id/envivo/presente',         $p(fn(string $id) => $envivo->presente($id)));
         \Flight::route('GET /app/evento/@id/envivo',                   $p(fn(string $id) => $envivo->formulario($id)));
-        \Flight::route('POST /app/evento/@id/envivo',                  $p(fn(string $id) => $envivo->publicar($id)));
+        \Flight::route('POST /app/evento/@id/envivo/marcador',         $p(fn(string $id) => $envivo->marcador($id)));
+        \Flight::route('POST /app/evento/@id/envivo/etapa',            $p(fn(string $id) => $envivo->etapa($id)));
+        \Flight::route('POST /app/evento/@id/envivo/novedad',          $p(fn(string $id) => $envivo->novedad($id)));
+        \Flight::route('POST /app/evento/@id/envivo/regreso',          $p(fn(string $id) => $envivo->regreso($id)));
         \Flight::route('POST /app/evento/@id/envivo/confirmar',        $p(fn(string $id) => $envivo->confirmar($id)));
         \Flight::route('GET /app/plantel/equipo/@id',                  $p(fn(string $id) => $plantel->equipoEditar($id)));
         \Flight::route('POST /app/plantel/equipo/@id',                 $p(fn(string $id) => $plantel->equipoGuardar($id)));
@@ -205,7 +208,7 @@ class SportivaPlugin implements PluginInterface
 
     public function getVersion(): string
     {
-        return '0.17.1';
+        return '0.17.2';
     }
 
     public function provides(): array

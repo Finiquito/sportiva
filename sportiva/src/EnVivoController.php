@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace TypeDock\Plugin\Sportiva;
 
-/** Reporte en vivo de un partido: «Estoy en la cancha», novedades, marcador y hora de regreso. */
+/**
+ * Reporte en vivo de un partido: «Estoy en la cancha», marcador por deporte, etapas, novedades y hora de regreso.
+ * Solo reporta un papá a la vez (el staff del equipo siempre puede). Los toques del marcador responden JSON; lo demás va por ajax del layout.
+ */
 final class EnVivoController extends AppBase
 {
     private function svc(): EnVivoService
@@ -14,6 +17,11 @@ final class EnVivoController extends AppBase
     private function zona(): string
     {
         return (string) ($this->club['zona'] ?? 'Europe/Paris');
+    }
+
+    private function dep(): string
+    {
+        return EnVivoService::deporte($this->club['deporte'] ?? null);
     }
 
     /** Partido publicado del club, o null. */
@@ -44,6 +52,43 @@ final class EnVivoController extends AppBase
     private function volver(string $id, ?string $msg = null, string $tipo = 'success'): void
     {
         $this->ctx->redirect('/app/evento/' . $id, $msg, $tipo);
+    }
+
+    private function aqui(string $id, ?string $msg = null, string $tipo = 'success'): void
+    {
+        $this->ctx->redirect('/app/evento/' . $id . '/envivo', $msg, $tipo);
+    }
+
+    /**
+     * Quien puede publicar ahora: sesión, partido, permiso, CSRF, ventana abierta y, si es familia, ser el reportero.
+     * Devuelve [evento, esStaff] o un texto de error de idioma.
+     * @return array{0: array<string, mixed>, 1: bool}|string|null null = redirigir a la agenda
+     */
+    private function autorizar(string $id, bool $conCsrf = true): array|string|null
+    {
+        if (($r = $this->exigir()) !== null) {
+            $this->ir($r);
+            return null;
+        }
+        $e = $this->partido($id);
+        if ($e === null || !$this->puedeReportar($e) || ($conCsrf && !$this->csrfOk())) {
+            return null;
+        }
+        if (!EnVivoService::abierto((string) $e['inicio'], Tiempo::ahora($this->zona()))) {
+            return 'envivo.cerrado';
+        }
+        $staff = $this->esStaffDe($e);
+        if (!$staff) {
+            $svc = $this->svc();
+            if (!$svc->esPresente($id, $this->persona['id'])) {
+                return 'envivo.error.no_presente';
+            }
+            $rep = $svc->reportero($e);
+            if ($rep !== null && $rep['persona_id'] !== $this->persona['id']) {
+                return 'envivo.error.ocupado';
+            }
+        }
+        return [$e, $staff];
     }
 
     /** «Estoy en la cancha» (o dejar de estarlo). */
@@ -97,58 +142,149 @@ final class EnVivoController extends AppBase
     private function pagina(array $e, array $d, array $err): void
     {
         $svc = $this->svc();
-        $act = $svc->actual($e['id']);
-        $dep = EnVivoService::deporte($this->club['deporte'] ?? null);
+        $dep = $this->dep();
         $staff = $this->esStaffDe($e);
         $rep = $svc->reportero($e);
         $presente = $svc->esPresente($e['id'], $this->persona['id']);
+        $ahora = Tiempo::ahora($this->zona());
+        $env = $svc->vista($e, $ahora, $dep);
         echo $this->vista()->pagina('evento-envivo.latte', [
-            'activa' => 'agenda', 'e' => $e, 'act' => $act, 'd' => $d, 'errores' => $err, 'dep' => $dep, 'botones' => EnVivoService::BOTONES[$dep],
-            'presente' => $presente, 'abierto' => EnVivoService::abierto((string) $e['inicio'], Tiempo::ahora($this->zona())),
-            'env' => $svc->vista($e, Tiempo::ahora($this->zona())), 'puede' => $staff, 'puedeRep' => true, 'reportero' => $rep,
+            'activa' => 'agenda', 'e' => $e, 'act' => $svc->actual($e['id']), 'd' => $d, 'errores' => $err, 'dep' => $dep, 'novedades' => EnVivoService::NOVEDADES,
+            'presente' => $presente, 'abierto' => EnVivoService::abierto((string) $e['inicio'], $ahora),
+            'env' => $env, 'puede' => $staff, 'puedeRep' => true, 'reportero' => $rep,
             'soyReportero' => !$staff && $presente && ($rep === null || $rep['persona_id'] === $this->persona['id']),
         ]);
     }
 
-    public function publicar(string $id): void
+    /** Un toque en el marcador (+1, +3, − corregir). Responde JSON con los números nuevos. */
+    public function marcador(string $id): void
     {
-        if (($r = $this->exigir()) !== null) {
-            $this->ir($r);
+        $a = $this->autorizar($id);
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+        }
+        if (!is_array($a)) {
+            http_response_code(403);
+            echo json_encode(['ok' => false]);
             return;
         }
-        $e = $this->partido($id);
-        if ($e === null || !$this->puedeReportar($e) || !$this->csrfOk()) {
-            $this->ir('/app/agenda');
-            return;
-        }
+        [$e] = $a;
         $svc = $this->svc();
-        $staff = $this->esStaffDe($e);
-        if (!EnVivoService::abierto((string) $e['inicio'], Tiempo::ahora($this->zona()))) {
-            $this->volver($id, $this->i18n->t('envivo.cerrado'), 'error');
-            return;
-        }
-        if (!$staff && !$svc->esPresente($id, $this->persona['id'])) {
-            $this->volver($id, $this->i18n->t('envivo.error.no_presente'), 'error');
-            return;
-        }
-        $rep = $svc->reportero($e);
-        if (!$staff && $rep !== null && $rep['persona_id'] !== $this->persona['id']) {
-            $this->volver($id, $this->i18n->t('envivo.error.ocupado'), 'error');
-            return;
-        }
-        $dep = EnVivoService::deporte($this->club['deporte'] ?? null);
-        $act = $svc->actual($id);
-        [$d, $err] = $svc->normalizar($_POST, (string) $e['inicio'], $act, $dep);
-        if ($err !== null) {
-            $this->pagina($e, $_POST, ['general' => $err]);
+        $dep = $this->dep();
+        $accion = (string) ($_POST['accion'] ?? '');
+        $m = $svc->tocar($id, $dep, $accion);
+        if ($m === null) {
+            http_response_code(409);
+            echo json_encode(['ok' => false]);
             return;
         }
         $svc->marcarPresente($id, $this->persona['id'], true);
-        $nuevo = $svc->publicar($id, $this->persona['id'], $d);
         $this->avisarInicio($e);
-        $this->avisarFamilias($e, $d, $nuevo);
-        // se queda en la misma pantalla (el envío es por ajax): quien reporta no pierde el foco
-        $this->ctx->redirect('/app/evento/' . $id . '/envivo', $this->i18n->t('envivo.publicado'));
+        if ($dep === 'futbol' && str_contains($accion, '+') && $svc->puedeAvisarGol($id)) {
+            $titulo = (string) $e['titulo'];
+            $n = (int) $m['nuestro'];
+            $r = (int) $m['rival'];
+            $this->notificar(
+                (new AvisoService($this->pdo))->adultosDelEvento($id),
+                'agenda',
+                fn(I18n $i) => [$i->t('aviso.envivo.marcador', ['titulo' => $titulo, 'nuestro' => $n, 'rival' => $r]), ''],
+                '/app/evento/' . $id,
+                ['id' => $id, 'motivo' => 'marcador']
+            );
+        }
+        $cur = ['nos' => 0, 'riv' => 0];
+        foreach ($m['cols'] as $c) {
+            if ($c['actual']) {
+                $cur = ['nos' => $c['nos'], 'riv' => $c['riv']];
+            }
+        }
+        echo json_encode(['ok' => true, 'nuestro' => $m['nuestro'], 'rival' => $m['rival'], 'cur' => $cur, 'total' => $m['total'], 'cerrable' => (bool) $m['cerrable']]);
+    }
+
+    /** Cambio de etapa: comenzar, entretiempo, 2.º tiempo, cerrar set, fin de cuarto, terminar. */
+    public function etapa(string $id): void
+    {
+        $a = $this->autorizar($id);
+        if ($a === null) {
+            $this->ir('/app/agenda');
+            return;
+        }
+        if (is_string($a)) {
+            $this->aqui($id, $this->i18n->t($a), 'error');
+            return;
+        }
+        [$e] = $a;
+        $svc = $this->svc();
+        $dep = $this->dep();
+        [$err, $aviso] = $svc->avanzar($id, $dep, (string) ($_POST['accion'] ?? ''), $this->persona['id']);
+        if ($err !== null) {
+            $this->aqui($id, $this->i18n->t($err), 'error');
+            return;
+        }
+        $svc->marcarPresente($id, $this->persona['id'], true);
+        $this->avisarInicio($e);
+        if ($aviso !== null) {
+            $this->avisarEtapa($e, $aviso);
+        }
+        $this->aqui($id, $this->i18n->t('envivo.listo'));
+    }
+
+    /** Novedad informativa con nota. */
+    public function novedad(string $id): void
+    {
+        $a = $this->autorizar($id);
+        if ($a === null) {
+            $this->ir('/app/agenda');
+            return;
+        }
+        if (is_string($a)) {
+            $this->aqui($id, $this->i18n->t($a), 'error');
+            return;
+        }
+        [$e] = $a;
+        $err = $this->svc()->novedad($id, $this->persona['id'], (string) ($_POST['tipo'] ?? ''), (string) ($_POST['texto'] ?? ''));
+        if ($err !== null) {
+            $this->aqui($id, $this->i18n->t($err), 'error');
+            return;
+        }
+        $this->svc()->marcarPresente($id, $this->persona['id'], true);
+        $this->avisarInicio($e);
+        $this->aqui($id, $this->i18n->t('envivo.publicado'));
+    }
+
+    /** Hora estimada de regreso: avisa a las familias solo si cambió. */
+    public function regreso(string $id): void
+    {
+        $a = $this->autorizar($id);
+        if ($a === null) {
+            $this->ir('/app/agenda');
+            return;
+        }
+        if (is_string($a)) {
+            $this->aqui($id, $this->i18n->t($a), 'error');
+            return;
+        }
+        [$e] = $a;
+        $svc = $this->svc();
+        [$err, $cambio] = $svc->regreso($id, $this->persona['id'], (string) ($_POST['regreso'] ?? ''), (string) $e['inicio']);
+        if ($err !== null) {
+            $this->aqui($id, $this->i18n->t($err), 'error');
+            return;
+        }
+        if ($cambio) {
+            $svc->marcarPresente($id, $this->persona['id'], true);
+            $this->avisarInicio($e);
+            $hora = Tiempo::hora((string) $svc->actual($id)['regreso']);
+            $titulo = (string) $e['titulo'];
+            $this->notificar(
+                (new AvisoService($this->pdo))->adultosDelEvento($id),
+                'agenda',
+                fn(I18n $i) => [$i->t('aviso.envivo.regreso', ['titulo' => $titulo, 'hora' => $hora]), ''],
+                '/app/evento/' . $id,
+                ['id' => $id, 'motivo' => 'regreso']
+            );
+        }
+        $this->aqui($id, $this->i18n->t($cambio ? 'envivo.regreso_ok' : 'envivo.sin_cambio'));
     }
 
     /** Una sola vez por partido: avisa a las familias que ya hay alguien reportando. */
@@ -170,31 +306,27 @@ final class EnVivoController extends AppBase
         );
     }
 
-    /** Solo se avisa a las familias si cambia el marcador, la hora de regreso o termina el partido. */
-    private function avisarFamilias(array $e, array $d, array $v): void
+    /** Avisos de etapa: set cerrado (vóley), cuarto (básquet) y final. Los goles y los puntos sueltos no avisan aquí. */
+    private function avisarEtapa(array $e, array $av): void
     {
-        $final = $d['tipo'] === 'termino';
-        $marcador = $d['nuestro'] !== null || $final;
-        if (!$marcador && $d['regreso'] === null) {
-            return;
-        }
         $titulo = (string) $e['titulo'];
-        $n = (int) $v['nuestro'];
-        $r = (int) $v['rival'];
-        $regreso = $v['regreso'] ? Tiempo::hora((string) $v['regreso']) : null;
-        $motivo = $final ? 'final' : ($marcador ? 'marcador' : 'regreso');
-        $clave = ['final' => 'aviso.envivo.final', 'marcador' => 'aviso.envivo.marcador', 'regreso' => 'aviso.envivo.regreso'][$motivo];
-        $nota = $d['texto'];
-        $this->notificar(
-            (new AvisoService($this->pdo))->adultosDelEvento($e['id']),
-            'agenda',
-            fn(I18n $i) => [
-                $i->t($clave, ['titulo' => $titulo, 'nuestro' => $n, 'rival' => $r, 'hora' => (string) $regreso]),
-                $nota ?: ($regreso && $motivo !== 'regreso' ? $i->t('aviso.envivo.cuerpo_regreso', ['hora' => $regreso]) : ''),
-            ],
-            '/app/evento/' . $e['id'],
-            ['id' => $e['id'], 'motivo' => $motivo]
-        );
+        $motivo = (string) $av['motivo'];
+        $dep = $this->dep();
+        $textos = function (I18n $i) use ($titulo, $av, $motivo, $dep): array {
+            $a = (int) ($av['nos'] ?? 0);
+            $b = (int) ($av['riv'] ?? 0);
+            if ($motivo === 'set') {
+                return [$i->t('aviso.envivo.set', ['titulo' => $titulo, 'n' => $av['n'], 'a' => $a, 'b' => $b]), $i->t('aviso.envivo.set_cuerpo', ['a' => $av['sets'][0], 'b' => $av['sets'][1]])];
+            }
+            if ($motivo === 'cuarto') {
+                return [$i->t('aviso.envivo.cuarto', ['titulo' => $titulo, 'n' => $av['n'], 'a' => $a, 'b' => $b]), $i->t('aviso.envivo.cuarto_cuerpo', ['a' => $av['total'][0], 'b' => $av['total'][1]])];
+            }
+            if ($dep === 'voley') {
+                return [$i->t('aviso.envivo.final_sets', ['titulo' => $titulo, 'a' => $av['sets'][0], 'b' => $av['sets'][1]]), ''];
+            }
+            return [$i->t('aviso.envivo.final', ['titulo' => $titulo, 'nuestro' => $a, 'rival' => $b]), ''];
+        };
+        $this->notificar((new AvisoService($this->pdo))->adultosDelEvento($e['id']), 'agenda', $textos, '/app/evento/' . $e['id'], ['id' => $e['id'], 'motivo' => $motivo]);
     }
 
     public function confirmar(string $id): void

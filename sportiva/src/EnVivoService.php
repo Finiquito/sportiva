@@ -10,18 +10,22 @@ namespace TypeDock\Plugin\Sportiva;
  */
 final class EnVivoService extends Repo
 {
-    /** Botones rápidos por deporte (el club decide el deporte). «descanso» y «reanuda» cambian de nombre según el deporte. */
-    public const BOTONES = [
-        'futbol'  => ['llegamos', 'comenzo', 'descanso', 'reanuda', 'termino', 'vuelta'],
-        'voley'   => ['llegamos', 'comenzo', 'descanso', 'termino', 'vuelta'],
-        'basquet' => ['llegamos', 'comenzo', 'descanso', 'reanuda', 'termino', 'vuelta'],
-    ];
-    public const TIPOS = ['llegamos', 'comenzo', 'descanso', 'reanuda', 'termino', 'vuelta'];
+    /** Novedades informativas (el marcador y las etapas del partido tienen sus propios controles). */
+    public const NOVEDADES = ['llegamos', 'vuelta'];
+    /** Vóley: al mejor de 3 sets de 25 puntos (15 el set decisivo), con 2 de diferencia. Básquet: 4 cuartos. */
+    public const SETS = 3;
+    public const PUNTOS_SET = 25;
+    public const PUNTOS_DECISIVO = 15;
+    public const CUARTOS = 4;
+    /** Cuánto suma cada toque según el deporte. */
+    public const TOQUES = ['futbol' => [1], 'voley' => [1], 'basquet' => [1, 2, 3]];
     /** El reporte se abre 3 h antes del partido y se cierra 12 h después de su inicio. */
     public const ANTES = 3;
     public const DESPUES = 12;
     /** Si nadie publica en este tiempo, el partido deja de mostrarse «en vivo». */
     public const SIN_NOVEDAD_HORAS = 4;
+    /** Los goles seguidos no avisan más de una vez por este tiempo (segundos). */
+    public const AVISO_GOL_SEG = 60;
 
     public static function deporte(?string $d): string
     {
@@ -117,100 +121,301 @@ final class EnVivoService extends Repo
         return (int) ($this->fila('SELECT COUNT(*) AS n FROM sportiva_envivo_presentes WHERE evento_id = ?', [$evento])['n'] ?? 0);
     }
 
-    /**
-     * Valida lo que se publica. Devuelve [datos, error].
-     * @param array<string, mixed> $in @param array<string, mixed>|null $act versión vigente
-     * @return array{0: array<string, mixed>, 1: string|null}
-     */
-    public function normalizar(array $in, string $inicio, ?array $act, string $deporte): array
+    // ---- marcador por deporte -------------------------------------------------------------------
+
+    /** @return array<int, array<string, mixed>> periodos cerrados, en orden */
+    public function periodos(string $evento): array
     {
-        $tipo = (string) ($in['tipo'] ?? '');
-        if ($tipo !== '' && !in_array($tipo, self::BOTONES[$deporte] ?? self::BOTONES['futbol'], true)) {
-            return [[], 'envivo.error.tipo'];
+        return $this->filas('SELECT numero, nuestro, rival FROM sportiva_envivo_periodos WHERE evento_id = ? ORDER BY numero', [$evento]);
+    }
+
+    private function cerrarPeriodo(string $evento, int $numero, int $nuestro, int $rival): void
+    {
+        $this->ejecutar('DELETE FROM sportiva_envivo_periodos WHERE evento_id = ? AND numero = ?', [$evento, $numero]);
+        $this->ejecutar('INSERT INTO sportiva_envivo_periodos (evento_id, numero, nuestro, rival) VALUES (?, ?, ?, ?)', [$evento, $numero, $nuestro, $rival]);
+    }
+
+    /** Versión vigente, con valores por defecto si todavía no hay reporte. @return array<string, mixed> */
+    private function vigente(string $evento): array
+    {
+        return $this->actual($evento) ?? ['evento_id' => $evento, 'estado' => 'previo', 'periodo' => 0, 'nuestro' => 0, 'rival' => 0, 'regreso' => null, 'regreso_por' => null, 'regreso_at' => null, 'confirmado' => 0, 'confirmado_por' => null, 'updated_at' => Tiempo::sello()];
+    }
+
+    private function guardarVigente(string $evento, array $a, bool $nuevo): void
+    {
+        $ahora = Tiempo::sello();
+        if ($nuevo) {
+            $this->ejecutar('INSERT INTO sportiva_envivo (evento_id, estado, periodo, nuestro, rival, regreso, regreso_por, regreso_at, confirmado, confirmado_por, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [$evento, $a['estado'], $a['periodo'], $a['nuestro'], $a['rival'], $a['regreso'], $a['regreso_por'], $a['regreso_at'], (int) $a['confirmado'], $a['confirmado_por'], $ahora]);
+        } else {
+            $this->ejecutar('UPDATE sportiva_envivo SET estado = ?, periodo = ?, nuestro = ?, rival = ?, regreso = ?, regreso_por = ?, regreso_at = ?, confirmado = ?, confirmado_por = ?, updated_at = ? WHERE evento_id = ?', [$a['estado'], $a['periodo'], $a['nuestro'], $a['rival'], $a['regreso'], $a['regreso_por'], $a['regreso_at'], (int) $a['confirmado'], $a['confirmado_por'], $ahora, $evento]);
         }
-        $marc = static function ($v): ?int {
-            $v = trim((string) $v);
-            return $v !== '' && ctype_digit($v) && (int) $v <= 99 ? (int) $v : null;
-        };
-        $nuestro = $marc($in['nuestro'] ?? '');
-        $rival = $marc($in['rival'] ?? '');
-        if (($nuestro === null) !== ($rival === null) && trim((string) ($in['nuestro'] ?? '')) . trim((string) ($in['rival'] ?? '')) !== '') {
-            return [[], 'envivo.error.marcador'];
-        }
-        $regreso = null;
-        $h = trim((string) ($in['regreso'] ?? ''));
-        if ($h !== '') {
-            $dia = Tiempo::dia($inicio);
-            $regreso = EventoService::unir($dia, $h);
-            if ($regreso === null) {
-                return [[], 'envivo.error.regreso'];
-            }
-        }
-        $texto = trim((string) ($in['texto'] ?? ''));
-        if (mb_strlen($texto) > 200) {
-            return [[], 'envivo.error.texto'];
-        }
-        $cambiaMarcador = $nuestro !== null && ($nuestro !== (int) ($act['nuestro'] ?? 0) || $rival !== (int) ($act['rival'] ?? 0));
-        $cambiaRegreso = $regreso !== null && ($act === null || ($act['regreso'] ?? null) !== $regreso);
-        if ($tipo === '' && $texto === '' && !$cambiaMarcador && !$cambiaRegreso) {
-            return [[], 'envivo.error.vacio'];
-        }
-        return [[
-            'tipo' => $tipo !== '' ? $tipo : ($cambiaMarcador ? 'marcador' : ($texto !== '' ? 'nota' : 'regreso')),
-            'texto' => $texto !== '' ? $texto : null,
-            'nuestro' => $cambiaMarcador ? $nuestro : null, 'rival' => $cambiaMarcador ? $rival : null,
-            'regreso' => $cambiaRegreso ? $regreso : null,
-        ], null];
+    }
+
+    /** Puntos que hace falta tener para poder cerrar el set (25, o 15 en el set decisivo). */
+    public static function metaSet(int $set): int
+    {
+        return $set >= self::SETS ? self::PUNTOS_DECISIVO : self::PUNTOS_SET;
     }
 
     /**
-     * Guarda una publicación y actualiza la versión vigente.
-     * @param array<string, mixed> $d salida de normalizar() @return array<string, mixed> versión vigente nueva
+     * Todo lo que se dibuja del marcador, según el deporte.
+     * `cols`: un periodo por columna (los cerrados y el que está en juego). `total`: sets ganados en vóley; goles o puntos totales en los demás.
+     * `actual`: lo que se toca ahora (en vóley los puntos del set; en fútbol y básquet el total).
+     * @return array<string, mixed>
      */
-    public function publicar(string $evento, string $persona, array $d): array
+    public function marcador(string $evento, string $dep): array
     {
-        $ahora = Tiempo::sello();
-        $act = $this->actual($evento) ?? ['estado' => 'previo', 'periodo' => 0, 'nuestro' => 0, 'rival' => 0, 'regreso' => null, 'regreso_por' => null, 'regreso_at' => null, 'confirmado' => 0, 'confirmado_por' => null];
-        $estado = (string) $act['estado'];
-        $periodo = (int) $act['periodo'];
-        switch ($d['tipo']) {
-            case 'comenzo':
-                $estado = 'jugando';
-                $periodo = 1;
-                break;
-            case 'descanso':
-                $estado = 'descanso';
-                break;
-            case 'reanuda':
-                $estado = 'jugando';
-                $periodo = max(2, $periodo + 1);
-                break;
-            case 'termino':
-                $estado = 'terminado';
-                break;
+        $a = $this->vigente($evento);
+        $estado = (string) $a['estado'];
+        $cols = [];
+        $sn = 0;
+        $sr = 0;
+        $ganados = [0, 0];
+        foreach ($this->periodos($evento) as $p) {
+            $cols[] = ['n' => (int) $p['numero'], 'nos' => (int) $p['nuestro'], 'riv' => (int) $p['rival'], 'actual' => false];
+            $sn += (int) $p['nuestro'];
+            $sr += (int) $p['rival'];
+            if ((int) $p['nuestro'] > (int) $p['rival']) {
+                $ganados[0]++;
+            } elseif ((int) $p['rival'] > (int) $p['nuestro']) {
+                $ganados[1]++;
+            }
         }
-        // en vóley no hay «reanuda»: después del fin del set, «comenzó» abre el siguiente
-        if ($d['tipo'] === 'comenzo' && (string) $act['estado'] === 'descanso') {
-            $periodo = max(2, (int) $act['periodo'] + 1);
+        $periodo = (int) $a['periodo'];
+        $nos = (int) $a['nuestro'];
+        $riv = (int) $a['rival'];
+        $enJuego = $estado === 'jugando';
+        if ($enJuego) {
+            $cols[] = ['n' => $periodo, 'nos' => $dep === 'voley' ? $nos : $nos - $sn, 'riv' => $dep === 'voley' ? $riv : $riv - $sr, 'actual' => true];
         }
-        $nuestro = $d['nuestro'] ?? (int) $act['nuestro'];
-        $rival = $d['rival'] ?? (int) $act['rival'];
-        $cambioMarcador = $d['nuestro'] !== null;
-        $regreso = $d['regreso'] ?? $act['regreso'];
-        $confirmado = $cambioMarcador || $d['tipo'] === 'termino' ? 0 : (int) $act['confirmado'];
+        $voley = $dep === 'voley';
+        return [
+            'dep' => $dep, 'estado' => $estado, 'periodo' => $periodo, 'nuestro' => $nos, 'rival' => $riv, 'cols' => $cols,
+            'total' => $voley ? ['nos' => $ganados[0], 'riv' => $ganados[1]] : ['nos' => $nos, 'riv' => $riv],
+            'cerrable' => $voley && $enJuego && max($nos, $riv) >= self::metaSet($periodo) && abs($nos - $riv) >= 2,
+            'sets' => $voley ? $ganados : null,
+            'marcable' => $enJuego, 'toques' => self::TOQUES[$dep] ?? [1],
+        ];
+    }
+
+    /** Botones de etapa según el deporte y el momento: [accion, k = clave del texto, v = variables, seguro = clave del «¿estás seguro?» o null, principal]. @return array<int, array<string, mixed>> */
+    public function etapas(array $m): array
+    {
+        $dep = $m['dep'];
+        $e = $m['estado'];
+        $n = (int) $m['periodo'];
+        if ($e === 'terminado') {
+            return [];
+        }
+        if ($e === 'previo') {
+            return [['accion' => 'comenzar', 'k' => 'envivo.m.comenzar', 'v' => [], 'seguro' => null, 'principal' => true]];
+        }
+        $terminar = ['accion' => 'terminar', 'k' => 'envivo.m.terminar', 'v' => [], 'seguro' => 'envivo.m.seguro.terminar', 'principal' => false];
+        if ($dep === 'voley') {
+            return [['accion' => 'cerrar_set', 'k' => 'envivo.m.cerrar_set', 'v' => ['n' => $n], 'seguro' => 'envivo.m.seguro.cerrar_set', 'principal' => $m['cerrable']], $terminar];
+        }
+        if ($dep === 'basquet') {
+            return [['accion' => 'cuarto', 'k' => $n >= self::CUARTOS ? 'envivo.m.prorroga' : 'envivo.m.fin_cuarto', 'v' => ['n' => $n], 'seguro' => $n >= self::CUARTOS ? 'envivo.m.seguro.prorroga' : 'envivo.m.seguro.cuarto', 'principal' => $n < self::CUARTOS], $terminar];
+        }
+        if ($e === 'descanso') {
+            return [['accion' => 'segundo', 'k' => 'envivo.m.segundo', 'v' => [], 'seguro' => null, 'principal' => true], $terminar];
+        }
+        return $n <= 1 ? [['accion' => 'entretiempo', 'k' => 'envivo.m.entretiempo', 'v' => [], 'seguro' => 'envivo.m.seguro.entretiempo', 'principal' => true], $terminar] : [$terminar];
+    }
+
+    private function nota(string $evento, string $persona, string $tipo, ?string $texto = null, ?int $nuestro = null, ?int $rival = null, ?string $regreso = null): void
+    {
         $this->ejecutar(
             'INSERT INTO sportiva_envivo_notas (id, evento_id, persona_id, tipo, texto, nuestro, rival, regreso, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [$this->id(), $evento, $persona, $d['tipo'], $d['texto'], $d['nuestro'], $d['rival'], $d['regreso'], $ahora]
+            [$this->id(), $evento, $persona, $tipo, $texto, $nuestro, $rival, $regreso, Tiempo::sello()]
         );
-        if ($this->actual($evento) === null) {
-            $this->ejecutar('INSERT INTO sportiva_envivo (evento_id, estado, periodo, nuestro, rival, regreso, regreso_por, regreso_at, confirmado, confirmado_por, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [$evento, $estado, $periodo, $nuestro, $rival, $regreso, $d['regreso'] ? $persona : null, $d['regreso'] ? $ahora : null, 0, null, $ahora]);
-        } else {
-            $this->ejecutar(
-                'UPDATE sportiva_envivo SET estado = ?, periodo = ?, nuestro = ?, rival = ?, regreso = ?, regreso_por = ?, regreso_at = ?, confirmado = ?, confirmado_por = ?, updated_at = ? WHERE evento_id = ?',
-                [$estado, $periodo, $nuestro, $rival, $regreso, $d['regreso'] ? $persona : $act['regreso_por'], $d['regreso'] ? $ahora : $act['regreso_at'], $confirmado, $confirmado ? $act['confirmado_por'] : null, $ahora, $evento]
-            );
+    }
+
+    /**
+     * Un toque en el marcador (+1 punto, +3 de básquet, − corregir). Devuelve el marcador nuevo o null si no corresponde.
+     * Cada deporte tiene sus toques y solo se anota con el partido en juego.
+     * @return array<string, mixed>|null
+     */
+    public function tocar(string $evento, string $dep, string $accion): ?array
+    {
+        if (!preg_match('/^(nos|riv)([+-])(\d)$/', $accion, $m)) {
+            return null;
         }
-        return $this->actual($evento) ?? [];
+        $delta = (int) $m[3] * ($m[2] === '-' ? -1 : 1);
+        $a = $this->vigente($evento);
+        if ($a['estado'] !== 'jugando' || !in_array(abs($delta), self::TOQUES[$dep] ?? [1], true) || ($delta < 0 && abs($delta) !== 1)) {
+            return null;
+        }
+        $campo = $m[1] === 'nos' ? 'nuestro' : 'rival';
+        $a[$campo] = max(0, min(199, (int) $a[$campo] + $delta));
+        $this->guardarVigente($evento, $a, false);
+        return $this->marcador($evento, $dep);
+    }
+
+    /**
+     * Cambia de etapa: comenzar, entretiempo, segundo tiempo, cerrar set, fin de cuarto o terminar el partido.
+     * Devuelve [error|null, aviso|null]; el aviso dice qué se debe notificar a las familias.
+     * @return array{0: string|null, 1: array<string, mixed>|null}
+     */
+    public function avanzar(string $evento, string $dep, string $accion, string $persona): array
+    {
+        $existe = $this->actual($evento) !== null;
+        $a = $this->vigente($evento);
+        $est = (string) $a['estado'];
+        $n = (int) $a['periodo'];
+        $nos = (int) $a['nuestro'];
+        $riv = (int) $a['rival'];
+        $m = $this->marcador($evento, $dep);
+        $aviso = null;
+        $sn = 0;
+        $sr = 0;
+        foreach ($this->periodos($evento) as $p) {
+            $sn += (int) $p['nuestro'];
+            $sr += (int) $p['rival'];
+        }
+        switch ($accion) {
+            case 'comenzar':
+                if ($est !== 'previo') {
+                    return ['envivo.error.etapa', null];
+                }
+                $a['estado'] = 'jugando';
+                $a['periodo'] = 1;
+                $this->nota($evento, $persona, 'comenzo');
+                break;
+            case 'entretiempo':
+                if ($dep !== 'futbol' || $est !== 'jugando' || $n !== 1) {
+                    return ['envivo.error.etapa', null];
+                }
+                $this->cerrarPeriodo($evento, 1, $nos, $riv);
+                $a['estado'] = 'descanso';
+                $this->nota($evento, $persona, 'descanso', null, $nos, $riv);
+                break;
+            case 'segundo':
+                if ($dep !== 'futbol' || $est !== 'descanso') {
+                    return ['envivo.error.etapa', null];
+                }
+                $a['estado'] = 'jugando';
+                $a['periodo'] = 2;
+                $this->nota($evento, $persona, 'reanuda');
+                break;
+            case 'cerrar_set':
+                if ($dep !== 'voley' || $est !== 'jugando') {
+                    return ['envivo.error.etapa', null];
+                }
+                if ($nos === 0 && $riv === 0) {
+                    return ['envivo.error.set_vacio', null];
+                }
+                $this->cerrarPeriodo($evento, $n, $nos, $riv);
+                $this->nota($evento, $persona, 'set', (string) $n, $nos, $riv);
+                $ganados = $m['sets'];
+                $ganados[$nos > $riv ? 0 : ($riv > $nos ? 1 : 0)] += $nos === $riv ? 0 : 1;
+                $meta = intdiv(self::SETS, 2) + 1;
+                $a['nuestro'] = 0;
+                $a['rival'] = 0;
+                if (max($ganados) >= $meta) {
+                    $a['estado'] = 'terminado';
+                    $a['confirmado'] = 0;
+                    $this->nota($evento, $persona, 'termino', null, $ganados[0], $ganados[1]);
+                    $aviso = ['motivo' => 'final', 'sets' => $ganados, 'n' => $n, 'nos' => $nos, 'riv' => $riv];
+                } else {
+                    $a['periodo'] = $n + 1;
+                    $aviso = ['motivo' => 'set', 'n' => $n, 'nos' => $nos, 'riv' => $riv, 'sets' => $ganados];
+                }
+                break;
+            case 'cuarto':
+                if ($dep !== 'basquet' || $est !== 'jugando') {
+                    return ['envivo.error.etapa', null];
+                }
+                $propio = [$nos - $sn, $riv - $sr];
+                $this->cerrarPeriodo($evento, $n, $propio[0], $propio[1]);
+                $this->nota($evento, $persona, $n >= self::CUARTOS ? 'prorroga' : 'cuarto', (string) $n, $propio[0], $propio[1]);
+                $a['periodo'] = $n + 1;
+                $aviso = ['motivo' => 'cuarto', 'n' => $n, 'nos' => $propio[0], 'riv' => $propio[1], 'total' => [$nos, $riv]];
+                break;
+            case 'terminar':
+                if (!in_array($est, ['jugando', 'descanso'], true)) {
+                    return ['envivo.error.etapa', null];
+                }
+                if ($est === 'jugando') {
+                    $propio = $dep === 'voley' ? [$nos, $riv] : [$nos - $sn, $riv - $sr];
+                    if ($dep === 'voley' ? ($nos > 0 || $riv > 0) : true) {
+                        $this->cerrarPeriodo($evento, $n, $propio[0], $propio[1]);
+                    }
+                }
+                $tot = $this->marcador($evento, $dep)['total'];
+                $a['estado'] = 'terminado';
+                $a['confirmado'] = 0;
+                $a['nuestro'] = $dep === 'voley' ? 0 : $nos;
+                $a['rival'] = $dep === 'voley' ? 0 : $riv;
+                $this->nota($evento, $persona, 'termino', null, $tot['nos'], $tot['riv']);
+                $aviso = ['motivo' => 'final', 'sets' => $dep === 'voley' ? [$tot['nos'], $tot['riv']] : null, 'nos' => $tot['nos'], 'riv' => $tot['riv']];
+                break;
+            default:
+                return ['envivo.error.etapa', null];
+        }
+        $this->guardarVigente($evento, $a, !$existe);
+        return [null, $aviso];
+    }
+
+    /** Novedad informativa (llegamos, salimos de vuelta) con nota opcional. Devuelve el error o null. */
+    public function novedad(string $evento, string $persona, string $tipo, string $texto): ?string
+    {
+        $texto = trim($texto);
+        if ($tipo !== '' && !in_array($tipo, self::NOVEDADES, true)) {
+            return 'envivo.error.tipo';
+        }
+        if (mb_strlen($texto) > 200) {
+            return 'envivo.error.texto';
+        }
+        if ($tipo === '' && $texto === '') {
+            return 'envivo.error.vacio';
+        }
+        $existe = $this->actual($evento) !== null;
+        $this->nota($evento, $persona, $tipo !== '' ? $tipo : 'nota', $texto !== '' ? $texto : null);
+        if (!$existe) {
+            $this->guardarVigente($evento, $this->vigente($evento), true);
+        }
+        return null;
+    }
+
+    /** Cambia la hora estimada de regreso. Devuelve [error|null, cambió?]. @return array{0: string|null, 1: bool} */
+    public function regreso(string $evento, string $persona, string $hora, string $inicio): array
+    {
+        $r = EventoService::unir(Tiempo::dia($inicio), trim($hora));
+        if ($r === null) {
+            return ['envivo.error.regreso', false];
+        }
+        $existe = $this->actual($evento) !== null;
+        $a = $this->vigente($evento);
+        if (($a['regreso'] ?? null) === $r) {
+            return [null, false];
+        }
+        $a['regreso'] = $r;
+        $a['regreso_por'] = $persona;
+        $a['regreso_at'] = Tiempo::sello();
+        $this->nota($evento, $persona, 'regreso', null, null, null, $r);
+        $this->guardarVigente($evento, $a, !$existe);
+        return [null, true];
+    }
+
+    /** ¿Hace falta avisar este gol? (no más de uno por minuto). */
+    public function puedeAvisarGol(string $evento): bool
+    {
+        $f = $this->fila('SELECT aviso_marcador_at AS t FROM sportiva_envivo_ctl WHERE evento_id = ?', [$evento]);
+        $ahora = Tiempo::sello();
+        if ($f !== null && $f['t'] && strtotime($ahora . ' UTC') - strtotime((string) $f['t'] . ' UTC') < self::AVISO_GOL_SEG) {
+            return false;
+        }
+        $this->ejecutar('DELETE FROM sportiva_envivo_ctl WHERE evento_id = ?', [$evento]);
+        $this->ejecutar('INSERT INTO sportiva_envivo_ctl (evento_id, aviso_marcador_at) VALUES (?, ?)', [$evento, $ahora]);
+        return true;
+    }
+
+    /** Resultado para mostrar fuera de la ficha (feed): en vóley son los sets ganados. @return array{0: int, 1: int} */
+    public function resultado(string $evento, string $dep): array
+    {
+        $t = $this->marcador($evento, $dep)['total'];
+        return [(int) $t['nos'], (int) $t['riv']];
     }
 
     /** El entrenador confirma el resultado final. */
@@ -263,7 +468,7 @@ final class EnVivoService extends Repo
      * Lo que muestra la tarjeta del partido: 'envivo' (hay quien reporta), 'sin' (nadie reporta) o 'fin'. null = no se muestra.
      * @param array<string, mixed> $e evento @return array<string, mixed>|null
      */
-    public function vista(array $e, \DateTimeImmutable $ahora): ?array
+    public function vista(array $e, \DateTimeImmutable $ahora, string $dep = 'futbol'): ?array
     {
         $act = $this->actual($e['id']);
         $abierto = self::abierto((string) $e['inicio'], $ahora);
@@ -280,6 +485,7 @@ final class EnVivoService extends Repo
                 $estado = 'envivo';
             }
         }
-        return ['estado' => $estado, 'act' => $act, 'notas' => $notas, 'abierto' => $abierto, 'presentes' => $this->cuantosPresentes($e['id'])];
+        $m = $this->marcador($e['id'], $dep);
+        return ['estado' => $estado, 'act' => $act, 'notas' => $notas, 'abierto' => $abierto, 'presentes' => $this->cuantosPresentes($e['id']), 'm' => $m, 'etapas' => $this->etapas($m)];
     }
 }

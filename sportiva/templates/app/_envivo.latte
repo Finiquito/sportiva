@@ -1,7 +1,6 @@
 {* Reporte en vivo en la ficha del partido. Recibe $e, $env (EnVivoService::vista), $dep, $puede (staff del equipo), $puedeRep, $reportero (papá que reporta ahora), $soyReportero, $enForm (sin botones, dentro de la pantalla de publicar). Tres estados: envivo, sin, fin. *}
 {var $act = $env['act']}
 {var $notas = $env['notas']}
-{var $hm = null}{foreach $notas as $x}{if $x['nuestro'] !== null && !$hm}{do $hm = $x}{/if}{/foreach}
 {var $rg = []}{foreach $notas as $x}{if $x['regreso']}{do $rg[] = $x}{/if}{/foreach}
 <section class="card" id="envivo">
  {if $env['estado'] === 'sin'}
@@ -14,11 +13,7 @@
   {if $env['estado'] === 'fin'}<h3>{$t('envivo.terminado')}</h3>{if $act['confirmado']}<span class="tag">{$ico('check')|noescape}{$t('envivo.confirmado')}</span>{/if}
   {else}<h3>{$t('envivo.titulo')}</h3><span class="tag vivo">● {if $act['estado'] === 'descanso'}{$t('envivo.descanso.' . $dep)}{elseif (int) $act['periodo'] > 0}{$t('envivo.per.' . $dep, ['n' => (int) $act['periodo']])}{else}{$t('envivo.previo')}{/if}</span>{/if}
  </div>
- <div class="vivo-marc">
-  <small>{$e['equipo']}{if $e['rival']} · {$e['rival']}{/if}</small>
-  <b>{(int) $act['nuestro']} – {(int) $act['rival']}</b>
-  {if $hm}<em>{$t('envivo.marcador_de', ['quien' => $hm['autor'], 'hace' => $hace($hm['created_at'])])}</em>{/if}
- </div>
+ {include '_marcador.latte', m: $env['m'], e: $e, dep: $dep, inter: false, etapas: []}
  {/if}
  {if $act && $act['regreso']}
  <div class="vivo-reg">
@@ -32,8 +27,8 @@
  <div class="vivo-notas">
   {foreach $notas as $x}
   <div class="vivo-nota"><span>{$h($x['created_at'])}</span><div>
-   <b>{if in_array($x['tipo'], ['descanso', 'reanuda'], true)}{$t('envivo.t.' . $x['tipo'] . '.' . $dep)}{else}{$t('envivo.t.' . $x['tipo'])}{/if}{if $x['texto']} · {$x['texto']}{/if}</b>
-   <small>{$x['autor']}{if $x['nuestro'] !== null} · {(int) $x['nuestro']} – {(int) $x['rival']}{/if}{if $x['regreso']} · {$h($x['regreso'])}{/if}</small>
+   <b>{if $x['tipo'] === 'set'}{$t('envivo.t.set', ['n' => $x['texto']])}{elseif $x['tipo'] === 'cuarto'}{$t('envivo.t.cuarto', ['n' => $x['texto']])}{elseif $x['tipo'] === 'prorroga'}{$t('envivo.t.prorroga')}{elseif $x['tipo'] === 'descanso'}{$t('envivo.t.descanso.futbol')}{elseif $x['tipo'] === 'reanuda'}{$t('envivo.t.reanuda.futbol')}{else}{$t('envivo.t.' . $x['tipo'])}{if $x['texto']} · {$x['texto']}{/if}{/if}</b>
+   <small>{$x['autor']}{if $x['nuestro'] !== null && $x['rival'] !== null} · {(int) $x['nuestro']} – {(int) $x['rival']}{/if}{if $x['regreso']} · {$h($x['regreso'])}{/if}</small>
   </div></div>
   {/foreach}
  </div>
